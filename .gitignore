@@ -81,3 +81,6 @@ desktop/.runtime/
 *.ova
 *.ovf
 /artifacts/
+
+# Database object repr accidentally used as a filename, at any depth.
+<app.database.Database object at 0x*

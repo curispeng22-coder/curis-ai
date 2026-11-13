@@ -715,7 +715,7 @@ def test_b_team_legacy_music_metadata_does_not_inherit_current_contract(tmp_path
     import shutil
     from app.music_entry_service import MusicEntryService, LEGACY_DIGEST
     db, runtime = company_only(tmp_path)
-    source = Path(__file__).resolve().parents[2] / 'artifacts/tasks/CURIS-V1-MUSIC-OPERATING-CHAIN-001/preimages/backend/app/bundled_workspace_packages/music'
+    source = Path(__file__).resolve().parent / 'fixtures/music_legacy'
     copy = tmp_path / 'legacy-music-assets'; shutil.copytree(source, copy)
     with scope():
         installed = runtime.install(copy, COMPANY, department_id='writing-test-department', business_id='legacy-music', business_name='隔离旧版音乐')
