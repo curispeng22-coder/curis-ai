@@ -261,7 +261,16 @@ def canonical_employee(tmp_path, folder="music"):
         runtime.install(Path(__file__).resolve().parents[1] / "app/bundled_workspace_packages" / folder,
             COMPANY, department_id="writing-test-department", business_id="position-business", business_name="授权测试")
         with db.connect() as con:
-            employee = con.execute("select id from employee_instances where company_id=?", (COMPANY,)).fetchone()[0]
+            employee = con.execute(
+                "select e.id from employee_instances e join workspace_package_instances p "
+                "on p.company_id=e.company_id and p.tenant_id=e.tenant_id "
+                "join runtime_entities a on a.tenant_id=e.tenant_id and a.company_id=e.company_id "
+                "and a.workspace_id=p.workspace_id and a.entity_type='RESPONSIBILITY_ASSIGNMENT' "
+                "and json_extract(a.data_json,'$.employeeRef')=e.id "
+                "where e.company_id=? and json_extract(a.data_json,'$.scopeType')='WORKSPACE' "
+                "and coalesce(json_extract(a.data_json,'$.responsibilityKey'),'')!='WRITING_REVIEWER'",
+                (COMPANY,),
+            ).fetchone()[0]
         db.save_tenant_private_capability(tenant_id="selfuse", capability_type="agent",
             capability_id=AGENT["capability_id"], display_name="Synthetic Agent", metadata={"kind": "codex-cli"})
     return db, EmployeeTemplateContract(db), employee
