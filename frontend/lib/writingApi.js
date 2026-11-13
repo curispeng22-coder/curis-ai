@@ -5,6 +5,7 @@ export function createWritingApi(request = workspaceFetch) {
   const root = (company, workspace) => `/api/workspace/v1/companies/${id(company)}/writing/${id(workspace)}`;
   const chapter = (company, workspace, entry) => `${root(company, workspace)}/books/${id(entry.book)}/chapters/${id(entry.chapter)}`;
   return {
+    direct: (c, w) => request(`${root(c, w)}/direct`, { method: "POST" }),
     collection: (c, w) => request(root(c, w)),
     bookContext: (c, w, book, ref = "") => request(`${root(c, w)}/books/${id(book)}/context${ref ? `?ref=${id(ref)}` : ""}`),
     saveBookContext: (c, w, book, payload) => request(`${root(c, w)}/books/${id(book)}/context`, { method: "POST", body: JSON.stringify(payload) }),

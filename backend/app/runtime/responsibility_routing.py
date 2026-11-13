@@ -801,6 +801,11 @@ class ResponsibilityRoutingRuntime:
         existing = executions.get(execution_key)
         if existing:
             return {"work": work, "execution": existing, "duplicate": True}
+        if routing.get("status") in {"CANCELLED", "COMPLETED"} or any(
+            item.get("status") == "UNKNOWN" or (item.get("provenance") or {}).get("effect_status") == "UNKNOWN"
+            for item in executions.values()
+        ):
+            raise ResponsibilityRoutingError("Settled or uncertain Work cannot start another execution")
         if routing.get("currentExecutorRef"):
             raise ResponsibilityRoutingError("Work already has an active Employee execution")
         if int(routing.get("executionCount") or 0) >= int(routing.get("maxExecutions") or 24):
@@ -840,6 +845,8 @@ class ResponsibilityRoutingRuntime:
             raise ResponsibilityRoutingError("Employee execution claim does not exist")
         if record.get("taskRef") and record["taskRef"] != task_ref:
             raise ResponsibilityRoutingError("Employee execution already owns another Provider Task")
+        if routing.get("status") == "CANCELLED" or record.get("status") not in {"SUBMITTING", "RUNNING"}:
+            raise ResponsibilityRoutingError("Cannot attach a Task to a settled execution")
         record.update({"taskRef": task_ref, "status": "RUNNING", "updatedAt": _now()})
         executions[execution_key] = record
         routing.update({"executions": executions, "updatedAt": record["updatedAt"]})
@@ -868,9 +875,9 @@ class ResponsibilityRoutingRuntime:
         if not record or (record.get("taskRef") and record.get("taskRef") != task_ref):
             raise ResponsibilityRoutingError("Provider result does not match the active execution")
         normalized = status.upper()
-        if normalized not in {"ACCEPTED", "REJECTED", "PARTIAL", "FAILED", "CANCELLED"}:
+        if normalized not in {"ACCEPTED", "REJECTED", "PARTIAL", "FAILED", "CANCELLED", "UNKNOWN"}:
             raise ResponsibilityRoutingError("Unsupported Employee Result status")
-        if record.get("status") in {"ACCEPTED", "REJECTED", "PARTIAL", "FAILED", "CANCELLED"}:
+        if record.get("status") in {"ACCEPTED", "REJECTED", "PARTIAL", "FAILED", "CANCELLED", "UNKNOWN"}:
             if record.get("status") != normalized or record.get("sessionRef") != (session_ref or None):
                 raise ResponsibilityRoutingError("Duplicate Provider callback has different truth")
             return {"work": work, "execution": record, "duplicate": True}
@@ -895,7 +902,8 @@ class ResponsibilityRoutingRuntime:
         routing.update({
             "executions": executions,
             "currentExecutorRef": None,
-            "status": "ACTIVE" if normalized == "ACCEPTED" else "WAITING",
+            "status": ("CANCELLED" if routing.get("status") == "CANCELLED" else
+                       "ACTIVE" if normalized == "ACCEPTED" else "WAITING"),
             "resultRefs": _unique([*routing.get("resultRefs", []), *result_values]),
             "artifactRefs": _unique([*routing.get("artifactRefs", []), *artifact_values]),
             "evidenceRefs": _unique([*routing.get("evidenceRefs", []), *evidence_values]),
@@ -926,6 +934,11 @@ class ResponsibilityRoutingRuntime:
             human_input.update({"state": "INVALIDATED", "revision": int(human_input["revision"]) + 1,
                                 "invalidatedAt": at, "invalidatedReason": "ORIGINAL_WORK_CANCELLED"})
             routing["humanInput"] = human_input
+        executions = {key: dict(value) for key, value in (routing.get("executions") or {}).items()}
+        for record in executions.values():
+            if record.get("status") in {"SUBMITTING", "RUNNING"}:
+                record.update(status="CANCELLED", resultStatus="CANCELLED", updatedAt=at)
+        routing["executions"] = executions
         routing.update({
             "status": "CANCELLED",
             "currentExecutorRef": None,

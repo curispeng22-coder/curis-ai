@@ -2582,54 +2582,59 @@ class WorkspacePackageRuntime:
             raise PackageValidationError("Core action is not allowed")
         if owner_ref.strip():
             raise PackageValidationError("owner_ref is a read-only Core relationship projection")
-        at = _now()
         with self.db.connect() as connection:
             connection.execute("begin immediate")
-            instance = self._instance(connection, workspace_id)
-            manifest = json.loads(instance["manifest_json"])
-            schemas = json.loads(instance["schemas_json"])
-            if action_id not in manifest["actions"] or object_type not in schemas:
-                raise PackageValidationError("action or object type is not declared by the package")
-            if object_type in manifest.get("canonicalEntityBindings", {}):
-                raise PackageValidationError("canonical domain object must use its scoped domain command, not package object storage")
-            data = self._validated_data(schemas[object_type], values)
             object_id = f"package-object-{uuid4()}"
-            activity_id = f"package-activity-{uuid4()}"
-            connection.execute(
-                "insert into workspace_package_objects values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    object_id, instance["instance_id"], self.tenant_id, instance["company_id"], workspace_id,
-                    object_type, schemas[object_type]["schemaVersion"], schemas[object_type]["initialState"],
-                    "", json.dumps(data, ensure_ascii=False), at, at,
-                ),
-            )
-            connection.execute(
-                "insert into runtime_entities(entity_id, tenant_id, entity_type, company_id, workspace_id, "
-                "owner_ref, lifecycle_status, blueprint_version, verification_status, evidence_condition, "
-                "data_json, created_at, updated_at) values (?, ?, 'PACKAGE_DOMAIN_OBJECT', ?, ?, '', ?, ?, "
-                "'UNVERIFIED', 'MISSING', ?, ?, ?)",
-                (
-                    object_id, self.tenant_id, instance["company_id"], workspace_id,
-                    schemas[object_type]["initialState"], instance["package_version"],
-                    json.dumps({
-                        "packageId": instance["package_id"],
-                        "packageVersion": instance["package_version"],
-                        "objectType": object_type,
-                        "schemaVersion": schemas[object_type]["schemaVersion"],
-                        "businessData": data,
-                        "companyIntegration": {"status": "NOT_STARTED"},
-                    }, ensure_ascii=False),
-                    at, at,
-                ),
-            )
-            connection.execute(
-                "insert into workspace_package_activities values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    activity_id, instance["instance_id"], self.tenant_id, instance["company_id"], workspace_id,
-                    action_id, object_id, json.dumps({"objectType": object_type}), at,
-                ),
-            )
+            self.create_object_in_connection(connection, workspace_id, action_id, object_type, values, object_id)
         return self.get_object(workspace_id, object_id)
+
+    def create_object_in_connection(self, connection, workspace_id, action_id, object_type, values, object_id):
+        if not connection.in_transaction or action_id not in SAFE_ACTIONS:
+            raise PackageValidationError("Package object creation requires an allowed action and transaction")
+        at = _now()
+        instance = self._instance(connection, workspace_id)
+        manifest = json.loads(instance["manifest_json"])
+        schemas = json.loads(instance["schemas_json"])
+        if action_id not in manifest["actions"] or object_type not in schemas:
+            raise PackageValidationError("action or object type is not declared by the package")
+        if object_type in manifest.get("canonicalEntityBindings", {}):
+            raise PackageValidationError("canonical domain object must use its scoped domain command, not package object storage")
+        data = self._validated_data(schemas[object_type], values)
+        activity_id = f"package-activity-{uuid4()}"
+        connection.execute(
+            "insert into workspace_package_objects values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                object_id, instance["instance_id"], self.tenant_id, instance["company_id"], workspace_id,
+                object_type, schemas[object_type]["schemaVersion"], schemas[object_type]["initialState"],
+                "", json.dumps(data, ensure_ascii=False), at, at,
+            ),
+        )
+        connection.execute(
+            "insert into runtime_entities(entity_id, tenant_id, entity_type, company_id, workspace_id, "
+            "owner_ref, lifecycle_status, blueprint_version, verification_status, evidence_condition, "
+            "data_json, created_at, updated_at) values (?, ?, 'PACKAGE_DOMAIN_OBJECT', ?, ?, '', ?, ?, "
+            "'UNVERIFIED', 'MISSING', ?, ?, ?)",
+            (
+                object_id, self.tenant_id, instance["company_id"], workspace_id,
+                schemas[object_type]["initialState"], instance["package_version"],
+                json.dumps({
+                    "packageId": instance["package_id"],
+                    "packageVersion": instance["package_version"],
+                    "objectType": object_type,
+                    "schemaVersion": schemas[object_type]["schemaVersion"],
+                    "businessData": data,
+                    "companyIntegration": {"status": "NOT_STARTED"},
+                }, ensure_ascii=False),
+                at, at,
+            ),
+        )
+        connection.execute(
+            "insert into workspace_package_activities values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                activity_id, instance["instance_id"], self.tenant_id, instance["company_id"], workspace_id,
+                action_id, object_id, json.dumps({"objectType": object_type}), at,
+            ),
+        )
 
     def operate_object(self, workspace_id: str, object_id: str, responsibility_type: str) -> dict:
         responsibility_type = responsibility_type.strip().upper()

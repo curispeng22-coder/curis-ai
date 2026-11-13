@@ -86,6 +86,10 @@ def build_writing_router(database, executor, *, conversation_service=None, allow
     def collection(company_id: str, workspace_id: str):
         return invoke(lambda: service.collection(company_id, workspace_id))
 
+    @router.post("/direct")
+    def open_direct(company_id: str, workspace_id: str):
+        return invoke(lambda: service.open_direct(company_id, workspace_id))
+
     @router.get("/books/{book_ref}/chapters/{chapter_ref}")
     def chapter(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str):
         return invoke(lambda: service.chapter(company_id, workspace_id, book_ref, chapter_ref))

@@ -116,7 +116,7 @@ class WritingEntryService:
         attempts = {}
         for row in rows:
             value = json.loads(row["payload"]); attempts[value["attempt_id"]] = value
-        return [value for value in attempts.values() if value.get("status") not in {"COMPLETED", "FAILED"}
+        return [value for value in attempts.values() if value.get("status") not in {"COMPLETED", "FAILED", "CANCELLED"}
                 or value.get("effect_status") == "UNKNOWN"]
 
     def _configuration(self, con, workspace):

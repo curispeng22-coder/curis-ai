@@ -82,6 +82,19 @@ export default function WritingWorkspace({ detail, workspaceId }) {
   // Stable identities guard late reads when navigating between books/chapters.
   }, [company, workspaceId, entryKey, detail]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { setCollection(null); setChapter(null); load(); return () => { epoch.current += 1; }; }, [load]);
+  const directPending = useRef(false);
+  const openDirect = async () => {
+    if (directPending.current) return;
+    directPending.current = true;
+    setBusy(true);
+    try {
+      const result = await writingApi.direct(company, workspaceId);
+      if (activeKey.current === entryKey) {
+        router.push(chapterHref(workspaceId, { mode: "chapter", book: result.book_ref, chapter: result.chapter_ref }));
+      }
+    } catch (reason) { if (activeKey.current === entryKey) setError(reason.message); }
+    finally { directPending.current = false; if (activeKey.current === entryKey) setBusy(false); }
+  };
   const command = async (action, data, requestId, expectedDraftRef) => {
     if (!chapter || pendingKey.current === entryKey) throw new Error("请等待当前章节读取完成。");
     const key = entryKey; pendingKey.current = key; setBusy(true);
@@ -215,6 +228,7 @@ export default function WritingWorkspace({ detail, workspaceId }) {
       {error && <p role="alert" className={styles.error}>{error} 输入已保留，请核对来源后重试。</p>}
       {!collection && !error && <p className={styles.notice}>正在读取作品与章节…</p>}
       {collection && entry.mode === "books" && !entry.view && !book && <>
+        <button className={styles.primary} disabled={busy || collection.read_only} onClick={openDirect}>开始写作</button>
         {newBookOpen && <form className={styles.create} onSubmit={(event) => { event.preventDefault(); create("WritingBook", bookTitle); }}><label>作品名称<input autoFocus aria-label="作品名称" aria-invalid={Boolean(bookTitleError)} aria-describedby={bookTitleError ? "writing-book-title-error" : undefined} value={bookTitle} maxLength={160} onChange={(event) => { setBookTitle(event.target.value); setBookTitleError(""); }} /></label>{bookTitleError && <p id="writing-book-title-error" role="alert" className={styles.error}>{bookTitleError}</p>}<button className={styles.primary} disabled={busy || creationUnknown || collection.read_only}>创建作品</button><button type="button" onClick={() => { setNewBookOpen(false); setBookTitleError(""); }}>取消</button></form>}
         <div className={styles.collectionTools}><input type="search" aria-label="搜索作品" placeholder="搜索作品名称" value={query} onChange={(event) => setQuery(event.target.value)} /><select aria-label="作品状态" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="">全部状态</option><option value="DRAFT">草稿</option><option value="ARCHIVED">已归档</option></select><span>{visibleBooks.length} 部作品</span></div>
         <div className={styles.books}>{visibleBooks.map((item) => { const chapters = collection.chapters.filter((chapter) => chapter.bookRef === item.ref); return <article key={item.ref} className={styles.bookCard}><div className={styles.bookCover} aria-label={`作品封面占位 · ${item.title}`}><small>写作作品</small><strong>{item.title}</strong><span>CURIS</span></div><div className={styles.bookCardBody}><h2>{item.title}</h2><span className={styles.badge}>{bookStatus(item.status)}</span><dl><div><dt>章节</dt><dd>{chapters.length} 个</dd></div><div><dt>当前工作</dt><dd>{chapters.length ? "继续章节正文" : "准备第一章"}</dd></div><div><dt>平台发布</dt><dd>未连接</dd></div></dl><Link className={styles.bookDoor} href={bookHref(workspaceId, item.ref)}>进入作品 →</Link></div></article>; })}</div>
