@@ -34,6 +34,13 @@ class CompanyTextPolicyIn(BaseModel):
     preview_token: str = Field(default="", max_length=128)
 
 
+class WritingTaskDraftIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    draft_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")
+    text: str = Field(max_length=200000)
+    expected_revision: int = Field(ge=0)
+
+
 class PresentationIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -228,6 +235,34 @@ def build_frontend_v1_router(
     cg_entry = content_growth_entry_service or ContentGrowthEntryService(database)
     from ..music_entry_service import MusicEntryService, PACKAGE_ID as MUSIC_PACKAGE_ID, ASSETS as MUSIC_ASSETS
     music_entry = music_entry_service or MusicEntryService(database)
+
+    from ..first_launch_service import FirstLaunchService
+    launch = FirstLaunchService(database)
+
+    @router.post("/first-launch")
+    def first_launch():
+        try:
+            return launch.ensure()
+        except RuntimeScopeError as error:
+            raise HTTPException(403, str(error)) from None
+        except ValueError as error:
+            raise HTTPException(409, str(error)) from None
+
+    @router.put("/companies/{company_id}/writing/{workspace_id}/task-draft")
+    def save_writing_task_draft(company_id: str, workspace_id: str, payload: WritingTaskDraftIn):
+        try:
+            return launch.save_draft(company_id, workspace_id, payload.draft_id, payload.text, payload.expected_revision)
+        except (RuntimeScopeError, KeyError):
+            raise HTTPException(404, "任务不属于当前工作空间。") from None
+        except ValueError as error:
+            raise HTTPException(409, str(error)) from None
+
+    @router.get("/companies/{company_id}/writing/{workspace_id}/task-drafts/{work_id}")
+    def read_writing_task_draft(company_id: str, workspace_id: str, work_id: str):
+        try:
+            return launch.read_draft(company_id, workspace_id, work_id)
+        except (RuntimeScopeError, KeyError):
+            raise HTTPException(404, "任务不属于当前工作空间。") from None
 
     @router.get("/companies/{company_id}/text-execution-policy")
     def company_text_policy(company_id: str):

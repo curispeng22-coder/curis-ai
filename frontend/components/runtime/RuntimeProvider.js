@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { workspaceFetch } from "../../lib/api.js";
 import { usePathname } from "next/navigation";
 
 import { getRuntimeBootstrap, runtimeErrorMessage } from "../../lib/runtimeApi.js";
@@ -26,6 +27,7 @@ export function RuntimeProvider({ children }) {
     if (!usesRuntime(pathname)) return;
     setState((current) => ({ ...current, status: "loading", error: "" }));
     try {
+      await workspaceFetch("/api/workspace/v1/first-launch", { method: "POST" });
       const result = await getRuntimeBootstrap();
       setState({
         status: result.snapshot ? "ready" : "empty",
