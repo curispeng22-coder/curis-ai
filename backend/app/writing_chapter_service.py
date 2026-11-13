@@ -650,7 +650,7 @@ class WritingChapterService:
                 "context": binding["context"], "binding_id": policy["binding"]["id"], "model": policy["selected"]["model"],
                 "grant": policy["grant"], "book_context_basis_sha256": basis_hash, "source_class": policy["grant"].get("source_class", "PROVIDER_EXECUTOR")}
         if work_ref:
-            if execution_selection is None or retry_no:
+            if execution_selection is None:
                 raise WritingConflict("Explicit Work requires a selected model; never retry an uncertain Work")
             execution_selection["work_ref"] = work_ref
             execution_selection["work_instruction"] = body.strip()
@@ -734,7 +734,8 @@ class WritingChapterService:
                 or source.get("context") != selection["context"] or data.get("writingBasis") != expected
                 or binding != {"bindingRef": selection["binding_id"], "model": selection["model"]}
                 or route.get("currentAssignmentRef") != selection["context"]["assignment_ref"]
-                or any(key != attempt_id for key in route.get("executions", {}))):
+                or any(key != attempt_id and not (record.get("status") == "FAILED" and not record.get("taskRef"))
+                       for key, record in route.get("executions", {}).items())):
             raise WritingConflict("Original Work chapter, responsibility, model or execution differs")
         return dict(row)
 

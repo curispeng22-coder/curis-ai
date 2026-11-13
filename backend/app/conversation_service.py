@@ -1143,8 +1143,11 @@ class ConversationService:
             with self.db.connect() as con:
                 existing = con.execute("select task_id from tasks where tenant_id=? and work_ref=? and execution_ref=?",
                                        (TenantContext.current_tenant_id(), work_ref, attempt_id)).fetchall()
-            if existing:
-                return  # Reconcile the retained Task; never replay an uncertain physical attempt.
+                finished = con.execute("select 1 from evolution_events where tenant_id=? and correlation_id=? "
+                    "and event_type='conversation.attempt.finished' and idempotency_key=?",
+                    (TenantContext.current_tenant_id(), conversation_id, attempt_id + ":finished")).fetchone()
+            if existing or finished:
+                return  # A retained Task or settled preflight must never replay.
         launched = False
         try:
             company, employee = claim["company_id"], claim["employee_ref"]
@@ -1293,7 +1296,7 @@ class ConversationService:
             if not duplicate_work_task:
                 effect = "UNKNOWN" if claim.get("execution_selection") and launched and status != "COMPLETED" else "SETTLED"
                 if not completed_atomically:
-                    if work_ref and not launched:
+                    if work_ref:
                         from .runtime import ResponsibilityRoutingRuntime
                         with self.db.connect() as con:
                             con.execute("begin immediate")
@@ -1301,8 +1304,10 @@ class ConversationService:
                             work = RuntimeFoundation(scoped).get(work_ref)
                             if work["data"].get("responsibilityRouting", {}).get("status") != "CANCELLED":
                                 ResponsibilityRoutingRuntime(scoped).finish_employee_execution(work_ref,
-                                    execution_key=attempt_id, status="FAILED", task_ref=task_id or "", session_ref="",
-                                    result_summary="发送前失败，原交办保留；没有发起模型调用。")
+                                    execution_key=attempt_id, status="UNKNOWN" if launched else "FAILED",
+                                    task_ref=task_id or "", session_ref="",
+                                    result_summary=("执行效果未知，保留原请求且禁止自动重发。" if launched else
+                                                    "发送前失败，原交办保留；没有发起模型调用。"))
                             EvolutionEventLog(scoped).record(correlation_id=conversation_id, event_type="conversation.attempt.finished",
                                 payload={**claim, "status": status, "task_ref": task_id, "effect_status": effect},
                                 idempotency_key=attempt_id + ":finished")
