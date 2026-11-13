@@ -60,7 +60,7 @@ class CapabilityAuthorizer:
     def _professional_model_allowed(self, employee_id, model_key, *, connection=None) -> bool:
         """A model-specific consent check; never grant a position-wide effect class."""
         from .company_execution_policy import CompanyExecutionPolicy
-        from .employee_templates import EmployeeTemplateContract, PROFESSIONAL_TEAM_DEFINITIONS
+        from .employee_templates import EmployeeTemplateContract, PROFESSIONAL_TEAM_DEFINITIONS, WRITING_EMPLOYEE_PRESETS
         from .runtime import RuntimeScopeError
 
         if not model_key:
@@ -71,8 +71,9 @@ class CapabilityAuthorizer:
                 "select e.*,t.allowed_effect_classes_json as template_effects "
                 "from employee_instances e join employee_templates t on t.id=e.template_id "
                 "where e.tenant_id=? and e.id=? and e.enabled=1 and e.deleted_at is null "
-                "and e.status in ('idle','assigned') and e.template_id in (?,?,?)",
-                (tenant, employee_id, *(row[0] for row in PROFESSIONAL_TEAM_DEFINITIONS.values())),
+                "and e.status in ('idle','assigned') and e.template_id in (?,?,?,?)",
+                (tenant, employee_id, *(row[0] for row in PROFESSIONAL_TEAM_DEFINITIONS.values()),
+                 WRITING_EMPLOYEE_PRESETS[1]["templateId"]),
             ).fetchone()
             if row is None:
                 return False
