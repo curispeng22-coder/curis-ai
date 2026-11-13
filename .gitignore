@@ -37,8 +37,7 @@ desktop/target/
 desktop/node_modules/
 desktop/runtime/__pycache__/
 
-# SQLite journal files only; primary databases and backups remain visible for
-# retention / evidence review and are intentionally not ignored here.
+# SQLite journal files.
 *.sqlite-wal
 *.sqlite-shm
 *.db-wal
@@ -47,8 +46,12 @@ desktop/runtime/__pycache__/
 # Curis baseline: local data, credentials, builds and evidence stay on device.
 *.db
 *.db-*
-*.sqlite*
-*.sqlite3*
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
 .env*
 *.pem
 *.key
@@ -62,7 +65,7 @@ desktop/runtime/__pycache__/
 *.der
 *.mobileprovision
 **/node_modules/
-**/.next*/
+**/.next/
 **/target/
 desktop/.runtime/
 /data/
@@ -81,3 +84,28 @@ desktop/.runtime/
 *.ova
 *.ovf
 /artifacts/
+
+# T-001: malformed database paths, templates, secrets and local artifacts.
+/<app.database.Database object at 0x*
+!.env.example
+!.env.*.example
+!.env.template
+!.env.*.template
+!.env.sample
+!.env.*.sample
+venv/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+dist/
+build/
+out/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+id_rsa
+id_ed25519

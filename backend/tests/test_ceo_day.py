@@ -201,7 +201,7 @@ def _client_with_escalation():
     sched = RuntimeScheduler(
         db, SimulatedExecutor(escalate_when=lambda c: bool(c.get("escalation")))
     )
-    app = create_app(db_path=str(db))
+    app = create_app(db_path=db.path)
     # 用带升级执行器的服务覆盖默认装配
     app.state.ceo_day_service = CeoDayService(db, scheduler=sched)
     return TestClient(app), app

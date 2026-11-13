@@ -9,5 +9,31 @@ social-auto-upload/social-auto-upload/
 **/data/
 *.log
 
-# Baseline: do not include any environment file, including examples.
+# Environment values stay local; templates remain versioned.
 .env*
+
+!.env.example
+!.env.*.example
+!.env.template
+!.env.*.template
+!.env.sample
+!.env.*.sample
+*.db
+*.sqlite
+*.sqlite3
+*.db-*
+*.sqlite-*
+*.sqlite3-*
+<app.database.Database object at 0x*
+*.pem
+*.key
+*.p12
+*.pfx
+__pycache__/
+.pytest_cache/
+node_modules/
+.next/
+dist/
+build/
+*.tmp
+*.temp

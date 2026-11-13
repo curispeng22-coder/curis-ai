@@ -1039,8 +1039,8 @@ def _seed_r3_approved_model_catalog(database: Database) -> None:
         )
 
 
-def create_app(db_path: str | None = None, tool_functions=None, model_gateway_adapter=None, *, music_media_root=None) -> FastAPI:
-    database = Database(db_path or os.getenv("CURIS_DB", "data/curis.sqlite"))
+def create_app(db_path: str | os.PathLike[str] | None = None, tool_functions=None, model_gateway_adapter=None, *, music_media_root=None) -> FastAPI:
+    database = Database(os.getenv("CURIS_DB", "data/curis.sqlite") if db_path is None else db_path)
     from .agent_tool_server import AgentToolSessions
     agent_tools = AgentToolSessions()
     browser_preparations = {}
