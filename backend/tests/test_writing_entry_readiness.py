@@ -521,8 +521,8 @@ raise SystemExit('boundary was not reached')
         count = 1 if expected == 'COMPLETED' else 0
         for table in ('canonical_businesses', 'workspaces', 'workspace_package_instances'):
             assert con.execute('select count(*) from ' + table).fetchone()[0] == count
-        assert con.execute("select count(*) from employee_instances where template_id='official.employee.writing.author'").fetchone()[0] == count
-        assert con.execute("select count(*) from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchone()[0] == count * 2
+        assert con.execute("select count(*) from employee_instances where template_id='official.employee.writing.author_v2'").fetchone()[0] == count
+        assert con.execute("select count(*) from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchone()[0] == count * 3
         assert con.execute('pragma foreign_key_check').fetchall() == []
         assert con.execute('pragma integrity_check').fetchone()[0] == 'ok'
     retained = list(Path(runtime.store_root).glob('*/*/*'))
@@ -538,14 +538,14 @@ def test_b_team_identity_no_key_edit_and_multiple_instances(tmp_path):
         run, draft, proposal = confirmed(db)
         first = materialize(FirstRunDelivery(db), runtime, run, draft, proposal)
         team = first['creation_result']['initial_team']
-        assert team['leaderRef'] == team['employeeRef']
-        assert len(team['assignments']) == 2
-        assert team['templateRef'] == 'official.employee.writing.author'
+        assert len({team['leaderRef'], team['employeeRef'], team['reviewerRef']}) == 3
+        assert len(team['assignments']) == 3
+        assert team['templateRef'] == 'official.employee.writing.author_v2'
         assert team['executionVerification'] == 'UNVERIFIED'
         assert WritingEntryService(db).metadata(COMPANY, team['workspaceRef'])['execution']['status'] == 'UNAVAILABLE'
         with db.connect() as con:
             employee = con.execute('select * from employee_instances where id=?', (team['employeeRef'],)).fetchone()
-            assert employee['company_id'] == COMPANY and employee['name'] == '章节作者'
+            assert employee['company_id'] == COMPANY and employee['name'] == '作者'
             runtime_employee = con.execute('select * from runtime_entities where entity_id=?', (team['employeeRef'],)).fetchone()
             assert json.loads(runtime_employee['data_json'])['companyEmployeeRef'] == employee['id']
             assert 'identityBridge' not in json.loads(runtime_employee['data_json'])
@@ -554,7 +554,7 @@ def test_b_team_identity_no_key_edit_and_multiple_instances(tmp_path):
             for index, ref in enumerate(team['assignments']):
                 assignment = con.execute('select * from runtime_entities where entity_id=?', (ref['assignmentRef'],)).fetchone()
                 data = json.loads(assignment['data_json'])
-                assert data['employeeRef'] == employee['id'] and data['scopeType'] == ('BUSINESS' if index == 0 else 'WORKSPACE')
+                assert data['employeeRef'] == [team['leaderRef'], employee['id'], team['reviewerRef']][index] and data['scopeType'] == ('BUSINESS' if index == 0 else 'WORKSPACE')
                 assert data['scopeRef'] == (team['businessRef'] if index == 0 else team['workspaceRef'])
                 assert data['isLeader'] is (index == 0)
                 assert len(con.execute('select * from runtime_links where source_id=?', (ref['assignmentRef'],)).fetchall()) == 2
@@ -600,8 +600,8 @@ def test_b_team_every_stage_rolls_back_in_same_connection(tmp_path, monkeypatch,
     assert result['activation']['status'] == 'FAILED', result
     with original() as con:
         assert con.execute('select count(*) from canonical_businesses where business_id=?', (FirstRunDelivery(db)._ids(run)['business_id'],)).fetchone()[0] == 0
-        assert con.execute("select count(*) from employee_instances where template_id='official.employee.writing.author'").fetchone()[0] == 0
-        assert con.execute("select count(*) from employee_templates where id='official.employee.writing.author'").fetchone()[0] == 0
+        assert con.execute("select count(*) from employee_instances where template_id='official.employee.writing.author_v2'").fetchone()[0] == 0
+        assert con.execute("select count(*) from employee_templates where id='official.employee.writing.author_v2'").fetchone()[0] == 0
         assert con.execute("select count(*) from runtime_entities where entity_type in ('AI_EMPLOYEE','ROLE_SLOT','RESPONSIBILITY_ASSIGNMENT')").fetchone()[0] == 0
         assert con.execute('pragma integrity_check').fetchone()[0] == 'ok'
     monkeypatch.setattr(db, 'connect', original)
@@ -618,12 +618,12 @@ def test_b_team_contract_tamper_catalog_conflict_and_legacy_no_backfill(tmp_path
         bad = json.loads(json.dumps(proposal)); bad['snapshot']['definition']['initial_team_contract']['displayName'] = '历史人物'
         with pytest.raises(BusinessSpineError): materialize(FirstRunDelivery(db), runtime, run, draft, bad)
         with db.connect() as con:
-            con.execute("insert into employee_templates(id,name,role,source,tenant_id) values ('official.employee.writing.author','冲突模板','研发','official','platform')")
+            con.execute("insert into employee_templates(id,name,role,source,tenant_id) values ('official.employee.writing.author_v2','冲突模板','研发','official','platform')")
         failed = materialize(FirstRunDelivery(db), runtime, run, draft, proposal)
         assert failed['activation']['status'] == 'FAILED'
         with db.connect() as con:
-            assert con.execute("select name from employee_templates where id='official.employee.writing.author'").fetchone()[0] == '冲突模板'
-            con.execute("delete from employee_templates where id='official.employee.writing.author'")
+            assert con.execute("select name from employee_templates where id='official.employee.writing.author_v2'").fetchone()[0] == '冲突模板'
+            con.execute("delete from employee_templates where id='official.employee.writing.author_v2'")
         done = materialize(FirstRunDelivery(db), runtime, run, draft, proposal, retry_no=1)
         with db.connect() as con:
             row = con.execute('select data_json from runtime_entities where entity_id=?', (run,)).fetchone()
