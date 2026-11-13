@@ -1,0 +1,356 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · K. 重要状态集
+  设计系统：Frozen tokens.css + shell.css
+  Shell：四独立 Pane；导航六区（状态集为跨页参考，导航区不标记 active）
+  覆盖：Empty / Loading / Failure / Needs CEO / Permission / First-use / Offline / Success 八状态
+  说明：每个状态含「名称 + 场景说明 + 最小静态示例」，复用 Shared Pattern（empty/error/skeleton/decision/composer/conversation）
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重要状态集 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-utility-bg, #181a1d); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); }
+.pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; }
+.nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+
+/* ===== State collection ===== */
+.state-card { margin-bottom: var(--ui-sp-6); }
+.state-head { display: flex; align-items: center; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-2); }
+.state-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.state-meta { font-size: var(--ui-fs-2); color: var(--ui-text-2); line-height: 1.6; }
+.state-example { margin-top: var(--ui-sp-4); }
+.state-variants { display: flex; gap: var(--ui-sp-2); flex-wrap: wrap; margin-top: var(--ui-sp-3); }
+
+/* Conversation / Composer（First-use 复用） */
+.conversation { max-width: 640px; display: flex; flex-direction: column; gap: var(--ui-sp-3); }
+.msg { display: flex; gap: var(--ui-sp-2); }
+.msg.user { flex-direction: row-reverse; }
+.msg .bubble { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3); max-width: 80%; font-size: var(--ui-fs-3); }
+.msg.user .bubble { background: var(--ui-surface-2); }
+.msg .who { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); }
+.composer { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.composer-input { width: 100%; min-height: 44px; resize: vertical; background: transparent; border: 0; color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-3); line-height: 1.5; }
+.composer-input:focus { outline: none; }
+.composer-bar { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.composer-bar.right { margin-left: auto; }
+.chip { display: inline-flex; align-items: center; gap: var(--ui-sp-1); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; }
+
+/* Decision Banner（Needs CEO 复用） */
+.decision-banner { border: 1px solid var(--ui-warning); border-left-width: 3px; background: var(--ui-surface); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); }
+.decision-banner .db-title { display: flex; align-items: center; gap: var(--ui-sp-2); font-weight: 600; color: var(--ui-warning); }
+.decision-actions { display: flex; gap: var(--ui-sp-2); flex-wrap: wrap; }
+
+/* Permission request */
+.perm-req .state-head { margin-bottom: var(--ui-sp-2); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+
+  <!-- ===== Navigation Pane ===== -->
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="全局对象搜索" aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <div class="nav-group">
+          <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+          <div class="nav-children">
+            <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>研发办公室</span></a>
+            <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>小红书运营办公室</span></a>
+          </div>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Context Pane（默认收起：状态索引，点击滚动定位） ===== -->
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">状态索引</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">八类关键状态</div>
+      <div class="ctx-list">
+        <div class="ctx-item" data-scroll-to="#state-empty">空态 Empty</div>
+        <div class="ctx-item" data-scroll-to="#state-loading">加载中 Loading</div>
+        <div class="ctx-item" data-scroll-to="#state-failure">失败 Failure</div>
+        <div class="ctx-item" data-scroll-to="#state-needsceo">待 CEO 决策</div>
+        <div class="ctx-item" data-scroll-to="#state-permission">权限请求 Permission</div>
+        <div class="ctx-item" data-scroll-to="#state-firstuse">首次使用 First-use</div>
+        <div class="ctx-item" data-scroll-to="#state-offline">离线 / 未知 Offline</div>
+        <div class="ctx-item" data-scroll-to="#state-success">成功 / 完成 Success</div>
+      </div>
+      <div class="ctx-head">说明</div>
+      <div class="ctx-list">
+        <div class="ctx-item">跨页面复用</div>
+        <div class="ctx-item">均含可浏览示例</div>
+        <div class="ctx-item">示例数据标注</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main Pane · 状态集 ===== -->
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="index.html">Curis</a><span class="sep">/</span><span>重要状态集</span></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <h1>重要状态集</h1>
+        <div class="sub">集中展示跨页面关键状态，确保每个状态都有可浏览示例 · <span class="mock-badge">示例数据</span></div>
+      </div>
+
+      <!-- 1. Empty -->
+      <section class="state-card card" id="state-empty">
+        <div class="state-head"><h2 class="state-title">空态 Empty</h2><span class="tag">状态集</span></div>
+        <div class="state-meta">场景：尚无公司 / 无业务 / 无员工 / 无资料 / 无会议。系统就绪但暂无内容，引导用户创建首个对象。</div>
+        <div class="state-example">
+          <div class="empty-state">
+            <div class="empty-state-icon">○</div>
+            <p class="empty-state-title">还没有创建业务</p>
+            <p class="empty-state-desc">从业务空间启动第一个业务，Curis 会为你装配对应的 Workspace 与员工。</p>
+            <button class="btn btn-secondary">新建业务</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Loading -->
+      <section class="state-card card" id="state-loading">
+        <div class="state-head"><h2 class="state-title">加载中 Loading</h2><span class="tag">状态集</span></div>
+        <div class="state-meta">场景：数据加载中 / 员工正在初始化。以骨架占位表达结构，避免空白闪烁。</div>
+        <div class="state-example">
+          <div style="display:flex;flex-direction:column;gap:var(--ui-sp-3)">
+            <div class="skeleton lg"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton sm"></div>
+            <div style="display:flex;gap:var(--ui-sp-3);margin-top:var(--ui-sp-2)">
+              <div class="skeleton circle"></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:var(--ui-sp-2)">
+                <div class="skeleton"></div><div class="skeleton sm"></div>
+              </div>
+            </div>
+            <div class="muted" style="font-size:var(--ui-fs-1)">数据加载中 · 员工正在初始化… <span class="mock-badge">示例数据</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Failure -->
+      <section class="state-card card" id="state-failure">
+        <div class="state-head"><h2 class="state-title">失败 Failure</h2><span class="tag">状态集</span></div>
+        <div class="state-meta">场景：任务失败 / 连接失败 / 模型不可用 / 权限拒绝。明确失败原因与可恢复动作。</div>
+        <div class="state-example">
+          <div class="error-state">
+            <div class="error-state-icon">!</div>
+            <p class="error-state-title">数据回传管道失败</p>
+            <p class="error-state-desc">外部平台接口限流（UNK）。已自动退避重试 2 / 5，下次重试预计 3 分钟后。</p>
+            <button class="btn btn-secondary">立即重试</button>
+          </div>
+          <div class="state-variants">
+            <span class="tag">任务失败</span>
+            <span class="tag">连接失败</span>
+            <span class="tag">模型不可用</span>
+            <span class="tag">权限拒绝</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Needs CEO -->
+      <section class="state-card card" id="state-needsceo">
+        <div class="state-head"><h2 class="state-title">待 CEO 决策 Needs CEO</h2><span class="tag">状态集</span></div>
+        <div class="state-meta">场景：Decision Banner（不可逆操作）/ 员工 needs_ceo / 能力缺口。以 8 要素语义 + 三按钮收敛决策。</div>
+        <div class="state-example">
+          <div class="decision-banner">
+            <div class="db-title">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              需要 CEO 决策 · 发布上线（不可逆对外变更）
+            </div>
+            <div class="state-meta">
+              <strong>①发生了什么：</strong>研发办公室申请将登录模块 v1.3 灰度发布至生产。<br>
+              <strong>②为何不能自决：</strong>涉及线上对外服务，回滚成本高（FACT）。<br>
+              <strong>⑤员工推荐：</strong>批准灰度（EST：联调通过率 96% 高于目标 95%）。<br>
+              <strong>⑦你只需做：</strong>批准 / 暂缓。
+            </div>
+            <div class="decision-actions">
+              <button class="btn btn-primary">批准发布</button>
+              <button class="btn btn-secondary">暂缓</button>
+              <button class="btn btn-ghost">查看方案</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Permission -->
+      <section class="state-card card perm-req" id="state-permission">
+        <div class="state-head"><h2 class="state-title">权限请求 Permission</h2><span class="status warning">待授权</span></div>
+        <div class="state-meta">场景：请求 Computer Access / Connector 授权。明确请求主体、范围与权限语义（ADR-0046 冻结）。</div>
+        <div class="state-example">
+          <div class="state-meta">研发办公室 · 开发工程师 周岚 请求对「生产环境构建机」的计算机操作权限，以完成自动部署验证。</div>
+          <div class="composer-bar" style="margin-top:var(--ui-sp-3)">
+            <button class="btn btn-primary">授予权限</button>
+            <button class="btn btn-ghost">拒绝</button>
+            <span class="muted" style="font-size:var(--ui-fs-1)">ADR-0046 冻结权限语义 · <span class="mock-badge">示例数据</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. First-use -->
+      <section class="state-card card" id="state-firstuse">
+        <div class="state-head"><h2 class="state-title">首次使用 First-use</h2><span class="tag">状态集</span></div>
+        <div class="state-meta">场景：首次创建公司 / 首次进入 Workspace。以 CEO 助理对话式引导最小必要信息。</div>
+        <div class="state-example">
+          <div class="conversation" style="padding:0">
+            <div class="msg"><div><div class="who">CEO 助理</div><div class="bubble">欢迎使用 Curis。我们先创建你的公司，告诉我公司名称与最想先跑的业务方向。</div></div></div>
+            <div class="msg user"><div><div class="who">你</div><div class="bubble">知微科技，先做小红书内容增长。</div></div></div>
+            <div class="msg"><div><div class="who">CEO 助理</div><div class="bubble">已记录。我将装配「小红书·内容增长」业务与运营办公室，并预置内容创作 / 策划 / 视觉 / 数据员工。是否确认启动？</div></div></div>
+          </div>
+          <div class="composer" style="margin-top:var(--ui-sp-3)">
+            <textarea class="composer-input" placeholder="补充业务目标、目标人群或预算范围…"></textarea>
+            <div class="composer-bar">
+              <button class="chip">+ 添加</button>
+              <button class="chip">访问权限 ▾</button>
+              <button class="chip">工作模式 ▾</button>
+              <div class="composer-bar right">
+                <button class="chip">执行 · Auto ▾</button>
+                <button class="btn btn-primary">发送</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Offline / Unknown -->
+      <section class="state-card card" id="state-offline">
+        <div class="state-head"><h2 class="state-title">离线 / 未知 Offline</h2><span class="status neutral">未知</span></div>
+        <div class="state-meta">场景：外部平台未连接 / 数据待回填。影响依赖该数据源的能力，给出重连与回填提示。</div>
+        <div class="state-example">
+          <div class="state-meta">小红书平台连接状态未知，部分数据待回填。影响：发布后 Analytics 暂无法回收曝光 / 互动指标。</div>
+          <div class="composer-bar" style="margin-top:var(--ui-sp-3)">
+            <button class="btn btn-secondary">重新连接</button>
+            <span class="muted" style="font-size:var(--ui-fs-1)">数据待回填 · <span class="mock-badge">示例数据</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Success / Completed -->
+      <section class="state-card card" id="state-success">
+        <div class="state-head"><h2 class="state-title">成功 / 完成 Success</h2><span class="status success">已完成</span></div>
+        <div class="state-meta">场景：结果已回收 / 任务完成 / 发布成功。明确产出与后续自动阶段（如系统活动回收）。</div>
+        <div class="state-example">
+          <div class="state-meta">第 3 篇种草笔记已发布至小红书，进入发布后 Analytics 自动回收阶段。</div>
+          <div class="composer-bar" style="margin-top:var(--ui-sp-3)">
+            <span class="muted" style="font-size:var(--ui-fs-1)">结果已回收 · 系统活动 Current Executor = none · <span class="mock-badge">示例数据</span></span>
+            <div class="composer-bar right"><button class="btn btn-secondary">查看数据</button></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== Utility Pane（默认收起：状态说明） ===== -->
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">状态说明</div>
+      <div class="spacer"></div>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="detail-field"><div class="k">覆盖原则</div><div class="v">每个一级区域至少包含 Normal / Empty / Loading / Error / Needs CEO 之一。</div></div>
+      <div class="detail-field"><div class="k">状态 ≠ UI 展开态</div><div class="v">运行时状态（如失败 / 阻塞）与 Pane 展开收起属不同维度。</div></div>
+      <div class="detail-field"><div class="k">标注</div><div class="v"><span class="mock-badge">示例数据</span> 表示非真实生产数据。</div></div>
+    </div>
+  </aside>
+
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('[data-scroll-to]', function () {
+    var el = document.querySelector(this.getAttribute('data-scroll-to'));
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2473 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经营 · Curis</title>
+    <style id="theme-vars">
+/* Curis Visual Design System v1.0 — Tailwind v4 theme bridge
+   Semantic tokens + legacy page tokens for high-fidelity pages. */
+
+:root {
+  /* ── Semantic tokens required by canvas head contract ── */
+  --background: #1a1b1d;
+  --foreground: #d1d3db;
+  --card: #222427;
+  --card-foreground: #d1d3db;
+  --popover: #2a2d31;
+  --popover-foreground: #f5f9fe;
+  --primary: #32f08c;
+  --primary-foreground: #0c0c0d;
+  --secondary: #2a2d31;
+  --secondary-foreground: #f5f9fe;
+  --muted: #9599a6;
+  --muted-foreground: #9599a6;
+  --accent: #387bff;
+  --accent-foreground: #f5f9fe;
+  --destructive: #f65a5a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(224, 226, 242, 0.10);
+  --input: rgba(224, 226, 242, 0.16);
+  --ring: #32f08c;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ── Legacy tokens used by existing high-fidelity pages ── */
+  --bg-base-default: #1a1b1d;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2a2d31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+  --brand-500: #32f08c;
+  --brand-600: #0fdc78;
+  --brand-900: #02743b;
+
+  --text-default: #d1d3db;
+  --text-default-hover: #f5f9fe;
+  --text-secondary: #9599a6;
+  --text-tertiary: #666b75;
+  --text-onbrand: #0c0c0d;
+  --text-brand: #32f08c;
+  --icon-brand: #32f08c;
+
+  --border-neutral-l1: rgba(224, 226, 242, 0.10);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.20);
+  --border-brand: #32f08c;
+
+  --status-error: #f65a5a;
+  --status-error-surface: rgba(246, 70, 70, 0.18);
+  --status-warning: #d27e24;
+  --status-warning-surface: rgba(210, 126, 36, 0.16);
+  --status-success: #33c192;
+  --status-success-surface: rgba(0, 165, 110, 0.18);
+  --status-primary: #387bff;
+  --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+  --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" role="navigation" aria-label="主导航">
+    <div class="brand">
+      <div class="brand-mark">C</div>
+      <div class="brand-name">Curis</div>
+    </div>
+
+    <nav class="nav-list">
+      <div class="nav-item">
+        <span class="nav-icon">◆</span>
+        <span>CEO 工作台</span>
+      </div>
+      <div class="nav-item active">
+        <span class="nav-icon">◎</span>
+        <span>经营</span>
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">◇</span>
+        <span>业务</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">□</span>
+        <span>公司</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>工作空间</span>
+        <span class="nav-badge">1</span>
+      </div>
+    </nav>
+
+    <div class="nav-footer">
+      <div class="nav-item">
+        <span class="nav-icon">⚙</span>
+        <span>设置</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">?</span>
+        <span>帮助</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar" role="banner">
+      <div class="context-group">
+        <div class="context-item">
+          <strong>Curis</strong>
+        </div>
+        <span class="context-sep"></span>
+        <div class="context-item">
+          <span>经营办公室</span>
+        </div>
+        <span class="context-sep"></span>
+        <div class="context-item">
+          <span>可重复运行阶段</span>
+        </div>
+      </div>
+
+      <div class="status-group">
+        <div class="sync-status">
+          <span class="sync-dot"></span>
+          <span>同步正常 · 2 分钟前</span>
+        </div>
+        <div class="lifecycle-badge" role="status" aria-label="Assistant 运行中">
+          Operating
+        </div>
+        <div class="mode-pill">经营视图</div>
+        <button class="ask-top-btn" onclick="toggleDrawer()" aria-label="打开 Assistant 抽屉" data-dom-id=".ask-top-btn">
+          <span>✦</span>
+          <span>询问助理</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">经营</h1>
+        <div class="page-meta">
+          <span>
+            <span class="mono">2026-08-01</span>
+            <span>运行第 <strong class="mono">128</strong> 天</span>
+          </span>
+          <span>|</span>
+          <span>公司阶段：<strong>可重复运行</strong></span>
+          <span>|</span>
+          <span>最近决策：<strong>批准内容增长扩大</strong></span>
+          <span>|</span>
+          <span>待处理：<strong style="color: var(--status-warning);">3 项待决策</strong> · <strong style="color: var(--status-error);">1 项阻塞</strong></span>
+          <span>|</span>
+          <span class="tertiary">上次同步：09:47</span>
+        </div>
+      </header>
+
+      <!-- Filter Tabs -->
+      <nav class="filter-tabs" aria-label="经营事项过滤">
+        <button class="filter-tab active" data-filter="all" onclick="setFilter(this, 'all')" data-dom-id=".filter-tab">
+          <span>全部</span>
+          <span class="filter-count">12</span>
+        </button>
+        <button class="filter-tab" data-filter="decision" onclick="setFilter(this, 'decision')" data-dom-id=".filter-tab">
+          <span>待决策</span>
+          <span class="filter-count">3</span>
+        </button>
+        <button class="filter-tab" data-filter="exception" onclick="setFilter(this, 'exception')" data-dom-id=".filter-tab">
+          <span>异常</span>
+          <span class="filter-count">3</span>
+        </button>
+        <button class="filter-tab" data-filter="opportunity" onclick="setFilter(this, 'opportunity')" data-dom-id=".filter-tab">
+          <span>机会</span>
+          <span class="filter-count">4</span>
+        </button>
+        <button class="filter-tab" data-filter="closed" onclick="setFilter(this, 'closed')" data-dom-id=".filter-tab">
+          <span>已关闭</span>
+          <span class="filter-count">2</span>
+        </button>
+      </nav>
+
+      <!-- Company Pulse -->
+      <section class="card" aria-labelledby="pulse-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="pulse-heading" class="card-title">公司脉搏</h2>
+            <p class="card-subtitle">六维经营状态 · 点击任一维度展开证据链</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="pulse-grid">
+            <article class="pulse-card pulse-ontrack" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>价值</span>
+                <span class="pulse-status-pill pulse-ontrack">正常</span>
+              </div>
+              <p class="pulse-summary">近 30 天外部结果 ¥127,400，较上月 +12.3%，3/4 业务产生可验证价值。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">金融研究 Workspace：3 / 5 信号命中</p>
+                      <p class="evidence-source">来源：外部 API · Research Lead · 08-01 08:32</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">内容增长业务：+2,400 阅读，14 条有效线索</p>
+                      <p class="evidence-source">来源：平台后台 · Growth AI · 07-31 23:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--text-tertiary);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">Curis 自研：尚未产生直接收入，处于构建中</p>
+                      <p class="evidence-source">来源：CEO 验收记录 · Engineering Lead · 07-30</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="pulse-card pulse-attention" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>执行</span>
+                <span class="pulse-status-pill pulse-attention">需关注</span>
+              </div>
+              <p class="pulse-summary">2 个 Workspace 偏离承诺：软件开发 v0.2 延迟，短视频内容排期落后 1 天。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-warning);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">软件开发 v0.2 验收延迟约 4 小时</p>
+                      <p class="evidence-source">来源：CI 报告 · Engineering Lead · 08-01 09:14</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-warning);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">短视频内容 Workspace 发布节奏落后 1 天</p>
+                      <p class="evidence-source">来源：排期系统 · Content AI · 07-31 21:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">金融研究 Workspace 按承诺提交周报</p>
+                      <p class="evidence-source">来源：Research Lead · 07-31 18:00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="pulse-card pulse-ontrack" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>供给</span>
+                <span class="pulse-status-pill pulse-ontrack">正常</span>
+              </div>
+              <p class="pulse-summary">AI 团队综合容量 72%，未出现持续过载；计算与工具预算充足。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">研发 AI 80% · 增长 AI 60% · 内容 AI 55%</p>
+                      <p class="evidence-source">来源：容量仪表盘 · CEO Assistant · 08-01 09:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">计算预算本月使用率 61%，无告警</p>
+                      <p class="evidence-source">来源：Finance AI · 07-31 23:30</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="pulse-card pulse-risk" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>风险</span>
+                <span class="pulse-status-pill pulse-risk">有风险</span>
+              </div>
+              <p class="pulse-summary">外部数据授权 7 天后到期；第三方登录回调不稳定，可能导致 v0.2 发布失败。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-error);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">外部数据供应商授权将于 08-08 到期</p>
+                      <p class="evidence-source">来源：供应商通知 · Finance AI · 08-01 08:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-warning);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">第三方登录回调在测试环境出现偶发失败</p>
+                      <p class="evidence-source">来源：阻塞工单 #S-214 · Engineering Lead · 08-01 07:45</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-warning);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">达人合作 ROI 模拟置信度仅 68%</p>
+                      <p class="evidence-source">来源：Growth AI 模拟报告 · 07-31 20:00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="pulse-card pulse-unknown" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>方向</span>
+                <span class="pulse-status-pill pulse-unknown">未知</span>
+              </div>
+              <p class="pulse-summary">抖音 / TikTok 运营是否扩大投入尚无结论，等待 CEO 战略判断。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--text-tertiary);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">Business Analysis AI 提交抖音 / TikTok 运营扩展评估</p>
+                      <p class="evidence-source">来源：机会评估 #O-09 · 07-30 16:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--text-tertiary);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">现有内容增长业务 ROI 刚转正，缺乏跨业务协同证据</p>
+                      <p class="evidence-source">来源：Research AI 复盘 · 07-29</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="pulse-card pulse-ontrack" onclick="togglePulse(this)" tabindex="0" role="button" aria-expanded="false" data-dom-id=".pulse-card">
+              <div class="pulse-card-header" data-dom-id=".pulse-card">
+                <span class="pulse-name"><span class="pulse-indicator"></span>连续性</span>
+                <span class="pulse-status-pill pulse-ontrack">正常</span>
+              </div>
+              <p class="pulse-summary">Assistant Operating，AI 团队交接与学习记录完整，无责任真空。</p>
+              <p class="pulse-expand-hint">点击展开证据链</p>
+              <div class="pulse-evidence">
+                <p class="evidence-title">证据链</p>
+                <div class="evidence-list">
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">CEO Assistant 运行状态：Operating，质量评分 A-</p>
+                      <p class="evidence-source">来源：Assistant Runtime · 08-01 09:00</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">今日 4 项 AI 交接均按时完成</p>
+                      <p class="evidence-source">来源：交接日志 · CEO Assistant · 08-01 09:30</p>
+                    </div>
+                  </div>
+                  <div class="evidence-item">
+                    <span class="evidence-dot" style="background: var(--status-success);"></span>
+                    <div class="evidence-text">
+                      <p class="evidence-name">昨日 47 条用户反馈已归档为学习记录</p>
+                      <p class="evidence-source">来源：Research AI · 07-31 22:00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Attention / Risk / Blocked -->
+      <section class="card" aria-labelledby="risk-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="risk-heading" class="card-title">关注 · 风险 · 阻塞</h2>
+            <p class="card-subtitle">按升级状态分组的经营异常 · 共 6 项</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="risk-grid">
+            <div class="risk-column">
+              <div class="risk-column-header">
+                <span class="risk-column-title">
+                  <span style="color: var(--status-warning);">◉</span>
+                  需要关注
+                </span>
+                <span class="risk-column-count">2</span>
+              </div>
+              <div class="risk-list">
+                <article class="matter-card exception filterable" data-type="exception">
+                  <div class="matter-type exception">异常</div>
+                  <h3 class="matter-title">短视频内容发布延迟</h3>
+                  <p class="matter-summary">Content AI 因素材预审排队，导致本周排期落后 1 天。</p>
+                  <div class="matter-meta">
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">负责人</div>
+                      <div class="matter-meta-value">Content AI</div>
+                    </div>
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">影响</div>
+                      <div class="matter-meta-value">周产量 -2 条</div>
+                    </div>
+                  </div>
+                  <div class="matter-actions">$1<button class="btn btn-primary" data-dom-id=".matter-actions .btn-primary" onclick="window.location.href='decision-room.html'">决策</button>
+                  </div>
+                </article>
+
+                <article class="matter-card exception filterable" data-type="exception">
+                  <div class="matter-type exception">异常</div>
+                  <h3 class="matter-title">达人合作 ROI 置信度不足</h3>
+                  <p class="matter-summary">Growth AI 的 ROI 模拟基于 14 天样本，置信度 68%，低于决策阈值 80%。</p>
+                  <div class="matter-meta">
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">负责人</div>
+                      <div class="matter-meta-value">Growth AI</div>
+                    </div>
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">影响</div>
+                      <div class="matter-meta-value">决策质量风险</div>
+                    </div>
+                  </div>
+                  <div class="matter-actions">
+                    <button class="btn btn-secondary">补充证据</button>
+                    <button class="btn btn-ghost">延后</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div class="risk-column">
+              <div class="risk-column-header">
+                <span class="risk-column-title">
+                  <span style="color: #ff8080;">◉</span>
+                  当前阻塞
+                </span>
+                <span class="risk-column-count">2</span>
+              </div>
+              <div class="risk-list">
+                <article class="matter-card exception filterable" data-type="exception">
+                  <div class="matter-type exception">异常</div>
+                  <h3 class="matter-title">v0.2 登录回调阻塞</h3>
+                  <p class="matter-summary">第三方登录回调在测试环境不稳定，导致今日发布窗口被阻塞。</p>
+                  <div class="matter-meta">
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">负责人</div>
+                      <div class="matter-meta-value">Engineering Lead</div>
+                    </div>
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">影响</div>
+                      <div class="matter-meta-value">发布延迟 4h</div>
+                    </div>
+                  </div>
+                  <div class="matter-actions">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">生成决策包</button>
+                  </div>
+                </article>
+
+                <article class="matter-card closed filterable" data-type="closed">
+                  <div class="matter-type closed">已关闭</div>
+                  <h3 class="matter-title">外部合作方授权已更新</h3>
+                  <p class="matter-summary">达人代理机构授权已续签，下周排期不再受阻。</p>
+                  <div class="matter-meta">
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">负责人</div>
+                      <div class="matter-meta-value">Finance AI</div>
+                    </div>
+                    <div class="matter-meta-cell">
+                      <div class="matter-meta-label">关闭于</div>
+                      <div class="matter-meta-value">07-31 18:00</div>
+                    </div>
+                  </div>
+                  <div class="matter-actions">
+                    <button class="btn btn-ghost">查看记录</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Decision Queue -->
+      <section class="card" aria-labelledby="decision-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="decision-heading" class="card-title">决策队列</h2>
+            <p class="card-subtitle">等待 CEO 决定的事项 · 按截止优先级排序</p>
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <table class="queue-table">
+            <thead>
+              <tr>
+                <th>决策事项</th>
+                <th>影响范围</th>
+                <th>截止时间</th>
+                <th>推荐动作</th>
+                <th style="text-align: right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="queue-row filterable" data-type="decision">
+                <td>
+                  <div class="queue-title">批准短视频达人合作预算扩展</div>
+                  <div class="queue-sub">增长营销 AI · 影响小红书运营 Workspace</div>
+                </td>
+                <td>
+                  <div class="queue-title">¥12K / 月 · 3 位达人</div>
+                  <div class="queue-sub">预计 14 天回收成本</div>
+                </td>
+                <td>
+                  <div class="queue-title" style="color: var(--status-error);">今天 11:00</div>
+                  <div class="queue-sub">剩余 1.2 小时</div>
+                </td>
+                <td>
+                  <div class="queue-title">批准并追加排期</div>
+                  <div class="queue-sub">置信度 68%，建议先小批量验证</div>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn btn-primary" onclick="window.location.href='decision-room.html'">决策</button>
+                </td>
+              </tr>
+              <tr class="queue-row filterable" data-type="decision">
+                <td>
+                  <div class="queue-title">是否扩大抖音 / TikTok 运营业务</div>
+                  <div class="queue-sub">Business Analysis AI · 新业务线</div>
+                </td>
+                <td>
+                  <div class="queue-title">+2 AI 员工 · 1 个新 Workspace</div>
+                  <div class="queue-sub">首月预算 ¥8K</div>
+                </td>
+                <td>
+                  <div class="queue-title" style="color: var(--status-warning);">明天 12:00</div>
+                  <div class="queue-sub">剩余 26 小时</div>
+                </td>
+                <td>
+                  <div class="queue-title">生成业务蓝图后决策</div>
+                  <div class="queue-sub">需先验证与现有内容增长协同</div>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn btn-secondary">生成蓝图</button>
+                </td>
+              </tr>
+              <tr class="queue-row filterable" data-type="decision">
+                <td>
+                  <div class="queue-title">是否续约外部数据供应商</div>
+                  <div class="queue-sub">Finance AI · 金融研究 Workspace</div>
+                </td>
+                <td>
+                  <div class="queue-title">数据连续性 + 备用源迁移</div>
+                  <div class="queue-sub">年成本 ¥24K</div>
+                </td>
+                <td>
+                  <div class="queue-title">08-08 18:00</div>
+                  <div class="queue-sub">剩余 7 天</div>
+                </td>
+                <td>
+                  <div class="queue-title">续约并迁移备用源</div>
+                  <div class="queue-sub">降低单一供应商风险</div>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn btn-secondary">查看合同</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Exception Queue -->
+      <section class="card" aria-labelledby="exception-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="exception-heading" class="card-title">异常队列</h2>
+            <p class="card-subtitle">已升级的经营异常 · 含负责人、遏制状态与恢复计划</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="grid-3">
+            <article class="matter-card exception filterable" data-type="exception">
+              <div class="matter-type exception">活跃异常</div>
+              <h3 class="matter-title">v0.2 登录回调阻塞</h3>
+              <p class="matter-summary">第三方 OAuth 回调在测试环境返回 502，导致发布验收无法完成。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">负责人</div>
+                  <div class="matter-meta-value">Engineering Lead</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">遏制状态</div>
+                  <div class="matter-meta-value">已隔离测试环境</div>
+                </div>
+              </div>
+              <div class="recovery-plan">
+                <div class="recovery-label">恢复计划</div>
+                <p class="recovery-text">切换至 mock 回调完成内部验收；周一与供应商联调真实回调，预计 4 小时内修复。</p>
+              </div>
+              <div class="matter-actions" style="margin-top: var(--space-14);">
+                <button class="btn btn-secondary">查看工单</button>
+                <button class="btn btn-ghost">升级</button>
+              </div>
+            </article>
+
+            <article class="matter-card exception filterable" data-type="exception">
+              <div class="matter-type exception">活跃异常</div>
+              <h3 class="matter-title">外部数据授权 7 天后过期</h3>
+              <p class="matter-summary">供应商未返回续约确认函，金融研究 Workspace 面临数据中断风险。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">负责人</div>
+                  <div class="matter-meta-value">Finance AI</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">遏制状态</div>
+                  <div class="matter-meta-value">已启动续约流程</div>
+                </div>
+              </div>
+              <div class="recovery-plan">
+                <div class="recovery-label">恢复计划</div>
+                <p class="recovery-text">48 小时内取得续约意向；同步配置备用数据源，确保授权到期时无缝切换。</p>
+              </div>
+              <div class="matter-actions" style="margin-top: var(--space-14);">
+                <button class="btn btn-secondary">追踪</button>
+                <button class="btn btn-primary" onclick="window.location.href='decision-room.html'">决策</button>
+              </div>
+            </article>
+
+            <article class="matter-card exception filterable" data-type="exception">
+              <div class="matter-type exception">活跃异常</div>
+              <h3 class="matter-title">短视频内容发布延迟</h3>
+              <p class="matter-summary">素材预审队列堆积，Content AI 本周排期落后 1 天。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">负责人</div>
+                  <div class="matter-meta-value">Content AI</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">遏制状态</div>
+                  <div class="matter-meta-value">启用备用排期</div>
+                </div>
+              </div>
+              <div class="recovery-plan">
+                <div class="recovery-label">恢复计划</div>
+                <p class="recovery-text">短视频脚本 AI 承接 30% 产能；将非核心内容延后至下周，确保爆款内容准时发布。</p>
+              </div>
+              <div class="matter-actions" style="margin-top: var(--space-14);">
+                <button class="btn btn-secondary">查看</button>
+                <button class="btn btn-ghost">调配</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Opportunity Radar -->
+      <section class="card" aria-labelledby="opportunity-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="opportunity-heading" class="card-title">机会雷达</h2>
+            <p class="card-subtitle">新信号与待调查机会 · 按信号强度排序</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="grid-2">
+            <article class="matter-card opportunity filterable" data-type="opportunity">
+              <div class="matter-type opportunity">高信号机会</div>
+              <h3 class="matter-title">短视频脚本 AI 可承接 30% 产能</h3>
+              <p class="matter-summary">Research AI 发现脚本生成质量达到发布标准，可释放 Content AI 产能用于审校与策略。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">来源</div>
+                  <div class="matter-meta-value">Research AI</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">预期影响</div>
+                  <div class="matter-meta-value">周产量 +12 条 · 成本 -18%</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">验证方式</div>
+                  <div class="matter-meta-value">A/B 测试 2 周</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">检查点</div>
+                  <div class="matter-meta-value">周一 10:00</div>
+                </div>
+              </div>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">设计实验</button>
+                <button class="btn btn-ghost">暂缓</button>
+              </div>
+            </article>
+
+            <article class="matter-card opportunity filterable" data-type="opportunity">
+              <div class="matter-type opportunity">高信号机会</div>
+              <h3 class="matter-title">用户反馈聚类显示新需求</h3>
+              <p class="matter-summary">47 条用户反馈中出现 3 个高频痛点，可能导向 Curis 自研产品的新功能。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">来源</div>
+                  <div class="matter-meta-value">Research AI</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">预期影响</div>
+                  <div class="matter-meta-value">产品方向输入</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">验证方式</div>
+                  <div class="matter-meta-value">CEO 审阅提案</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">检查点</div>
+                  <div class="matter-meta-value">今天 16:00</div>
+                </div>
+              </div>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">查看提案</button>
+                <button class="btn btn-ghost">归档</button>
+              </div>
+            </article>
+
+            <article class="matter-card opportunity filterable" data-type="opportunity">
+              <div class="matter-type opportunity">中信号机会</div>
+              <h3 class="matter-title">金融研究信号可扩展至港股</h3>
+              <p class="matter-summary">现有数据 pipeline 可低成本接入港股数据源，潜在增加 1 个可售信号品类。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">来源</div>
+                  <div class="matter-meta-value">Research Lead</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">预期影响</div>
+                  <div class="matter-meta-value">新增信号品类</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">验证方式</div>
+                  <div class="matter-meta-value">数据源评估</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">检查点</div>
+                  <div class="matter-meta-value">08-05 10:00</div>
+                </div>
+              </div>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">评估数据源</button>
+                <button class="btn btn-ghost">暂缓</button>
+              </div>
+            </article>
+
+            <article class="matter-card opportunity filterable" data-type="opportunity">
+              <div class="matter-type opportunity">中信号机会</div>
+              <h3 class="matter-title">内容增长跨平台分发</h3>
+              <p class="matter-summary">Growth AI 识别出 2 个新平台的内容分发潜力，建议小批量测试。</p>
+              <div class="matter-meta">
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">来源</div>
+                  <div class="matter-meta-value">Growth AI</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">预期影响</div>
+                  <div class="matter-meta-value">阅读量 +20%</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">验证方式</div>
+                  <div class="matter-meta-value">2 周实验</div>
+                </div>
+                <div class="matter-meta-cell">
+                  <div class="matter-meta-label">检查点</div>
+                  <div class="matter-meta-value">08-15 18:00</div>
+                </div>
+              </div>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">设计实验</button>
+                <button class="btn btn-ghost">暂缓</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Company Constraints -->
+      <section class="card mb-0" aria-labelledby="constraints-heading">
+        <div class="card-header">
+          <div>
+            <h2 id="constraints-heading" class="card-title">公司约束</h2>
+            <p class="card-subtitle">容量 · 授权 · 注意力瓶颈</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="constraint-grid">
+            <div class="constraint-card">
+              <div class="constraint-label">CEO 注意力容量</div>
+              <div class="constraint-value warning">78%</div>
+              <p class="constraint-desc">今日已分配 78% 注意力，剩余仅够处理 1 项高影响决策。建议将达人合作预算与短视频新业务决策错开。</p>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">查看注意力日历</button>
+              </div>
+            </div>
+
+            <div class="constraint-card">
+              <div class="constraint-label">外部平台授权</div>
+              <div class="constraint-value">2 / 5</div>
+              <p class="constraint-desc">2 项平台授权待续签，影响 3 个 Workspace。建议在 08-08 前完成续约或启用备用授权。</p>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">查看授权清单</button>
+              </div>
+            </div>
+
+            <div class="constraint-card">
+              <div class="constraint-label">AI 团队容量瓶颈</div>
+              <div class="constraint-value">研发 AI 80%</div>
+              <p class="constraint-desc">Engineering Lead 已接近满载，v0.2 阻塞与港股数据源扩展需避免并行，否则可能导致新的交付延迟。</p>
+              <div class="matter-actions">
+                <button class="btn btn-secondary">调配容量</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<button class="ask-fab" onclick="toggleDrawer()" aria-label="询问 Assistant">
+  <span>✦</span>
+  <span>询问助理</span>
+</button>
+
+<div id="drawer-overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+<aside id="drawer" class="drawer" role="dialog" aria-label="Assistant 抽屉" aria-modal="true">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <div class="drawer-avatar">C</div>
+      <span>Assistant · Curis</span>
+    </div>
+    <button class="drawer-close" onclick="toggleDrawer()" aria-label="关闭抽屉">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-context">
+      <div class="drawer-context-title">当前上下文</div>
+      <div class="drawer-context-value">经营办公室 · 今日运行</div>
+    </div>
+    <div class="chat-bubble">
+      当前公司有 1 项阻塞、2 项风险和 3 项待决策。最需要你立即处理的是“短视频达人合作预算扩展”，将在 1.2 小时后到期。需要我生成决策包吗？
+    </div>
+    <div class="matter-card decision" style="margin-bottom: var(--space-12);">
+      <div class="matter-type decision">待决策</div>
+      <h3 class="matter-title">生成达人合作预算决策包</h3>
+      <p class="matter-summary">包含 ROI 模拟、现金流影响、回滚路径与批准/拒绝/延后选项。</p>
+    </div>
+    <div class="matter-card exception" style="margin-bottom: var(--space-12);">
+      <div class="matter-type exception">异常</div>
+      <h3 class="matter-title">解释 v0.2 登录回调阻塞</h3>
+      <p class="matter-summary">说明 Engineering Lead 的排查进展与建议的 CEO 动作。</p>
+    </div>
+    <div class="matter-card opportunity">
+      <div class="matter-type opportunity">机会</div>
+      <h3 class="matter-title">评估短视频脚本 AI 实验</h3>
+      <p class="matter-summary">设计 2 周 A/B 测试，验证脚本 AI 承接 30% 产能的可行性。</p>
+    </div>
+  </div>
+  <div class="chat-input-wrap">
+    <textarea class="chat-input" placeholder="输入自然语言指令，例如：帮我评估达人合作预算扩展的风险…"></textarea>
+    <div class="chat-actions">
+      <button class="btn btn-primary">发送</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+  function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function togglePulse(card) {
+    const isExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.pulse-card').forEach(c => {
+      c.classList.remove('expanded');
+      c.setAttribute('aria-expanded', 'false');
+    });
+    if (!isExpanded) {
+      card.classList.add('expanded');
+      card.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  document.querySelectorAll('.pulse-card').forEach(card => {
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePulse(card);
+      }
+    });
+  });
+
+  function setFilter(btn, filter) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.filterable').forEach(el => {
+      if (filter === 'all' || el.dataset.type === filter) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    });
+  }
+</script>
+
+
+    <style>
+    /* ────────────────────────────────────────────────
+       Curis 经营页面 · Operating Control Room
+       Tokens: Curis Visual Design System v1.0 (TRAE dark)
+       ──────────────────────────────────────────────── */
+
+    :root {
+      --bg-base-default: #1a1b1d;
+      --bg-base-secondary: #222427;
+      --bg-base-tertiary: #2a2d31;
+      --bg-tooltip: #1a1b1d;
+      --bg-menu: #202123;
+      --bg-invert: #dadde5;
+      --bg-invert-hover: #edeff2;
+
+      --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+      --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+      --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+      --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+      --brand-100: #e5fff2;
+      --brand-200: #b4fdd9;
+      --brand-300: #85fabf;
+      --brand-400: #5cf5a8;
+      --brand-500: #32f08c;
+      --brand-600: #0fdc78;
+      --brand-700: #0ab861;
+      --brand-800: #05994f;
+      --brand-900: #02743b;
+
+      --text-default: #d1d3db;
+      --text-default-hover: #f5f9fe;
+      --text-secondary: #9599a6;
+      --text-secondary-hover: #d1d3db;
+      --text-tertiary: #666b75;
+      --text-disabled: #666b75;
+      --text-onbrand: #0c0c0d;
+      --text-brand: #32f08c;
+      --text-brand-hover: #0fdc78;
+
+      --icon-default: #d1d3db;
+      --icon-secondary: #9599a6;
+      --icon-tertiary: #666b75;
+      --icon-brand: #32f08c;
+
+      --border-neutral-l1: rgba(224, 226, 242, 0.10);
+      --border-neutral-l2: rgba(224, 226, 242, 0.16);
+      --border-neutral-l3: rgba(224, 226, 242, 0.20);
+      --border-contrast: #ffffff;
+      --border-brand: #32f08c;
+
+      --status-error: #f65a5a;
+      --status-error-surface: rgba(246, 70, 70, 0.18);
+      --status-warning: #d27e24;
+      --status-warning-surface: rgba(210, 126, 36, 0.16);
+      --status-alert: #d29d00;
+      --status-alert-surface: rgba(210, 157, 0, 0.16);
+      --status-success: #33c192;
+      --status-success-surface: rgba(0, 165, 110, 0.18);
+      --status-primary: #387bff;
+      --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+      --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      --text-xs: 10px;
+      --text-sm: 11px;
+      --text-md: 12px;
+      --text-base: 13px;
+      --text-lg: 15px;
+      --text-xl: 18px;
+      --text-2xl: 22px;
+      --text-3xl: 28px;
+      --text-4xl: 36px;
+
+      --leading-xs: 14px;
+      --leading-sm: 16px;
+      --leading-md: 18px;
+      --leading-base: 20px;
+      --leading-lg: 24px;
+      --leading-xl: 28px;
+      --leading-2xl: 32px;
+      --leading-3xl: 36px;
+      --leading-4xl: 44px;
+
+      --space-0: 0px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-10: 10px;
+      --space-12: 12px;
+      --space-14: 14px;
+      --space-16: 16px;
+      --space-20: 20px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --space-40: 40px;
+      --space-64: 64px;
+
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 10px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+      --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+      --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+
+      --sidebar-width: 220px;
+      --drawer-width: 390px;
+      --topbar-height: 52px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    a { color: var(--text-brand); text-decoration: none; }
+    a:hover { color: var(--text-brand-hover); }
+    code, .mono { font-family: var(--font-mono); font-size: var(--text-md); }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-neutral-l3); }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* ── Shell ── */
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-base-secondary);
+      border-right: 1px solid var(--border-neutral-l1);
+      padding: var(--space-16) 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      padding: 0 var(--space-20) var(--space-24);
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-md);
+      background: var(--brand-500);
+      display: grid;
+      place-items: center;
+      color: var(--text-onbrand);
+      font-family: var(--font-heading);
+      font-size: var(--text-md);
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0 var(--space-12);
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-10);
+      padding: var(--space-10) var(--space-12);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+
+    .nav-item.active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 18px;
+      border-radius: 0 var(--radius-full) var(--radius-full) 0;
+      background: var(--brand-500);
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      color: var(--icon-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .nav-item:hover .nav-icon,
+    .nav-item.active .nav-icon { color: var(--icon-default); }
+
+    .nav-badge {
+      margin-left: auto;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: var(--radius-full);
+      background: var(--status-warning-surface);
+      color: var(--status-warning);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+    }
+
+    .nav-footer {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0 var(--space-12);
+      margin-top: auto;
+      border-top: 1px solid var(--border-neutral-l1);
+      padding-top: var(--space-12);
+    }
+
+    .main-area {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 80% 5%, rgba(50, 240, 140, 0.05) 0%, transparent 38%),
+        radial-gradient(ellipse at 5% 95%, rgba(246, 90, 90, 0.04) 0%, transparent 38%),
+        var(--bg-base-default);
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      min-height: var(--topbar-height);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-24);
+      background: rgba(26, 27, 29, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .context-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+
+    .context-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .context-item:hover { color: var(--text-default-hover); }
+
+    .context-item strong {
+      color: var(--text-default-hover);
+      font-weight: 500;
+    }
+
+    .context-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border-neutral-l2);
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+
+    .sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      box-shadow: none;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+
+    .lifecycle-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      height: 24px;
+      padding: 0 var(--space-10);
+      border-radius: var(--radius-full);
+      background: var(--status-success-surface);
+      color: var(--status-success);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .lifecycle-badge:hover { background: rgba(0, 165, 110, 0.26); }
+
+    .lifecycle-badge::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: var(--status-success);
+    }
+
+    .mode-pill {
+      height: 24px;
+      padding: 0 var(--space-10);
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l2);
+      color: var(--text-secondary);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .ask-top-btn {
+      height: 28px;
+      padding: 0 var(--space-12);
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid var(--border-neutral-l2);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      transition: all 0.15s ease;
+    }
+
+    .ask-top-btn:hover {
+      background: var(--bg-overlay-l2);
+      border-color: var(--border-neutral-l3);
+      color: var(--text-default-hover);
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-24) var(--space-32) var(--space-40);
+    }
+
+    .page-header {
+      margin-bottom: var(--space-20);
+    }
+
+    .page-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      line-height: var(--leading-3xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-8);
+    }
+
+    .page-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      flex-wrap: wrap;
+    }
+
+    .page-meta span {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+    }
+
+    .page-meta .mono { color: var(--text-tertiary); }
+
+    /* ── Filter Tabs ── */
+    .filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      margin-bottom: var(--space-24);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      padding-bottom: var(--space-8);
+    }
+
+    .filter-tab {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-12);
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .filter-tab:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+
+    .filter-tab.active {
+      color: var(--text-brand);
+      background: rgba(50, 240, 140, 0.08);
+    }
+
+    .filter-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: -9px;
+      left: var(--space-12);
+      right: var(--space-12);
+      height: 2px;
+      background: var(--brand-500);
+      border-radius: var(--radius-full);
+    }
+
+    .filter-count {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+    }
+
+    .filter-tab.active .filter-count {
+      background: rgba(50, 240, 140, 0.16);
+      color: var(--text-brand);
+    }
+
+    /* ── Cards ── */
+    .card {
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      margin-bottom: var(--space-16);
+    }
+
+    .card:hover { border-color: var(--border-neutral-l2); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-14) var(--space-16);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0;
+    }
+
+    .card-subtitle {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin: var(--space-4) 0 0;
+    }
+
+    .card-body { padding: var(--space-16); }
+
+    /* ── Company Pulse ── */
+    .pulse-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-12);
+    }
+
+    .pulse-card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pulse-card:hover {
+      border-color: var(--border-neutral-l2);
+      background: var(--bg-overlay-l1);
+    }
+
+    .pulse-card.expanded {
+      border-color: var(--border-brand);
+      background: rgba(50, 240, 140, 0.04);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .pulse-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-10);
+    }
+
+    .pulse-name {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+
+    .pulse-indicator {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .pulse-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 20px;
+      padding: 0 var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+
+    .pulse-status-pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: currentColor;
+    }
+
+    .pulse-ontrack { color: var(--status-success); background: var(--status-success-surface); }
+    .pulse-ontrack .pulse-indicator { background: var(--status-success); }
+
+    .pulse-attention { color: var(--status-warning); background: var(--status-warning-surface); }
+    .pulse-attention .pulse-indicator { background: var(--status-warning); }
+
+    .pulse-risk { color: var(--status-error); background: rgba(246, 90, 90, 0.16); }
+    .pulse-risk .pulse-indicator { background: var(--status-error); }
+
+    .pulse-unknown { color: var(--text-tertiary); background: var(--bg-overlay-l3); }
+    .pulse-unknown .pulse-indicator { background: var(--text-tertiary); }
+
+    /* 状态只在圆点和胶囊中表达，卡片表面保持中性，避免变成彩色仪表盘。 */
+    .pulse-card.pulse-ontrack,
+    .pulse-card.pulse-attention,
+    .pulse-card.pulse-risk,
+    .pulse-card.pulse-unknown { color: var(--text-default); background: var(--bg-base-default); }
+
+    .pulse-summary {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+      margin: 0;
+    }
+
+    .pulse-expand-hint {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-top: var(--space-10);
+    }
+
+    .pulse-evidence {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, margin 0.25s ease;
+    }
+
+    .pulse-card.expanded .pulse-evidence {
+      max-height: 420px;
+      opacity: 1;
+      margin-top: var(--space-14);
+    }
+
+    .evidence-title {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 var(--space-10);
+    }
+
+    .evidence-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    .evidence-item {
+      display: flex;
+      gap: var(--space-10);
+      padding: var(--space-10) var(--space-12);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-md);
+      transition: background 0.15s ease;
+    }
+
+    .evidence-item:hover { background: var(--bg-overlay-l2); }
+
+    .evidence-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--text-tertiary);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .evidence-text { flex: 1; min-width: 0; }
+
+    .evidence-name {
+      color: var(--text-default-hover);
+      font-weight: 500;
+      margin: 0 0 var(--space-2);
+      line-height: var(--leading-md);
+    }
+
+    .evidence-source {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin: 0;
+    }
+
+    /* ── Matter Cards ── */
+    .matter-card {
+      padding: var(--space-14);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+      border-left: 3px solid transparent;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    .matter-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-neutral-l2);
+      box-shadow: var(--shadow-md);
+    }
+
+    .matter-card.decision { border-left-color: var(--status-primary); }
+    .matter-card.exception { border-left-color: var(--status-warning); }
+    .matter-card.opportunity { border-left-color: var(--brand-500); }
+    .matter-card.closed { border-left-color: var(--text-tertiary); opacity: 0.75; }
+
+    .matter-card.hidden { display: none; }
+
+    .matter-type {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      margin-bottom: var(--space-10);
+    }
+
+    .matter-type.decision { color: var(--status-primary); }
+    .matter-type.exception { color: var(--status-warning); }
+    .matter-type.opportunity { color: var(--text-brand); }
+    .matter-type.closed { color: var(--text-tertiary); }
+
+    .matter-type::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: currentColor;
+    }
+
+    .matter-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-10);
+      line-height: var(--leading-lg);
+    }
+
+    .matter-summary {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+      margin: 0 0 var(--space-12);
+    }
+
+    .matter-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8);
+      margin-bottom: var(--space-14);
+    }
+
+    .matter-meta-cell { min-width: 0; }
+
+    .matter-meta-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-2);
+    }
+
+    .matter-meta-value {
+      color: var(--text-default);
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+
+    .matter-actions {
+      display: flex;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+    }
+
+    .recovery-plan {
+      margin-top: var(--space-12);
+      padding: var(--space-10) var(--space-12);
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-md);
+    }
+
+    .recovery-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-4);
+    }
+
+    .recovery-text {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+      margin: 0;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      height: 32px;
+      padding: 0 var(--space-12);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+
+    .btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
+
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+
+    .btn-secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l3); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+
+    .btn-ghost:hover { color: var(--text-default-hover); background: var(--bg-overlay-l2); }
+
+    /* ── Risk Board ── */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-16);
+    }
+
+    .risk-column {
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .risk-column-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-12) var(--space-14);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .risk-column-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+
+    .risk-column-count {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+    }
+
+    .risk-list {
+      flex: 1;
+      padding: var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-10);
+    }
+
+    /* ── Queue Table ── */
+    .queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-md);
+    }
+
+    .queue-table th,
+    .queue-table td {
+      padding: var(--space-12) var(--space-14);
+      text-align: left;
+      border-bottom: 1px solid var(--border-neutral-l1);
+      vertical-align: top;
+    }
+
+    .queue-table th {
+      color: var(--text-tertiary);
+      font-weight: 500;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--bg-overlay-l1);
+    }
+
+    .queue-table tr:last-child td { border-bottom: 0; }
+
+    .queue-table td { color: var(--text-default); }
+
+    .queue-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .queue-row:hover { background: var(--bg-overlay-l1); }
+
+    .queue-title {
+      font-weight: 500;
+      color: var(--text-default-hover);
+      margin-bottom: var(--space-2);
+    }
+
+    .queue-sub {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin: 0;
+    }
+
+    /* ── Constraint Cards ── */
+    .constraint-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-16);
+    }
+
+    .constraint-card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .constraint-card:hover {
+      border-color: var(--border-neutral-l2);
+      transform: translateY(-1px);
+    }
+
+    .constraint-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-8);
+    }
+
+    .constraint-value {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin-bottom: var(--space-10);
+    }
+
+    .constraint-value.warning { color: var(--status-warning); }
+    .constraint-value.risk { color: var(--status-error); }
+
+    .constraint-desc {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+      margin: 0 0 var(--space-12);
+    }
+
+    /* ── Layout helpers ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); }
+    .mb-0 { margin-bottom: 0; }
+
+    /* ── Ask FAB & Drawer ── */
+    .ask-fab {
+      position: fixed;
+      right: var(--space-24);
+      bottom: var(--space-24);
+      height: 48px;
+      padding: 0 var(--space-20);
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border: 1px solid var(--brand-500);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      transition: all 0.15s ease;
+      z-index: 200;
+    }
+
+    .ask-fab:hover {
+      background: var(--brand-600);
+      border-color: var(--brand-600);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.48);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 300;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: var(--drawer-width);
+      max-width: 100%;
+      height: 100%;
+      background: var(--bg-base-secondary);
+      border-left: 1px solid var(--border-neutral-l1);
+      box-shadow: var(--shadow-xl);
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 301;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-16) var(--space-20);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .drawer-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-10);
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+
+    .drawer-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      display: grid;
+      place-items: center;
+      color: var(--text-onbrand);
+      font-weight: 700;
+      font-size: var(--text-sm);
+    }
+
+    .drawer-close {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: var(--text-lg);
+      transition: all 0.15s ease;
+    }
+
+    .drawer-close:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+      border-color: var(--border-neutral-l2);
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-20);
+    }
+
+    .drawer-context {
+      padding: var(--space-12);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+      margin-bottom: var(--space-16);
+    }
+
+    .drawer-context-title {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-6);
+    }
+
+    .drawer-context-value {
+      color: var(--text-default-hover);
+      font-weight: 500;
+    }
+
+    .chat-bubble {
+      padding: var(--space-12) var(--space-14);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      margin-bottom: var(--space-12);
+      line-height: var(--leading-lg);
+    }
+
+    .chat-input-wrap {
+      padding: var(--space-16) var(--space-20);
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+
+    .chat-input {
+      width: 100%;
+      min-height: 80px;
+      padding: var(--space-12);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-neutral-l2);
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      resize: none;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .chat-input:focus {
+      border-color: var(--brand-500);
+      box-shadow: 0 0 0 3px rgba(50, 240, 140, 0.10);
+    }
+
+    .chat-input::placeholder { color: var(--text-tertiary); }
+
+    .chat-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: var(--space-10);
+    }
+
+    *:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+  </style>
+<script>
+/**
+ * Curis Hi-Fi Prototype — shared interaction layer
+ * Handles cross-page navigation, active nav state, toast feedback,
+ * and common button affordances for the click-through demo.
+ */
+(function () {
+  'use strict';
+
+  // ── Navigation map (label text → page file)
+  const NAV_MAP = {
+    'CEO 工作台': 'ceo-desk.html',
+    'CEO 办公桌': 'ceo-desk.html',
+    '经营': 'operating.html',
+    '经营概览': 'operating.html',
+    '业务': 'business.html',
+    '业务空间': 'business.html',
+    '公司': 'ai-organization.html',
+    'AI 团队': 'ai-organization.html',
+    '工作空间': 'workspace-portal.html',
+    '决策': 'decision-room.html',
+    '决策室': 'decision-room.html',
+    '设置': '#',
+    '帮助': '#',
+    '帮助与反馈': '#',
+    '员工目录': '#',
+    '能力中心': '#'
+  };
+
+  // ── Wire sidebar nav items
+  function initNavigation() {
+    const currentPage = (window.location.pathname.split('/').pop() || 'ceo-desk.html');
+
+    document.querySelectorAll('.sidebar .nav-item, aside.sidebar .nav-item, .nav-list .nav-item').forEach(item => {
+      // Skip if already a link
+      if (item.tagName === 'A') return;
+
+      // Determine target from data-href or text content
+      let target = item.dataset.href;
+      if (!target) {
+        const text = item.textContent.trim().split(/\s+/).join(' ');
+        for (const [label, href] of Object.entries(NAV_MAP)) {
+          if (text.includes(label)) {
+            target = href;
+            break;
+          }
+        }
+      }
+
+      if (target) {
+        item.style.cursor = 'pointer';
+        item.setAttribute('role', 'link');
+        item.setAttribute('tabindex', '0');
+        item.dataset.href = target;
+
+        const navigate = () => {
+          if (target === '#') {
+            showToast('该入口将在设置中心接入；当前工作上下文已保留');
+            return;
+          }
+          window.location.href = target;
+        };
+
+        item.addEventListener('click', navigate);
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate();
+          }
+        });
+      }
+
+      // Active state
+      const href = item.dataset.href;
+      if (href && href !== '#') {
+        const active = currentPage === href || currentPage.endsWith('/' + href);
+        item.classList.toggle('active', active);
+      }
+    });
+  }
+
+  // ── Toast
+  function showToast(message, duration = 2200) {
+    let toast = document.getElementById('proto-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'proto-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = `
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-base-secondary, #222427);
+        color: var(--text-default-hover, #f5f9fe);
+        border: 1px solid var(--border-neutral-l2, rgba(224,226,242,.16));
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+        z-index: 9999;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration);
+  }
+
+  // ── Button click feedback (where no specific handler exists)
+  function initButtonFeedback() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button, .btn');
+      if (!btn) return;
+
+      // Specific Curis handlers own marked actions; only fallback for unbound controls.
+      if (btn.dataset.curisHandled === 'true') return;
+      // If button already has onclick or bound listener, skip generic feedback
+      if (btn.onclick) return;
+      if (btn.closest('a')) return;
+
+      const label = btn.textContent.trim();
+      if (!label) return;
+
+      // Capture a few generic actions across pages
+      if (/^(决策|查看|调查|委派|暂缓|修复问题|运行模拟|提交审批|批准|拒绝|延后|要求修改|预览|编辑|发送|保存|查看影响)$/.test(label)) {
+        e.preventDefault();
+        showToast(`${label}已记录，CEO 助理会继续跟进`);
+      }
+    });
+  }
+
+  // ── Expose globals for inline onclick handlers that may be missing
+  window.showToast = showToast;
+
+  // ── Auto-init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initButtonFeedback();
+    });
+  } else {
+    initNavigation();
+    initButtonFeedback();
+  }
+})();
+
+</script>
+  <script src="curis-prototype.js"></script>
+</body>
+</html>

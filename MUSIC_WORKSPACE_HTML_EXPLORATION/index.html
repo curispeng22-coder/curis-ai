@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Curis · AI 音乐经营工作区（视觉探索）</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 桌面四 Pane 外壳：全局七区导航 / Main / 右侧专业导航(Utility) / 顶部窗口栏 -->
+  <div class="mw-shell">
+    <!-- Pane 1：全局左导航（七区） + 音乐工作区局部专业导航 -->
+    <aside class="mw-sidebar" id="sidebar" aria-label="主导航">
+      <div class="mw-brand">
+        <span class="mw-brand-mark">C</span>
+        <span class="mw-brand-name">Curis</span>
+        <span class="mw-brand-sub">AI 音乐经营</span>
+      </div>
+      <nav class="mw-zone-nav" id="zone-nav" aria-label="全局导航"></nav>
+      <div class="mw-area-group" id="area-nav" aria-label="音乐工作区"></div>
+      <div class="mw-side-foot" id="side-foot"></div>
+    </aside>
+
+    <!-- 右侧主体列 -->
+    <div class="mw-main">
+      <!-- 顶部窗口栏 -->
+      <header class="mw-topbar">
+        <div class="mw-win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="mw-crumbs" id="breadcrumb"></div>
+        <div class="mw-top-right">
+          <span class="mw-mock-badge" title="本工作区为视觉探索 mock">MOCK 数据</span>
+          <span class="mw-ceo-badge" id="needs-ceo-badge" aria-live="polite"></span>
+          <div class="mw-theme-switch" id="theme-switch" role="group" aria-label="主题切换"></div>
+        </div>
+      </header>
+
+      <!-- Pane 2：Main（当前 Work Area 内容） -->
+      <main class="mw-content" id="view-root" tabindex="-1"></main>
+    </div>
+
+    <!-- Pane 3：右侧专业导航(Utility) —— 按 Work Area 实需命名，非通用「上下文」 -->
+    <aside class="mw-utility" id="utility-root" aria-label="专业导航"></aside>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <script src="pages.js"></script>
+  <script>
+    // 应用启动
+    if (window.MU && MU.init) MU.init();
+  </script>
+</body>
+</html>

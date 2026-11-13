@@ -1,0 +1,60 @@
+sequenceDiagram
+    participant Client as API Client
+    participant Main as main.py<br>(create_app)
+    participant Runtime as RdWorkflowRuntime
+    participant DB as Database
+    participant Executor as RealRDExecutor
+    participant Toolset as LocalRDToolset<br>(read/write/git)
+    participant ModelGw as ModelGatewayAdapter
+
+    Client->>Main: POST /api/workspace/rd-workflow/run<br>{department_id, workflow_content_id, prompt}
+    Main->>Runtime: run(department_id, workflow_content_id, prompt)
+
+    Runtime->>DB: get_department_instance(department_id)
+    DB-->>Runtime: department dict (enabled=true)
+
+    Runtime->>DB: list_employees(department_id)
+    DB-->>Runtime: employees_by_role {tech_lead, backend_engineer, ...}
+
+    Runtime->>DB: get_workflow_content(workflow_content_id)
+    Runtime->>DB: _get_wt_steps(wt_ref)
+    DB-->>Runtime: steps ["需求理解","任务拆解","架构设计","编码","测试","交付"]
+
+    Runtime->>DB: insert workflow_run (status=running)
+
+    loop each step
+        Runtime->>Runtime: _role_for_step(step_name) → role
+        Runtime->>Runtime: _build_step_prompt(prompt, step_name, previous)
+        Runtime->>Runtime: _execute_step(employee, step_name, step_input)
+
+        alt step_name contains "编码" and real_rd_executor is set
+            Runtime->>Runtime: _build_issue_spec(step_name, prompt, employee)
+            Runtime->>Executor: run(issue_spec)
+            Executor->>Toolset: read_file (preimage)
+            Executor->>ModelGw: execute(prompt)
+            ModelGw-->>Executor: model output (unified diff)
+            Executor->>Toolset: apply_diff (transactional)
+            Executor->>Toolset: run_test
+            alt test passes
+                Executor->>Toolset: git_read (diff)
+                Toolset-->>Executor: diff_text
+                Executor-->>Runtime: {status:"succeeded", diff_text, ...}
+            else test fails
+                Executor->>Toolset: rollback
+                Executor->>ModelGw: execute(prompt) [retry]
+                Note over Executor,Toolset: max_rounds exhausted → status="failed"
+                Executor-->>Runtime: {status:"failed", ...}
+            end
+        else model_fn is set
+            Runtime->>Main: model_fn(prompt)
+            Main-->>Runtime: LLM text output
+        else scaffold fallback
+            Runtime->>Runtime: generate scaffold text
+        end
+
+        Runtime->>DB: _write_step (workflow_steps, step_assignments, step_results)
+    end
+
+    Runtime->>DB: update workflow_run (status=completed/failed, final_report)
+    Runtime-->>Main: {workflow_run_id, status, final_report, ...}
+    Main-->>Client: 201 Created {workflow_run_id, status, ...}

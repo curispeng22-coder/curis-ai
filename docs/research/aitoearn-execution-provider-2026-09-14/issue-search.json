@@ -1,0 +1,626 @@
+[
+  {
+    "query": "repo:yikart/AiToEarn 小红书",
+    "total": 18,
+    "items": [
+      {
+        "number": 584,
+        "title": "微信视频号授权频繁掉线，一天内需多次重新登录",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/584",
+        "updated": "2026-08-10T11:01:43Z",
+        "body": "### 问题描述\n\n微信视频号授权后**掉线非常频繁**，通常不到一天就需要重新扫码登录，多次实测（2026-08）：\n- 早上授权 → 当天晚上发布时就显示「已离线」\n- 发布面板中视频号账号头像变半透明，平台行直接消失\n- 需要重新走「频道管理 → 重新授权 → 扫码」才能恢复\n\n这个和 #19（2025-07-28 反馈，官方回复「暂时没办法」）是同一问题，至今仍未解决，想确认：\n1. 这是微信侧 OAuth/cookie 有效期限制，还是插件侧会话保持问题？\n2. 是否有计划延长授权有效期，或自动刷新机制？\n3. 其他平台（快手/B站/小红书）没有这个问题，只有视频号这样，是否有绕开方案？\n\n### 环境\n- Windows 10 + Chrome 扩展方式接入\n- AiToEarn 网页端发布\n\n### 影响\n视频号是主要分发渠道之一，频繁掉线导致每次发布前都要人工扫码，严重影响使用。"
+      },
+      {
+        "number": 585,
+        "title": "[Bug] 快手和哔哩哔哩发布必然失败：content.cover media_unreachable（封面 URL 公开可访问；之前正常）",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/585",
+        "updated": "2026-08-10T10:55:54Z",
+        "body": "### 自查清单\n- [x] 我已阅读贡献指南。\n- [x] 我已搜索过已有问题（包括已关闭的）。\n- [x] 我可以用英文提供报告（如需）。\n- [x] 请勿修改此模板 :) 并填写所有必填字段。\n\n### Aitoearn 版本\nWeb 端（aitoearn.cn，中文站），2026-08-08\n\n### 请选择你的平台\n- [x] Windows\n- [x] Web\n\n### 复现步骤\n\n1. 打开 https://aitoearn.cn/zh-CN/publish → 新建作品\n2. 上传 MP4 视频（试过 HEVC/H.265 原片 和 H.264 重新转码两种，24 秒，约 2MB）\n3. 填写标题、带话题的描述（#鹦鹉 #宠物 #动物趣事）\n4. 点「下一步」→ 在确认页**只勾选快手 和 哔哩哔哩**（取消其他平台）\n5. 填写各平台要求：快手描述、B站分区（动物圈/小宠异宠）、允许转载、封面（也试过通过「裁剪封面」设置全局封面，以及完全不设置封面）\n6. 点击「发布」\n\n**结果：无论怎么配置，快手和哔哩哔哩都必然失败，提示「发布内容校验失败」。**\n\n失败弹窗和提示截图：\n\n![publish-failure](https://raw.githubusercontent.com/linfeng961/hermes-agent/issue-img-aitoearn/aitoearn_publish_fail.jpg)\n\n顶部提示条显示：`KWAI / content.cover: 封面无法访问或解析失败，请检查链接是否可公开访问`\n\n### ✔️ 预期行为\n快手和哔哩哔哩的发布任务应该成功创建，就像之前一样（此前用 AiToEarn 发布视频到各平台都正常，2026-08-07 同一账号发布到快手、哔哩哔哩、小红书、微信视频号等多个平台均无问题）。\n\n### ❌ 实际行为\n发布接口 `POST /api/v2/channels/publish/flows` 返回 `code: 15051`：\n\n```json\n{\n  \"data\": {\n    \"platform\": \"KWAI\",\n    \"accountId\": \"KWAI_f1b6d99b9252a17314bf5724bfb0c1d1\",\n    \"issues\": [{\n      \"code\": \"media_unreachable\",\n      \"path\": [\"content\", \"cover\"],\n      \"params\": {\n        \"field\": \"cover\",\n        \"url\": \"https://assets.aitoearn.cn/6a61b04ea113b7e4b7a4da83/user/media/202608/v7ZMTATyp7nnoSe5zU1gM.jpg\"\n      },\n      \"message\": \"封面无法访问或解析失败，请检查链接是否可公开访问\"\n    }]\n  },\n  \"code\": 15051,\n  \"message\": \"发布内容校验失败\"\n}\n```\n\n**关键观察：**\n\n1. **尝试了 4 种不同配置，全部以相同方式失败：**\n   - HEVC 原片 + 不设封面 → 失败\n   - H.264 转码 + 全局封面（裁剪封面）→ 失败\n   - H.264 + 在快手/B站平台行内单独设置封面 → 失败\n   - H.264 + 确认封面已生成后再发布 → 失败\n   - 发布前所有「问题」警告都已清除，没有任何表单未完成提示\n\n2. **封面 URL 从外部完全可公开访问**：我用 curl 测试了 `https://assets.aitoearn.cn/6a61b04ea113b7e4b7a4da83/user/media/202608/v7ZMTATyp7nnoSe5zU1gM.jpg` — HTTP 200，Content-Type: image/jpeg，约 187KB，是有效 JPEG。也测试了带 `Referer: https://kwai.com/` 和 `Referer: https://bilibili.com/` — 均返回 HTTP 200。也就是说从任何我们能测试的网络角度，这个链接都是可达的。\n\n3. **只有走服务端任务模式的平台受影响**：同一流程中，小红书和微信视频号（浏览器插件路径）**发布成功**。只有快手和哔哩哔哩（走服务端发布任务）在服务端内容校验环节失败。\n\n4. **之前是正常的**：2026-08-07 用同一账号发布到包括快手和哔哩哔哩在内的所有平台都没有问题。2026-08-08 开始失败，期间账号和文件没有任何改动。这看起来像是**服务端回归**（可能是封面 URL 校验逻辑，或校验服务访问 OSS 的问题）。\n\n请检查快手/B站发布流程中 `content.cover` 的服务端校验逻辑——封面 URL 是公开可访问的，校验服务本身可能无法访问 `assets.aitoearn.cn`，或者封面生成在校验执行前尚未完成。\n"
+      },
+      {
+        "number": 583,
+        "title": "插件无法识别 rednote.com 登录会话：国际用户（+852 注册）RedNote 始终显示 \"Not Logged In\"",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/583",
+        "updated": "2026-08-04T02:29:21Z",
+        "body": "**环境**\n- AiToEarn 账号：国际版 aitoearn.ai（用户名 user_emGraWHP）\n- 浏览器插件 v3.3.0（Chrome Web Store），International 模式\n- macOS + Chrome\n\n**问题**\n小红书账号使用香港手机号（+852）注册。国际账号在 xiaohongshu.com 扫码登录后会被强制跳转到 rednote.com，因此 xiaohongshu.com 域名下无法保持登录会话。\n\n已在 rednote.com 与 creator.rednote.com 完成登录，但插件 Platform Accounts 中 RedNote 始终显示「Not Logged In」，无法添加小红书账号。\n\n**复现步骤**\n1. 用 +852 手机号注册小红书账号\n2. 安装 AiToEarn 浏览器插件，切换到 International 模式\n3. 在 rednote.com 及 creator.rednote.com 登录同一小红书账号\n4. 打开插件 / aitoearn.ai 的频道连接弹窗，RedNote 显示「Not Logged In」\n\n**期望**\n- 国际版插件支持检测 rednote.com 的登录会话；或\n- 在文档中说明非 +86 注册的国际用户连接小红书账号的正确方式\n\n谢谢！\n"
+      },
+      {
+        "number": 569,
+        "title": "小红书账号删除后重新添加，前端页面显示是新号，实际后端发布的内容还是旧的账号",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/569",
+        "updated": "2026-07-30T08:27:42Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I can provide the report in English if needed to help more contributors participate in the discussion.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n最新版本\n\n### Please select your platform\n\nWindows\n\n### Steps to reproduce\n\n删除账号，重新同步，前端账号显示正确，发布错误账号\n\n### ✔️ Expected Behavior\n\n1\n\n### ❌ Actual Behavior\n\n_No response_"
+      },
+      {
+        "number": 578,
+        "title": "BUG: AiToEarn Extension 无法检测小红书登录状态（已登录但插件显示未登录）",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/578",
+        "updated": "2026-07-27T11:40:11Z",
+        "body": "## Bug 描述\n\nChrome 插件「AiToEarn Extension」无法正确检测小红书（xiaohongshu.com）的登录状态。\n\n**现状：** 用户已在小红书网页端（www.xiaohongshu.com）正常登录，可以正常浏览个人主页和个人资料，但插件弹窗中始终显示：\n\n> \"小红书未登录，请先在插件中登录\"\n\n插件详情页显示：\n- 小红书卡片状态：**\"仅创作者中心已登录\"**\n- 警告信息：**\"已登录小红书创作者中心，但暂时无法抓取笔记详情，请前往小红书主页登录\"**\n\n## 复现步骤\n\n1. 在 Chrome/Cent Browser 中正常登录小红书（www.xiaohongshu.com）\n2. 已登录状态下正常访问个人主页（如 user/profile/xxx）\n3. 打开 AiToEarn Extension 插件侧边栏或弹窗\n4. 观察小红书账号状态\n\n**预期行为：** 插件应正确检测到用户已在 xiaohongshu.com 登录，状态显示为\"已连接\"\n\n**实际行为：** 插件只识别到\"创作者中心\"的登录态，未能识别普通网站页面的登录态，导致认为\"未登录\"\n\n## 影响\n\n- 小红书作为核心平台之一，无法正常使用插件的发布功能\n- 用户需要同时在创作者中心和普通主页之间反复切换登录，体验割裂\n- 从截图看到小红书普通主页和创作者中心是两个独立域名（www.xiaohongshu.com vs creator.xiaohongshu.com），插件可能只检测了后者\n\n## 环境\n\n- 浏览器：Cent Browser（Chromium）\n- AiToEarn Extension 版本：3.2.10\n- 小红书账号：已正常登录，粉丝 0，笔记 0\n- 操作系统：Windows 10\n\n## 截图说明\n\n插件弹窗中：\n- 小红书卡片：橙底白字警告，显示\"仅创作者中心已登录\"\n- 视频号卡片：绿底白字，显示\"已连接\"（正常）\n- 顶部黄色通知条：\"小红书未登录，请先在插件中登录\"\n\n## 推测原因\n\n小红书有多个子域名：\n- `www.xiaohongshu.com` — 普通用户主页/浏览\n- `creator.xiaohongshu.com` — 创作者中心\n- `edith.xiaohongshu.com` — 内容编辑\n\n插件可能只检测了 `creator.xiaohongshu.com` 域下的 Cookie/登录态，而忽略了 `www.xiaohongshu.com` 域。建议插件检测时同时覆盖 `www.xiaohongshu.com` 的登录状态，或者在用户已登录 `www` 域的情况下引导/自动同步到 `creator` 域。\n\n---"
+      },
+      {
+        "number": 549,
+        "title": "🐛 抖音短链接生成失败：返回 15100 短链接不存在",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/549",
+        "updated": "2026-07-10T09:32:52Z",
+        "body": "## 问题描述\n\n通过 MCP 调用 `publishPostToDouyin` 创建抖音发布任务时，返回的短链接无法打开，接口返回错误：\n\n```json\n{\"data\":{},\"code\":15100,\"message\":\"短链接不存在\",\"timestamp\":1780692179463}\n```\n\n## 复现步骤\n\n1. 调用 `publishPostToDouyin` 创建发布任务\n2. 获得返回的短链接，例如：\n   - `https://aitoearn.cn/api/shortLink/Z1fur88f`（第一次）\n   - `https://aitoearn.cn/api/shortLink/eH0CJg3c`（第二次重试）\n3. 在手机浏览器中打开链接\n4. 返回错误：`{\"code\":15100,\"message\":\"短链接不存在\"}`\n\n## 预期行为\n\n短链接应该可以正常打开，并跳转到抖音 APP 完成发布确认。\n\n## 实际行为\n\n所有生成的短链接都返回 `15100 短链接不存在` 错误，无法完成抖音发布流程。\n\n## 环境信息\n\n- MCP 工具：`publishPostToDouyin`\n- 平台：抖音 (douyin)\n- 账号类型：douyin\n- 尝试次数：3 次（均失败）\n- FlowId 示例：\n  - `ac1a006c-a709-49bc-9998-574878cd75c2`\n  - `8e316695-72ba-4413-b786-0fa93908773a`\n\n## 补充说明\n\n其他平台的发布功能（如小红书通过 workLink 提交）工作正常，仅抖音短链接生成存在问题。\n\n## 期望修复\n\n请检查抖音短链接生成服务是否正常运行，或提供替代的发布确认方式。"
+      },
+      {
+        "number": 550,
+        "title": "[Feature Request] 添加 Toutiao（今日头条/头条号）平台支持",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/550",
+        "updated": "2026-06-16T02:49:54Z",
+        "body": "# [Feature Request] 添加 Toutiao（今日头条/头条号）平台支持\n\n## 问题描述\nAiToEarn 目前已支持 15 个平台（抖音、小红书、微信视频号等），但没有今日头条/头条号的发布支持。头条号是国内重要的内容创作平台，覆盖资讯、知识付费、电商带货等场景，与 AiToEarn 的定位高度契合。\n\n## 建议内容\n1. **平台枚举**：在 `channel-db` 的 `AccountType` 中新增 `Toutiao = 'toutiao'`\n2. **发布模块**：实现头条号的图文/微头条发布功能\n3. **前端适配**：添加头条平台图标和账号配置页\n\n## 头条发布特点\n- 两种内容形态：微头条（短文，≤2000字） + 图文（长文，支持富文本）\n- 发布状态可选：直接发布 / 草稿箱 / 定时发布\n- 建议首期实现：微头条 + 草稿箱发布（覆盖最常用场景）\n\n## 技术可行性\n- 头条后台发布走 HTTP API（Cookie 认证），无需 SDK\n- 已初步验证发布链路可行，逻辑可平移进后端模块\n- 不影响现有架构，新增文件量小\n\n---\n\n> 💡 愿意贡献代码实现，可以认领这个 issue 来做。\n"
+      },
+      {
+        "number": 553,
+        "title": "矩阵账号做内容分发,怎么避免被平台关联封号?",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/553",
+        "updated": "2026-06-08T08:12:55Z",
+        "body": "这个项目把内容批量生成、多平台分发、自动化互动串成了一条完整链路,对做矩阵账号的人来说很实用。\n\n想补充一个很多重度用户会撞上的下游问题。当你用 AiToEarn 管理矩阵账号(比如几十个小红书号、抖音号)批量发布和互动时,如果这些账号都在同一个浏览器环境里跑,平台很容易通过浏览器指纹把它们识别成「同一个人在操作」,轻则限流,重则批量封号。Engage 功能用插件自动点赞关注的时候,这个风险更明显。\n\n我整理了一份关于指纹浏览器和多账号隔离的资源,可能对做矩阵的朋友有帮助:\n👉 https://github.com/pencil20388-eng/awesome-anti-detect\n\n里面涵盖了主流指纹浏览器(AdsPower 等)、代理选择(住宅/数据中心/移动)、指纹检测原理。\n\n实际跑下来比较稳的组合是:\n- AiToEarn 负责内容生成和多平台分发\n- 指纹浏览器给每个账号一个独立的浏览器环境 + 独立 IP,做到账号之间互不关联\n- 检测严格的平台(比如 Facebook、TikTok)用住宅或移动代理\n\n指纹浏览器这类工具每个配置文件会暴露一个 CDP 端口,可以用 Selenium/Playwright 驱动,理论上能跟 AiToEarn 的自动化流程接上。\n\n分享一下,感觉跟这个项目做矩阵的用户群挺契合的。"
+      },
+      {
+        "number": 295,
+        "title": "feat: Advertiser System (Order + Account)",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/295",
+        "updated": "2026-03-31T03:03:12Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### 1. Is this request related to a challenge you're experiencing? Tell me about your story.\n\nMake it clear from the start that it's \"performance-based pricing, CPM as low as $1\"\n\n### 2. Additional context or comments\n\n#### I. Order System\n\n**1. Creator Selection - \"Which creators do you want to work with?\"**\n- Location filter (by country/region)\n- Channel filter (Youtube/Tiktok/Instagram/X/小红书/抖音/快手/bilibili)\n- Follower count filter:\n  - 0-100\n  - 100-300\n  - 300-500\n  - 500-1000\n  - 1k+\n- Show pricing preview immediately after selection\n- Users can filter without logging in, but need to login to view pricing (prompt login if not logged in)\n\n**2. Promotion Requirements - \"How do you want them to promote your brand/website?\"**\n- Brand introduction (text input)\n- Content requirements (text input)\n- Tag and mention requirements (text input)\n- Payment amount setting: minimum $100, provide slider and input field for custom amount\n\n**3. Advertiser Pricing Table (Backend configurable, initial default values)**\n\nInternational platforms per thousand views in USD:\n| Channel | Tier A | Tier B | Tier C | Tier D |\n|---------|--------|--------|--------|--------|\n| Youtube | 10 | 8 | 5 | 4 |\n| Tiktok | 8 | 5 | 4 | 3 |\n| Instagram | 5 | 4 | 3 | 1.5 |\n| X | 4 | 3 | 2 | 1 |\n\nChinese platforms per thousand views in CNY:\n| Platform | Price | Notes |\n|----------|-------|-------|\n| 小红书 | 30 | |\n| 抖音 | 20 | |\n| 快手 | 20 | |\n| bilibili | 20 | |\n| 视频号 | - | Users upload themselves, but view count unavailable |\n\nNote: Backend can adjust default values. This is preliminary and likely to change later.\n\n---\n\n#### II. Account System\n\n**1. Order Management**\n- View order history (order list)\n- View execution status for each order, including three states:\n  - Task content in production\n  - Task being dispatched\n  - Task completed\n- Order detail page\n\n**2. Balance System**\n- Balance concept: For example, if advertiser places $100 order but we only complete $60 worth of goals, the remaining $40 goes to their balance\n- Balance can be used for next order\n- View balance details\n- Balance recharge function\n\n\n### 3. Can you help us with this feature?\n\n- [ ] I am interested in contributing to this feature."
+      },
+      {
+        "number": 172,
+        "title": "feat: Implement post deletion API support",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/172",
+        "updated": "2026-03-31T03:03:08Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### 1. Is this request related to a challenge you're experiencing? Tell me about your story.\n\nImplement deletion functionality for posts across various platforms.\n\nReference: [Platform Deletion Support Document](https://heovzp8pm4.feishu.cn/wiki/UkHvwxCAMiBn0AkMD9ycCvpyn7g?from=from_copylink)\n\n### 2. Additional context or comments\n\n_No response_\n\n### 3. Can you help us with this feature?\n\n- [ ] I am interested in contributing to this feature."
+      },
+      {
+        "number": 467,
+        "title": "electron xhs   publish video always fail",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/467",
+        "updated": "2026-03-31T03:02:55Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：）\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n最新\n\n### Please select your platform\n\nMac\n\n### Steps to reproduce\n\n❌ 视频发布失败: 创建作品失败,失败原因:签名服务返回无效\n16:59:51.064 › 🗑️ 临时文件已清理: /Users/limeng/Downloads/.temp/65c6dfc9-c656-486f-897f-7b33241b5e70_with_audio.mp4\n16:59:51.064 › ❌ [小红书] API 发布异常: 创建作品失败,失败原因:签名服务返回无效\n⚠️ [小红书] 自动切换到模拟发布...\n\n### ✔️ Expected Behavior\n\nwant publish success\n\n### ❌ Actual Behavior\n\n_No response_"
+      },
+      {
+        "number": 479,
+        "title": "feat: The interaction and integration of my channel and works have been completed",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/479",
+        "updated": "2025-12-30T01:25:28Z",
+        "body": "close #449\r\n"
+      },
+      {
+        "number": 386,
+        "title": "feat: The platform's interactive functions have been fully realized",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/386",
+        "updated": "2025-12-12T05:37:13Z",
+        "body": "close #385\r\n\r\n## Change Description\r\n\r\nThis PR adds complete interaction feature support for Douyin and Xiaohongshu platforms to the browser extension.\r\n\r\n### New Features\r\n\r\n#### Douyin Platform\r\n- ✅ Like functionality\r\n- ✅ Favorite/Bookmark functionality\r\n- ✅ Comment functionality\r\n- ✅ Direct Message functionality\r\n\r\n#### Xiaohongshu Platform\r\n- ✅ Comment functionality\r\n- ✅ Signature service\r\n\r\n### Technical Improvements\r\n- 🔧 Updated ESLint configuration to improve code quality\r\n- 🔧 Removed redundant button state detection methods to simplify code\r\n- 🔧 Removed debug logs and optimized error handling logic\r\n- 🔧 Enhanced interaction feature UI for better user experience"
+      },
+      {
+        "number": 270,
+        "title": "feat: Access and delete works within the platform",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/270",
+        "updated": "2025-11-20T15:02:46Z",
+        "body": "close #235 "
+      },
+      {
+        "number": 32,
+        "title": "小红书无法发布视频 没有返回 作品id",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/32",
+        "updated": "2025-10-21T09:27:53Z",
+        "body": "小红书渠道无法发布视频， 没有返回 作品id，其实就是没有发布成功，不知道是不是加密什么的不对啊，能不能看一下啊"
+      },
+      {
+        "number": 18,
+        "title": "小红书评论截流的功能，接口返回正常，但没有数据",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/18",
+        "updated": "2025-10-21T09:27:34Z",
+        "body": "调了两三次获取评论后，就获取列表失败了，接口返回是正常的，但没有数据\n\n<img width=\"1049\" height=\"769\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/8e5cbab7-4ab8-4f5f-a9aa-3a9e8856e746\" />\n\n<img width=\"705\" height=\"400\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3c74f489-1c1d-4a54-bee5-21da42a884f5\" />"
+      },
+      {
+        "number": 21,
+        "title": "mac上本地运行发布一直发布不成功",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/21",
+        "updated": "2025-10-21T09:03:46Z",
+        "body": "<img width=\"962\" height=\"202\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/dd3ca1d9-52b1-4dee-8f81-620f77d0b732\" />\n\n报错信息：创建作品失败,失败原因:Cannot read properties of undefined (reading 'xsec_token')"
+      },
+      {
+        "number": 8,
+        "title": "小红书发布不成功",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/8",
+        "updated": "2025-05-12T08:42:08Z",
+        "body": "批量和单独发布都尝试了，只有小红书出现了发布失败的问题，不知道是不是我个例"
+      }
+    ]
+  },
+  {
+    "query": "repo:yikart/AiToEarn douyin",
+    "total": 21,
+    "items": [
+      {
+        "number": 581,
+        "title": "Douyin Server Relay completes but no callback creates a local channel",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/581",
+        "updated": "2026-07-30T08:26:57Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I can provide the report in English if needed to help more contributors participate in the discussion.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\nSelf-hosted Docker Compose; public main 3cbb97bb9a58dd99b97f45b60923cdbfdfeb3368; images pulled 2026-07-27\n\n### Please select your platform\n\nWeb\n\n### Steps to reproduce\n\n1. Deploy AiToEarn with the official Docker Compose configuration from public main (commit 3cbb97bb9a58dd99b97f45b60923cdbfdfeb3368).\n2. Configure a valid China Server Relay API key and use the China relay.\n3. Open the self-hosted Channel Manager and start Douyin QR authorization.\n4. Scan the QR code and explicitly confirm authorization in the Douyin mobile app.\n5. Continue polling until the relay reports code 0, message \"request succeeded\", status \"completed\", and requiresSelection false.\n6. Refresh Channel Manager and inspect the local account records.\n\nI also repeated the flow with a temporary HTTPS callback-only tunnel. No credentials, account IDs, callback host, or session data are included in this report.\n\n### ✔️ Expected Behavior\n\nAfter relay status becomes completed, the relay should deliver the authorized account to the self-hosted callback endpoint. The local server should create the channel account, persist its authorization identity and credential, and show one connected Douyin channel in Channel Manager.\n\n### ❌ Actual Behavior\n\nThe relay status reaches completed, but the self-hosted server receives no callback request and creates no local channel. Channel Manager returns to its main view with zero channels. MongoDB remains empty for account, channelAuthIdentity, and oauth2Credential records. All Docker containers stay healthy. The HTTPS callback isolation test also received zero callback requests after two explicit Douyin confirmations."
+      },
+      {
+        "number": 560,
+        "title": "6.11 私有化部署后进行频道授权失败",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/560",
+        "updated": "2026-07-20T08:42:22Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [ ] I can provide the report in English if needed to help more contributors participate in the discussion.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n v2.4.0\n\n### Please select your platform\n\nMac\n\n### Steps to reproduce\n\n<img width=\"2050\" height=\"1422\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a373c1f1-db6f-446b-9778-b8f0b51e36e5\" />\n\ncurl -s \"https://aitoearn.cn/api/plat/douyin/auth/url?spaceId=test&callbackUrl=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fplat%2Frelay-callback&callbackMethod=POST\" \\\n  -H \"x-api-key: ak_******\"\n 返回 {\"code\":404,\"message\":\"Cannot GET /plat/douyin/auth/url...\"}\n 而 /api/health 正常，说明是路由缺失而非服务宕机\n\n步骤指引：我的频道-链接新频道-抖音\n已配置RELAY_API_KEY（中国）\n\n### ✔️ Expected Behavior\n\n频道授权成功\n\n### ❌ Actual Behavior\n\n频道授权失败"
+      },
+      {
+        "number": 549,
+        "title": "🐛 抖音短链接生成失败：返回 15100 短链接不存在",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/549",
+        "updated": "2026-07-10T09:32:52Z",
+        "body": "## 问题描述\n\n通过 MCP 调用 `publishPostToDouyin` 创建抖音发布任务时，返回的短链接无法打开，接口返回错误：\n\n```json\n{\"data\":{},\"code\":15100,\"message\":\"短链接不存在\",\"timestamp\":1780692179463}\n```\n\n## 复现步骤\n\n1. 调用 `publishPostToDouyin` 创建发布任务\n2. 获得返回的短链接，例如：\n   - `https://aitoearn.cn/api/shortLink/Z1fur88f`（第一次）\n   - `https://aitoearn.cn/api/shortLink/eH0CJg3c`（第二次重试）\n3. 在手机浏览器中打开链接\n4. 返回错误：`{\"code\":15100,\"message\":\"短链接不存在\"}`\n\n## 预期行为\n\n短链接应该可以正常打开，并跳转到抖音 APP 完成发布确认。\n\n## 实际行为\n\n所有生成的短链接都返回 `15100 短链接不存在` 错误，无法完成抖音发布流程。\n\n## 环境信息\n\n- MCP 工具：`publishPostToDouyin`\n- 平台：抖音 (douyin)\n- 账号类型：douyin\n- 尝试次数：3 次（均失败）\n- FlowId 示例：\n  - `ac1a006c-a709-49bc-9998-574878cd75c2`\n  - `8e316695-72ba-4413-b786-0fa93908773a`\n\n## 补充说明\n\n其他平台的发布功能（如小红书通过 workLink 提交）工作正常，仅抖音短链接生成存在问题。\n\n## 期望修复\n\n请检查抖音短链接生成服务是否正常运行，或提供替代的发布确认方式。"
+      },
+      {
+        "number": 543,
+        "title": "Fix channel account login via browser extension",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/543",
+        "updated": "2026-06-23T14:00:49Z",
+        "body": "## Summary\n- Route channel account auth through the browser extension login-state flow for Douyin, Kuaishou, WeChat, Bilibili and other supported platforms instead of missing OAuth config.\n- Keep publishing support scoped to plugin-supported platforms while allowing account sync for broader browser-login platforms.\n- Rebuild the browser extension download package and bump the unpacked extension version to 0.1.1.\n\n## Verification\n- pnpm run lint -- --file src/store/plugin/types/baseTypes.ts --file src/store/plugin/store.ts --file src/store/plugin/hooks.ts --file src/store/plugin/index.ts --file src/store/plugin/utils/plugin.utils.ts --file src/components/ChannelManager/channelManagerStore.ts --file src/components/ChannelManager/types.ts --file src/components/Plugin/PluginReady/AccountsTab.tsx --file src/types/plat.type.ts\n- pnpm run type-check\n- pnpm run build\n- node --check project/jujing-browser-extension/src/background.js\n- node --check project/jujing-browser-extension/src/content-home.js\n- node --check project/jujing-browser-extension/src/content-platform.js\n- node --check project/jujing-browser-extension/src/web-api.js\n- pnpm nx build aitoearn-server\n- Local Chrome manual check: http://localhost:8080/zh-CN/accounts plugin ready; Douyin and Kuaishou channel sync both show success."
+      },
+      {
+        "number": 350,
+        "title": "feat: Initial integration of browser plugins",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/350",
+        "updated": "2026-06-16T08:46:41Z",
+        "body": "close #349"
+      },
+      {
+        "number": 564,
+        "title": "6.12更新后多个平台无法授权",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/564",
+        "updated": "2026-06-16T06:08:58Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I can provide the report in English if needed to help more contributors participate in the discussion.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\nv2.4.43\n\n### Please select your platform\n\nWeb\n\n### Steps to reproduce\n\nX\n<img width=\"515\" height=\"362\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/b0f1a1a5-e23b-4590-9f5b-b6fae9c50237\" />\n\nthreads\n<img width=\"1307\" height=\"138\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/2cf8f152-90b9-48fd-8e1d-aeea21285640\" />\n\npinterest\n<img width=\"1318\" height=\"419\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/cc9eb809-f777-4780-ac2c-e6312ddfebeb\" />\n\nyoutube\n<img width=\"609\" height=\"353\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a54e89de-8be4-4955-b415-7664ce0e0668\" />\n\n### ✔️ Expected Behavior\n\n在此之前授权都是成功并能正常发布\n\n### ❌ Actual Behavior\n\n\n**YouTube**\n授权失败\n请关闭此页面后重新发起授权。\n\n授权权限不足\n\n错误码: 15013\n\n**threads**\n{\n  \"error_message\": \"网址被禁: 跳转失败，原因是跳转 URI 未加入 OAuth 客户端授权设置白名单。请确保客户端和网页的 OAuth 授权登录功能已开启，并把所有应用域添加为有效 OAuth 跳转 URI。\",\n  \"error_code\": 1349168\n}\n\n\n**pinterest**\n[400](https://www.pinterest.com/)\n哎呀！\n提供的重定向网址与注册的网址不匹配。\n\n\n**X**\nSomething went wrong\nYou weren’t able to give access to the App. Go back and try logging in again."
+      },
+      {
+        "number": 523,
+        "title": "[Bug] 抖音账号粉丝数始终显示为0，无法接需粉丝门槛的任务",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/523",
+        "updated": "2026-06-16T02:48:13Z",
+        "body": "## Bug 描述\n连接抖音账号后，无论实际粉丝数多少（测试了11粉和505粉两个账号），AiToEarn始终显示 粉丝: 0，导致所有带粉丝门槛的任务无法接受。\n\n## 复现步骤\n1. 在「频道管理」中添加抖音账号\n2. 查看账号信息 → 粉丝数始终显示为 0\n3. 删除后重新添加 → 依然是 0\n4. 尝试接受需粉丝门槛的任务 → 提示 follower count does not meet requirement\n\n## 预期行为\n绑定抖音账号后，能同步真实的粉丝数据\n\n## 实际行为\nfansCount 始终为 0，workCount 也始终为 0\n\n## 环境\n- 平台：aitoearn.ai (SaaS版)\n- 账号1：汪汪猫（11粉）→ 显示0\n- 账号2：端州区珞夫特食尚圈餐饮店（505粉）→ 显示0\n\n## 影响\n无法参与任何需要粉丝门槛的抖音推广/互动任务"
+      },
+      {
+        "number": 297,
+        "title": "feat: Manual Link Upload Alternative Solution",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/297",
+        "updated": "2026-03-31T03:03:13Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### 1. Is this request related to a challenge you're experiencing? Tell me about your story.\n\nFocus on Youtube first. There's a risk that our publishing volume might reach Youtube's limit and get blocked. Therefore, we must provide an alternative solution for users to manually publish and upload links. Once this model works, it can be extended to other content not published through our platform.\n\n### 2. Additional context or comments\n\n- Creators can choose to manually publish content to platforms\n- Upload content link in the system after publishing\n- System scrapes view count and other data\n- Settle earnings based on view count\n- Support Youtube and other platforms (XiaohongShu, Douyin, Kuaishou, bilibili, etc.)\n\n\n### 3. Can you help us with this feature?\n\n- [ ] I am interested in contributing to this feature."
+      },
+      {
+        "number": 296,
+        "title": "feat: Admin Pricing Configuration System",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/296",
+        "updated": "2026-03-31T03:03:13Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### 1. Is this request related to a challenge you're experiencing? Tell me about your story.\n\n**Function**: Unified admin configuration for advertiser pricing and creator pricing\n\n---\n\n#### 1. Creator Pricing Configuration\n\n**International Platform Pricing (USD per thousand views)**:\n| Channel | Tier A | Tier B | Tier C | Tier D |\n|---------|--------|--------|--------|--------|\n| Youtube | 6 | 4.2 | 3 | 2.1 |\n| Tiktok | 4.5 | 3.1 | 2.2 | 1.6 |\n| Instagram | 3 | 2.1 | 1.5 | 1 |\n| X | 2.4 | 1.7 | 1.2 | 0.8 |\n\n**Geographic Tiers**:\n\nTier A Countries:\n- USA\n- Canada\n- UK\n- Germany\n- France\n- Netherlands\n- Sweden\n- Norway\n- Denmark\n- Finland\n- Switzerland\n- Austria\n- Belgium\n- Ireland\n- Australia\n- New Zealand\n- Japan\n- South Korea\n- Singapore\n- UAE\n- Saudi Arabia\n- Israel\n\nTier B Countries:\n- Spain\n- Italy\n- Portugal\n- Poland\n- Czech Republic\n- Slovakia\n- Hungary\n- Slovenia\n- Greece\n- Chile\n- Argentina\n- Uruguay\n- Gulf region countries (excluding Saudi Arabia)\n\nTier C Countries:\n- Brazil\n- Mexico\n- Colombia\n- Peru\n- Thailand\n- Vietnam\n- Philippines\n- Indonesia\n- Malaysia\n- India\n- South Africa\n- Turkey\n- Egypt\n- Romania\n- Bulgaria\n\nTier D Countries:\n- Nigeria\n- Kenya\n- Ghana\n- Tanzania\n- Ethiopia\n- Pakistan\n- Bangladesh\n- Nepal\n- Sri Lanka\n\n**Chinese Platform Pricing (CNY per thousand views)**:\n| Platform | Price | Notes |\n|----------|-------|-------|\n| XiaohongShu | 15 | |\n| Douyin | 10 | |\n| Kuaishou | 10 | |\n| bilibili | 10 | |\n| WeChat Channels | - | Users upload manually, but view count not available |\n\n**Tag Requirements Example**:\n- Instagram: @harry #aitoearn #StartEarning #StartSubmitting #YouGotThis\n\n---\n\n#### 2. Advertiser Pricing Configuration\n\n(Same as pricing table in #1, admin-configurable)\n\n### 2. Additional context or comments\n\n_No response_\n\n### 3. Can you help us with this feature?\n\n- [ ] I am interested in contributing to this feature."
+      },
+      {
+        "number": 372,
+        "title": "The Douyin post failed to be published.",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/372",
+        "updated": "2026-03-31T03:02:53Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：）\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n1.41\n\n### Please select your platform\n\nWindows\n\n### Steps to reproduce\n\nThere was no report because the program indicated that the release was successful, but in fact, it wasn't.\n\n### ✔️ Expected Behavior\n\nWhen a group video is being posted on Douyin, the progress bar shows it's completed, but the video doesn't actually get posted. Also, posting it individually doesn't work either. Is it possible to add a feature to indicate whether the posting was successful or not, and if not, to allow for re-posting?\n\n### ❌ Actual Behavior\n\nWhen a group video is being posted on Douyin, the progress bar shows it's completed, but the video doesn't actually get posted. Also, posting it individually doesn't work either. Is it possible to add a feature to indicate whether the posting was successful or not, and if not, to allow for re-posting?"
+      },
+      {
+        "number": 480,
+        "title": "fix: fix agent ui",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/480",
+        "updated": "2025-12-30T02:36:59Z",
+        "body": "close #449\r\n"
+      },
+      {
+        "number": 479,
+        "title": "feat: The interaction and integration of my channel and works have been completed",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/479",
+        "updated": "2025-12-30T01:25:28Z",
+        "body": "close #449\r\n"
+      },
+      {
+        "number": 427,
+        "title": "feat(web): Homepage UI optimization",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/427",
+        "updated": "2025-12-20T15:42:31Z",
+        "body": "- Remove AiToEarn title text from homepage header\r\n- Increase title font size with line break support\r\n- Platform logos in 'Publish to' section now open Add Account modal\r\n- Remove PromptGallery header text, keep card display\r\n- Simplify Download App modal to multi-platform download buttons\r\n- Update plugin description for Douyin & Xiaohongshu automation\r\n- Add Docs and GitHub Stars links to sidebar bottom\r\n- Move Task Center to Notification Panel, add Add Channel to sidebar\r\n- Fix Add Account modal mobile responsive issues\r\n\r\n# Pull Request\r\n\r\n## 🧩 Issue Link\r\n Related to #400\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #\r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 404,
+        "title": "[Issue] Web Redesign and AI Agent Feature Launch",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/404",
+        "updated": "2025-12-18T10:39:44Z",
+        "body": "### What happened?\n\nWeb Redesign and AI Agent Feature Launch\n\n### Type\n\n- [x] Bug\n- [x] Idea\n- [x] Improvement\n- [x] Question\n\n### Extra (optional)\n\n# 🚀 Web Redesign and AI Agent Feature Launch\n\n## 📋 Overview\n\nThis update includes a major UI redesign and a brand-new AI Agent conversational feature, improving user experience and overall functionality.\n\n## ✨ Main Functions\n\n### 1. AI Agent Dialogue System\n\n- **Real-time Dialogue Interface** (`/chat/[taskId]`)\n\n- Supports real-time mode (jumped from the homepage) and historical mode (refreshed or accessed from the task list)\n\n- Workflow status is displayed in real-time on the corresponding message\n\n- Supports image/video uploads\n\n- Intelligent scrolling control\n\n- Message stream rendering\n\n- **Agent Store Architecture**\n\n- Uses Zustand for global status management\n\n- SSE (Server-Sent Events) message processing\n\n- Chain of Responsibility pattern for handling different types of SSE messages\n\n- Strategy pattern for handling task results (Actions)\n\n- Supports tool calls and workflow step visualization\n\n- **Core Functions**\n\n- Create tasks and continue dialogue\n\n- Real-time message stream updates\n\n- Workflow step tracking\n\n- Automatic task result processing (publishing, saving drafts, account binding guidance, etc.)\n\n- Error handling and user guidance\n\n### 2. Pricing Page Redesign\n\n- **New Pricing Scheme**\n\n- Free Plan: Basic features + One-time $3 Agent credit\n\n- Creator Plan: $50 Agent credit per month + Premium features\n\n- Enterprise Plan: Customized pricing and exclusive services\n\n- **Member Status Management**\n\n- Dynamically show/hide VIP status options\n\n- Optimized current plan identifier and style\n\n- \"Dear Creator\" label (displayed when a member is active)\n\n- Subscription Management Entry\n\n- **Subscription Management Functions**\n\n- Subscription Plan Management (view, unsubscribe, restore subscription)\n\n- Purchase history query\n\n- Order details view\n\n- Pagination support\n\n### 3. UI/UX Improvements\n\n- **Design System Migration**\n\n- Migrated from Ant Design to shadcn/ui\n\n- Using Tailwind CSS v4 new syntax\n\n- Semantic color variables, supporting dark/light theme switching\n\n- Minimalist and modern design style\n\n- **Component Optimization**\n\n- Responsive layout\n\n- Skeleton screen loading status\n\n- Animation effects (blinking, gradient, lighting effects)\n\n- Accessibility Support\n\n### 4. Credits Balance System\n\n- **Balance Display**\n\n- Sidebar Balance Entry\n\n- Real-time Balance Updates\n\n- Automatic Balance Refresh After Task Completion\n\n- **Insufficient Credit Handling**\n\n- Automatic Error Code 12001 Detection\n\n- Pop-up Prompt to Guide Users to Activate Membership\n\n- Automatic Redirect to Pricing Page\n\n### 5. Account Binding Guide\n\n- **Intelligent Guide**\n\n- Detect Account Binding Status\n\n- Automatically Guide Users to Bind/Login to Channels\n\n- Supports Multiple Platforms (Twitter, Xiaohongshu, Douyin, etc.)\n\n## 🔧 Technical Improvements\n\n### Architecture Optimization\n\n- **Modular Design**\n\n- Agent Store uses Factory Pattern\n\n- Processor Registry Pattern (SSE Handler, Action Handler)\n\n- Modularization of Utility Functions\n\n- **State Management**\n\n- Zustand Persistent Storage\n\n- Optimize Performance Using `useShallow`\n\n- Refs Management to Avoid Closure Issues\n\n### Code Quality\n\n- **TypeScript Type Safety**\n\n- Complete type definitions\n\n- Interface standardization\n\n- **Internationalization Support**\n\n- Bilingual support (Chinese & English)\n\n- Namespace management\n\n- Standardized translation keys\n\n## 📁 Major File Changes\n\n### New Files\n\n- `src/store/agent/` - Complete Agent Store module\n\n- `src/app/[lng]/chat/[taskId]/` - Chat details page\n\n- `src/app/[lng]/pricing/components/` - Pricing page component\n\n- `src/app/[lng]/pricing/components/SubscriptionManagementDialog/` - Subscription management dialog\n\n### Refactoring Files\n\n- `src/app/layout/LayoutSidebar/` - Sidebar component refactoring\n\n- `src/components/` - UI component migration to shadcn/ui\n\n## 🐛 Bugs Fixes\n\n- Fixed Sass variable undefined error (`$line`)\n\n- Fixed multi-language namespace issue\n\n- Fixed message rendering issue (result type message)\n\n- Fixed balance refresh timing issue\n\n## 📝 Optimization Items\n\n- [ ] Test mode switch (currently `TEST_MODE = false`)\n\n- [ ] Account binding guidance for more platforms\n\n- [ ] Workflow step visualization optimization\n\n- [ ] User-friendly error handling prompts\n\n## 🎯 Next Steps\n\n1. Improve Agent function test coverage\n\n2. Optimize mobile experience\n\n3. Add more AI tool integrations\n\n4. Performance optimization and monitoring\n\n## 📚 Related Documentation\n\n- Agent Store Documentation: `src/store/agent/README.md`\n\n- Component Documentation: `src/components/README.md`\n\n- Utility function documentation: `src/lib/README.md`\n\n---\n\n**Version**: v0.8.0+\n\n**Release Date**: 2025-01-XX\n\n**Affected Scope**: Site-wide UI redesign, addition of Agent functionality"
+      },
+      {
+        "number": 394,
+        "title": "fix(web): The content is ready and you will be redirected to the publishing page shortly.",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/394",
+        "updated": "2025-12-15T11:51:19Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #393 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 388,
+        "title": "fix(web): Angent feature development and many problem fixes",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/388",
+        "updated": "2025-12-12T09:02:46Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #387 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 386,
+        "title": "feat: The platform's interactive functions have been fully realized",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/386",
+        "updated": "2025-12-12T05:37:13Z",
+        "body": "close #385\r\n\r\n## Change Description\r\n\r\nThis PR adds complete interaction feature support for Douyin and Xiaohongshu platforms to the browser extension.\r\n\r\n### New Features\r\n\r\n#### Douyin Platform\r\n- ✅ Like functionality\r\n- ✅ Favorite/Bookmark functionality\r\n- ✅ Comment functionality\r\n- ✅ Direct Message functionality\r\n\r\n#### Xiaohongshu Platform\r\n- ✅ Comment functionality\r\n- ✅ Signature service\r\n\r\n### Technical Improvements\r\n- 🔧 Updated ESLint configuration to improve code quality\r\n- 🔧 Removed redundant button state detection methods to simplify code\r\n- 🔧 Removed debug logs and optimized error handling logic\r\n- 🔧 Enhanced interaction feature UI for better user experience"
+      },
+      {
+        "number": 385,
+        "title": "interaction support system",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/385",
+        "updated": "2025-12-12T05:37:12Z",
+        "body": "### What happened?\n\nAdd support for interactive operations on the Douyin platform (like, collect, comment, private message)\nAdd interactive operation support for the Xiaohongshu platform (comment and signature services)\n\n### Type\n\n- [ ] Bug\n- [ ] Idea\n- [ ] Improvement\n- [ ] Question\n\n### Extra (optional)\n\n_No response_"
+      },
+      {
+        "number": 338,
+        "title": "feat(account): add clientType to account DTO and repository",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/338",
+        "updated": "2025-12-10T13:10:53Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\nRelated to #302 \r\n"
+      },
+      {
+        "number": 36,
+        "title": "Fix: Douyin not working",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/36",
+        "updated": "2025-11-05T07:11:13Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：）\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n1.1.0\n\n### Please select your platform\n\nAndroid, Windows, Mac\n\n### Steps to reproduce\n\n1. Douyin publishing failed\n2. Douyin interaction feature unavailable\n\n### ✔️ Expected Behavior\n\n\n1. We’ve identified that the publishing failure on Douyin was caused by insufficient bandwidth on our relay server during video uploads, leading to a timeout.\n\n2. The interaction feature issue has been traced to an incorrect channel selection.\n\n\n### ❌ Actual Behavior\n\n_No response_"
+      },
+      {
+        "number": 73,
+        "title": "Homepage content is non-interactive",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/issues/73",
+        "updated": "2025-11-01T09:09:57Z",
+        "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I confirm that I am using English to submit this report, otherwise it will be closed.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### 1. Is this request related to a challenge you're experiencing? Tell me about your story.\n\nAdd interactive management features for users’ own posts on Xiaohongshu, Douyin, Threads, Instagram, and Facebook.\n\n### 2. Additional context or comments\n\n_No response_\n\n### 3. Can you help us with this feature?\n\n- [ ] I am interested in contributing to this feature."
+      }
+    ]
+  },
+  {
+    "query": "repo:yikart/AiToEarn duplicate",
+    "total": 55,
+    "items": [
+      {
+        "number": 587,
+        "title": "fix(tiktok): prevent duplicate posts after retryable failures",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/587",
+        "updated": "2026-08-12T10:02:06Z",
+        "body": "# Pull Request\n\n## 🧩 Issue Link\n\nFixes #586\n\n## 📝 Description\n\nTikTok Direct Post tasks no longer repeat a remote publish operation after AiToEarn has received and saved its `publish_id`. The provider checkpoints that ID before upload or follow-up work. A later failure now enters status reconciliation instead of returning to publish initialization, including credential-refresh re-entry.\n\nTikTok also disables automatic retries for ambiguous failures that happen before a checkpoint. This favors a visible failed task over a possible duplicate public post. If TikTok reports multiple public post IDs, AiToEarn keeps the first post as canonical and retains every reported ID for incident diagnosis.\n\n## ✅ Validation\n\n- 69 focused TikTok, publish-task, queue, and state tests passed.\n- Changed-file ESLint passed.\n- `aitoearn-server` and all 15 build dependencies compiled successfully.\n- `git diff --check` passed.\n\nRepository-wide lint still reports pre-existing errors in `config/config.yaml` and `relay-exception.filter.ts`; neither file is changed by this PR.\n\n## 🚀 Deployment note\n\nThe fix affects hosted Relay traffic only after the `aitoearn.ai` backend deploys this change.\n"
+      },
+      {
+        "number": 586,
+        "title": "TikTok Direct Post can duplicate posts after ambiguous retries",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/586",
+        "updated": "2026-08-12T09:21:23Z",
+        "body": "## Bug\n\nTikTok Direct Post tasks can create more than one public post when a transient failure occurs after TikTok has accepted the publish request but before AiToEarn persists the returned `publish_id`.\n\n## Failure sequence\n\n1. AiToEarn calls TikTok's Direct Post initialization endpoint.\n2. TikTok creates the publish operation and returns a `publish_id`.\n3. The upload or local persistence path fails.\n4. The task is treated as retryable and returns to the publish queue.\n5. The retry initializes a second TikTok publish operation for the same task.\n\nAn ambiguous timeout during initialization has the same risk because the client cannot know whether TikTok accepted the request.\n\n## Expected behavior\n\n- Persist `publish_id` before any upload or follow-up work.\n- After a remote checkpoint exists, reconcile status instead of calling Direct Post initialization again.\n- Do not automatically retry ambiguous TikTok publish-init failures.\n- If TikTok reports multiple public post IDs for one `publish_id`, preserve the first canonical ID and retain all IDs for incident diagnosis.\n\n## Validation\n\nA patch with focused regression tests is ready. It covers the checkpoint-before-upload sequence, credential-refresh re-entry, disabled ambiguous retries, reconciliation after checkpointed failures, and multiple public post IDs.\n"
+      },
+      {
+        "number": 579,
+        "title": "Security: argument/protocol injection into FFmpeg via generateSubtitle MCP mediaUrl (CWE-78 / CWE-918)",
+        "state": "open",
+        "url": "https://github.com/yikart/AiToEarn/issues/579",
+        "updated": "2026-07-27T02:06:11Z",
+        "body": "## Summary\n\nThe `generateSubtitle` MCP tool in `apps/aitoearn-ai/src/core/agent/mcp/subtitle.mcp.ts` passes a caller-supplied `mediaUrl` directly to `ffmpeg -i` without validating the URL scheme. Because FFmpeg accepts many protocols beyond `http(s)` (`file:`, `concat:`, `subfile:`, `data:`, `pipe:`, `rtmp:`, `gopher:`, …), any authenticated MCP caller — including an LLM/agent that a user has connected via the MCP server — can coerce the server to read arbitrary local files, perform SSRF against internal services, or inject FFmpeg CLI flags.\n\n- **CWE**: CWE-78 (argument injection into an external program) / CWE-918 (SSRF) / CWE-22 (arbitrary file read)\n- **File**: `project/aitoearn-backend/apps/aitoearn-ai/src/core/agent/mcp/subtitle.mcp.ts`\n- **Sink**: `execa('ffmpeg', ['-i', mediaUrl, ...])` inside `extractAudioWithFFmpeg`\n- **Source**: `mediaUrl` argument of the `generateSubtitle` MCP tool (Zod-validated as `z.string()`, no scheme constraint)\n\n## Data flow\n\n1. MCP tool `generateSubtitle` is registered with `generateSubtitleSchema = z.object({ mediaUrl: z.string(), language: z.string().optional() })` — `z.string()` does not restrict the URL scheme.\n2. The handler forwards `mediaUrl` unchanged into `extractAudioWithFFmpeg(mediaUrl)`.\n3. `extractAudioWithFFmpeg` calls `execa('ffmpeg', ['-i', mediaUrl, ...])`. `execa` avoids a shell (so this is not classic shell injection), but FFmpeg itself parses the URL and dispatches to a protocol handler (`file`, `concat`, `data`, `subfile`, `rtmp`, `gopher`, `pipe`, `srtp`, …). A leading `-` in `mediaUrl` is additionally parsed by FFmpeg as a flag.\n\n## Proof of concept\n\nAny caller that can reach the MCP tool can invoke it with:\n\n```json\n{\n  \"name\": \"generateSubtitle\",\n  \"arguments\": {\n    \"mediaUrl\": \"file:///etc/passwd\",\n    \"language\": \"en\"\n  }\n}\n```\n\nFFmpeg opens `/etc/passwd` (or any readable file on the server) as an input. Equivalent payloads that all reproduce against the pre-fix code:\n\n- `concat:/etc/hosts|/etc/passwd` — read+concatenate local files\n- `subfile,,start,0,end,4096,,:/etc/shadow` — byte-range read of a local file\n- `http://169.254.169.254/latest/meta-data/` — SSRF to cloud metadata\n- `gopher://internal-service:6379/_...` — SSRF against internal Redis/etc.\n- `-y` or `-loglevel debug` as the value of `mediaUrl` — argument injection into the FFmpeg command line\n\nFFmpeg output feeds the transcription pipeline; even without direct output, error messages and blind/timing side channels are typically enough to exfiltrate contents (and `concat:` frequently returns file bytes verbatim to the audio stage).\n\n## Fix\n\nValidate `mediaUrl` before it ever reaches FFmpeg:\n\n1. Parse with `new URL(mediaUrl)` and require `protocol === 'http:' || 'https:'`.\n2. Reject any value starting with `-` (defence against argument injection).\n3. Additionally pass `-protocol_whitelist https,http,tls,tcp` to FFmpeg as defence-in-depth against protocol chaining inside playlists/HLS segments FFmpeg might follow.\n\nBoth `extractAudioWithFFmpeg` and the tool entry point call the validator so the check cannot be bypassed by future callers.\n\nA PR with the fix will follow this issue: it adds an `assertSafeMediaUrl` helper and the `-protocol_whitelist` flag. The diff is a single file, +39 lines.\n\n## Preconditions & impact\n\n- Requires the ability to invoke the `generateSubtitle` MCP tool (authenticated MCP/agent user, or a prompt-injectable LLM connected to the server).\n- Does **not** require any pre-existing local-file-read capability on the host — this fix closes a real capability gap rather than duplicating existing access.\n- Impact: arbitrary local file read on the `aitoearn-ai` container, SSRF into the internal network (including cloud metadata endpoints), and potential FFmpeg-flag injection.\n"
+      },
+      {
+        "number": 554,
+        "title": "Implement navigation visibility toggle with keyboard shortcut",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/554",
+        "updated": "2026-06-23T14:10:20Z",
+        "body": "Added state management for navigation visibility and keyboard shortcut to toggle it.\r\n\r\n# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #\r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 255,
+        "title": "fix(update-published-post): support update youtube video metadata\"",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/255",
+        "updated": "2026-06-16T08:47:09Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #173 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\nfix(update-published-post): support update youtube video metadata\"\r\n"
+      },
+      {
+        "number": 249,
+        "title": "fix(publishing): fix delete/update facebook post issue",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/249",
+        "updated": "2026-06-16T08:47:09Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #173 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\nfix(publishing): fix delete/update facebook post issue\r\n\r\n"
+      },
+      {
+        "number": 268,
+        "title": "fix(web): Click event bubbling in the text selection toolbar causes the pop-up to shrink abnormally",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/268",
+        "updated": "2026-06-16T08:47:07Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #267 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 276,
+        "title": "fix(publishing): delete linedin/bilibili post ",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/276",
+        "updated": "2026-06-16T08:47:06Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n--> \r\n\r\nCloses #139 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\nfix(publishing): delete linedin/bilibili post \r\n"
+      },
+      {
+        "number": 241,
+        "title": "feat(publishing): support update published posts for Youtube/Facebook",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/241",
+        "updated": "2026-06-16T08:47:02Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #173 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\nsupport update published posts for Youtube/Facebook\r\n\r\n"
+      },
+      {
+        "number": 229,
+        "title": "fix(web): Let's use AI to earn!",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/229",
+        "updated": "2026-06-16T08:46:58Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #209 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 193,
+        "title": "refactor(web): To avoid duplicate clicks during posting, ensure ID uniqueness, and add an \"Post Now\" function.",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/193",
+        "updated": "2026-06-16T08:46:55Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\n必填：请至少关联一个 Issue。\r\n关闭型：Closes #123 / Fixes #123 / Resolves #123\r\n关联型：Related to #123 / Refs #123\r\n支持多条：Closes #12, Related to #34\r\n跨仓库：Closes owner/repo#123\r\n-->\r\n\r\nCloses #192 \r\n\r\n## 📝 Description\r\n\r\n<!-- 请简要描述此 PR 的目的和主要更改内容 -->\r\n\r\n## 📋 Changes\r\n\r\n<!-- 列出此 PR 中的主要变更点 -->\r\n\r\n-\r\n-\r\n\r\n## 🧪 Testing\r\n\r\n<!-- 描述已执行的测试 -->\r\n\r\n- [ ] Passed ESLint check locally\r\n- [ ] Build succeeded locally\r\n- [ ] Added/updated related tests\r\n- [ ] All tests passed\r\n\r\n## 📝 Notes\r\n\r\n<!-- 其他需要说明的信息 -->\r\n"
+      },
+      {
+        "number": 350,
+        "title": "feat: Initial integration of browser plugins",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/350",
+        "updated": "2026-06-16T08:46:41Z",
+        "body": "close #349"
+      },
+      {
+        "number": 337,
+        "title": "fix(web): Overview This update primarily optimizes homepage loading performance, restructures the navigation, and improves the error handling of the popular content interface",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/337",
+        "updated": "2026-06-16T08:46:40Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #336 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n### Overview This update primarily optimizes homepage loading performance, restructures the navigation, and improves the error handling of the popular content interface.\r\n\r\n### Major Changes\r\n\r\n#### 1. Image Fault Handling on Hot Content Interface\r\n\r\n- **Issue**: Cover image displays blank when loading fails due to anti-hotlinking measures.\r\n\r\n- **Solution**:\r\n\r\n- Added image loading failure detection mechanism\r\n\r\n- Display text placeholders when loading fails (prioritizes the title, uses the author's name if there is no title)\r\n\r\n- Use a gradient background of the theme color for placeholders to maintain visual consistency\r\n\r\n- **Related Files**:\r\n\r\n- `src/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget.tsx`\r\n\r\n- `src/app/[lng]/hotContent/components/HotContent/hotContent.module.scss`\r\n\r\n#### 2. Homepage Navigation Structure Restructuring\r\n\r\n- **Issue**: Too many items in the navigation bar, resulting in a cluttered layout.\r\n\r\n- **Solution**:\r\n\r\n- Added a \"Resources\" dropdown menu\r\n\r\n- Status, Docs, Blog, and Downloads are integrated into submenu items.\r\n\r\n- The desktop version uses the Ant Design Dropdown component.\r\n\r\n- Mobile versions support expanding/collapsed submenus.\r\n\r\n- **Related Files**:\r\n\r\n- `src/app/layout/routerData.ts`\r\n\r\n- `src/app/layout/HomeHeader.tsx`\r\n\r\n- `src/app/i18n/locales/*/home.json`\r\n\r\n#### 3. Hero Section Full-Screen Display\r\n\r\n- **Problem**: The Hero area has a fixed height, resulting in poor display on different screen sizes.\r\n\r\n- **Solution**:\r\n\r\n- Adjust the Hero area height to `100vh` to fill the entire screen.\r\n\r\n- Use flex layout to vertically center the content.\r\n\r\n- Improve the visual impact of the first screen.\r\n\r\n- **Related Files**:\r\n\r\n- `src/app/[lng]/styles/difyHome.module.scss`\r\n\r\n#### 4. Product Introduction Section Lazy Loading\r\n\r\n- **Problem:** The homepage loads all product introduction sections at once, resulting in excessively long first-screen loading time.\r\n\r\n**Solution:**\r\n\r\n- Implement a lazy-loading component based on the Intersection Observer API.\r\n\r\n- Apply lazy loading to the following 8 sections:\r\n\r\n- BrandBar\r\n\r\n- ContentPublishingSection\r\n\r\n- ContentHotspotSection\r\n\r\n- ContentSearchSection\r\n\r\n- CommentsSearchSection\r\n\r\n- ContentEngagementSection\r\n\r\n- UpcomingFeaturesSection\r\n\r\n- DownloadSection\r\n\r\n- Set a 200px preload distance to preload content that will soon enter the viewport.\r\n\r\n- Significantly reduce first-screen loading time.\r\n\r\n**Related Files:**\r\n\r\n- `src/app/[lng]/page.tsx`\r\n\r\n### Technical Details\r\n\r\n#### Lazy Loading Implementation\r\n\r\nfunction LazyLoadSection({ children }: { children: ReactNode }) {\r\nconst [shouldLoad, setShouldLoad] = useState(false)\r\n\r\nconst sectionRef = useRef<HTMLDivElement>(null)\r\n\r\nuseEffect(() => {\r\nconst observer = new IntersectionObserver(\r\n(entries) => {\r\nentries.forEach((entry) => {\r\nif (entry.isIntersecting) {\r\nsetShouldLoad(true)\r\nobserver.disconnect()\r\n\r\n}\r\n})\r\n\r\n},\r\n\r\n{ rootMargin: '200px' }\r\n\r\n)\r\n\r\n// ...\r\n\r\n}, [])\r\n\r\n### Performance Improvements\r\n\r\n- First screen load time reduced by approximately 40-60% (depending on network speed)\r\n\r\n- Initial JavaScript bundle size reduced\r\n\r\n- Image resources loaded on demand, saving bandwidth\r\n\r\n### Testing Suggestions\r\n\r\n- [ ] Test loading performance under different network environments\r\n\r\n- [ ] Verify mobile navigation menu interaction\r\n\r\n- [ ] Check placeholder display in image loading failure scenarios\r\n\r\n- [ ] Verify lazy loading compatibility in different browsers\r\n\r\n### Related Issues\r\n\r\n- None\r\n\r\n### Tags:\r\n\r\n`enhancement` `performance` `ui/ux` `frontend`\r\n\r\n"
+      },
+      {
+        "number": 312,
+        "title": "feat(public): add publish db repository",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/312",
+        "updated": "2026-06-16T08:46:37Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #177 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 305,
+        "title": "fix(web): There are several serious problems when the AI ​​assistant synchronizes content to the publishing editor",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/305",
+        "updated": "2026-06-16T08:46:36Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #306 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 285,
+        "title": "feat(web): Add Account Warning Modal When Creating New Work",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/285",
+        "updated": "2026-06-16T08:46:33Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #284 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 282,
+        "title": "refactor(web): AI Features Enhancement & Multi-language Support",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/282",
+        "updated": "2026-06-16T08:46:33Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #279 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 188,
+        "title": "refactor(publishing): consolidate social media API error handling and retry strategy in publishing",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/188",
+        "updated": "2026-06-16T04:17:45Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\n必填：请至少关联一个 Issue。\r\n关闭型：Closes #123 / Fixes #123 / Resolves #123\r\n关联型：Related to #123 / Refs #123\r\n支持多条：Closes #12, Related to #34\r\n跨仓库：Closes owner/repo#123\r\n-->\r\n\r\nCloses #187\r\n\r\n## 📝 Description\r\n\r\n<!-- 请简要描述此 PR 的目的和主要更改内容 -->\r\n\r\n## 📋 Changes\r\n\r\n<!-- 列出此 PR 中的主要变更点 -->\r\n\r\n- consolidate social media API error handling and retry strategy in publishing\r\n\r\n\r\n## 🧪 Testing\r\n\r\n<!-- 描述已执行的测试 -->\r\n\r\n- [x] Passed ESLint check locally\r\n- [x] Build succeeded locally\r\n- [x] Added/updated related tests\r\n- [x] All tests passed\r\n\r\n## 📝 Notes\r\n\r\n<!-- 其他需要说明的信息 -->\r\n"
+      },
+      {
+        "number": 310,
+        "title": "fix: ai video generate dto",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/310",
+        "updated": "2026-06-16T04:17:35Z",
+        "body": "# Pull Request\n\n## 🧩 Issue Link\n\n<!--\nRequired: Please link at least one Issue.\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\nReference only: Related to #123 / Refs #123\nMultiple links supported: Closes #12, Related to #34\nCross-repo: Closes owner/repo#123\n-->\n\nCloses #309\n\n## 📝 Description\n\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\nai video generate dto\n\n"
+      },
+      {
+        "number": 322,
+        "title": "fix(media): handle full URL paths in media service",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/322",
+        "updated": "2026-06-16T04:17:33Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #321\r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 515,
+        "title": "fix(twitter): resolve video publishing stuck in 'publishing' state",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/515",
+        "updated": "2026-05-13T06:57:32Z",
+        "body": "This PR fixes a critical issue where Twitter video uploads remain stuck in the 'publishing' state indefinitely. \n\n### Changes:\n1. **`libs/twitter/twitter.service.ts`**: Added the missing `command: 'STATUS'` parameter to the `getMediaStatus` API call, which is required by Twitter for polling processing status.\n2. **`publishing/providers/twitter.service.ts`**: Improved status parsing to handle cases where `processing_info` might be missing but the upload has already succeeded. Added safety checks for `dataId` during verification.\n\nThese changes ensure the backend correctly identifies when a video has finished processing and proceeds to create the post."
+      },
+      {
+        "number": 508,
+        "title": "chore: avoid local AiToEarn port conflicts",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/508",
+        "updated": "2026-05-11T08:33:36Z",
+        "body": "## Summary\n- Adds an isolated local Codex deployment entrypoint and OpenAI-compatible proxy.\n- Parameterizes Docker Compose host ports while preserving existing upstream defaults.\n- Sets non-conflicting local defaults for the Codex startup script: Web `18080`, RustFS proxy `19000`, RustFS console `19001`, MongoDB `27018`, Redis `6380`.\n- Documents the local port map and updates local API/MCP/SSE examples to `http://localhost:18080`.\n\n## Verification\n- `bash -n scripts/start-local-codex.sh`\n- `node --check scripts/codex-openai-proxy.mjs`\n- `/Applications/Docker.app/Contents/Resources/bin/docker compose -f docker-compose.yml -f docker-compose.codex.yml config --quiet`\n- `git diff --check HEAD~1..HEAD`\n- Effective compose config confirmed published host ports `18080`, `19000`, `19001`, `27018`, `6380`, and updated `ASSETS_CONFIG` / `RELAY_CALLBACK_URL` values.\n- Codex proxy smoke test: `curl -fsS http://127.0.0.1:52032/health` returned `ok=true`, `model=gpt-5.5`, `reasoningEffort=xhigh`.\n\n## Runtime note\nFull container startup could not be completed on the current machine because Docker Desktop is the Intel build on Apple Silicon. Docker Desktop reports: `This is the Intel version of Docker Desktop`; the docs already call out the need for the arm64 build.\n"
+      },
+      {
+        "number": 480,
+        "title": "fix: fix agent ui",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/480",
+        "updated": "2025-12-30T02:36:59Z",
+        "body": "close #449\r\n"
+      },
+      {
+        "number": 478,
+        "title": "fix(web): Added functionality to interrupt AI content generation tasks un close isok publish startus end",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/478",
+        "updated": "2025-12-29T14:13:19Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #477 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 473,
+        "title": "fix: Share development completed",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/473",
+        "updated": "2025-12-26T22:19:35Z",
+        "body": "close #449"
+      },
+      {
+        "number": 470,
+        "title": "fix: Fix some problems",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/470",
+        "updated": "2025-12-25T15:09:28Z",
+        "body": "close #449\r\n"
+      },
+      {
+        "number": 463,
+        "title": "fix: Some bugs have been fixed",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/463",
+        "updated": "2025-12-25T07:35:36Z",
+        "body": "close #457"
+      },
+      {
+        "number": 459,
+        "title": "feat: 2025-12-24 Daily development",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/459",
+        "updated": "2025-12-25T01:18:21Z",
+        "body": "close #457\r\n"
+      },
+      {
+        "number": 456,
+        "title": "fix: Fix the bug on the release page",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/456",
+        "updated": "2025-12-24T04:34:50Z",
+        "body": "close #451"
+      },
+      {
+        "number": 446,
+        "title": "fix(web): action card persistence and status",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/446",
+        "updated": "2025-12-21T13:53:56Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nRelated to #400\r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      }
+    ]
+  },
+  {
+    "query": "repo:yikart/AiToEarn analytics",
+    "total": 6,
+    "items": [
+      {
+        "number": 245,
+        "title": "feat: Multiple new functions have been added",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/245",
+        "updated": "2026-06-16T08:47:09Z",
+        "body": "This pr has added many new functions for the web end. The function descriptions are as follows:\r\n\r\n1. Complete the temporary storage of publication records in the browser, Closes #236 \r\n2. A new data statistics poster function has been added, Closes #240 \r\n3. Automatically poll the completion of tasks in the release process, Closes  #233\r\n4. web release time selection optimization, Closes #232 "
+      },
+      {
+        "number": 516,
+        "title": "fix(meta): optimize facebook/instagram oauth flow and update graph api version to v24.0",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/516",
+        "updated": "2026-05-13T07:01:15Z",
+        "body": "This PR optimizes the Meta (Facebook/Instagram) authorization flow to resolve issues with account linking and permissions.\n\n### Key Changes:\n1. **Update Graph API Version**: Changed Graph API version to `v24.0` (latest) across all Meta platform configurations.\n2. **Expand Scopes**: Added missing essential scopes for Facebook (`pages_read_user_content`, `pages_manage_engagement`, etc.) and Instagram (`instagram_business_manage_comments`, `instagram_business_manage_insights`) to ensure full functionality for publishing and analytics.\n3. **Fix PKCE Handling**: Corrected a bug in `MetaService` where the `codeVerifier` was not being saved to Redis during the authorization phase, which would break OAuth for platforms requiring PKCE.\n4. **Improve Error Feedback**: Enhanced the callback handler with more descriptive and localized error messages to help users understand why authorization might have failed (e.g., missing public pages).\n\nThese optimizations should make the Facebook/Instagram integration significantly more robust."
+      },
+      {
+        "number": 417,
+        "title": "fix(web): jiaoben416",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/417",
+        "updated": "2025-12-19T13:57:34Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #416 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 401,
+        "title": "feat: youtube analyse auth",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/401",
+        "updated": "2025-12-17T11:28:18Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nCloses #\r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 402,
+        "title": "feat: youtube analyse auth",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/402",
+        "updated": "2025-12-17T11:28:18Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\n\r\n<!--\r\nRequired: Please link at least one Issue.\r\nClosing keywords: Closes #123 / Fixes #123 / Resolves #123\r\nReference only: Related to #123 / Refs #123\r\nMultiple links supported: Closes #12, Related to #34\r\nCross-repo: Closes owner/repo#123\r\n-->\r\n\r\nRelated to #168 \r\n\r\n## 📝 Description\r\n\r\n<!-- Briefly describe the purpose of this PR and the main changes introduced. -->\r\n\r\n\r\n"
+      },
+      {
+        "number": 395,
+        "title": "feat: Update README files to include the new \"All In Agent\" feature ",
+        "state": "closed",
+        "url": "https://github.com/yikart/AiToEarn/pull/395",
+        "updated": "2025-12-15T14:40:43Z",
+        "body": "# Pull Request\r\n\r\n## 🧩 Issue Link\r\nCloses #373 \r\n\r\n\r\n## 📝 Description\r\nUpdate README files to include the new \"All In Agent\" feature \r\n\r\n"
+      }
+    ]
+  }
+]

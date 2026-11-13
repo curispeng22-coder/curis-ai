@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "source": "http://127.0.0.1:8765",
+  "pageInventory": "../figma/curis-ui-v2.all-pages.json",
+  "legacyAliases": ["project-miniapp", "project-xhs"],
+  "frames": ["analytics-org","analytics-project","analytics-workflow","analytics","brainstorm-active","brainstorm-results","brainstorm-session-detail","brainstorm","capability-agent-list","capability-center","capability-model-list","capability-skill-list","capability-tool-list","capability-workflow-list","ceo-home","company-runtime","decision-center","department-create","department-detail","employee-create","employee-detail","execution-runs","execution-tasks","execution","knowledge-company","knowledge-dept","knowledge-entry-detail","knowledge-project","knowledge","org-center","org-dept","org-employees","project-center","project-dept","project-detail","project-miniapp-detail","project-xhs-workflow-detail","report-detail","reports","run-detail","settings-brand","settings-notify","settings-profile","settings","skill-detail","strategy-room","task-detail"],
+  "viewports": {
+    "1440": {"width":1440,"height":900,"path":"exports/1440/{frame}.png"},
+    "1024": {"width":1024,"height":768,"path":"exports/1024/{frame}.png"},
+    "390": {"width":390,"height":844,"path":"exports/390/{frame}.png"}
+  },
+  "stateCatalog": {
+    "1440": "states/catalog-1440.png",
+    "1024": "states/catalog-1024.png",
+    "390": "states/catalog-390.png"
+  }
+}

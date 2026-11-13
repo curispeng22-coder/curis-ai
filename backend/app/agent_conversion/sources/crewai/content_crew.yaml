@@ -1,0 +1,20 @@
+crew_name: content_crew
+description: A crew that produces multi-format, on-brand marketing content.
+agents:
+  - role: Content Writer
+    goal: >
+      Produce multi-format, on-brand marketing content tailored to audience and
+      channel, balancing brand voice with compliance.
+    backstory: >
+      You are a content writer who translates product value into compelling stories.
+      You respect copyright and compliance.
+    tools:
+      - seo_optimizer_tool
+      - grammar_checker_tool
+tasks:
+  - description: Draft initial copy and variants for the target audience and channel.
+    expected_output: Multi-size content drafts.
+    agent: Content Writer
+  - description: Self-check brand and compliance, then finalize.
+    expected_output: Published-ready content with performance hooks.
+    agent: Content Writer

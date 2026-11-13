@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis · 首页风格探索</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: #0B0D14;
+    color: #E7EAF3;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 控制条：风格切换 */
+  .switcher {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 24px;
+    background: rgba(13,15,26,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #1E2233;
+  }
+  .switcher .brand-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: linear-gradient(135deg,#8B5CF6,#22D3EE);
+    box-shadow: 0 0 12px rgba(139,92,246,.7);
+  }
+  .switcher .title { font-size: 14px; font-weight: 600; letter-spacing:.3px; }
+  .switcher .title small { color:#8A90A8; font-weight: 500; margin-left:8px; }
+  .switcher .spacer { flex: 1; }
+  .tabs { display: flex; gap: 8px; }
+  .tab {
+    border: 1px solid #262C42; background: #161A2B;
+    color: #B6BDD6; font-size: 13px; font-weight: 500;
+    padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    transition: all .18s ease;
+  }
+  .tab:hover { color:#fff; border-color:#3a4060; }
+  .tab.active { color:#fff; background:#8B5CF6; border-color:#8B5CF6; box-shadow:0 4px 14px rgba(139,92,246,.4); }
+
+  /* ===== 应用骨架（三套主题共用结构） ===== */
+  .app {
+    --bg:#F6F8FC; --surface:#FFFFFF; --surface-2:#F1F4FA;
+    --text:#1A2233; --text-muted:#6B7280;
+    --primary:#4F46E5; --primary-hover:#4338CA; --primary-soft:#EEF0FF;
+    --accent:#06B6D4; --success:#10B981; --warning:#F59E0B; --danger:#EF4444;
+    --border:#E5E9F2;
+    --shadow:0 1px 3px rgba(20,30,60,.06), 0 4px 12px rgba(20,30,60,.04);
+    --radius:16px; --radius-sm:11px;
+    display:grid; grid-template-columns: 244px 1fr; min-height: 100vh;
+    background: var(--bg); color: var(--text);
+    transition: background .4s ease, color .4s ease;
+  }
+  .app[data-theme="indigo"] { /* 默认即晨雾蓝 */ }
+  .app[data-theme="teal"] {
+    --bg:#F3FBFA; --surface:#FFFFFF; --surface-2:#ECF7F4;
+    --text:#14201E; --text-muted:#5B7470;
+    --primary:#0D9488; --primary-hover:#0F766E; --primary-soft:#E4F6F2;
+    --accent:#14B8A6; --border:#D9EDEA;
+    --shadow:0 1px 3px rgba(13,80,75,.06), 0 4px 12px rgba(13,80,75,.04);
+  }
+  .app[data-theme="violet"] {
+    --bg:#0D0F1A; --surface:#161A2B; --surface-2:#1E2438;
+    --text:#EAEDF7; --text-muted:#9AA3BD;
+    --primary:#8B5CF6; --primary-hover:#7C3AED; --primary-soft:#2A2350;
+    --accent:#22D3EE; --success:#34D399; --warning:#FBBF24; --danger:#FB7185;
+    --border:#262C42;
+    --shadow:0 1px 3px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+  }
+
+  /* 侧边栏 */
+  .sidebar { background: var(--surface); border-right:1px solid var(--border); padding:22px 16px; display:flex; flex-direction:column; gap:6px; }
+  .logo { display:flex; align-items:center; gap:10px; padding:4px 8px 18px; }
+  .logo .mark { width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+  .logo .name { font-weight:700; font-size:17px; letter-spacing:.4px; }
+  .nav-group-label { font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:.6px; padding:14px 10px 6px; text-transform:uppercase; }
+  .nav-item { display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:var(--radius-sm); color:var(--text-muted); font-size:14px; font-weight:500; cursor:pointer; transition:all .15s ease; }
+  .nav-item svg { width:18px; height:18px; flex:none; }
+  .nav-item:hover { background:var(--surface-2); color:var(--text); }
+  .nav-item.active { background:var(--primary-soft); color:var(--primary); font-weight:600; }
+  .nav-item .badge { margin-left:auto; font-size:11px; background:var(--primary); color:#fff; padding:1px 7px; border-radius:999px; }
+  .sidebar .spacer { flex:1; }
+  .tenant-card { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; }
+  .tenant-card .t-name { font-size:13px; font-weight:600; }
+  .tenant-card .t-sub { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+  /* 主区 */
+  .main { display:flex; flex-direction:column; min-width:0; }
+  .topbar { display:flex; align-items:center; gap:16px; padding:16px 28px; border-bottom:1px solid var(--border); background:var(--surface); }
+  .search { flex:1; max-width:420px; display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:9px 16px; color:var(--text-muted); font-size:13px; }
+  .search svg { width:16px; height:16px; }
+  .topbar .spacer { flex:1; }
+  .icon-btn { width:38px; height:38px; border-radius:11px; background:var(--surface-2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .icon-btn:hover { color:var(--text); }
+  .icon-btn svg { width:18px; height:18px; }
+  .avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--accent)); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:14px; }
+
+  .content { padding:28px; display:flex; flex-direction:column; gap:24px; }
+
+  /* Hero */
+  .hero { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .hero h1 { font-size:24px; font-weight:700; letter-spacing:.2px; }
+  .hero h1 .hi { color:var(--primary); }
+  .hero p { color:var(--text-muted); font-size:13.5px; margin-top:6px; }
+  .hero .date { font-size:12.5px; color:var(--text-muted); }
+
+  /* KPI */
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); }
+  .kpi .label { font-size:12.5px; color:var(--text-muted); display:flex; align-items:center; gap:7px; }
+  .kpi .label .dot { width:8px; height:8px; border-radius:50%; background:var(--primary); }
+  .kpi .value { font-size:28px; font-weight:700; margin-top:10px; letter-spacing:.3px; }
+  .kpi .trend { font-size:12px; margin-top:4px; font-weight:600; }
+  .kpi .trend.up { color:var(--success); }
+  .kpi .trend.flat { color:var(--text-muted); }
+
+  /* 部门矩阵 */
+  .section-head { display:flex; align-items:center; justify-content:space-between; }
+  .section-head h2 { font-size:16px; font-weight:700; }
+  .section-head .link { font-size:13px; color:var(--primary); font-weight:600; cursor:pointer; }
+  .depts { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .dept { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); position:relative; overflow:hidden; transition:transform .18s ease, box-shadow .18s ease; cursor:pointer; }
+  .dept:hover { transform:translateY(-3px); box-shadow:0 10px 26px rgba(20,30,60,.10); }
+  .app[data-theme="violet"] .dept:hover { box-shadow:0 12px 30px rgba(0,0,0,.45); }
+  .dept .top { display:flex; align-items:center; gap:12px; }
+  .dept .icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
+  .dept .icon svg { width:22px; height:22px; }
+  .dept .d-name { font-size:15px; font-weight:700; }
+  .dept .d-type { font-size:11.5px; color:var(--text-muted); margin-top:1px; }
+  .dept .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .chip { font-size:11.5px; padding:4px 9px; border-radius:999px; background:var(--surface-2); color:var(--text-muted); border:1px solid var(--border); }
+  .dept .status { position:absolute; top:16px; right:16px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; }
+  .status.run { background:rgba(16,185,129,.14); color:var(--success); }
+  .status.draft { background:rgba(245,158,11,.16); color:var(--warning); }
+  .dept .meta { font-size:12px; color:var(--text-muted); margin-top:12px; }
+
+  /* 下方面板 */
+  .panels { display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
+  .panel h3 { font-size:14.5px; font-weight:700; margin-bottom:14px; }
+  .task-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px dashed var(--border); }
+  .task-row:last-child { border-bottom:none; }
+  .task-row .t-ico { width:34px; height:34px; border-radius:9px; background:var(--primary-soft); color:var(--primary); display:flex; align-items:center; justify-content:center; flex:none; }
+  .task-row .t-ico svg { width:17px; height:17px; }
+  .task-row .t-main { min-width:0; flex:1; }
+  .task-row .t-title { font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .task-row .t-sub { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  .pill { font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; flex:none; }
+  .pill.done { background:rgba(16,185,129,.14); color:var(--success); }
+  .pill.run { background:var(--primary-soft); color:var(--primary); }
+  .pill.wait { background:rgba(245,158,11,.16); color:var(--warning); }
+
+  .quick { display:flex; flex-direction:column; gap:10px; }
+  .q-btn { display:flex; align-items:center; gap:11px; padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:13.5px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .q-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .q-btn svg { width:17px; height:17px; color:var(--primary); }
+  .q-btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .q-btn.primary:hover { background:var(--primary-hover); color:#fff; }
+  .q-btn.primary svg { color:#fff; }
+
+  @media (max-width:1080px){
+    .kpis{grid-template-columns:repeat(2,1fr);}
+    .depts{grid-template-columns:repeat(2,1fr);}
+    .panels{grid-template-columns:1fr;}
+  }
+  @media (max-width:680px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .kpis,.depts{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <span class="brand-dot"></span>
+  <span class="title">Curis 首页风格探索 <small>同一套组件骨架 · 仅切换配色与质感</small></span>
+  <span class="spacer"></span>
+  <div class="tabs">
+    <button class="tab active" data-set="indigo">① 晨雾蓝</button>
+    <button class="tab" data-set="teal">② 薄荷青</button>
+    <button class="tab" data-set="violet">③ 墨夜紫</button>
+  </div>
+</div>
+
+<div class="app" data-theme="indigo" id="app">
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo"><span class="mark"></span><span class="name">Curis</span></div>
+    <div class="nav-group-label">工作台</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg> 首页
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg> 任务台 <span class="badge">27</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg> 部门
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 11a3 3 0 100-6M21 20a6 6 0 00-5-5.9"/></svg> 员工
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg> 数据 · BI
+    </div>
+    <div class="nav-group-label">系统</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.3l2-1.5-2-3.4-2.3 1a7 7 0 00-2.3-1.3L14 2h-4l-.3 2.5a7 7 0 00-2.3 1.3l-2.3-1-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .9.1 1.3l-2 1.5 2 3.4 2.3-1a7 7 0 002.3 1.3L10 22h4l.3-2.5a7 7 0 002.3-1.3l2.3 1 2-3.4-2-1.5c.1-.4.1-.9.1-1.3z"/></svg> 设置
+    </div>
+    <div class="spacer"></div>
+    <div class="tenant-card">
+      <div class="t-name">星河内容工坊</div>
+      <div class="t-sub">CEO · 6 部门 · 8 员工</div>
+    </div>
+  </aside>
+
+  <!-- 主区 -->
+  <div class="main">
+    <header class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        搜索任务、部门、员工、平台…
+      </div>
+      <span class="spacer"></span>
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13 21a2 2 0 01-2 0"/></svg></div>
+      <div class="avatar">C</div>
+    </header>
+
+    <div class="content">
+
+      <!-- Hero -->
+      <section class="hero">
+        <div>
+          <h1><span class="hi">下午好，</span>林总 👋</h1>
+          <p>星河内容工坊 · 今日 3 个任务进行中，整体运转健康</p>
+        </div>
+        <div class="date">2026-07-07 · 周二 · 15:35</div>
+      </section>
+
+      <!-- KPI -->
+      <section class="kpis">
+        <div class="kpi">
+          <div class="label"><span class="dot"></span>本月 ROI</div>
+          <div class="value">312%</div>
+          <div class="trend up">↑ 较上月 +48%</div>
+        </div>
+        <div class="kpi">
+          <div class="label"><span class="dot"></span>Token 产出比</div>
+          <div class="value">1 : 4.2</div>
+          <div class="trend up">↑ 效率提升</div>
+        </div>
+        <div class="kpi">
+          <div class="label"><span class="dot"></span>活跃任务</div>
+          <div class="value">27</div>
+          <div class="trend flat">进行中 12 · 待审 4</div>
+        </div>
+        <div class="kpi">
+          <div class="label"><span class="dot"></span>在线员工</div>
+          <div class="value">6 / 8</div>
+          <div class="trend flat">2 离线</div>
+        </div>
+      </section>
+
+      <!-- 部门矩阵 -->
+      <section>
+        <div class="section-head"><h2>我的部门</h2><span class="link">管理全部 →</span></div>
+      </section>
+      <section class="depts">
+        <div class="dept">
+          <span class="status run">运行中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#F43F5E,#FB7185)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4l7 5 7-5M3 4v16h18V4M3 4l9 6 9-6"/></svg>
+            </div>
+            <div><div class="d-name">业务部</div><div class="d-type">业务型 · 视频</div></div>
+          </div>
+          <div class="chips"><span class="chip">抖音</span><span class="chip">小红书</span><span class="chip">视频剪辑</span></div>
+          <div class="meta">3 个员工 · 本周发布 18 条</div>
+        </div>
+
+        <div class="dept">
+          <span class="status run">运行中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#10B981,#34D399)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+            </div>
+            <div><div class="d-name">文案部</div><div class="d-type">业务型 · 图文</div></div>
+          </div>
+          <div class="chips"><span class="chip">微信公众号</span><span class="chip">头条</span><span class="chip">小红书</span></div>
+          <div class="meta">2 个员工 · 待发布 5 篇</div>
+        </div>
+
+        <div class="dept">
+          <span class="status draft">草稿中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h5"/></svg>
+            </div>
+            <div><div class="d-name">小说部</div><div class="d-type">业务型 · 创作</div></div>
+          </div>
+          <div class="chips"><span class="chip">番茄小说</span><span class="chip">起点</span></div>
+          <div class="meta">1 个员工 · 连载 2 部</div>
+        </div>
+
+        <div class="dept">
+          <span class="status run">运行中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 11a3 3 0 100-6M21 20a6 6 0 00-5-5.9"/></svg>
+            </div>
+            <div><div class="d-name">人事部</div><div class="d-type">职能型 · 组织</div></div>
+          </div>
+          <div class="chips"><span class="chip">招聘</span><span class="chip">角色分配</span><span class="chip">技能配置</span></div>
+          <div class="meta">1 个员工 · 招聘中 2</div>
+        </div>
+
+        <div class="dept">
+          <span class="status run">运行中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>
+            </div>
+            <div><div class="d-name">行政部</div><div class="d-type">职能型 · 统计</div></div>
+          </div>
+          <div class="chips"><span class="chip">ROI 统计</span><span class="chip">考勤</span><span class="chip">成本</span></div>
+          <div class="meta">1 个员工 · 周报待生成</div>
+        </div>
+
+        <div class="dept">
+          <span class="status run">运行中</span>
+          <div class="top">
+            <div class="icon" style="background:linear-gradient(135deg,#EC4899,#F472B6)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg>
+            </div>
+            <div><div class="d-name">BI 部</div><div class="d-type">职能型 · 分析</div></div>
+          </div>
+          <div class="chips"><span class="chip">数据看板</span><span class="chip">报表</span><span class="chip">可视化</span></div>
+          <div class="meta">1 个员工 · 看板 6 张</div>
+        </div>
+      </section>
+
+      <!-- 面板 -->
+      <section class="panels">
+        <div class="panel">
+          <h3>最近任务流</h3>
+          <div class="task-row">
+            <div class="t-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4l7 5 7-5M3 4v16h18V4"/></svg></div>
+            <div class="t-main"><div class="t-title">爆款视频脚本生成</div><div class="t-sub">业务部 · 抖音 · 14:20</div></div>
+            <span class="pill done">完成</span>
+          </div>
+          <div class="task-row">
+            <div class="t-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg></div>
+            <div class="t-main"><div class="t-title">公众号推文撰写</div><div class="t-sub">文案部 · 微信 · 进行中</div></div>
+            <span class="pill run">进行中</span>
+          </div>
+          <div class="task-row">
+            <div class="t-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4zM8 9h8M8 13h8"/></svg></div>
+            <div class="t-main"><div class="t-title">小说第 12 章创作</div><div class="t-sub">小说部 · 番茄 · 进行中</div></div>
+            <span class="pill run">进行中</span>
+          </div>
+          <div class="task-row">
+            <div class="t-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg></div>
+            <div class="t-main"><div class="t-title">本周 ROI 汇总</div><div class="t-sub">行政部 · 待审核</div></div>
+            <span class="pill wait">待审</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>快捷操作</h3>
+          <div class="quick">
+            <div class="q-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> 新建任务
+            </div>
+            <div class="q-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg> 配置部门
+            </div>
+            <div class="q-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg> 接入平台
+            </div>
+            <div class="q-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg> 查看报表
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const app = document.getElementById('app');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    app.dataset.theme = t.dataset.set;
+  }));
+</script>
+</body>
+</html>

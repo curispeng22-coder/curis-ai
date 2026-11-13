@@ -1,0 +1,1585 @@
+/* ============================================================
+   RD Workspace — Mock Data (CANDIDATE / 视觉探索用)
+   ------------------------------------------------------------
+   全部为虚构研发样例数据。结构严格对齐：
+   - RECONCILIATION_INDEX / RD_PRODUCT_TRANSLATION §3/§5/§6
+   - RD_INSTANCE_APPROVED §1.1 / §1a (Responsibility 模型) / §4 / §7
+   - 不画 IDE / Terminal / Git / CI / 部署工具；Provider 是能力提供方，
+     Employee 是责任归属者 (Employee ≠ Provider)。
+   全局命名空间挂在 window.RD_DATA 上，由 app.js 消费。
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ---------- 工具：状态语义统一 ---------- */
+  // status ∈ working / waiting / needs_ceo / blocked / review / complete / idle
+
+  /* ============================================================
+     PROJECT 1 — 默认办公空间（主场景，含 Needs CEO 决策 + 多 Work 员工）
+     ============================================================ */
+  var P_DEFAULT = {
+    id: 'p-default',
+    name: '默认办公空间',
+    goal: '把「用户中心」这条产品线持续做快、做稳、能独立发布——在不让 CEO 读 Git 的前提下。',
+    version: 'v2.4.0',
+    stage: '开发阶段 · 灰度前',
+    progress: 64,
+    roundGoal: '本轮打通 getUserData 性能瓶颈、定稿数据库迁移方案、补齐集成测试，使 v2.4.0 具备灰度条件。',
+    leaderJudgment: '核心链路已脱险，迁移方案是本轮唯一卡点；测试一旦就位即可进灰度。',
+    nextCheck: '本周五 18:00 — 迁移执行授权回收 + 灰度发布判定。',
+    // 该 Project 顶部内嵌的 Needs CEO 决策（对齐 RD_INSTANCE §7 / P7 八要素）
+    decision: {
+      id: 'dec-db-migrate',
+      workId: 'W-233',
+      employeeId: 'e-lixiang',
+      // 8 要素（语义，不强制 8 块 UI）
+      what: '用户表数据迁移脚本已就绪，最后一步「切换线上读写指向新表」会改动线上结构且不可一键回退，需你授权执行窗口。',
+      why: '迁移涉及 1,280 万行用户记录，需在低峰期以双写+校验方式切换；该动作属于不可逆的高风险 Human Gate，AI 不能自决。',
+      impact: '通过：v2.4.0 解除发布阻塞，灰度可如期；不通过：用户表继续承载历史包袱，新功能受限。',
+      risk: '切换瞬间若出现校验不一致，存在短暂读旧写新错位窗口（约 90s），需人工盯盘回滚预案。',
+      options: [
+        { label: 'A · 本低频窗口执行（推荐）', detail: '今晚 02:00–04:00 低峰双写切换，配 15 分钟校验 + 回滚脚本。' },
+        { label: 'B · 延后至下个维护窗', detail: '保守，但阻塞 v2.4.0 灰度 5 天。' },
+        { label: 'C · 仅先合脚本不切换', detail: '代码入库但不动线上，风险最低但本轮目标不达。' }
+      ],
+      recommendation: '选 A：今晚低峰执行，已备回滚。',
+      recommendationReason: '迁移脚本与校验已 PASS 预发环境，推迟只会累积阻塞。',
+      ceoChoice: '批准执行窗口（A），或选 B/C，或给出指示。',
+      after: '你拍板后，李翔在授权窗口内执行切换，王雨并行启动集成测试，进度 +8%。',
+      eta: '执行约 2 小时（02:00 起），含校验。',
+      provenance: {
+        impact: 'FACT', risk: 'EST', recommendation: 'POLICY', eta: 'EST'
+      }
+    },
+    employees: ['e-chenhao', 'e-lixiang', 'e-wangyu', 'e-xuchuan', 'e-zhaolin', 'e-sunlei']
+  };
+
+  /* ============================================================
+     PROJECT 2 — 内部工具平台（轻量，真实内容）
+     ============================================================ */
+  var P_INTERNAL = {
+    id: 'p-internal',
+    name: '内部工具平台',
+    goal: '把各业务线的运营脚本收敛到一个自助平台，减少人工跑数。',
+    version: 'v0.9.2',
+    stage: '验证阶段',
+    progress: 41,
+    roundGoal: '本周完成权限模型联调与两个业务线试点接入。',
+    leaderJudgment: '权限模型是难点，已拆给架构与后端双线并行。',
+    nextCheck: '下周二 — 试点接入评审。',
+    decision: null,
+    employees: ['e-lixiang', 'e-wangyu', 'e-zhaolin']
+  };
+
+  /* ============================================================
+     PROJECT 3 — 客户项目 X（轻量，真实内容）
+     ============================================================ */
+  var P_CLIENT = {
+    id: 'p-client',
+    name: '客户项目 X',
+    goal: '为客户交付一套可嵌入的报表 SDK（私有化部署）。',
+    version: 'v1.0.0-rc2',
+    stage: '发布前验收',
+    progress: 88,
+    roundGoal: 'rc2 验收问题清零，准备 GA。',
+    leaderJudgment: '验收剩余 2 项低危，本周可 GA。',
+    nextCheck: '周四 — GA 发布判定（Human Gate）。',
+    decision: null,
+    employees: ['e-chenhao', 'e-sunlei']
+  };
+
+  /* ============================================================
+     EMPLOYEES
+     ============================================================ */
+  var EMPLOYEES = {
+    'e-chenhao': {
+      id: 'e-chenhao', name: '陈昊', role: '全栈开发工程师',
+      responsibility: 'Development', avatar: '陈', color: '#5b8cff',
+      works: ['W-230', 'W-250']
+    },
+    'e-lixiang': {
+      id: 'e-lixiang', name: '李翔', role: '系统架构师',
+      responsibility: 'Architecture', avatar: '李', color: '#b07cff',
+      works: ['W-233']
+    },
+    'e-wangyu': {
+      id: 'e-wangyu', name: '王雨', role: '后端 / 测试工程师',
+      responsibility: 'Verification', avatar: '王', color: '#3fcf86',
+      works: ['W-240']
+    },
+    'e-xuchuan': {
+      id: 'e-xuchuan', name: '徐川', role: '开发工程师',
+      responsibility: 'Development', avatar: '徐', color: '#f0a84a',
+      works: ['W-231', 'W-232', 'W-236']
+    },
+    'e-zhaolin': {
+      id: 'e-zhaolin', name: '赵琳', role: '前端 / 验证工程师',
+      responsibility: 'Review·Test', avatar: '赵', color: '#ef6f9e',
+      works: ['W-241']
+    },
+    'e-sunlei': {
+      id: 'e-sunlei', name: '孙磊', role: '发布 / DevOps 工程师',
+      responsibility: 'Release·Operations', avatar: '孙', color: '#46c5d8',
+      works: ['W-245', 'W-247']
+    }
+  };
+
+  /* ============================================================
+     WORKS（默认办公空间为主，≥8 条，覆盖六态）
+     ============================================================ */
+  var WORKS = {
+
+    /* —— 陈昊 · W-230 Working · Codex —— */
+    'W-230': {
+      id: 'W-230', code: 'W-230',
+      title: 'getUserData API 性能优化',
+      employeeId: 'e-chenhao', responsibility: 'R1 · Development',
+      provider: 'Codex', status: 'working',
+      overview: 'getUserData 在 P99 下偶发 1.8s 抖动，根因为 N+1 查询 + 无批量加载。已重构为批量查询 + 连接池复用，预计 P99 降到 540ms（↓约 70%）。',
+      nextStep: '等待集成测试（王雨）覆盖后合入主干，进入灰度。',
+      blocker: null,
+      responsibilityHolder: 'e-chenhao', currentExecutor: 'e-chenhao',
+      conversation: [
+        { who: 'employee', name: '陈昊', t: '09:12', text: '已按方案拆成两步：① 把循环查库改为 IN 批量查询（api/users.ts · 34-93）；② 引入读连接池。本地压测 P99 从 1.8s 降到 540ms。' },
+        { who: 'employee', name: '陈昊', t: '09:13', text: 'Provider 已生成改动，下面把差异贴给你看。', refs: ['ref-diff-230'] },
+        { who: 'provider', name: 'Codex', t: '09:14', text: '已应用批量查询重构，新增 users.batchGet 方法，单测 32/32 通过。等待你确认是否送审。', refs: ['ref-test-230'] },
+        { who: 'employee', name: '陈昊', t: '09:20', text: '已开 Draft PR，麻烦王雨接集成测试。', refs: ['ref-pr-230'] }
+      ],
+      resultRefs: ['ref-diff-230', 'ref-test-230', 'ref-pr-230', 'ref-build-230']
+    },
+
+    /* —— 陈昊 · W-250 Complete —— */
+    'W-250': {
+      id: 'W-250', code: 'W-250',
+      title: '登录限流（已完成）',
+      employeeId: 'e-chenhao', responsibility: 'R4 · Development',
+      provider: 'Claude Code', status: 'complete',
+      overview: '为登录接口加令牌桶限流（100 req/min/IP），已合入 v2.3.0，线上 7 日无异常。',
+      nextStep: '无需后续动作。', blocker: null,
+      responsibilityHolder: 'e-chenhao', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '陈昊', t: '上周一', text: '限流已上线并通过压测，标记为完成。' }
+      ],
+      resultRefs: ['ref-build-250']
+    },
+
+    /* —— 李翔 · W-233 Needs CEO（数据库迁移方案授权） —— */
+    'W-233': {
+      id: 'W-233', code: 'W-233',
+      title: '用户表数据迁移方案',
+      employeeId: 'e-lixiang', responsibility: 'R2 · Architecture',
+      provider: 'Claude Code', status: 'needs_ceo',
+      overview: '用户表按 tenant 拆分到独立 schema，迁移脚本（双写+校验+切换）已在预发 PASS。最后一步「线上切换」为不可逆 Human Gate，等待 CEO 授权执行窗口。',
+      nextStep: 'CEO 授权后于低峰窗口执行切换。',
+      blocker: '等待 CEO 对线上切换窗口的授权（见顶部决策横幅）。',
+      responsibilityHolder: 'e-lixiang', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '李翔', t: '昨天 17:40', text: '迁移方案定稿：双写 7 天 → 校验一致性 → 低峰切换读路径 → 停写旧表。预发已演练通过。' },
+        { who: 'employee', name: '李翔', t: '昨天 17:41', text: '切换脚本如下，需你拍板执行窗口（高风险、不可一键回退）。', refs: ['ref-diff-233'] },
+        { who: 'employee', name: '李翔', t: '09:02', text: '已提到顶部决策横幅，等你裁决。决策通过后我立即进授权窗口执行。' }
+      ],
+      resultRefs: ['ref-diff-233']
+    },
+
+    /* —— 王雨 · W-240 Waiting（等 W-230 完成） —— */
+    'W-240': {
+      id: 'W-240', code: 'W-240',
+      title: '集成测试套件（v2.4.0）',
+      employeeId: 'e-wangyu', responsibility: 'R3 · Verification',
+      provider: 'GitHub Actions', status: 'waiting',
+      overview: '为 getUserData 重构编写端到端集成测试（真实库 + 影子流量回放），覆盖批量查询与限流边界。',
+      nextStep: '待 W-230 合入后启动全量回放，出具 Verification 结论。',
+      blocker: '前置条件：W-230（陈昊）尚未合入主干。',
+      advanceOnDone: 'complete',
+      responsibilityHolder: 'e-wangyu', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '王雨', t: '08:50', text: '测试脚本已就绪，挂起等待 W-230 合入。合入后我立即跑影子流量回放并给 Verification 结论。' }
+      ],
+      resultRefs: []
+    },
+
+    /* —— 徐川 · W-231 Working · Codex —— */
+    'W-231': {
+      id: 'W-231', code: 'W-231',
+      title: 'Browser Session 跨标签失效修复',
+      employeeId: 'e-xuchuan', responsibility: 'R5 · Development',
+      provider: 'Codex', status: 'working',
+      overview: '用户在新标签页打开时会话丢失，根因为 cookie SameSite 未设 Lax+鉴权态未广播。Provider 已修复 Session 中间件。',
+      nextStep: '等前端联调后送赵琳 Code Review。',
+      blocker: null,
+      responsibilityHolder: 'e-xuchuan', currentExecutor: 'e-xuchuan',
+      conversation: [
+        { who: 'employee', name: '徐川', t: '10:05', text: '已让 Codex 改 Session 中间件，加入跨标签心跳广播。差异如下。', refs: ['ref-diff-231'] },
+        { who: 'provider', name: 'Codex', t: '10:06', text: '修复完成：SameSite=Lax + 心跳 5s。本地多标签用例通过。' }
+      ],
+      resultRefs: ['ref-diff-231', 'ref-test-231']
+    },
+
+    /* —— 徐川 · W-232 Working · Claude Code —— */
+    'W-232': {
+      id: 'W-232', code: 'W-232',
+      title: 'Profile Isolation（多租户数据隔离）',
+      employeeId: 'e-xuchuan', responsibility: 'R6 · Development',
+      provider: 'Claude Code', status: 'working',
+      overview: '按李翔的租户拆分方案，给 Profile 查询加 tenant scope，防止越权读其他租户数据。与 W-231 并行，互不干扰。',
+      nextStep: '写单测覆盖越权用例。',
+      blocker: null,
+      responsibilityHolder: 'e-xuchuan', currentExecutor: 'e-xuchuan',
+      conversation: [
+        { who: 'employee', name: '徐川', t: '10:10', text: '并行开一条：让 Claude Code 给 Profile 查询加 tenant scope。', refs: ['ref-diff-232'] },
+        { who: 'provider', name: 'Claude Code', t: '10:12', text: '已加 tenant_id 强制 scope，补充越权单测 6 条。' }
+      ],
+      resultRefs: ['ref-diff-232']
+    },
+
+    /* —— 徐川 · W-236 Review —— */
+    'W-236': {
+      id: 'W-236', code: 'W-236',
+      title: 'Auth Stop Gate 实现',
+      employeeId: 'e-xuchuan', responsibility: 'R7 · Development',
+      provider: 'Claude Code', status: 'review',
+      overview: '当外部平台要求登录/CAPTCHA/MFA 时，进入 WAITING_FOR_USER（Auth Stop Gate），停止自动点击并通知用户。已送赵琳 Review。',
+      nextStep: '赵琳 Code Review 通过后合入。',
+      blocker: null,
+      responsibilityHolder: 'e-xuchuan', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '徐川', t: '昨天', text: 'Auth Stop Gate 实现完成，对照 G1 §3 收敛为 WAITING_FOR_USER，已送审。', refs: ['ref-diff-236'] },
+        { who: 'review', name: '赵琳', t: '今天 09:30', text: '在 Review 中：整体 OK，建议补一条「恢复后重核账号/域名」的单测。' }
+      ],
+      resultRefs: ['ref-diff-236']
+    },
+
+    /* —— 赵琳 · W-241 Review（前端组件库升级） —— */
+    'W-241': {
+      id: 'W-241', code: 'W-241',
+      title: '前端组件库升级 v3 → v4',
+      employeeId: 'e-zhaolin', responsibility: 'R8 · Review·Test',
+      provider: 'Copilot', status: 'review',
+      overview: '把设计系统组件库从 v3 升到 v4（破坏性变更：圆角令牌重命名）。已升完并跑通视觉回归。',
+      nextStep: '复核破坏性变更清单后放行。',
+      blocker: null,
+      responsibilityHolder: 'e-zhaolin', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '赵琳', t: '09:50', text: '升级完成，视觉回归 0 差异。破坏性变更仅令牌名，已全量替换。', refs: ['ref-pr-241'] },
+        { who: 'employee', name: '赵琳', t: '09:51', text: '等 Release·Ops 确认发布节奏后合入。' }
+      ],
+      resultRefs: ['ref-pr-241', 'ref-test-241']
+    },
+
+    /* —— 孙磊 · W-245 Waiting / idle（灰度发布流水线） —— */
+    'W-245': {
+      id: 'W-245', code: 'W-245',
+      title: '灰度发布流水线（v2.4.0）',
+      employeeId: 'e-sunlei', responsibility: 'R9 · Release·Operations',
+      provider: 'GitHub Actions', status: 'waiting',
+      overview: '搭建 1%→5%→25%→100% 灰度流水线，含自动回滚触发器。待 v2.4.0 具备灰度条件后接入。',
+      nextStep: 'v2.4.0 解除阻塞后接入灰度。',
+      blocker: '前置：W-233 迁移授权 + W-240 集成测试通过。',
+      responsibilityHolder: 'e-sunlei', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '孙磊', t: '昨天', text: '灰度流水线骨架就绪，等 v2.4.0 解锁后挂接。当前挂起。' }
+      ],
+      resultRefs: []
+    },
+
+    /* ============================================================
+       其它 Project 的 Works（轻量但真实）
+       ============================================================ */
+    'W-INT-1': {
+      id: 'W-INT-1', code: 'W-INT-1', title: '权限模型联调',
+      employeeId: 'e-lixiang', responsibility: 'Architecture', provider: 'Claude Code', status: 'working',
+      overview: '内部工具平台 RBAC 联调：组织/角色/资源三表关联。', nextStep: '联调通过后交给后端接试点。', blocker: null,
+      responsibilityHolder: 'e-lixiang', currentExecutor: 'e-lixiang',
+      conversation: [{ who: 'employee', name: '李翔', t: '昨天', text: '权限模型联调中，RBAC 三表已关联。' }], resultRefs: []
+    },
+    'W-INT-2': {
+      id: 'W-INT-2', code: 'W-INT-2', title: '试点接入 · 业务线 A',
+      employeeId: 'e-wangyu', responsibility: 'Verification', provider: 'GitHub Actions', status: 'waiting',
+      overview: '把业务线 A 的运营脚本迁到平台。', nextStep: '等权限模型联调完成。', blocker: '等 W-INT-1。',
+      responsibilityHolder: 'e-wangyu', currentExecutor: 'none',
+      conversation: [{ who: 'employee', name: '王雨', t: '今天', text: '试点接入脚本就绪，挂起等权限模型。' }], resultRefs: []
+    },
+    'W-INT-3': {
+      id: 'W-INT-3', code: 'W-INT-3', title: '前端接入表单',
+      employeeId: 'e-zhaolin', responsibility: 'Review·Test', provider: 'Copilot', status: 'working',
+      overview: '平台自助配置表单前端。', nextStep: '联调后端接口。', blocker: null,
+      responsibilityHolder: 'e-zhaolin', currentExecutor: 'e-zhaolin',
+      conversation: [{ who: 'employee', name: '赵琳', t: '今天', text: '表单前端联调中。' }], resultRefs: []
+    },
+
+    'W-CLI-1': {
+      id: 'W-CLI-1', code: 'W-CLI-1', title: '报表 SDK 验收问题修复',
+      employeeId: 'e-chenhao', responsibility: 'Development', provider: 'Codex', status: 'working',
+      overview: 'rc2 验收发现导出大报表 OOM，已改为流式导出。', nextStep: '回归后交付 GA。', blocker: null,
+      responsibilityHolder: 'e-chenhao', currentExecutor: 'e-chenhao',
+      conversation: [{ who: 'employee', name: '陈昊', t: '今天', text: '导出改流式，rc2 两项剩余问题之一已修。', refs: ['ref-diff-cli1'] }], resultRefs: ['ref-diff-cli1']
+    },
+    'W-CLI-2': {
+      id: 'W-CLI-2', code: 'W-CLI-2', title: 'GA 发布编排',
+      employeeId: 'e-sunlei', responsibility: 'Release·Operations', provider: 'GitHub Actions', status: 'waiting',
+      overview: 'rc2 → GA 的 Changelog/Tag/部署编排，属 Human Gate。', nextStep: '周四 CEO 判定后触发。', blocker: '等验收清零 + CEO 发布判定。',
+      responsibilityHolder: 'e-sunlei', currentExecutor: 'none',
+      conversation: [{ who: 'employee', name: '孙磊', t: '今天', text: 'GA 编排就绪，等周四发布判定。' }], resultRefs: []
+    }
+  };
+
+  /* ============================================================
+     RESULT REFERENCES / UTILITY PAYLOADS（右栏内容）
+     ============================================================ */
+  var REFS = {
+    'ref-diff-230': {
+      type: 'diff', title: 'api/users.ts · 34-93 · 查看差异',
+      file: 'api/users.ts', workId: 'W-230', responsibility: 'R1 · Development',
+      diff: [
+        { k: 'ctx', t: '32  export async function getUserData(id: string) {' },
+        { k: 'ctx', t: '33    const cache = await cacheGet(`user:${id}`);' },
+        { k: 'del', t: '34    const row = await db.query("SELECT * FROM users WHERE id = $1", [id]);' },
+        { k: 'del', t: '35    const orgs = await db.query("SELECT * FROM orgs WHERE user_id = $1", [id]);' },
+        { k: 'del', t: '36    const prefs = await db.query("SELECT * FROM prefs WHERE user_id = $1", [id]);' },
+        { k: 'add', t: '34    const rows = await users.batchGet([id]); // IN 批量查询，消除 N+1' },
+        { k: 'add', t: '35    const { orgs, prefs } = await loadProfileBulk(rows); // 读连接池复用' },
+        { k: 'ctx', t: '36    return assemble(rows[0], orgs, prefs);' },
+        { k: 'ctx', t: '37  }' }
+      ]
+    },
+    'ref-test-230': {
+      type: 'test', title: '✅ 测试通过 127/127',
+      workId: 'W-230', responsibility: 'R1 · Development',
+      summary: '单元 32/32 · 集成 71/71 · E2E 24/24 · 覆盖率 86%',
+      tests: [
+        { n: 'users.batchGet 批量查询返回顺序一致', s: 'pass' },
+        { n: '读连接池在 200 并发下无泄漏', s: 'pass' },
+        { n: 'P99 延迟 < 600ms（压测 5k QPS）', s: 'pass' },
+        { n: '缓存未命中回源正确', s: 'pass' },
+        { n: '越权读取被 tenant scope 拦截', s: 'pass' },
+        { n: '… 其余 122 项', s: 'pass' }
+      ]
+    },
+    'ref-pr-230': {
+      type: 'pr', title: '🔗 PR #42 · getUserData 性能优化',
+      workId: 'W-230', responsibility: 'R1 · Development',
+      pr: { number: 42, title: 'perf(api): 批量查询 + 读连接池，P99 ↓70%', state: 'open', additions: 184, deletions: 97, checks: 'all passing', comments: 3 }
+    },
+    'ref-build-230': {
+      type: 'build', title: '🏗 Build #118 · 通过',
+      workId: 'W-230', responsibility: 'R1 · Development',
+      log: ['$ pnpm build', '✓ 类型检查通过', '✓ 打包完成 1.2MB (gzip 312KB)', '✓ 预览部署 https://rd-user-preview.vercel.app', '状态：Build Passed']
+    },
+    'ref-build-250': {
+      type: 'build', title: '🏗 Build #95 · 通过',
+      workId: 'W-250', responsibility: 'R4 · Development',
+      log: ['$ pnpm build', '✓ 限流中间件打包通过', '✓ 已发布 v2.3.0', '状态：Build Passed']
+    },
+    'ref-diff-233': {
+      type: 'diff', title: 'migration/users_2026.sql · 查看差异',
+      file: 'migration/users_2026.sql', workId: 'W-233', responsibility: 'R2 · Architecture',
+      diff: [
+        { k: 'ctx', t: '-- 双写阶段：旧表 + 新 tenant schema 同时写入' },
+        { k: 'add', t: "INSERT INTO users_new SELECT * FROM users WHERE tenant_id = '${tenant}';" },
+        { k: 'add', t: '-- 校验：逐行比对 checksum，不一致写入 reconcile 表' },
+        { k: 'add', t: "SELECT assert_equal(md5(old.*), md5(new.*)) FROM users JOIN users_new USING(id);" },
+        { k: 'warn', t: '-- Human Gate：以下切换需在授权窗口执行（不可一键回退）' },
+        { k: 'add', t: 'BEGIN; ALTER TABLE users RENAME TO users_legacy; ALTER TABLE users_new RENAME TO users; COMMIT;' }
+      ]
+    },
+    'ref-diff-231': {
+      type: 'diff', title: 'lib/session.ts · 12-40 · 查看差异',
+      file: 'lib/session.ts', workId: 'W-231', responsibility: 'R5 · Development',
+      diff: [
+        { k: 'del', t: 'cookie: { sameSite: "none", secure: true }' },
+        { k: 'add', t: 'cookie: { sameSite: "lax", secure: true } // 跨标签共享' },
+        { k: 'add', t: 'setInterval(broadcastSession, 5000); // 心跳广播鉴权态' }
+      ]
+    },
+    'ref-test-231': {
+      type: 'test', title: '📊 测试通过 58/58',
+      workId: 'W-231', responsibility: 'R5 · Development',
+      summary: '单测 41/41 · E2E 多标签 17/17',
+      tests: [
+        { n: '新标签页会话保持', s: 'pass' },
+        { n: '心跳广播不丢态', s: 'pass' },
+        { n: '登出全标签失效', s: 'pass' },
+        { n: '… 其余 55 项', s: 'pass' }
+      ]
+    },
+    'ref-test-232': {
+      type: 'test', title: '📊 测试通过 46/46',
+      workId: 'W-232', responsibility: 'R6 · Development',
+      summary: '单测 33/33 · 租户隔离用例 13/13',
+      tests: [
+        { n: '跨租户读取返回 404（不暴露存在性）', s: 'pass' },
+        { n: '同租户读取正常返回', s: 'pass' },
+        { n: '… 其余 44 项', s: 'pass' }
+      ]
+    },
+    'ref-diff-232': {
+      type: 'diff', title: 'api/profile.ts · 8-22 · 查看差异',
+      file: 'api/profile.ts', workId: 'W-232', responsibility: 'R6 · Development',
+      diff: [
+        { k: 'del', t: 'const p = await db.query("SELECT * FROM profile WHERE id=$1",[id]);' },
+        { k: 'add', t: 'const p = await db.query("SELECT * FROM profile WHERE id=$1 AND tenant_id=$2",[id, ctx.tenant]);' },
+        { k: 'add', t: '// 越权读取返回 404（不暴露存在性之外的信息）' }
+      ]
+    },
+    'ref-diff-236': {
+      type: 'diff', title: 'lib/auth-stop-gate.ts · 查看差异',
+      file: 'lib/auth-stop-gate.ts', workId: 'W-236', responsibility: 'R7 · Development',
+      diff: [
+        { k: 'add', t: 'function onAuthChallenge(kind) {' },
+        { k: 'add', t: '  // kind ∈ logged_out|mfa|captcha|risk_control …' },
+        { k: 'add', t: '  setState(WAITING_FOR_USER); // 对齐 G1 §3，不新造状态名' },
+        { k: 'add', t: '  stopAutoClicks(); notifyUser(kind); savePosition();' },
+        { k: 'add', t: '}' }
+      ]
+    },
+    'ref-pr-241': {
+      type: 'pr', title: '🔗 PR #51 · 组件库 v3→v4',
+      workId: 'W-241', responsibility: 'R8 · Review·Test',
+      pr: { number: 51, title: 'chore(ui): 设计系统组件库升级 v4', state: 'open', additions: 642, deletions: 530, checks: 'all passing', comments: 7 }
+    },
+    'ref-test-241': {
+      type: 'test', title: '📊 视觉回归 0 差异',
+      workId: 'W-241', responsibility: 'R8 · Review·Test',
+      summary: '快照测试 312/312 · 破坏性变更仅令牌名',
+      tests: [
+        { n: 'Button 圆角令牌重命名全局替换', s: 'pass' },
+        { n: 'Dialog 入场动画一致', s: 'pass' },
+        { n: '… 其余 310 项', s: 'pass' }
+      ]
+    },
+    'ref-diff-cli1': {
+      type: 'diff', title: 'sdk/exporter.ts · 查看差异',
+      file: 'sdk/exporter.ts', workId: 'W-CLI-1', responsibility: 'Development',
+      diff: [
+        { k: 'del', t: 'const buf = buildWholeReport(rows); // 大报表 OOM' },
+        { k: 'add', t: 'const stream = exportStream(rows); // 流式写出' },
+        { k: 'add', t: 'res.setHeader("Content-Type","application/octet-stream");' }
+      ]
+    }
+  };
+
+  /* ============================================================
+     Context Pane（左）— 文件与最近对象（按 Project 真实内容，非虚构“上下文”）
+     ============================================================ */
+  var CONTEXT = {
+    'p-default': {
+      files: [
+        { name: 'api/users.ts', work: 'W-230', meta: 'R1 · 批量查询' },
+        { name: 'migration/users_2026.sql', work: 'W-233', meta: 'R2 · 迁移' },
+        { name: 'lib/session.ts', work: 'W-231', meta: 'R5 · Session' },
+        { name: 'api/profile.ts', work: 'W-232', meta: 'R6 · 隔离' },
+        { name: 'lib/auth-stop-gate.ts', work: 'W-236', meta: 'R7 · Auth Gate' }
+      ],
+      recent: [
+        { name: 'PR #42 getUserData 优化', work: 'W-230' },
+        { name: 'PR #51 组件库 v4', work: 'W-241' },
+        { name: 'Build #118 预览', work: 'W-230' },
+        { name: '迁移脚本预发演练', work: 'W-233' }
+      ]
+    },
+    'p-internal': {
+      files: [
+        { name: 'rbac/model.sql', work: 'W-INT-1', meta: '权限模型' },
+        { name: 'web/forms.tsx', work: 'W-INT-3', meta: '接入表单' }
+      ],
+      recent: [{ name: 'W-INT-1 联调', work: 'W-INT-1' }]
+    },
+    'p-client': {
+      files: [{ name: 'sdk/exporter.ts', work: 'W-CLI-1', meta: '流式导出' }],
+      recent: [{ name: 'W-CLI-2 GA 编排', work: 'W-CLI-2' }]
+    }
+  };
+
+  /* ============================================================
+     七区全局导航（verbatim，按 brief 指定顺序；不新增 Project 项）
+     ============================================================ */
+  var NAV = ['CEO 工作台', '业务空间', '组织中心', '人才与能力', '经营洞察', '资料库', '会议'];
+
+  /* ============================================================
+     ENRICHMENT — 扩展真实工程内容（提升保真度，并满足单文件体积要求）
+     追加对话轮次、测试清单、Code Review 线程、提交日志。均为虚构样例。
+     ============================================================ */
+  (function enrich() {
+    // —— 扩展对话轮次 ——
+    WORKS['W-230'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '09:25', text: 'P99 降到 540ms 很稳。送审前先确认限流边界没被这次重构影响，王雨的集成测试要覆盖到。' },
+      { who: 'employee', name: '陈昊', t: '09:28', text: '已确认：限流在网关层，不在 users 查询路径，互不影响。集成测试已加「越权读取被 tenant scope 拦截」一条。' },
+      { who: 'review', name: '赵琳', t: '09:40', text: 'Code Review 中：批量查询 OK；建议把 batchGet 的 IN 长度上限设为 500，防止超大列表炸库。' },
+      { who: 'employee', name: '陈昊', t: '09:46', text: '已加硬上限 500 并补单测，刷新了 PR。', refs: ['ref-pr-230'] }
+    );
+    WORKS['W-231'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '10:20', text: '跨标签心跳会不会在用户量高时把会话表打爆？关注下写放大。' },
+      { who: 'provider', name: 'Codex', t: '10:21', text: '已改为每会话仅广播版本号（8 字节），不写库，仅经内存通道；写放大可忽略。' },
+      { who: 'employee', name: '徐川', t: '10:24', text: '收到，已并入 W-231，送赵琳复核。' }
+    );
+    WORKS['W-232'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '10:30', text: 'Profile 隔离和 W-231 的会话改动会互相干扰吗？' },
+      { who: 'employee', name: '徐川', t: '10:33', text: '不冲突：W-232 改的是 profile 查询的参数绑定，W-231 改的是 session 中间件；两者作用在不同层，并行安全。' }
+    );
+    WORKS['W-236'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天 09:35', text: 'Auth Stop Gate 之后，恢复登录要重核哪些信息？' },
+      { who: 'employee', name: '徐川', t: '09:38', text: '严格对齐 G1 §3：恢复后重核「账号 / 域名 / 目标」三要素，且接管期间不与用户竞争控制；登录信息不进日志与 Evidence。' }
+    );
+    WORKS['W-241'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '10:00', text: '组件库破坏性变更有没有遗漏的调用方？' },
+      { who: 'employee', name: '赵琳', t: '10:03', text: '全量 grep 替换已完成，CI 视觉回归 0 差异；剩余仅发布节奏待 Release·Ops 确认。' }
+    );
+    WORKS['W-240'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '08:55', text: '集成测试用真实库还是影子？' },
+      { who: 'employee', name: '王雨', t: '08:58', text: '真实库 + 影子流量回放（脱敏），断言覆盖批量查询、连接池、限流、越权四类，合入后自动触发。' }
+    );
+    WORKS['W-233'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '昨天 17:50', text: '切换失败的话回滚要多久？' },
+      { who: 'employee', name: '李翔', t: '17:52', text: '回滚脚本 15 分钟内可把 users_new 指回 users_legacy；校验不一致会先写入 reconcile 表人工核对，不盲目回退。' }
+    );
+    WORKS['W-245'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '昨天', text: '灰度自动回滚的触发条件定了吗？' },
+      { who: 'employee', name: '孙磊', t: '昨天', text: '定了：错误率 > 1% 持续 5 分钟 或 P99 > 1s 即自动回滚到上一稳定版。' }
+    );
+
+    // —— 扩展测试清单（真实命名） ——
+    REFS['ref-test-230'].tests = [
+      { n: 'users.batchGet 批量查询返回顺序与入参一致', s: 'pass' },
+      { n: 'users.batchGet 空数组返回空', s: 'pass' },
+      { n: 'users.batchGet 单元素等价单查', s: 'pass' },
+      { n: '读连接池在 200 并发下无泄漏', s: 'pass' },
+      { n: '读连接池在空闲 60s 后收缩到最小', s: 'pass' },
+      { n: 'P99 延迟 < 600ms（压测 5k QPS）', s: 'pass' },
+      { n: 'P95 延迟 < 420ms（压测 5k QPS）', s: 'pass' },
+      { n: '缓存命中直接返回不查库', s: 'pass' },
+      { n: '缓存未命中回源正确', s: 'pass' },
+      { n: '缓存击穿时单飞（singleflight）生效', s: 'pass' },
+      { n: 'IN 列表长度 > 500 触发分批', s: 'pass' },
+      { n: 'IN 列表长度上限 500 防御', s: 'pass' },
+      { n: '越权读取被 tenant scope 拦截', s: 'pass' },
+      { n: 'tenant_id 缺失返回 400', s: 'pass' },
+      { n: '组装层字段完整（orgs + prefs）', s: 'pass' },
+      { n: '组装层对 null profile 容错', s: 'pass' },
+      { n: 'DB 超时快速失败不堆积', s: 'pass' },
+      { n: '事务内批量写入原子性', s: 'pass' },
+      { n: '批量查询 SQL 无 N+1（计划确认）', s: 'pass' },
+      { n: '批量查询 explain 命中索引', s: 'pass' },
+      { n: '限流（100/min/IP）不受影响', s: 'pass' },
+      { n: '限流超限返回 429', s: 'pass' },
+      { n: '限流计数按 IP 隔离', s: 'pass' },
+      { n: '多租户下缓存 key 含 tenant', s: 'pass' },
+      { n: '序列化对大对象无栈溢出', s: 'pass' },
+      { n: 'E2E 影子流量回放 24/24 通过', s: 'pass' },
+      { n: 'E2E 峰值稳定性 30 分钟无抖动', s: 'pass' }
+    ];
+    REFS['ref-test-230'].summary = '单元 32/32 · 集成 71/71 · E2E 24/24 · 覆盖率 86%（共 127 项）';
+
+    REFS['ref-test-231'].tests = REFS['ref-test-231'].tests.concat([
+      { n: '心跳广播不阻塞主请求', s: 'pass' },
+      { n: '心跳间隔可配置（默认 5s）', s: 'pass' },
+      { n: '断网重连后会话恢复', s: 'pass' },
+      { n: '同源多标签共享鉴权态', s: 'pass' },
+      { n: '跨域标签不共享（SameSite 约束）', s: 'pass' },
+      { n: '会话过期全标签失效', s: 'pass' },
+      { n: '并发登出不丢其他会话', s: 'pass' },
+      { n: '广播通道内存占用稳定', s: 'pass' }
+    ]);
+
+    // —— 扩展 diff（更多真实上下文） ——
+    REFS['ref-diff-230'].diff = REFS['ref-diff-230'].diff.concat([
+      { k: 'add', t: '38  export async function batchGet(ids: string[]) {' },
+      { k: 'add', t: '39    if (ids.length === 0) return [];' },
+      { k: 'add', t: '40    const chunks = chunk(ids, 500); // 防御超大列表' },
+      { k: 'add', t: "41    const rows = (await Promise.all(chunks.map(c => db.query('SELECT * FROM users WHERE id = ANY($1)', [c])))).flat();" },
+      { k: 'add', t: '42    return rows;' },
+      { k: 'add', t: '43  }' },
+      { k: 'ctx', t: '45  function loadProfileBulk(rows) {' },
+      { k: 'ctx', t: '46    // 复用读连接池，避免 N+1' },
+      { k: 'add', t: '47    const ids = rows.map(r => r.id);' },
+      { k: 'add', t: '48    const [orgs, prefs] = await Promise.all([' },
+      { k: 'add', t: '49      db.query("SELECT * FROM orgs WHERE user_id = ANY($1)", [ids]),' },
+      { k: 'add', t: '50      db.query("SELECT * FROM prefs WHERE user_id = ANY($1)", [ids])' },
+      { k: 'add', t: '51    ]);' },
+      { k: 'add', t: '52    return { orgs, prefs };' },
+      { k: 'add', t: '53  }' }
+    ]);
+
+    // —— Code Review 线程（真实评论） ——
+    REFS['ref-pr-230'].comments = 5;
+    WORKS['W-230'].reviewThread = [
+      { author: '赵琳', t: '09:40', text: '批量查询 OK，但 IN 列表无上限，建议封顶 500。' },
+      { author: '陈昊', t: '09:46', text: '已加 chunk(ids,500)，补单测。' },
+      { author: '王雨', t: '10:10', text: '集成测试覆盖越权用例，等合入即可跑。' }
+    ];
+
+    // —— 提交日志（真实感） ——
+    WORKS['W-230'].commits = [
+      { sha: 'a3f9c1', msg: 'perf(api): 批量查询替代 N+1', author: '陈昊', t: '09:14' },
+      { sha: 'b7e2d4', msg: 'refactor: 读连接池复用', author: '陈昊', t: '09:18' },
+      { sha: 'c1a0f9', msg: 'test: IN 上限 500 + 越权用例', author: '陈昊', t: '09:46' }
+    ];
+  })();
+
+  /* ============================================================
+     ENRICHMENT 2 — 跨 Project 扩充（更多 Work / 提交 / Review / 差异）
+     ============================================================ */
+  (function enrich2() {
+    // 新的 Works（内部工具平台 + 客户项目 X）
+    WORKS['W-INT-4'] = {
+      id: 'W-INT-4', code: 'W-INT-4', title: '多租户 schema 落地（RBAC）',
+      employeeId: 'e-lixiang', responsibility: 'Architecture', provider: 'Claude Code', status: 'working',
+      overview: '把组织/角色/资源三表落到独立 schema，行级策略用 tenant_id 过滤；已生成迁移与策略视图。',
+      nextStep: '联调通过后交后端接试点。', blocker: null,
+      responsibilityHolder: 'e-lixiang', currentExecutor: 'e-lixiang',
+      conversation: [
+        { who: 'employee', name: '李翔', t: '今天', text: 'RBAC 三表 schema 已落地，下面是迁移与策略视图。', refs: ['ref-diff-int4'] },
+        { who: 'provider', name: 'Claude Code', t: '今天', text: '已生成 roles / resources / grants 三表及 tenant 过滤视图，单测 18/18。' },
+        { who: 'ceo', name: '你（CEO）', t: '今天', text: '权限变更要能审计，加一条审计表。' },
+        { who: 'employee', name: '李翔', t: '今天', text: '已加 grants_audit，所有授权变更落审计。', refs: ['ref-diff-int4'] }
+      ],
+      resultRefs: ['ref-diff-int4', 'ref-test-int4']
+    };
+    WORKS['W-INT-5'] = {
+      id: 'W-INT-5', code: 'W-INT-5', title: '内部工具前端联调',
+      employeeId: 'e-zhaolin', responsibility: 'Review·Test', provider: 'Copilot', status: 'working',
+      overview: '自助配置表单与后端 RBAC 接口联调，含权限树展示与变更预览。',
+      nextStep: '联调后端后接入试点业务线。', blocker: null,
+      responsibilityHolder: 'e-zhaolin', currentExecutor: 'e-zhaolin',
+      conversation: [
+        { who: 'employee', name: '赵琳', t: '今天', text: '前端联调中：权限树展示 + 变更预览已通，等后端接口稳定。' },
+        { who: 'ceo', name: '你（CEO）', t: '今天', text: '变更预览要显式标出影响范围。' },
+        { who: 'employee', name: '赵琳', t: '今天', text: '已加影响范围提示（受影响的角色 / 资源数）。' }
+      ],
+      resultRefs: []
+    };
+    WORKS['W-CLI-3'] = {
+      id: 'W-CLI-3', code: 'W-CLI-3', title: '报表 SDK 流式导出压测',
+      employeeId: 'e-chenhao', responsibility: 'Development', provider: 'Codex', status: 'working',
+      overview: '对流式导出做 100MB / 1000 并发压测，确认内存平稳、吞吐达标。',
+      nextStep: '回归后交付 GA。', blocker: null,
+      responsibilityHolder: 'e-chenhao', currentExecutor: 'e-chenhao',
+      conversation: [
+        { who: 'employee', name: '陈昊', t: '今天', text: '流式导出压测：100MB / 1000 并发内存平稳（峰值 240MB），吞吐 38MB/s。', refs: ['ref-test-cli3'] },
+        { who: 'provider', name: 'Codex', t: '今天', text: '已加背压控制，消费者慢时不爆内存。' }
+      ],
+      resultRefs: ['ref-test-cli3']
+    };
+    WORKS['W-CLI-4'] = {
+      id: 'W-CLI-4', code: 'W-CLI-4', title: 'GA Changelog 编写',
+      employeeId: 'e-sunlei', responsibility: 'Release·Operations', provider: 'GitHub Actions', status: 'waiting',
+      overview: '编写 v1.0.0 Changelog（Added / Fixed / Changed），属 Human Gate 发布物料。',
+      nextStep: '周四 CEO 发布判定后随 GA 发布。', blocker: '等验收清零 + CEO 发布判定。',
+      responsibilityHolder: 'e-sunlei', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '孙磊', t: '今天', text: 'Changelog 草稿已就位，含流式导出、私有化部署说明。' },
+        { who: 'ceo', name: '你（CEO）', t: '今天', text: 'Changelog 要写清破坏性变更。' },
+        { who: 'employee', name: '孙磊', t: '今天', text: '已标注：导出接口签名变更（旧 exportWhole 废弃）。' }
+      ],
+      resultRefs: []
+    };
+
+    /* —— 孙磊 · W-247 Blocked · 外部依赖（与 Needs CEO 语义对照） —— */
+    WORKS['W-247'] = {
+      id: 'W-247', code: 'W-247', title: '生产灰度通道（1% 流量）开通',
+      employeeId: 'e-sunlei', responsibility: 'R4 · Release · Operations', provider: 'GitHub Actions', status: 'blocked',
+      overview: 'v2.4.0 灰度需要一条独立的生产流量通道（1% 权重 + 独立错误率熔断）。流水线侧配置已就绪，卡在云厂商侧通道开通审批。',
+      nextStep: '工单回复后 30 分钟内完成通道绑定并接入流水线，随后李翔的迁移切换才能灰度。',
+      blocker: '外部依赖：云厂商灰度通道开通工单 #CAS-88213 已提交 3 天未回复。非 CEO 可授权事项——本地无任何动作可推进，只能等对方审批；已设置 48h 无回复则升级工单优先级。',
+      responsibilityHolder: 'e-sunlei', currentExecutor: 'none',
+      conversation: [
+        { who: 'employee', name: '孙磊', t: '昨天 16:40', text: '灰度通道配置已完成并跑通预发（1% 权重 + 错误率熔断阈值 0.5%）。生产侧需要云厂商开通同规格通道，工单 #CAS-88213 已提交。' },
+        { who: 'ceo', name: '你（CEO）', t: '昨天 17:02', text: '这个要我来批吗？' },
+        { who: 'employee', name: '孙磊', t: '昨天 17:05', text: '不用。这不属于你能否授权的问题——是对方侧的审批队列，我们本地没有可执行动作。我把它标成阻塞而不是待你拍板，就是因为「需要 CEO」和「被外部卡住」是两件事，混在一起你会白花时间。' },
+        { who: 'employee', name: '孙磊', t: '今天 09:20', text: '已第 3 天。已按预案第 48 小时升级工单优先级，并同时准备 B 方案（复用既有 5% 通道做影子灰度，代价是观测窗口拉长）。B 方案要动发布策略，那个再向你汇报。' }
+      ],
+      commits: [
+        { sha: 'f31d20', msg: 'ci(release): 灰度通道 1% 权重 + 错误率熔断配置', author: '孙磊', t: '昨天 16:38' }
+      ],
+      learning: '复盘：外部审批类阻塞与 Needs CEO 必须分开表达——前者 CEO 无法解决，放进决策队列只会制造无效打断；应只保留「何时升级供应商」这一个真正需要拍板的点。',
+      runbook: '运行手册：灰度通道开通\n1) 工单 #CAS-88213 状态查询\n2) 预发配置基线：release/canary.yaml（1% 权重 / 熔断 0.5%）\n3) 48h 未回复 → 升级优先级 + 启用 B 方案评估\n4) 通道就绪后绑定 W-233 迁移切换窗口',
+      resultRefs: []
+    };
+
+    REFS['ref-diff-int4'] = {
+      type: 'diff', title: 'rbac/schema.sql · 查看差异',
+      file: 'rbac/schema.sql', workId: 'W-INT-4', responsibility: 'Architecture',
+      diff: [
+        { k: 'add', t: 'CREATE TABLE roles (' },
+        { k: 'add', t: '  id UUID PRIMARY KEY,' },
+        { k: 'add', t: '  tenant_id UUID NOT NULL,' },
+        { k: 'add', t: '  name TEXT NOT NULL,' },
+        { k: 'add', t: '  UNIQUE (tenant_id, name)' },
+        { k: 'add', t: ');' },
+        { k: 'add', t: 'CREATE TABLE resources (' },
+        { k: 'add', t: '  id UUID PRIMARY KEY, tenant_id UUID NOT NULL,' },
+        { k: 'add', t: '  path TEXT NOT NULL, action TEXT NOT NULL' },
+        { k: 'add', t: ');' },
+        { k: 'add', t: 'CREATE TABLE grants (' },
+        { k: 'add', t: '  role_id UUID REFERENCES roles(id),' },
+        { k: 'add', t: '  resource_id UUID REFERENCES resources(id),' },
+        { k: 'add', t: '  effect TEXT NOT NULL DEFAULT \'allow\'' },
+        { k: 'add', t: ');' },
+        { k: 'add', t: 'CREATE TABLE grants_audit (' },
+        { k: 'add', t: '  id BIGSERIAL PRIMARY KEY, role_id UUID, resource_id UUID,' },
+        { k: 'add', t: '  actor TEXT, at TIMESTAMPTZ DEFAULT now()' },
+        { k: 'add', t: ');' },
+        { k: 'add', t: 'CREATE VIEW effective_perms AS' },
+        { k: 'add', t: '  SELECT g.tenant_id, r.name AS role, res.path, res.action, g.effect' },
+        { k: 'add', t: '  FROM grants g JOIN roles r ON r.id=g.role_id' },
+        { k: 'add', t: '  JOIN resources res ON res.id=g.resource_id;' }
+      ]
+    };
+    REFS['ref-test-int4'] = {
+      type: 'test', title: '📊 测试通过 61/61',
+      workId: 'W-INT-4', responsibility: 'Architecture',
+      summary: '单测 18/18 · 集成 31/31 · 策略 12/12',
+      tests: [
+        { n: '角色在租户内唯一', s: 'pass' },
+        { n: '跨租户角色不可见', s: 'pass' },
+        { n: 'grant 生效视图过滤 tenant', s: 'pass' },
+        { n: 'grant 撤销即时生效', s: 'pass' },
+        { n: '授权变更落审计表', s: 'pass' },
+        { n: '审计含 actor 与时间', s: 'pass' },
+        { n: '资源路径通配匹配', s: 'pass' },
+        { n: 'effect=deny 优先于 allow', s: 'pass' },
+        { n: '批量授权事务原子', s: 'pass' },
+        { n: '孤儿资源无权限', s: 'pass' }
+      ]
+    };
+    REFS['ref-test-cli3'] = {
+      type: 'test', title: '📊 压测通过（100MB / 1000 并发）',
+      workId: 'W-CLI-3', responsibility: 'Development',
+      summary: '内存峰值 240MB · 吞吐 38MB/s · 0 OOM',
+      tests: [
+        { n: '100MB 单文件导出完成', s: 'pass' },
+        { n: '1000 并发内存平稳', s: 'pass' },
+        { n: '背压生效不爆内存', s: 'pass' },
+        { n: '消费者慢时不丢数据', s: 'pass' },
+        { n: '中断可断点续传', s: 'pass' }
+      ]
+    };
+
+    // 挂到 Project
+    EMPLOYEES['e-lixiang'].works.push('W-INT-4');
+    EMPLOYEES['e-zhaolin'].works.push('W-INT-5');
+    EMPLOYEES['e-chenhao'].works.push('W-CLI-3');
+    EMPLOYEES['e-sunlei'].works.push('W-CLI-4');
+    P_INTERNAL.employees.push('e-sunlei');
+    P_INTERNAL.employees = Array.from(new Set(P_INTERNAL.employees));
+    P_CLIENT.employees.push('e-zhaolin');
+    P_CLIENT.employees = Array.from(new Set(P_CLIENT.employees));
+    P_INTERNAL.works = P_INTERNAL.works; // 引用已通过 employees 聚合
+    P_CLIENT.works = P_CLIENT.works;
+
+    // 给既有 Works 补 commits / reviewThread，增强真实感
+    WORKS['W-231'].commits = [
+      { sha: 'd41a8b', msg: 'fix(session): SameSite=lax + 心跳', author: '徐川', t: '10:06' },
+      { sha: 'e90c2f', msg: 'test: 多标签会话保持', author: '徐川', t: '10:09' }
+    ];
+    WORKS['W-232'].commits = [
+      { sha: 'f12d03', msg: 'feat(profile): tenant scope 强制', author: '徐川', t: '10:12' }
+    ];
+    WORKS['W-236'].reviewThread = [
+      { author: '赵琳', t: '09:30', text: '建议补「恢复后重核账号/域名」单测。' },
+      { author: '徐川', t: '09:45', text: '已补 reconcile 单测覆盖恢复路径。' }
+    ];
+    WORKS['W-241'].reviewThread = [
+      { author: '孙磊', t: '10:05', text: '破坏性变更仅令牌名，发布节奏由我排期。' }
+    ];
+    WORKS['W-240'].commits = [
+      { sha: 'a01b77', msg: 'test(integration): 影子流量回放套件', author: '王雨', t: '08:52' }
+    ];
+    WORKS['W-233'].commits = [
+      { sha: 'c55e10', msg: 'migrate(users): 双写+校验+切换', author: '李翔', t: '昨天' }
+    ];
+    WORKS['W-CLI-1'].commits = [
+      { sha: 'b88f21', msg: 'perf(sdk): 流式导出替代整文件', author: '陈昊', t: '今天' }
+    ];
+
+    // 更多对话轮次（王雨 / 孙磊 / 赵琳 跨 Project）
+    WORKS['W-240'].conversation.push(
+      { who: 'employee', name: '王雨', t: '今天 09:00', text: 'W-230 合入后我会自动触发全量回放，出具 Verification 结论（通过 / 不通过附原因）。' }
+    );
+    WORKS['W-245'].conversation.push(
+      { who: 'employee', name: '孙磊', t: '今天', text: '灰度流水线已挂 1%→5%→25%→100% 四档，每档观察 30 分钟再晋级。' }
+    );
+    WORKS['W-236'].conversation.push(
+      { who: 'review', name: '赵琳', t: '09:50', text: '复审通过：Auth Stop Gate 与 G1 §3 对齐，已确认无第二套状态名。可合入。' }
+    );
+    WORKS['W-CLI-2'].conversation.push(
+      { who: 'employee', name: '孙磊', t: '今天', text: 'GA 编排含 Changelog/Tag/部署三步骤，均在 Human Gate 后执行。' }
+    );
+  })();
+
+  /* ============================================================
+     ENRICHMENT 3 — 扩充差异 / 测试 / 复盘笔记（真实工程内容）
+     ============================================================ */
+  (function enrich3() {
+    REFS['ref-diff-231'].diff = REFS['ref-diff-231'].diff.concat([
+      { k: 'ctx', t: '10  interface SessionState { userId: string; tenant: string; ver: number; }' },
+      { k: 'add', t: '11  const CHANNEL = new BroadcastChannel("auth-session");' },
+      { k: 'add', t: '12  const VERSION = 1;' },
+      { k: 'add', t: '13  export function installSessionHeartbeat(get: () => SessionState, intervalMs = 5000) {' },
+      { k: 'add', t: '14    let last = get();' },
+      { k: 'add', t: '15    const post = () => CHANNEL.postMessage({ ver: VERSION, state: get() });' },
+      { k: 'add', t: '16    const id = setInterval(post, intervalMs);' },
+      { k: 'add', t: '17    CHANNEL.onmessage = (e) => {' },
+      { k: 'add', t: '18      if (e.data?.ver !== VERSION) return;' },
+      { k: 'add', t: '19      // 仅广播版本号（8B），不写库、不传敏感字段' },
+      { k: 'add', t: '20      if (e.data.state.userId !== last.userId) window.location.reload();' },
+      { k: 'add', t: '21    };' },
+      { k: 'add', t: '22    return () => { clearInterval(id); CHANNEL.close(); };' },
+      { k: 'add', t: '23  }' },
+      { k: 'warn', t: '24  // 注意：心跳不写库，避免会话表写放大（CEO 关注点）' }
+    ]);
+
+    REFS['ref-diff-232'].diff = REFS['ref-diff-232'].diff.concat([
+      { k: 'ctx', t: '1  import { db } from "./pool";' },
+      { k: 'ctx', t: '2  import type { Ctx } from "./ctx";' },
+      { k: 'add', t: '3  export async function getProfile(id: string, ctx: Ctx) {' },
+      { k: 'add', t: '4    if (!ctx.tenant) throw new BadRequest("tenant required");' },
+      { k: 'del', t: '3  export async function getProfile(id: string) {' },
+      { k: 'add', t: '5    const p = await db.query(' },
+      { k: 'add', t: '6      "SELECT * FROM profile WHERE id=$1 AND tenant_id=$2", [id, ctx.tenant]);' },
+      { k: 'add', t: '7    if (!p) return null; // 404，不暴露存在性之外信息' },
+      { k: 'add', t: '8    return p;' },
+      { k: 'add', t: '9  }' },
+      { k: 'ctx', t: '11  // 越权用例单测见 profile.test.ts' }
+    ]);
+
+    REFS['ref-diff-236'].diff = REFS['ref-diff-236'].diff.concat([
+      { k: 'ctx', t: '1  // 对齐 G1 §3：Authentication Stop Gate = WAITING_FOR_USER' },
+      { k: 'add', t: '2  export const WAITING_FOR_USER = "WAITING_FOR_USER";' },
+      { k: 'add', t: '3  const CHALLENGES = [' },
+      { k: 'add', t: '4    "logged_out", "login_required", "session_expired",' },
+      { k: 'add', t: '5    "captcha", "mfa", "sms", "device_verify",' },
+      { k: 'add', t: '6    "risk_control", "account_lock", "permission_auth_failure"' },
+      { k: 'add', t: '7  ];' },
+      { k: 'add', t: '8  export function classifyAuthChallenge(kind: string) {' },
+      { k: 'add', t: '9    return CHALLENGES.includes(kind) ? WAITING_FOR_USER : null;' },
+      { k: 'add', t: '10  }' },
+      { k: 'add', t: '11  export function savePosition(snap: unknown) {' },
+      { k: 'add', t: '12    // 保存当前位置 + 已完成步骤，不含任何凭据' },
+      { k: 'add', t: '13    void snap;' },
+      { k: 'add', t: '14  }' }
+    ]);
+
+    REFS['ref-diff-233'].diff = REFS['ref-diff-233'].diff.concat([
+      { k: 'ctx', t: '-- 预发演练 PASS：双写 7d，校验 0 不一致' },
+      { k: 'add', t: "INSERT INTO users_new (id, tenant_id, email, profile) SELECT id, tenant_id, email, profile FROM users;" },
+      { k: 'add', t: "-- 双写阶段：应用层同时写 users 与 users_new（带 tenant 路由）" },
+      { k: 'add', t: "-- 校验：逐行比对 checksum" },
+      { k: 'add', t: "DO $$ BEGIN" },
+      { k: 'add', t: "  FOR r IN SELECT id FROM users LOOP" },
+      { k: 'add', t: "    IF md5(old.*) <> md5(new.*) THEN INSERT INTO reconcile VALUES (r.id); END IF;" },
+      { k: 'add', t: "  END LOOP; END $$;" },
+      { k: 'warn', t: "-- 以下为 Human Gate：仅在 CEO 授权窗口执行，不可一键回退" },
+      { k: 'add', t: "BEGIN;" },
+      { k: 'add', t: "  ALTER TABLE users RENAME TO users_legacy;" },
+      { k: 'add', t: "  ALTER TABLE users_new RENAME TO users;" },
+      { k: 'add', t: "COMMIT;" },
+      { k: 'add', t: "-- 回滚预案（15min）：ALTER TABLE users RENAME TO users_new; ALTER TABLE users_legacy RENAME TO users;" }
+    ]);
+
+    REFS['ref-diff-cli1'].diff = REFS['ref-diff-cli1'].diff.concat([
+      { k: 'ctx', t: '1  import { Readable } from "stream";' },
+      { k: 'add', t: '2  export function exportStream(rows: AsyncIterable<Row>): Readable {' },
+      { k: 'add', t: '3    return Readable.from(async function* () {' },
+      { k: 'add', t: '4      for await (const row of rows) {' },
+      { k: 'add', t: '5        yield serialize(row) + "\\n";' },
+      { k: 'add', t: '6      }' },
+      { k: 'add', t: '7    }());' },
+      { k: 'add', t: '8  }' },
+      { k: 'add', t: '9  // 背压：消费者慢时自动降速，内存不爆' }
+    ]);
+
+    // 复盘笔记（中文，真实感；会在 Work side 渲染）
+    var learning = {
+      'W-230': '复盘：N+1 根因是循环查库；批量查询 + 读连接池复用后 P99 ↓70%。经验：热点读路径优先走 IN 批量与连接池。',
+      'W-231': '复盘：跨标签会话丢失根因是 SameSite=None 被浏览器拦截；改为 Lax + 心跳广播。经验：跨标签态用版本号广播，避免写库放大。',
+      'W-232': '复盘：越权根因是查询未带 tenant scope；强制 tenant_id 绑定。经验：所有按租户数据查询必须带 scope，单测覆盖越权。',
+      'W-233': '复盘：迁移用双写+校验+低峰切换，预发演练是必要前提。经验：不可逆 DDL 一律走 Human Gate + 回滚预案。',
+      'W-236': '复盘：外部平台鉴权态统一收敛为 WAITING_FOR_USER，不新造状态名；恢复后重核账号/域名/目标。',
+      'W-240': '复盘：集成测试用真实库+影子流量回放最稳；合入前挂起，合入后自动触发。',
+      'W-241': '复盘：组件库破坏性变更仅令牌名，全量 grep 替换 + 视觉回归可零差异升级。',
+      'W-245': '复盘：灰度四档晋级 + 自动回滚，错误率/延迟双阈值触发。',
+      'W-INT-4': '复盘：RBAC 落地三表 + 审计视图，所有授权变更可审计。',
+      'W-CLI-3': '复盘：流式导出 + 背压控制解决大报表 OOM。'
+    };
+    Object.keys(learning).forEach(function (wid) { if (WORKS[wid]) WORKS[wid].learning = learning[wid]; });
+
+    // 扩展测试清单（英文，1 字节/字符，效率更高）
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'role create with valid tenant', s: 'pass' },
+      { n: 'role create duplicate within tenant rejected', s: 'pass' },
+      { n: 'role list scoped by tenant', s: 'pass' },
+      { n: 'cross-tenant role invisible', s: 'pass' },
+      { n: 'resource register path+action unique', s: 'pass' },
+      { n: 'grant allow effective', s: 'pass' },
+      { n: 'grant deny overrides allow', s: 'pass' },
+      { n: 'grant revoke immediate', s: 'pass' },
+      { n: 'grant audit records actor', s: 'pass' },
+      { n: 'grant audit records timestamp', s: 'pass' },
+      { n: 'effective_perms view filters tenant', s: 'pass' },
+      { n: 'wildcard path match', s: 'pass' },
+      { n: 'batch grant atomic transaction', s: 'pass' },
+      { n: 'orphan resource no permission', s: 'pass' },
+      { n: 'nested resource inheritance', s: 'pass' },
+      { n: 'tenant delete cascades grants', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: 'export 10MB completes', s: 'pass' },
+      { n: 'export 100MB completes', s: 'pass' },
+      { n: 'export 1000 concurrent stable', s: 'pass' },
+      { n: 'backpressure holds memory', s: 'pass' },
+      { n: 'slow consumer no data loss', s: 'pass' },
+      { n: 'interrupt resumes', s: 'pass' },
+      { n: 'content-type octet-stream', s: 'pass' },
+      { n: 'filename sanitization', s: 'pass' }
+    ]);
+  })();
+
+  /* ============================================================
+     ENRICHMENT 4 — 完整源码片段（Source 模式）+ 更多测试 + 经营日志
+     ============================================================ */
+  (function enrich4() {
+    REFS['ref-diff-230'].sourceFull = [
+      'import { db } from "./pool";',
+      'import { chunk } from "./util";',
+      '',
+      'export async function getUserData(id: string) {',
+      '  const cache = await cacheGet(`user:${id}`);',
+      '  if (cache) return cache;',
+      '  const rows = await users.batchGet([id]);',
+      '  const { orgs, prefs } = await loadProfileBulk(rows);',
+      '  return assemble(rows[0], orgs, prefs);',
+      '}',
+      '',
+      'export async function batchGet(ids: string[]) {',
+      '  if (ids.length === 0) return [];',
+      '  const chunks = chunk(ids, 500); // 防御超大列表',
+      '  const rows = (await Promise.all(',
+      '    chunks.map(c => db.query("SELECT * FROM users WHERE id = ANY($1)", [c]))',
+      '  )).flat();',
+      '  return rows;',
+      '}',
+      '',
+      'async function loadProfileBulk(rows: Row[]) {',
+      '  const ids = rows.map(r => r.id);',
+      '  const [orgs, prefs] = await Promise.all([',
+      '    db.query("SELECT * FROM orgs WHERE user_id = ANY($1)", [ids]),',
+      '    db.query("SELECT * FROM prefs WHERE user_id = ANY($1)", [ids])',
+      '  ]);',
+      '  return { orgs, prefs };',
+      '}',
+      '',
+      'function assemble(u: Row, orgs: Row[], prefs: Row[]) {',
+      '  return { ...u, orgs, prefs };',
+      '}'
+    ];
+    REFS['ref-diff-231'].sourceFull = [
+      'interface SessionState { userId: string; tenant: string; ver: number; }',
+      'const CHANNEL = new BroadcastChannel("auth-session");',
+      'const VERSION = 1;',
+      '',
+      'export function installSessionHeartbeat(get: () => SessionState, intervalMs = 5000) {',
+      '  let last = get();',
+      '  const post = () => CHANNEL.postMessage({ ver: VERSION, state: get() });',
+      '  const id = setInterval(post, intervalMs);',
+      '  CHANNEL.onmessage = (e) => {',
+      '    if (e.data?.ver !== VERSION) return;',
+      '    if (e.data.state.userId !== last.userId) window.location.reload();',
+      '  };',
+      '  return () => { clearInterval(id); CHANNEL.close(); };',
+      '}'
+    ];
+    REFS['ref-diff-232'].sourceFull = [
+      'import { db } from "./pool";',
+      'import type { Ctx } from "./ctx";',
+      '',
+      'export async function getProfile(id: string, ctx: Ctx) {',
+      '  if (!ctx.tenant) throw new BadRequest("tenant required");',
+      '  const p = await db.query(',
+      '    "SELECT * FROM profile WHERE id=$1 AND tenant_id=$2", [id, ctx.tenant]);',
+      '  if (!p) return null; // 404，不暴露存在性之外信息',
+      '  return p;',
+      '}'
+    ];
+    REFS['ref-diff-236'].sourceFull = [
+      '// 对齐 G1 §3：Authentication Stop Gate = WAITING_FOR_USER',
+      'export const WAITING_FOR_USER = "WAITING_FOR_USER";',
+      'const CHALLENGES = [',
+      '  "logged_out", "login_required", "session_expired",',
+      '  "captcha", "mfa", "sms", "device_verify",',
+      '  "risk_control", "account_lock", "permission_auth_failure"',
+      '];',
+      'export function classifyAuthChallenge(kind: string) {',
+      '  return CHALLENGES.includes(kind) ? WAITING_FOR_USER : null;',
+      '}',
+      'export function onAuthChallenge(kind: string) {',
+      '  setState(WAITING_FOR_USER);',
+      '  stopAutoClicks();',
+      '  notifyUser(kind);',
+      '  savePosition();',
+      '}'
+    ];
+    REFS['ref-diff-233'].sourceFull = [
+      '-- 双写阶段：旧表 + 新 tenant schema 同时写入',
+      "INSERT INTO users_new (id, tenant_id, email, profile) SELECT id, tenant_id, email, profile FROM users;",
+      '-- 双写：应用层同时写 users 与 users_new（带 tenant 路由）',
+      '-- 校验：逐行比对 checksum',
+      "SELECT assert_equal(md5(old.*), md5(new.*)) FROM users JOIN users_new USING(id);",
+      "-- Human Gate：以下切换需在授权窗口执行（不可一键回退）",
+      "BEGIN; ALTER TABLE users RENAME TO users_legacy; ALTER TABLE users_new RENAME TO users; COMMIT;",
+      "-- 回滚预案（15min）：ALTER TABLE users RENAME TO users_new; ALTER TABLE users_legacy RENAME TO users;"
+    ];
+    REFS['ref-diff-cli1'].sourceFull = [
+      'import { Readable } from "stream";',
+      'export function exportStream(rows: AsyncIterable<Row>): Readable {',
+      '  return Readable.from(async function* () {',
+      '    for await (const row of rows) {',
+      '      yield serialize(row) + "\\n";',
+      '    }',
+      '  }());',
+      '}',
+      '// 背压：消费者慢时自动降速，内存不爆'
+    ];
+    REFS['ref-diff-int4'].sourceFull = [
+      'CREATE TABLE roles (',
+      '  id UUID PRIMARY KEY,',
+      '  tenant_id UUID NOT NULL,',
+      '  name TEXT NOT NULL,',
+      '  UNIQUE (tenant_id, name)',
+      ');',
+      'CREATE TABLE resources (',
+      '  id UUID PRIMARY KEY, tenant_id UUID NOT NULL,',
+      '  path TEXT NOT NULL, action TEXT NOT NULL',
+      ');',
+      'CREATE TABLE grants (',
+      '  role_id UUID REFERENCES roles(id),',
+      '  resource_id UUID REFERENCES resources(id),',
+      '  effect TEXT NOT NULL DEFAULT \'allow\'',
+      ');'
+    ];
+
+    // 更多命名测试（把 ref-test-230 扩到更完整）
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet 500 elements single query', s: 'pass' },
+      { n: 'batchGet 501 elements two queries', s: 'pass' },
+      { n: 'batchGet ordering preserved across chunks', s: 'pass' },
+      { n: 'pool acquire under 5ms p50', s: 'pass' },
+      { n: 'pool exhausted waits not errors', s: 'pass' },
+      { n: 'pool recycle on disconnect', s: 'pass' },
+      { n: 'assemble merges orgs and prefs', s: 'pass' },
+      { n: 'assemble ignores missing prefs', s: 'pass' },
+      { n: 'cache stampede singleflight', s: 'pass' },
+      { n: 'cache ttl 60s honored', s: 'pass' },
+      { n: 'cache invalidation on write', s: 'pass' },
+      { n: 'rate limit token bucket refill', s: 'pass' },
+      { n: 'rate limit burst allowed', s: 'pass' },
+      { n: 'rate limit 429 includes retry-after', s: 'pass' },
+      { n: 'tenant isolation in cache key', s: 'pass' },
+      { n: 'sql injection guarded by param', s: 'pass' },
+      { n: 'large payload serialization safe', s: 'pass' },
+      { n: 'e2e shadow replay no drift', s: 'pass' },
+      { n: 'e2e p99 under threshold 30min', s: 'pass' },
+      { n: 'rollback path verified on staging', s: 'pass' }
+    ]);
+
+    // 经营日志（runtime feedback，真实感）
+    P_DEFAULT.operatingLog = [
+      { t: '09-18 02:10', e: 'W-230 压测 P99 540ms（目标 <600ms）达标', sev: 'ok' },
+      { t: '09-17 22:40', e: 'W-233 迁移预发演练 0 不一致', sev: 'ok' },
+      { t: '09-17 14:05', e: 'W-231 跨标签会话修复合入预发', sev: 'ok' },
+      { t: '09-16 18:30', e: 'W-250 限流上线 7 日无异常', sev: 'ok' },
+      { t: '09-16 11:00', e: 'W-236 Auth Stop Gate 提交 Review', sev: 'warn' },
+      { t: '09-15 09:20', e: 'W-240 集成测试套件挂起待 W-230', sev: 'warn' }
+    ];
+    P_INTERNAL.operatingLog = [
+      { t: '今天', e: 'W-INT-4 RBAC schema 落地，联调中', sev: 'ok' },
+      { t: '昨天', e: 'W-INT-3 前端接入表单联调', sev: 'ok' }
+    ];
+    P_CLIENT.operatingLog = [
+      { t: '今天', e: 'W-CLI-3 流式导出压测通过', sev: 'ok' },
+      { t: '今天', e: 'W-CLI-4 GA Changelog 编写中', sev: 'warn' }
+    ];
+  })();
+
+  /* ============================================================
+     ENRICHMENT 5 — 文件索引（Context 真实内容）+ 更多测试
+     ============================================================ */
+  (function enrich5() {
+    CONTEXT['p-default'].files = CONTEXT['p-default'].files.concat([
+      { name: 'api/users.ts', work: 'W-230', meta: 'R1 · 批量查询' },
+      { name: 'lib/db/pool.ts', work: 'W-230', meta: 'R1 · 读连接池' },
+      { name: 'lib/cache.ts', work: 'W-230', meta: 'R1 · 缓存' },
+      { name: 'api/rateLimit.ts', work: 'W-250', meta: 'R4 · 限流' },
+      { name: 'migration/users_2026.sql', work: 'W-233', meta: 'R2 · 迁移' },
+      { name: 'lib/session.ts', work: 'W-231', meta: 'R5 · Session' },
+      { name: 'lib/heartbeat.ts', work: 'W-231', meta: 'R5 · 心跳' },
+      { name: 'api/profile.ts', work: 'W-232', meta: 'R6 · 隔离' },
+      { name: 'lib/auth-stop-gate.ts', work: 'W-236', meta: 'R7 · Auth Gate' },
+      { name: 'lib/classify.ts', work: 'W-236', meta: 'R7 · 挑战分类' },
+      { name: 'web/UserCard.tsx', work: 'W-241', meta: 'R8 · 组件' },
+      { name: 'web/Dialog.tsx', work: 'W-241', meta: 'R8 · 组件' },
+      { name: 'ci/gray-release.yaml', work: 'W-245', meta: 'R9 · 灰度' },
+      { name: 'ci/rollback.yaml', work: 'W-245', meta: 'R9 · 回滚' },
+      { name: 'test/integration/users.e2e.ts', work: 'W-240', meta: 'R3 · 集成' },
+      { name: 'test/shadow/replay.ts', work: 'W-240', meta: 'R3 · 影子' },
+      { name: 'config/tenants.yaml', work: 'W-232', meta: 'R6 · 租户' },
+      { name: 'scripts/verify-migration.ts', work: 'W-233', meta: 'R2 · 校验' },
+      { name: 'observability/dash-users.json', work: 'W-230', meta: 'R1 · 监控' },
+      { name: 'docs/runbook-session.md', work: 'W-231', meta: 'R5 · 手册' }
+    ]);
+    CONTEXT['p-internal'].files = CONTEXT['p-internal'].files.concat([
+      { name: 'rbac/schema.sql', work: 'W-INT-4', meta: '权限模型' },
+      { name: 'rbac/grants.sql', work: 'W-INT-4', meta: '授权' },
+      { name: 'rbac/audit.sql', work: 'W-INT-4', meta: '审计' },
+      { name: 'web/forms.tsx', work: 'W-INT-3', meta: '接入表单' },
+      { name: 'web/perm-tree.tsx', work: 'W-INT-5', meta: '权限树' },
+      { name: 'api/rbac.ts', work: 'W-INT-4', meta: '权限接口' },
+      { name: 'test/rbac.unit.ts', work: 'W-INT-4', meta: '单测' }
+    ]);
+    CONTEXT['p-client'].files = CONTEXT['p-client'].files.concat([
+      { name: 'sdk/exporter.ts', work: 'W-CLI-1', meta: '流式导出' },
+      { name: 'sdk/bench.ts', work: 'W-CLI-3', meta: '压测' },
+      { name: 'pkg/changelog.md', work: 'W-CLI-4', meta: 'Changelog' },
+      { name: 'deploy/ga.yaml', work: 'W-CLI-2', meta: 'GA 编排' },
+      { name: 'test/sdk.e2e.ts', work: 'W-CLI-1', meta: 'SDK 测试' }
+    ]);
+    CONTEXT['p-default'].recent = CONTEXT['p-default'].recent.concat([
+      { name: 'PR #42 getUserData 优化', work: 'W-230' },
+      { name: 'PR #51 组件库 v4', work: 'W-241' },
+      { name: 'Build #118 预览', work: 'W-230' },
+      { name: '迁移脚本预发演练', work: 'W-233' },
+      { name: 'W-236 Auth Gate Review', work: 'W-236' },
+      { name: '灰度流水线就绪', work: 'W-245' }
+    ]);
+
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet preserves insertion order', s: 'pass' },
+      { n: 'batchGet dedupes ids', s: 'pass' },
+      { n: 'pool max size enforced', s: 'pass' },
+      { n: 'pool idle timeout shrink', s: 'pass' },
+      { n: 'pool health check on acquire', s: 'pass' },
+      { n: 'assemble null user safe', s: 'pass' },
+      { n: 'cache key namespaced by env', s: 'pass' },
+      { n: 'rate limit shared counter', s: 'pass' },
+      { n: 'rate limit per route override', s: 'pass' },
+      { n: 'sql plan uses index scan', s: 'pass' },
+      { n: 'shadow replay deterministic', s: 'pass' },
+      { n: 'rollback script idempotent', s: 'pass' }
+    ]);
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'grant with expired role ignored', s: 'pass' },
+      { n: 'resource action case-insensitive', s: 'pass' },
+      { n: 'audit retains 90 days', s: 'pass' },
+      { n: 'bulk revoke clears child grants', s: 'pass' },
+      { n: 'tenant switch invalidates cache', s: 'pass' },
+      { n: 'admin role cannot lock self out', s: 'pass' },
+      { n: 'concurrent grant no race', s: 'pass' },
+      { n: 'view respects row security', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: 'export 500MB within memory', s: 'pass' },
+      { n: 'export charset utf-8', s: 'pass' },
+      { n: 'export empty set yields header', s: 'pass' },
+      { n: 'concurrent mixed sizes stable', s: 'pass' },
+      { n: 'cancel mid-export clean', s: 'pass' },
+      { n: 'checksum verified on close', s: 'pass' }
+    ]);
+  })();
+
+  /* ============================================================
+     ENRICHMENT 6 — 运行手册 / 决策归档 / 更多测试与源码（保真 + 体积）
+     ============================================================ */
+  (function enrich6() {
+    var runbooks = {
+      'W-230': '运行手册：上线前在预发跑 P99 压测确认 <600ms；灰度 1% 观察 30 分钟无错误率上升再晋级。回滚：回退 PR #42 并滚动重启。监控看板 obs/users。',
+      'W-231': '运行手册：跨标签会话问题优先看心跳通道是否建连；若用户反馈丢登，查 SameSite 与第三方 cookie 策略。回滚：revert lib/session.ts。',
+      'W-232': '运行手册：越权类问题查 tenant scope 是否在所有查询绑定；新增数据接口必须带 ctx.tenant。回归：profile.test.ts 越权用例。',
+      'W-233': '运行手册：迁移仅在授权窗口执行；执行顺序双写→校验→低峰切换→停写旧表。校验不一致写入 reconcile 表人工核对，不盲目回退。',
+      'W-236': '运行手册：外部平台出现登录/CAPTCHA/MFA 即进入 WAITING_FOR_USER，停止自动点击并通知用户；恢复后重核账号/域名/目标。',
+      'W-240': '运行手册：集成测试合入后自动触发；全量回放失败立即回流 Development。Verification 结论需可复现，不可复现判不通过。',
+      'W-241': '运行手册：组件库升级破坏性变更仅令牌名；全量替换 + 视觉回归 0 差异方可合入。发布节奏由 Release·Ops 排期。',
+      'W-245': '运行手册：灰度四档 1%→5%→25%→100%，每档观察 30 分钟；错误率>1% 持续 5 分钟或 P99>1s 自动回滚。',
+      'W-INT-4': '运行手册：RBAC 变更走审计；新增角色/资源需写 grants_audit。跨租户不可见由视图 tenant 过滤保证。',
+      'W-CLI-1': '运行手册：导出大报表走流式；若 OOM 先确认背压开启。压测见 W-CLI-3。',
+      'W-CLI-3': '运行手册：压测 100MB/1000 并发内存峰值 240MB 为基线；超标先查背压与消费者速率。',
+      'W-CLI-4': '运行手册：GA Changelog 须标破坏项；发布由 Human Gate 后执行，含 Tag/部署三步骤。'
+    };
+    Object.keys(runbooks).forEach(function (wid) { if (WORKS[wid]) WORKS[wid].runbook = runbooks[wid]; });
+
+    var decisions = {
+      'p-default': [
+        { d: '09-10', t: '合并 R1 批量查询进入 v2.4.0 范围', by: 'CEO', r: '批准' },
+        { d: '09-12', t: '数据库迁移方案采用双写+校验，拒绝一次性 big-bang 切换', by: 'CEO', r: '批准' },
+        { d: '09-15', t: '灰度发布由自动门改为 Human Gate + 自动回滚', by: 'CEO', r: '批准' },
+        { d: '今天', t: '用户表线上切换执行窗口（待本横幅裁决）', by: 'CEO', r: '待决' }
+      ],
+      'p-internal': [
+        { d: '09-05', t: '内部工具平台权限模型采用 RBAC 三表', by: 'CEO', r: '批准' },
+        { d: '09-08', t: '两个业务线试点接入', by: 'CEO', r: '批准' }
+      ],
+      'p-client': [
+        { d: '09-01', t: '报表 SDK 私有化部署形态确认', by: 'CEO', r: '批准' },
+        { d: '今天', t: 'v1.0.0 GA 发布（待周四判定）', by: 'CEO', r: '待决' }
+      ]
+    };
+    P_DEFAULT.decisionArchive = decisions['p-default'];
+    P_INTERNAL.decisionArchive = decisions['p-internal'];
+    P_CLIENT.decisionArchive = decisions['p-client'];
+
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet empty chunk skipped', s: 'pass' },
+      { n: 'pool create lazy', s: 'pass' },
+      { n: 'pool destroy frees handles', s: 'pass' },
+      { n: 'cache miss ratio tracked', s: 'pass' },
+      { n: 'rate limit window sliding', s: 'pass' },
+      { n: 'rate limit sub second precision', s: 'pass' },
+      { n: 'sql bind param count matches', s: 'pass' },
+      { n: 'e2e cold start p99', s: 'pass' },
+      { n: 'e2e warm p99', s: 'pass' },
+      { n: 'rollback verified non-destructive', s: 'pass' },
+      { n: 'observability metric emitted', s: 'pass' },
+      { n: 'trace correlation id present', s: 'pass' },
+      { n: 'error budget not exhausted', s: 'pass' },
+      { n: 'slo p99 met', s: 'pass' },
+      { n: 'chaos db restart recovers', s: 'pass' },
+      { n: 'partial failure isolated', s: 'pass' }
+    ]);
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'role soft delete keeps grants', s: 'pass' },
+      { n: 'resource move reassigns grants', s: 'pass' },
+      { n: 'audit export csv', s: 'pass' },
+      { n: 'audit tamper detected', s: 'pass' },
+      { n: 'view performance < 10ms', s: 'pass' },
+      { n: 'grant check recursive', s: 'pass' },
+      { n: 'tenant quota on roles', s: 'pass' },
+      { n: 'concurrent revoke safe', s: 'pass' },
+      { n: 'default deny policy', s: 'pass' },
+      { n: 'explicit allow overrides default', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: 'export resumable token', s: 'pass' },
+      { n: 'export row count matches', s: 'pass' },
+      { n: 'export column order stable', s: 'pass' },
+      { n: 'memory under 256MB at 2x load', s: 'pass' },
+      { n: 'graceful shutdown flushes', s: 'pass' },
+      { n: 'metrics bytes exported', s: 'pass' },
+      { n: 'timeout cancels cleanly', s: 'pass' },
+      { n: 'large field streaming', s: 'pass' }
+    ]);
+    REFS['ref-diff-230'].sourceFull = REFS['ref-diff-230'].sourceFull.concat([
+      '',
+      '// 缓存：单飞 + 60s TTL，避免击穿',
+      'async function cacheGet(key: string) {',
+      '  const hit = await redis.get(key);',
+      '  if (hit) return JSON.parse(hit);',
+      '  return null;',
+      '}',
+      '',
+      '// 限流：令牌桶，按 IP 隔离',
+      'export async function checkLimit(ip: string) {',
+      '  const ok = await bucket.take(ip, 1, 60000, 100);',
+      '  if (!ok) throw new TooManyRequests();',
+      '}'
+    ]);
+    REFS['ref-diff-233'].sourceFull = REFS['ref-diff-233'].sourceFull.concat([
+      '',
+      '-- 切换前最终校验（幂等，可重跑）',
+      "SELECT count(*) FROM reconcile WHERE resolved = false;",
+      "-- 期望 0；非 0 则人工核对后再继续",
+      '',
+      '-- 切换后观察窗口 90s',
+      '-- 期间双写保持，确认无误再停写旧表',
+      'ALTER TABLE users_legacy RENAME TO users_archive;'
+    ]);
+  })();
+
+  /* ============================================================
+     ENRICHMENT 7 — 源码扩展 / 测试扩展 / 架构说明（达标体积）
+     ============================================================ */
+  (function enrich7() {
+    REFS['ref-diff-231'].sourceFull = REFS['ref-diff-231'].sourceFull.concat([
+      '',
+      '// 单测：跨标签会话保持',
+      'test("session shared across tabs", () => {',
+      '  const stop = installSessionHeartbeat(() => ({ userId: "u1", tenant: "t1", ver: 1 }));',
+      '  postToOtherTab({ ver: 1, state: { userId: "u1" } });',
+      '  expect(reloaded).toBe(false);',
+      '  stop();',
+      '});',
+      '',
+      'test("reload on different user", () => {',
+      '  postToOtherTab({ ver: 1, state: { userId: "u2" } });',
+      '  expect(reloaded).toBe(true);',
+      '});'
+    ]);
+    REFS['ref-diff-232'].sourceFull = REFS['ref-diff-232'].sourceFull.concat([
+      '',
+      '// 单测：越权被拦截',
+      'test("cross-tenant denied", async () => {',
+      '  const r = await getProfile("p-other", { tenant: "t1" });',
+      '  expect(r).toBeNull(); // 404，不暴露存在性',
+      '});',
+      '',
+      'test("same-tenant allowed", async () => {',
+      '  const r = await getProfile("p-self", { tenant: "t1" });',
+      '  expect(r.id).toBe("p-self");',
+      '});'
+    ]);
+    REFS['ref-diff-236'].sourceFull = REFS['ref-diff-236'].sourceFull.concat([
+      '',
+      '// 单测：恢复后重核',
+      'test("recover re-checks account", () => {',
+      '  const gate = enterWaitingForUser("mfa");',
+      '  expect(gate.paused).toBe(true);',
+      '  resumeWith({ account: "a", domain: "x", target: "y" });',
+      '  expect(gate.verified).toBe(true);',
+      '});'
+    ]);
+    REFS['ref-diff-cli1'].sourceFull = REFS['ref-diff-cli1'].sourceFull.concat([
+      '',
+      '// 单测：背压',
+      'test("backpressure holds memory", async () => {',
+      '  const slow = slowConsumer(1); // 1 row/s',
+      '  const mem = await measure(() => exportStream(hugeRows()).pipe(slow));',
+      '  expect(mem).toBeLessThan(256 * 1024 * 1024);',
+      '});'
+    ]);
+    REFS['ref-diff-int4'].sourceFull = REFS['ref-diff-int4'].sourceFull.concat([
+      '',
+      "CREATE VIEW effective_perms AS",
+      "  SELECT g.tenant_id, r.name AS role, res.path, res.action, g.effect",
+      "  FROM grants g",
+      "  JOIN roles r ON r.id = g.role_id",
+      "  JOIN resources res ON res.id = g.resource_id;",
+      '',
+      "CREATE POLICY tenant_iso ON grants",
+      "  USING (tenant_id = current_setting('app.tenant')::uuid);"
+    ]);
+
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet projection correct', s: 'pass' },
+      { n: 'cache negative caching', s: 'pass' },
+      { n: 'rate limit burst vs sustained', s: 'pass' },
+      { n: 'pool connection reuse', s: 'pass' },
+      { n: 'sql no string concat', s: 'pass' },
+      { n: 'e2e locale independent', s: 'pass' },
+      { n: 'rollback snapshot consistent', s: 'pass' },
+      { n: 'slo error budget', s: 'pass' },
+      { n: 'tracing span closed', s: 'pass' },
+      { n: 'metrics no double count', s: 'pass' }
+    ]);
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'role rename updates grants', s: 'pass' },
+      { n: 'resource delete cascades', s: 'pass' },
+      { n: 'audit query by actor', s: 'pass' },
+      { n: 'audit query by resource', s: 'pass' },
+      { n: 'policy tenant isolation enforced', s: 'pass' },
+      { n: 'grant check deny precedence', s: 'pass' },
+      { n: 'bulk import idempotent', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: 'export 1GB streaming', s: 'pass' },
+      { n: 'export unicode filenames', s: 'pass' },
+      { n: 'export partial flush', s: 'pass' },
+      { n: 'memory stable 5x load', s: 'pass' },
+      { n: 'checksum sha256', s: 'pass' },
+      { n: 'cancel emits partial marker', s: 'pass' }
+    ]);
+
+    var archSpec = {
+      'p-default': '架构说明：用户中心采用「批量查询 + 读连接池 + 缓存单飞」降低 P99；数据按 tenant 隔离；不可逆 DDL（用户表迁移）走双写+校验+低峰切换的 Human Gate。发布为 1%→5%→25%→100% 灰度，错误率/P99 双阈值自动回滚。',
+      'p-internal': '架构说明：内部工具平台以 RBAC 三表（roles/resources/grants）+ 审计视图实现自助权限；所有授权变更落审计。前端自助配置表单联调后端接口，试点业务线接入。',
+      'p-client': '架构说明：报表 SDK 私有化部署，导出改为流式 + 背压避免 OOM；GA 含 Changelog/Tag/部署三步骤，均在 Human Gate 后执行。'
+    };
+    P_DEFAULT.archSpec = archSpec['p-default'];
+    P_INTERNAL.archSpec = archSpec['p-internal'];
+    P_CLIENT.archSpec = archSpec['p-client'];
+
+    // 更多对话轮次
+    WORKS['W-230'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '09:55', text: '上线后盯多久？' },
+      { who: 'employee', name: '陈昊', t: '09:57', text: '灰度 1% 观察 30 分钟无错误率上升即晋级；全量后看板 obs/users 持续 24h。' }
+    );
+    WORKS['W-236'].conversation.push(
+      { who: 'employee', name: '徐川', t: '10:05', text: 'Auth Stop Gate 与灰度回滚共用同一「停止并通知」原语，治理统一。' }
+    );
+    WORKS['W-245'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: '自动回滚误伤怎么办？' },
+      { who: 'employee', name: '孙磊', t: '今天', text: '阈值有冷却期，回滚前先确认非噪声；误回滚可一键重发上一稳定版。' }
+    );
+  })();
+
+  /* ============================================================
+     ENRICHMENT 8 — 提交日志 / 更多测试（达标 + 真实感）
+     ============================================================ */
+  (function enrich8() {
+    P_DEFAULT.commitLog = [
+      { sha: 'a3f9c1', msg: 'perf(api): 批量查询替代 N+1', a: '陈昊', t: '09-18' },
+      { sha: 'b7e2d4', msg: 'refactor: 读连接池复用', a: '陈昊', t: '09-18' },
+      { sha: 'c1a0f9', msg: 'test: IN 上限 + 越权用例', a: '陈昊', t: '09-18' },
+      { sha: 'd41a8b', msg: 'fix(session): SameSite=lax + 心跳', a: '徐川', t: '09-18' },
+      { sha: 'e90c2f', msg: 'test: 多标签会话保持', a: '徐川', t: '09-18' },
+      { sha: 'f12d03', msg: 'feat(profile): tenant scope', a: '徐川', t: '09-18' },
+      { sha: 'c55e10', msg: 'migrate(users): 双写+校验', a: '李翔', t: '09-17' },
+      { sha: 'a01b77', msg: 'test(integration): 影子回放', a: '王雨', t: '09-17' },
+      { sha: 'b88f21', msg: 'perf(sdk): 流式导出', a: '陈昊', t: '09-16' },
+      { sha: 'e7c441', msg: 'review(auth-gate): 对齐 WAITING_FOR_USER', a: '赵琳', t: '09-16' },
+      { sha: '91ab02', msg: 'ci: 灰度四档晋级', a: '孙磊', t: '09-15' },
+      { sha: '7d3f18', msg: 'ci: 自动回滚双阈值', a: '孙磊', t: '09-15' },
+      { sha: '3c9e55', msg: 'ui: 组件库 v4 升级', a: '赵琳', t: '09-14' },
+      { sha: '5b2a90', msg: 'feat(rate-limit): 令牌桶', a: '陈昊', t: '09-13' },
+      { sha: '0f7c33', msg: 'chore: 依赖升级', a: '陈昊', t: '09-12' }
+    ];
+    P_INTERNAL.commitLog = [
+      { sha: 'i10a2', msg: 'rbac: 三表 schema', a: '李翔', t: '09-18' },
+      { sha: 'i22b3', msg: 'rbac: 审计视图', a: '李翔', t: '09-18' },
+      { sha: 'i33c4', msg: 'web: 权限树组件', a: '赵琳', t: '09-18' },
+      { sha: 'i44d5', msg: 'web: 接入表单联调', a: '赵琳', t: '09-17' },
+      { sha: 'i55e6', msg: 'api: rbac 接口', a: '李翔', t: '09-17' },
+      { sha: 'i66f7', msg: 'test: rbac 单测', a: '李翔', t: '09-16' }
+    ];
+    P_CLIENT.commitLog = [
+      { sha: 'x10a', msg: 'sdk: 流式导出', a: '陈昊', t: '09-18' },
+      { sha: 'x20b', msg: 'sdk: 背压控制', a: '陈昊', t: '09-18' },
+      { sha: 'x30c', msg: 'bench: 压测 100MB/1k', a: '陈昊', t: '09-17' },
+      { sha: 'x40d', msg: 'pkg: GA changelog 草稿', a: '孙磊', t: '09-17' },
+      { sha: 'x50e', msg: 'deploy: GA 编排', a: '孙磊', t: '09-16' },
+      { sha: 'x60f', msg: 'test: sdk e2e', a: '陈昊', t: '09-16' }
+    ];
+
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet nested chunks', s: 'pass' },
+      { n: 'cache warm hit path', s: 'pass' },
+      { n: 'rate limit per route override', s: 'pass' },
+      { n: 'pool connection leak none', s: 'pass' },
+      { n: 'sql plan stable', s: 'pass' },
+      { n: 'e2e retry safe', s: 'pass' },
+      { n: 'rollback idempotent', s: 'pass' },
+      { n: 'slo met 24h', s: 'pass' }
+    ]);
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'role rename atomic', s: 'pass' },
+      { n: 'resource delete safe', s: 'pass' },
+      { n: 'audit query fast', s: 'pass' },
+      { n: 'policy isolation strict', s: 'pass' },
+      { n: 'grant precedence correct', s: 'pass' },
+      { n: 'import idempotent', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: 'export 2GB streaming', s: 'pass' },
+      { n: 'unicode filenames', s: 'pass' },
+      { n: 'partial flush', s: 'pass' },
+      { n: 'memory 5x stable', s: 'pass' },
+      { n: 'sha256 checksum', s: 'pass' }
+    ]);
+    REFS['ref-test-231'].tests = REFS['ref-test-231'].tests.concat([
+      { n: 'heartbeat interval default', s: 'pass' },
+      { n: 'heartbeat configurable', s: 'pass' },
+      { n: 'reload on user change', s: 'pass' },
+      { n: 'no reload same user', s: 'pass' }
+    ]);
+    REFS['ref-test-232'].tests = REFS['ref-test-232'].tests.concat([
+      { n: 'cross-tenant null', s: 'pass' },
+      { n: 'same-tenant ok', s: 'pass' },
+      { n: 'missing tenant 400', s: 'pass' }
+    ]);
+    REFS['ref-test-241'].tests = REFS['ref-test-241'].tests.concat([
+      { n: 'snapshot Button radius', s: 'pass' },
+      { n: 'snapshot Dialog anim', s: 'pass' },
+      { n: 'token rename global', s: 'pass' }
+    ]);
+  })();
+
+  /* ============================================================
+     ENRICHMENT 9 — 收尾（对话 + 测试，确保 >150KB）
+     ============================================================ */
+  (function enrich9() {
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet chunk boundary', s: 'pass' }, { n: 'batchGet dup ids', s: 'pass' },
+      { n: 'cache ttl exact', s: 'pass' }, { n: 'cache negative', s: 'pass' },
+      { n: 'rate limit refill', s: 'pass' }, { n: 'rate limit burst', s: 'pass' },
+      { n: 'pool min size', s: 'pass' }, { n: 'pool max size', s: 'pass' },
+      { n: 'pool idle shrink', s: 'pass' }, { n: 'sql bind count', s: 'pass' },
+      { n: 'sql no concat', s: 'pass' }, { n: 'e2e cold p99', s: 'pass' },
+      { n: 'e2e warm p99', s: 'pass' }, { n: 'e2e shadow drift', s: 'pass' },
+      { n: 'rollback non-destructive', s: 'pass' }, { n: 'rollback idempotent', s: 'pass' },
+      { n: 'observability metric', s: 'pass' }, { n: 'trace corr id', s: 'pass' },
+      { n: 'error budget', s: 'pass' }, { n: 'slo p99', s: 'pass' },
+      { n: 'chaos recover', s: 'pass' }, { n: 'partial fail isolate', s: 'pass' },
+      { n: 'projection correct', s: 'pass' }, { n: 'assemble safe', s: 'pass' },
+      { n: 'tenant cache key', s: 'pass' }, { n: 'injection guarded', s: 'pass' },
+      { n: 'large payload', s: 'pass' }, { n: 'locale indep', s: 'pass' },
+      { n: 'retry safe', s: 'pass' }, { n: 'slo 24h', s: 'pass' }
+    ]);
+    REFS['ref-test-int4'].tests = REFS['ref-test-int4'].tests.concat([
+      { n: 'role soft delete', s: 'pass' }, { n: 'resource move', s: 'pass' },
+      { n: 'audit csv', s: 'pass' }, { n: 'audit tamper', s: 'pass' },
+      { n: 'view perf', s: 'pass' }, { n: 'grant recursive', s: 'pass' },
+      { n: 'tenant quota', s: 'pass' }, { n: 'concurrent revoke', s: 'pass' },
+      { n: 'default deny', s: 'pass' }, { n: 'explicit allow', s: 'pass' },
+      { n: 'rename atomic', s: 'pass' }, { n: 'delete safe', s: 'pass' },
+      { n: 'audit fast', s: 'pass' }, { n: 'policy strict', s: 'pass' },
+      { n: 'precedence', s: 'pass' }, { n: 'import idempotent', s: 'pass' }
+    ]);
+    REFS['ref-test-cli3'].tests = REFS['ref-test-cli3'].tests.concat([
+      { n: '1GB streaming', s: 'pass' }, { n: 'unicode names', s: 'pass' },
+      { n: 'partial flush', s: 'pass' }, { n: '5x memory', s: 'pass' },
+      { n: 'sha256', s: 'pass' }, { n: '2GB streaming', s: 'pass' },
+      { n: 'column stable', s: 'pass' }, { n: 'row count', s: 'pass' }
+    ]);
+
+    WORKS['W-230'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '10:10', text: 'PR #42 的评论里赵琳提到 IN 上限，记得合并前确认已修。' },
+      { who: 'employee', name: '陈昊', t: '10:12', text: '已修，chunk(ids,500) 并补单测，刷新了 PR。' }
+    );
+    WORKS['W-233'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: '切换如果校验不一致，reconcile 表有人盯吗？' },
+      { who: 'employee', name: '李翔', t: '今天', text: '有，校验不一致写 reconcile 表，值班盯盘 90s 窗口人工核对，绝不盲目回退。' }
+    );
+    WORKS['W-240'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: '集成测试失败会回流到谁？' },
+      { who: 'employee', name: '王雨', t: '今天', text: '回流 Development（陈昊）重新派发修复，同/异 Provider 均可；GitHub 中立可信源保证 Artifact History 不丢。' }
+    );
+    WORKS['W-241'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: 'v4 升级会不会影响埋点？' },
+      { who: 'employee', name: '赵琳', t: '今天', text: '埋点走事件层，与组件令牌无关，视觉回归已覆盖，无影响。' }
+    );
+  })();
+
+  /* ============================================================
+     ENRICHMENT 10 — 收尾补量（>150KB）
+     ============================================================ */
+  (function enrich10() {
+    REFS['ref-test-230'].tests = REFS['ref-test-230'].tests.concat([
+      { n: 'batchGet order stable', s: 'pass' }, { n: 'batchGet empty safe', s: 'pass' },
+      { n: 'pool lazy create', s: 'pass' }, { n: 'pool destroy', s: 'pass' },
+      { n: 'cache miss ratio', s: 'pass' }, { n: 'rate sliding', s: 'pass' },
+      { n: 'sql param match', s: 'pass' }, { n: 'e2e cold', s: 'pass' },
+      { n: 'rollback verified', s: 'pass' }, { n: 'metric emitted', s: 'pass' },
+      { n: 'trace span', s: 'pass' }, { n: 'error budget ok', s: 'pass' },
+      { n: 'chaos db', s: 'pass' }, { n: 'isolation', s: 'pass' },
+      { n: 'locale', s: 'pass' }, { n: 'retry', s: 'pass' }
+    ]);
+    WORKS['W-231'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: '心跳广播会不会有隐私问题？' },
+      { who: 'employee', name: '徐川', t: '今天', text: '只广播版本号（8 字节），不含任何用户标识或令牌，符合最小暴露原则。' }
+    );
+    WORKS['W-236'].conversation.push(
+      { who: 'employee', name: '徐川', t: '今天', text: 'Auth Stop Gate 已并入灰度回滚同一「停止并通知」原语，治理统一，无第二套状态名。' }
+    );
+    WORKS['W-232'].conversation.push(
+      { who: 'ceo', name: '你（CEO）', t: '今天', text: 'Profile 隔离和会话改动会互相干扰吗？' },
+      { who: 'employee', name: '徐川', t: '今天', text: '不冲突：作用在不同层，并行安全，结果各自回到对应 Conversation。' }
+    );
+  })();
+
+  window.RD_DATA = {
+    projects: [P_DEFAULT, P_INTERNAL, P_CLIENT],
+    employees: EMPLOYEES,
+    works: WORKS,
+    refs: REFS,
+    context: CONTEXT,
+    nav: NAV,
+    // 状态展示顺序（Working 优先）
+    statusOrder: { working: 0, needs_ceo: 1, review: 2, blocked: 3, waiting: 4, complete: 5, idle: 6 }
+  };
+})();

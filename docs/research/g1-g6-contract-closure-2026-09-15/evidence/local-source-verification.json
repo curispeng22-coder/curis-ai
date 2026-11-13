@@ -1,0 +1,158 @@
+[
+  {
+    "id": "E01",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/PRODUCT_DOCUMENT_POINTER.md",
+    "same_as_prior_evidence": true,
+    "sha256": "8c20737de7d89d94c51aca4de52a524f0e44bd02b63bba4001986bb80c9ed761"
+  },
+  {
+    "id": "E02",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/CURRENT_STATE.md",
+    "same_as_prior_evidence": true,
+    "sha256": "fcdc3e125f8c1e7837faed2dea66bc35d542ea3a941fa3fe0f719da51da33bfc"
+  },
+  {
+    "id": "E03",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/ai_capability_registry.py",
+    "same_as_prior_evidence": true,
+    "sha256": "0e71cca169772b0a7a21354c2b6cecc7308ab335327fafe840b1a22b09801989"
+  },
+  {
+    "id": "E04",
+    "path": "/Users/yy/Documents/Curis AI Workspace/frontend/components/v1/ModelManagement.js",
+    "same_as_prior_evidence": true,
+    "sha256": "be46553b347721a05aa8a686f40f8c3581149db1d6a9783546c4a870bc9e12a6"
+  },
+  {
+    "id": "E05",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/model_preferences.py",
+    "same_as_prior_evidence": true,
+    "sha256": "0504133bab608a11da80fdb3cf63c2879167c717f1c69bb52e4d3c0605415926"
+  },
+  {
+    "id": "E06",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/employee_capability_model.py",
+    "same_as_prior_evidence": true,
+    "sha256": "2448f36329f4ae5d609814d36647da1befc00a321c7acf7e2d9a66c8b6c7567b"
+  },
+  {
+    "id": "E07",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/agent_adapter.py",
+    "same_as_prior_evidence": true,
+    "sha256": "0463d102116499821df24fc0639321031edcc3d4cd4306f09ccffead53265905"
+  },
+  {
+    "id": "E08",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/local_rd_toolset.py",
+    "same_as_prior_evidence": true,
+    "sha256": "78fe0edb13b351799e2a98ceb6b43e57a184701da6c7d8b403dd43b81351fc4a"
+  },
+  {
+    "id": "E09",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/capability_adapters.py",
+    "same_as_prior_evidence": true,
+    "sha256": "b7adb55d98ae363894466d45a20a539e14dd6c4f85b9b936b201e96f15ce3f90"
+  },
+  {
+    "id": "E10",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/credential_vault.py",
+    "same_as_prior_evidence": true,
+    "sha256": "a32f2606ed27a9054da314d76c004d4f133af75445f683333675cd78caafc7fa"
+  },
+  {
+    "id": "E11",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/runtime/scheduler.py",
+    "same_as_prior_evidence": true,
+    "sha256": "df883184eeab1079a4d28e674b9b0337dcf7c224a042e338c742f0a718d2fed2"
+  },
+  {
+    "id": "E12",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/runtime/ceo_day_service.py",
+    "same_as_prior_evidence": true,
+    "sha256": "a0c0cb46a79c961a5a607446ee64e30fdfa9a1d4d239a879fc0af8d143d0ddd7"
+  },
+  {
+    "id": "E13",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/scheduler.py",
+    "same_as_prior_evidence": true,
+    "sha256": "14c67269440e33e5303e130c6e50b4d98ffdef1daa45bb69570f53f2a2f45b8d"
+  },
+  {
+    "id": "E14",
+    "path": "/Users/yy/Documents/Curis AI Workspace/desktop/src/lib.rs",
+    "same_as_prior_evidence": true,
+    "sha256": "3785f93a731352a3e63d54cea5722140203dd921d56f6a0e0671dffa491beb84"
+  },
+  {
+    "id": "E15",
+    "path": "/Users/yy/Documents/Curis AI Workspace/desktop/Cargo.toml",
+    "same_as_prior_evidence": true,
+    "sha256": "373b2355346570ad7694514bab6dc6c8807143d94513a989556a25b6de2bb877"
+  },
+  {
+    "id": "E16",
+    "path": "/Users/yy/Documents/Curis AI Workspace/backend/app/main.py",
+    "same_as_prior_evidence": true,
+    "sha256": "c30a4cfbd2a1a2106ec91bf88c800a192bca2c939274ac4b965a10b65ca6aedf"
+  },
+  {
+    "id": "E17",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_V1_CLOUD_AI_CONTINUITY_ACCEPTANCE.md",
+    "same_as_prior_evidence": true,
+    "sha256": "2ae11530e16f9f9a2170b5e656b55031cf03fbcfe94bf2db8f6be61f6db31824"
+  },
+  {
+    "id": "E18",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_V1_TALENT_CAPABILITY_IMPLEMENTATION_ACCEPTANCE.md",
+    "same_as_prior_evidence": true,
+    "sha256": "7ea93fd4a15813755022d19921014526a3d89992a5966dc9f3c8abc5e69de668"
+  },
+  {
+    "id": "E19",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_IMPLEMENTATION_ACCEPTANCE.md",
+    "same_as_prior_evidence": true,
+    "sha256": "ecc8740cf4f601fb8251aaabf83d4b928d217b5304f79da6eab5868ca8149959"
+  },
+  {
+    "id": "E20",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_V1_EXECUTION_BACKLOG.md",
+    "same_as_prior_evidence": true,
+    "sha256": "a88f4fafae4f0bc2751e83724e3f7f0d40495a92f5a2a7abdcf3e9c98fd34f44"
+  },
+  {
+    "id": "E21",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Blueprint.html",
+    "same_as_prior_evidence": true,
+    "sha256": "b46aa46e4b50fa14c1b489d0b8d76532171d59a2e087d0fa8380f659cec1d77d"
+  },
+  {
+    "id": "E22",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Master_Map.md",
+    "same_as_prior_evidence": true,
+    "sha256": "23fab713e92d29ec7b58bfcd99b3e8078424d1ee93cb5570052c100c52e6f97d"
+  },
+  {
+    "id": "E23",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_UI_Blueprint.html",
+    "same_as_prior_evidence": true,
+    "sha256": "c185f0a0e20f3dad94da7889d595029441c334b89641bf5317285895d13d2a83"
+  },
+  {
+    "id": "E24",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md",
+    "same_as_prior_evidence": true,
+    "sha256": "674fde2b66817f16b3e048af5d5c2cc3a650b061bf0c56d90efa898d7eccb059"
+  },
+  {
+    "id": "E25",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md",
+    "same_as_prior_evidence": true,
+    "sha256": "b8bec77dcbc939882b6f6534d56efbe54fdde5f18f22278ecb58e577b21e5a11"
+  },
+  {
+    "id": "E26",
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_CORE_PRODUCT_AUTHORITY_REPAIR.md",
+    "same_as_prior_evidence": true,
+    "sha256": "75827d741b9105f2df39cad6ef0d0902ad5d3315980be8e4de7263842c3e1ac4"
+  }
+]

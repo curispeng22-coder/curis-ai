@@ -1,0 +1,83 @@
+classDiagram
+    class RuntimeGovernanceConfig {
+        +str schema_version = "1.0"
+        +GateConfig gates
+        +BudgetConfig budget
+        +str default_decision_policy = "ask"
+        +WhitelistConfig whitelist
+    }
+    class GateConfig {
+        +GateSwitch production_deploy
+        +ExternalSendGate external_send
+        +DataDeletionGate data_deletion
+        +GateSwitch billing_config
+        +GateSwitch marketplace
+        +GateSwitch permission_boundary
+        +GateSwitch core_asset
+    }
+    class BudgetConfig {
+        +int token_hard_limit = 200000
+        +float warn_ratio = 0.8
+        +bool auto_simulate_before_send = true
+        +bool fail_closed = true
+    }
+    class GateSwitch { +bool enabled = true }
+    class ExternalSendGate { +bool enabled = true; +tuple allow_list = () }
+    class DataDeletionGate { +bool enabled = true; +tuple protected_collections = (customers,orders,employees) }
+    class WhitelistConfig { +tuple actions = () }
+
+    class ActionContext {
+        +str action_type
+        +bool irreversible = false
+        +bool external = false
+        +float estimated_cost = 0.0
+        +int estimated_tokens = 0
+        +str destination = ""
+        +tuple protected_collections = ()
+        +bool in_sandbox = true
+        +bool in_path_whitelist = true
+        +dict metadata
+    }
+    class GateDecision {
+        +bool needs_gate
+        +str category
+        +GatePrompt gate
+        +str reason
+    }
+    class GatePrompt {
+        +str gate_id
+        +str category
+        +str title
+        +str business_risk
+        +list~GateOption~ options
+        +str recommended
+        +str one_line_consequence
+        +str expires_at
+    }
+    class GateOption {
+        +str id
+        +str label
+        +str effect
+    }
+    class TemplateSpec {
+        +str title
+        +str business_risk
+        +dict options_effects
+        +str recommended
+        +str consequence
+    }
+
+    RuntimeGovernanceConfig *-- GateConfig
+    RuntimeGovernanceConfig *-- BudgetConfig
+    RuntimeGovernanceConfig *-- WhitelistConfig
+    GateConfig *-- GateSwitch
+    GateConfig *-- ExternalSendGate
+    GateConfig *-- DataDeletionGate
+    GateDecision --> GatePrompt
+    GatePrompt *-- GateOption
+    gate_prompt_templates ..> TemplateSpec : GATE_TEMPLATES
+    runtime_governance ..> ActionContext : evaluate()入参
+    runtime_governance ..> GateDecision : evaluate()返回
+    runtime_governance ..> gate_prompt : render_gate_prompt()
+    gate_prompt ..> gate_prompt_templates : 取模板
+    runtime_governance ..> runtime_governance_config : load_config()

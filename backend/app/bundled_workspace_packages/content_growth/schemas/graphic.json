@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "0.1.0",
+  "title": "图文内容",
+  "type": "object",
+  "initialState": "DRAFT",
+  "required": [
+    "title",
+    "topic",
+    "audience",
+    "body"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "标题",
+      "maxLength": 240
+    },
+    "topic": {
+      "type": "string",
+      "title": "选题",
+      "maxLength": 1000
+    },
+    "audience": {
+      "type": "string",
+      "title": "受众",
+      "maxLength": 1000
+    },
+    "body": {
+      "type": "string",
+      "title": "正文",
+      "maxLength": 20000,
+      "multiline": true
+    },
+    "status": {
+      "type": "string",
+      "title": "内容状态",
+      "enum": [
+        "DRAFT"
+      ],
+      "default": "DRAFT"
+    }
+  }
+}

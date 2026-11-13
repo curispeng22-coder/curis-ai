@@ -1,0 +1,126 @@
+[
+  {
+    "file": "10_REVIEW_RUNNING.png",
+    "note": "只点击一次重新审稿，内部检查自动接续；截图时可能已完成部分步骤。"
+  },
+  {
+    "file": "11_REVIEW_COMPLETE.png",
+    "note": "同一轮审稿自动完成后，统一意见按检查范围分组；不修改正文。"
+  },
+  {
+    "file": "12_REVIEW_OPINIONS.png",
+    "note": "向下滚动查看文字、剧情与表达意见，保持导航与当前章节上下文。"
+  },
+  {
+    "file": "13_REVIEW_BASIS.png",
+    "note": "员工专业标准、本书依据与用户硬性规则在同一审校依据窗口。"
+  },
+  {
+    "file": "14_EMPLOYEE_STANDARD_PROPOSAL.png",
+    "note": "许清禾根据本书构思提出补充标准；演示建议尚未加入，不覆盖用户硬性规则。"
+  },
+  {
+    "file": "07_CHAPTER_WRITING.png",
+    "note": "现有第43章正文与创作编辑，审校位于同一章节流程。"
+  },
+  {
+    "file": "01_OPERATING.png",
+    "note": "经营首页：当前作品、经营判断与待决事项。"
+  },
+  {
+    "file": "02_MARKET.png",
+    "note": "市场与方向默认页：来源、参考与创作方向入口。"
+  },
+  {
+    "file": "03_BOOKSHELF.png",
+    "note": "作品默认进入书架，开新书与已有作品入口。"
+  },
+  {
+    "file": "04_NEW_BOOK.png",
+    "note": "已有未命名作品的开书准备，保留原有输入，不新建测试书。"
+  },
+  {
+    "file": "05_DIRECTION_LENGTH.png",
+    "note": "题材、读者、风格、篇幅和章节目标字数所在步骤。"
+  },
+  {
+    "file": "06_CREATIVE_TAGS.png",
+    "note": "完整创作分类选择器，只查看，不改变用户选择。"
+  },
+  {
+    "file": "15_SERIALIZATION.png",
+    "note": "连载发布队列、回执与人工边界。"
+  },
+  {
+    "file": "16_READERS_REVENUE.png",
+    "note": "读者与收益默认页，平台指标与口径声明。"
+  },
+  {
+    "file": "17_READERS_REVENUE_LOWER.png",
+    "note": "读者与收益下半页，补充首屏未显示的信息。"
+  },
+  {
+    "file": "18_WRITING_LEARNING.png",
+    "note": "写作经验默认页，作品经验与适用范围。"
+  },
+  {
+    "file": "10_REVIEW_RUNNING.png",
+    "note": "一次点击后自动执行；本地检查耗时很短，截图可能已完成部分或全部步骤。"
+  },
+  {
+    "file": "11_REVIEW_COMPLETE.png",
+    "note": "一次审稿完成，统一意见；含员工补充的语义标准，未接模型的判断诚实标为待核对。"
+  },
+  {
+    "file": "12_REVIEW_OPINIONS.png",
+    "note": "统一审稿意见下半页；各类意见不再各自提供启动检查按钮。"
+  },
+  {
+    "file": "08_AUTHOR_CONFIRMATION.png",
+    "note": "作者定稿步骤：保留未解决意见与作者理由入口，本轮没有确认或发布。"
+  },
+  {
+    "file": "09_CHAPTER_PUBLICATION.png",
+    "note": "章节发布接续页；正式稿、线上稿与平台结果分开。"
+  },
+  {
+    "file": "16_READERS_REVENUE.png",
+    "note": "夜行灯：在读趋势与章节表现，模拟数据。"
+  },
+  {
+    "file": "17_READERS_REVENUE_LOWER.png",
+    "note": "夜行灯数据页下半部，口径与缺失数据。"
+  },
+  {
+    "file": "18_WRITING_LEARNING.png",
+    "note": "写作经验区：按作品分析与经验沉淀入口。"
+  },
+  {
+    "file": "19_LEARNING_ANALYSIS.png",
+    "note": "点击逐维度分析，查看分析与经验确认的关系。"
+  },
+  {
+    "file": "20_OPERATING_LOWER.png",
+    "note": "经营页向下滚动：首屏之外的经营内容。"
+  },
+  {
+    "file": "21_REFERENCE_ANALYSIS.png",
+    "note": "参考书固定拆解结构，首屏。"
+  },
+  {
+    "file": "22_REFERENCE_ANALYSIS_LOWER.png",
+    "note": "参考拆解后续维度与复用动作。"
+  },
+  {
+    "file": "23_BOOK_WORKSPACE.png",
+    "note": "夜行灯本书工作面：章节与本书准备。"
+  },
+  {
+    "file": "24_OUTLINE_CONTEXT.png",
+    "note": "同一本书右栏切换大纲，不离开主工作面。"
+  },
+  {
+    "file": "25_EDITOR_CONVERSATION.png",
+    "note": "本书编辑就地交流入口展开，与作品上下文并置；未发送消息。"
+  }
+]

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 科技 · 工具区详情</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/shell.css">
+</head>
+<body data-page="utility">
+  <div class="prototype-frame">
+    <div class="prototype-controls">
+      <button data-dom-id="theme-toggle" class="icon-btn" title="切换主题" aria-label="切换主题">🌗</button>
+      <span>页面:</span>
+      <button data-page="overview">Overview</button>
+      <button data-page="research">Research</button>
+      <button data-page="content">Content</button>
+      <button data-page="calendar">Calendar</button>
+      <button data-page="growth">Growth</button>
+      <button data-page="feedback">Feedback</button>
+      <button data-page="commercial">Commercial</button>
+      <button data-page="team">Team</button>
+      <button data-page="handoff">Handoff</button>
+      <button data-page="utility" class="active">Utility</button>
+      <button data-page="assistant">Assistant</button>
+      <button data-page="collapsed">Collapsed</button>
+      <button data-page="1280">1280</button>
+      <button data-page="rdcheck">RD Check</button>
+    </div>
+    <div class="window-chrome">
+      <div class="ms-shell with-context with-utility" style="--win-w:1440px; --win-h:900px;">
+        <aside class="ms-pane ms-pane-nav">
+          <header class="ms-pane-header ms-nav-head">
+            <div class="win-dots"><span></span><span></span><span></span></div>
+            <div class="pane-title">Curis</div>
+            <button class="icon-btn nav-toggle" data-dom-id="nav-toggle" aria-label="切换导航">≡</button>
+            <button class="icon-btn t1-restore" data-dom-id="nav-restore" aria-label="展开导航">»</button>
+          </header>
+          <nav class="nav-scroll">
+            <div class="nav-group">工作区</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⌂</span>CEO 工作台</a>
+            <a href="#" class="nav-item active"><span class="ni-ico">◈</span>业务空间</a>
+            <div class="nav-sub">
+              <a href="#" class="nav-item active">AI 科技</a>
+            </div>
+            <div class="nav-group">组织与运营</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⊞</span>组织中心</a>
+            <a href="#" class="nav-item"><span class="ni-ico">♟</span>人才与能力</a>
+            <a href="#" class="nav-item"><span class="ni-ico">📊</span>经营洞察</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗂</span>资料库</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗒</span>会议</a>
+          </nav>
+          <footer class="nav-foot">
+            <div class="nav-user-ava">林</div>
+            <div>
+              <div class="station-name">林薇</div>
+              <div class="station-work">内容增长部负责人</div>
+            </div>
+          </footer>
+        </aside>
+
+        <aside class="ms-pane ms-pane-ctx resize-h">
+          <header class="ms-pane-header ms-ctx-head">
+            <div class="pane-title">AI 科技</div>
+            <button class="pane-toggle" data-action="toggle-context" aria-label="切换上下文" title="切换上下文">◀</button>
+          </header>
+          <div class="ctx-content">
+            <div class="ctx-section">Surface</div>
+            <div class="ctx-nav">
+              <a href="overview.html" class="ctx-nav-item">经营总览</a>
+              <a href="research.html" class="ctx-nav-item">研究与洞察</a>
+              <a href="content.html" class="ctx-nav-item active">内容运营</a>
+              <a href="growth.html" class="ctx-nav-item">增长与评估</a>
+              <a href="feedback.html" class="ctx-nav-item">反馈</a>
+              <a href="commercial.html" class="ctx-nav-item">商业化</a>
+            </div>
+            <div class="ctx-section">视图</div>
+            <div class="ctx-nav">
+              <a href="content.html" class="ctx-nav-item active">列表视图</a>
+              <a href="calendar.html" class="ctx-nav-item">日历视图</a>
+            </div>
+          </div>
+        </aside>
+
+        <main class="ms-pane ms-pane-main">
+          <header class="ms-pane-header ms-main-head">
+            <button class="icon-btn" data-action="toggle-context" aria-label="切换上下文">☰</button>
+            <nav class="crumbs" aria-label="面包屑">
+              <a href="#">业务空间</a><span>/</span><a href="#">内容增长部</a><span>/</span><span class="cur">工具区详情</span>
+            </nav>
+
+            <div class="main-head-right">
+              <button class="icon-btn" data-action="toggle-assistant" aria-label="CEO 助理" title="CEO 助理">🞋</button>
+              <button class="icon-btn" data-action="toggle-utility" aria-label="切换工具" title="切换工具">◧</button>
+              
+            </div>
+          </header>
+
+          <div class="ms-scroll">
+            <div class="ms-header">
+              <h1 class="ms-title">内容运营</h1>
+              <div class="ms-meta">AI 科技 · Main Surface 保持可见，Utility 展示对象详情</div>
+              <div class="ms-statusbar"><span class="dot"></span>已打开 Utility：小红书 AI 绘画教程 #3</div>
+            </div>
+
+            <section class="surface-section">
+              <div class="section-head"><span class="section-title">内容对象列表</span><span class="section-action">Main 保持上下文</span></div>
+              <div class="team-scoped">
+                <div class="ts-head"><span class="ts-title">本周内容</span></div>
+                <div class="ts-body">
+                  <div class="content-row"><div class="co-cover">AI</div><div class="co-main"><div class="co-title">OpenAI 新模型对小红书选题的影响</div><div class="co-meta">8月18日 · 制作中</div></div><div class="co-actions"><span class="tag tag-working">制作中</span></div></div>
+                  <div class="content-row"><div class="co-cover">测评</div><div class="co-main"><div class="co-title">AI 硬件测评：谁更适合入门</div><div class="co-meta">8月20日 · 待发布</div></div><div class="co-actions"><span class="tag">待发布</span></div></div>
+                  <div class="content-row" style="background:color-mix(in srgb, var(--ui-accent) 8%, var(--ui-surface));"><div class="co-cover">绘画</div><div class="co-main"><div class="co-title">小红书 AI 绘画教程 #3</div><div class="co-meta">8月21日 · 制作中 · 已打开</div></div><div class="co-actions"><span class="tag tag-working">制作中</span></div></div>
+                  <div class="content-row"><div class="co-cover">变现</div><div class="co-main"><div class="co-title">AIGC 变现路径盘点</div><div class="co-meta">8月25日 · 待确认</div></div><div class="co-actions"><span class="tag tag-needs">待确认</span></div></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="ms-assistant-drawer collapsed">
+            <header class="assistant-head">
+              <div class="assistant-ava">AI</div>
+              <div><div class="assistant-title">CEO 助理</div><div class="assistant-role">战略决策支持</div></div>
+              <button class="icon-btn" data-action="close-assistant" aria-label="关闭助理">✕</button>
+            </header>
+            <div class="assistant-body">
+              <div class="assistant-context">当前位置：AI 科技 · 内容运营 · Utility 打开</div>
+              <div class="assistant-msg">已打开「小红书 AI 绘画教程 #3」的 Utility 详情。</div>
+            </div>
+            <footer class="assistant-foot">
+              <input type="text" placeholder="向 CEO 助理提问...">
+              <button class="btn-secondary btn-sm">发送</button>
+            </footer>
+          </div>
+
+        </main>
+        <aside class="ms-pane ms-pane-util resize-h">
+          <header class="ms-pane-header ms-util-head">
+            <div class="pane-title">小红书 AI 绘画教程 #3</div>
+            <button class="pane-toggle" data-action="toggle-utility" aria-label="切换工具区" title="切换工具区">▶</button>
+          </header>
+          <div class="util-content">
+            <div class="preview-cover">绘画 · 封面预览</div>
+            <div class="preview-title">小红书 AI 绘画教程 #3</div>
+            <div class="preview-body">本教程面向零基础用户，结构为：痛点引入 → 工具演示 → 行动建议。发布前需检查封面、标题、标签与评论区预埋。</div>
+            <div class="preview-meta">
+              <span class="tag tag-working">制作中</span>
+              <span style="color:var(--ui-text-3);font-size:var(--ui-fs-2);">陈真 · 8月21日</span>
+            </div>
+            <div style="margin-top:var(--ui-sp-4); display:flex; flex-direction:column; gap:var(--ui-sp-2);">
+              <div style="font-size:var(--ui-fs-3); font-weight:600;">操作</div>
+              <button class="btn-primary btn-sm">发布前检查</button>
+              <button class="btn-secondary btn-sm">编辑正文</button>
+              <button class="btn-ghost btn-sm">查看历史版本</button>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+  <script>window.__CURIS_PAGE__ = "utility";</script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

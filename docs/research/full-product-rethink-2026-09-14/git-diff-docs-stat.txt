@@ -1,0 +1,27 @@
+ docs/00_Context/DOCUMENT_INVENTORY.md              |  37 +
+ docs/00_Context/DOCUMENT_MIGRATION_PLAN.md         |  11 +
+ .../Business_Runtime_Gap_Report_2026-07-31.md      |   4 +-
+ .../Curis_Business_Runtime_Definition_v0.1.md      | 936 ++++++++++++++++++++-
+ .../01_Product/Curis_Product_Derivation_Journal.md |  49 +-
+ .../Curis_Product_Development_Queue_Pack.md        |   2 +-
+ docs/01_Product/Curis_Product_Page_Map_v1.0.md     |   3 +-
+ docs/01_Product/Curis_Product_Reasoning_Record.md  |  71 +-
+ .../Curis_Talent_Market_Integration_Contract.md    |  65 +-
+ docs/01_Product/Curis_Talent_Market_Product_Map.md |  52 +-
+ .../Curis_Talent_Market_Resource_Audit.md          |  66 ++
+ .../Architecture_Migration_Report_2026-07-31.md    |   4 +
+ .../WORKSPACE_PACKAGE_TECHNICAL_PROPOSAL.md        |  57 +-
+ docs/03_Design/Curis_Design_System.md              |  29 +-
+ .../03_Design/Curis_Visual_Design_System_v1.0.html |  57 +-
+ ...s_Workspace_Engineering_Gates_and_Acceptance.md |  41 +-
+ .../Curis_Workspace_Engineering_Lifecycle.md       | 100 ++-
+ .../Curis_Workspace_Engineering_Methodology.md     | 107 ++-
+ ...045-ordinary-user-desktop-product-rebaseline.md |   2 +-
+ .../06-Capability-Inventory-Plain-Language.md      |   6 +-
+ .../07-Product-Derivation-Plain-Language.md        |   4 +-
+ .../08-Architecture-Fit-Assessment.md              |   6 +-
+ docs/plan/blueprint-4.4-review-readiness.md        |  12 +-
+ docs/plan/evoflow-reuse-repo-mapping.md            |   2 +
+ docs/plan/evoflow-verified-reuse-plan.md           |   2 +
+ .../2026-08-03-curis-ui-prototype-review.md        |   6 +-
+ 26 files changed, 1564 insertions(+), 167 deletions(-)

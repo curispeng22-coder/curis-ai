@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-commit-curis-restore"
+description = "Enables the commit_curis_restore command without any pre-configured scope."
+commands.allow = ["commit_curis_restore"]
+
+[[permission]]
+identifier = "deny-commit-curis-restore"
+description = "Denies the commit_curis_restore command without any pre-configured scope."
+commands.deny = ["commit_curis_restore"]

@@ -1,0 +1,739 @@
+ M .workbuddy/memory/2026-08-04.md
+ M .workbuddy/memory/MEMORY.md
+ M backend/app/agent_conversion/agency_adapter.py
+ M backend/app/ai_usage.py
+ M backend/app/api/runtime_foundation_router.py
+ M backend/app/api/shared_workspace_router.py
+ M backend/app/api/team_operating_router.py
+ M backend/app/business_metrics.py
+ M backend/app/capability_catalog.py
+ M backend/app/capability_registry.py
+ M backend/app/catalog_constants.py
+ M backend/app/context_service.py
+ M backend/app/credential_vault.py
+ M backend/app/database.py
+ M backend/app/dev_agent.py
+ M backend/app/employee_execution_identity.py
+ M backend/app/employee_templates.py
+ M backend/app/evolution_event_log.py
+ M backend/app/issue_pipeline_api.py
+ M backend/app/knowledge_service.py
+ M backend/app/main.py
+ M backend/app/meeting_service.py
+ M backend/app/model_gateway.py
+ M backend/app/model_preferences.py
+ M backend/app/orchestrator.py
+ M backend/app/pipeline_runtime.py
+ M backend/app/resource_scope_policy.py
+ M backend/app/result_store.py
+ M backend/app/routers/home.py
+ M backend/app/runtime/business_spine.py
+ M backend/app/runtime/child_work.py
+ M backend/app/runtime/foundation.py
+ M backend/app/runtime/responsibility_routing.py
+ M backend/app/runtime/workspace.py
+ M backend/app/shared_workspace_projection.py
+ M backend/app/skill_runtime.py
+ M backend/app/task_execution_control.py
+ M backend/app/tool_executor.py
+ M backend/app/workbench_guide.py
+ M backend/seed_wave1.py
+ M backend/tests/conftest.py
+ M backend/tests/test_database_agent_type_migration.py
+ M backend/tests/test_employee_execution_identity.py
+ M backend/tests/test_mvp_phase5_s10_knowledge_management.py
+ M backend/tests/test_phase8_billing_mvp.py
+ M backend/tests/test_rd_artifact_review.py
+ M backend/tests/test_rd_workspace_real_execution.py
+ M backend/tests/test_responsibility_routing_runtime.py
+ M backend/tests/test_runtime_bridge_private_model.py
+ M backend/tests/test_runtime_operating_cycle.py
+ M backend/tests/test_runtime_workspace_foundation.py
+ M backend/tests/test_shared_workspace_projection.py
+ M backend/tests/test_team_operating_adapter.py
+ M backend/tests/test_team_operating_real_employee_e2e.py
+ M backend/tests/test_tenant_model_preference.py
+ M backend/tests/test_v1_meeting_autonomous_discussion.py
+ M backend/tests/test_v1_meeting_employee_self_judgment.py
+ M backend/tests/test_xhs_calendar_note_runtime.py
+ M data/sample_publish_package.md
+ M desktop/runtime/gateway.py
+ M desktop/scripts/build-runtime.sh
+ M desktop/src/lib.rs
+ M docs/00_Context/DOCUMENT_INVENTORY.md
+ M docs/00_Context/DOCUMENT_MIGRATION_PLAN.md
+ M docs/01_Product/Business_Runtime_Gap_Report_2026-07-31.md
+ M docs/01_Product/Curis_Business_Runtime_Definition_v0.1.md
+ M docs/01_Product/Curis_Product_Derivation_Journal.md
+ M docs/01_Product/Curis_Product_Development_Queue_Pack.md
+ M docs/01_Product/Curis_Product_Page_Map_v1.0.md
+ M docs/01_Product/Curis_Product_Reasoning_Record.md
+ M docs/01_Product/Curis_Talent_Market_Integration_Contract.md
+ M docs/01_Product/Curis_Talent_Market_Product_Map.md
+ M docs/01_Product/Curis_Talent_Market_Resource_Audit.md
+ M docs/02_Architecture/Architecture_Migration_Report_2026-07-31.md
+ M docs/02_Architecture/WORKSPACE_PACKAGE_TECHNICAL_PROPOSAL.md
+ M docs/03_Design/Curis_Design_System.md
+ M docs/03_Design/Curis_Visual_Design_System_v1.0.html
+ M docs/05_Workspace_Engineering/Curis_Workspace_Engineering_Gates_and_Acceptance.md
+ M docs/05_Workspace_Engineering/Curis_Workspace_Engineering_Lifecycle.md
+ M docs/05_Workspace_Engineering/Curis_Workspace_Engineering_Methodology.md
+ M docs/07_Decisions/ADR-0045-ordinary-user-desktop-product-rebaseline.md
+ M docs/curis-takeover/06-Capability-Inventory-Plain-Language.md
+ M docs/curis-takeover/07-Product-Derivation-Plain-Language.md
+ M docs/curis-takeover/08-Architecture-Fit-Assessment.md
+ M docs/plan/blueprint-4.4-review-readiness.md
+ M docs/plan/evoflow-reuse-repo-mapping.md
+ M docs/plan/evoflow-verified-reuse-plan.md
+ M docs/reviews/2026-08-03-curis-ui-prototype-review.md
+ M frontend/app/ceo-office/analytics/page.js
+ M frontend/app/ceo-office/business/page.js
+ M frontend/app/ceo-office/capabilities/CapabilityFormDrawer.js
+ M frontend/app/ceo-office/capabilities/page.js
+ M frontend/app/ceo-office/decisions/page.js
+ M frontend/app/ceo-office/execution/page.js
+ M frontend/app/ceo-office/knowledge/entries/[id]/page.js
+ M frontend/app/ceo-office/knowledge/page.js
+ M frontend/app/ceo-office/meeting/page.js
+ M frontend/app/ceo-office/organization/employees/[id]/page.js
+ M frontend/app/ceo-office/organization/page.js
+ M frontend/app/ceo-office/page.js
+ M frontend/app/ceo-office/projects/page.js
+ M frontend/app/ceo-office/strategy-room/page.js
+ M frontend/app/ceo-office/workspace/page.js
+ M frontend/app/ceo-office/workspace/studio/page.js
+ M frontend/app/globals.css
+ M frontend/app/layout.js
+ M frontend/app/onboarding/page.js
+ M frontend/app/page.js
+ M frontend/app/platform/page.js
+ M frontend/components/assistant/GlobalAssistant.js
+ M frontend/components/runtime/RuntimeProvider.js
+ M frontend/components/terra/TerraNavData.js
+ M frontend/components/terra/TerraShell.js
+ M frontend/components/terra/TerraSidebar.js
+ M frontend/components/workspace/SharedEmployeeWorkArea.js
+ M frontend/components/workspace/WorkspacePaneShell.js
+ M frontend/lib/api.js
+ M frontend/lib/knowledge.js
+ M frontend/lib/runtimeApi.js
+ M frontend/next.config.js
+ M frontend/tests/runtimeWorkspaceUi.test.mjs
+?? .tmp-fix-shell-common.mjs
+?? .workbuddy/automations/automation-1787000545926/
+?? .workbuddy/memory/2026-08-05.md
+?? .workbuddy/memory/2026-08-06.md
+?? .workbuddy/memory/2026-08-07.md
+?? .workbuddy/memory/2026-08-08.md
+?? .workbuddy/memory/2026-08-13.md
+?? .workbuddy/memory/2026-08-15.md
+?? .workbuddy/memory/2026-08-16.md
+?? .workbuddy/memory/2026-08-17.md
+?? .workbuddy/memory/2026-08-18.md
+?? .workbuddy/memory/2026-08-19.md
+?? .workbuddy/memory/2026-08-20.md
+?? .workbuddy/memory/2026-08-21.md
+?? .workbuddy/memory/2026-08-22.md
+?? .workbuddy/memory/2026-08-23.md
+?? .workbuddy/memory/2026-08-24.md
+?? .workbuddy/memory/2026-08-31.md
+?? .workbuddy/memory/2026-09-03.md
+?? .workbuddy/memory/2026-09-04.md
+?? .workbuddy/memory/2026-09-12.md
+?? .workbuddy/output/
+?? "<app.database.Database object at 0x10173d220>"
+?? "<app.database.Database object at 0x10a4196d0>"
+?? "<app.database.Database object at 0x10a41b660>"
+?? "<app.database.Database object at 0x10b57da90>"
+?? "<app.database.Database object at 0x10b57e990>"
+?? "<app.database.Database object at 0x10bda4a50>"
+?? "<app.database.Database object at 0x10cf144b0>"
+?? "<app.database.Database object at 0x10df8fac0>"
+?? "<app.database.Database object at 0x10e334460>"
+?? "<app.database.Database object at 0x10e6274d0>"
+?? "<app.database.Database object at 0x10e627700>"
+?? "<app.database.Database object at 0x10ec001e0>"
+?? "<app.database.Database object at 0x10ec85e00>"
+?? "<app.database.Database object at 0x10f052620>"
+?? "<app.database.Database object at 0x10f54fd90>"
+?? "<app.database.Database object at 0x10f6b9a90>"
+?? "<app.database.Database object at 0x10fbfea80>"
+?? "<app.database.Database object at 0x10fbff6b0>"
+?? CONTENT_GROWTH_FIGMA_STRUCTURAL_REFERENCES/
+?? CONTENT_GROWTH_FINAL_PRE_IA_RED_TEAM_VERIFICATION.md
+?? CONTENT_GROWTH_INDEPENDENT_RED_TEAM_REVIEW.md
+?? CONTENT_GROWTH_INDEPENDENT_RED_TEAM_SECOND_PASS.md
+?? CURIS_FIGMA_MAKE_CURRENT_DESIGN_CONTEXT_PACK.md
+?? CURIS_FIGMA_MAKE_INPUT_MANIFEST.md
+?? CURIS_FIRST_RUN_AND_BUSINESS_ENTRY_MODEL.md
+?? CURIS_PRODUCT_REALITY_ALIGNMENT.md
+?? CURIS_VISUAL_DESIGN_CHATGPT_HANDOFF_PACK.md
+?? CURIS_XHS_INTERACTIVE_PROTOTYPE_FROZEN_COMPLIANCE_AUDIT.md
+?? "Curis \344\272\247\345\223\201\344\270\216\346\204\277\346\231\257\350\265\204\346\226\231\345\272\223/"
+?? Curis-Professional-Workspace-Operating-Reconciliation-CEO-Review.md
+?? Curis_Page_Map_v1.0.md
+?? Curis_Product_Master_Map_v2.0.md
+?? Curis_Product_Rethink_Reasoning.md
+?? HANDOFF_DESIGN_AUTHORITY_2026-08-17.md
+?? Talent_Market_Integration_Contract.md
+?? Talent_Market_Product_Map.md
+?? Talent_Market_Resource_Audit.md
+?? ai-tech-workspace/
+?? artifacts/cmap_01_default.png
+?? artifacts/cmap_02_focus_dept.png
+?? artifacts/cmap_03_expand_roles.png
+?? artifacts/cmap_04_detail_drawer.png
+?? artifacts/cmap_05_variant_b.png
+?? artifacts/cmap_06_variant_b_focus.png
+?? artifacts/cmap_07_variant_a_expand_nofocus.png
+?? artifacts/evoflow-audit-2026-08-09/
+?? artifacts/meeting-room-productization-001/
+?? artifacts/ui-final-inventory/
+?? artifacts/workspace-engineering-multi-surface-package-001/desktop-dynamic-navigation.png
+?? artifacts/workspace-engineering-multi-surface-package-001/desktop-restart-render-failure.png
+?? artifacts/workspace-engineering-multi-surface-package-001/desktop-workspace-render-failure.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-context-main-utility.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-deep-link-research.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-dynamic-navigation.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-restart-last-active-operations.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-surface-operations.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-surface-overview.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-desktop-surface-research.png
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-packaged-navigation-api-response.json
+?? artifacts/workspace-engineering-multi-surface-package-001/fixed-packaged-workspace-api-response.json
+?? artifacts/workspace-engineering-multi-surface-package-001/packaged-workspace-api-headers.txt
+?? "backend/<app.database.Database object at 0x10ae085f0>"
+?? "backend/<app.database.Database object at 0x10af92da0>"
+?? "backend/<app.database.Database object at 0x10b059b80>"
+?? "backend/<app.database.Database object at 0x10b433480>"
+?? "backend/<app.database.Database object at 0x10bcd2170>"
+?? "backend/<app.database.Database object at 0x10d1ddb80>"
+?? "backend/<app.database.Database object at 0x10d1de490>"
+?? "backend/<app.database.Database object at 0x10d2ebed0>"
+?? "backend/<app.database.Database object at 0x10d792120>"
+?? "backend/<app.database.Database object at 0x10d888460>"
+?? "backend/<app.database.Database object at 0x10d889220>"
+?? "backend/<app.database.Database object at 0x10da4c410>"
+?? "backend/<app.database.Database object at 0x10da4d1d0>"
+?? "backend/<app.database.Database object at 0x10df148c0>"
+?? "backend/<app.database.Database object at 0x10df15220>"
+?? "backend/<app.database.Database object at 0x10df54190>"
+?? "backend/<app.database.Database object at 0x10f24ce60>"
+?? "backend/<app.database.Database object at 0x10f2ddcc0>"
+?? "backend/<app.database.Database object at 0x10f2de4e0>"
+?? "backend/<app.database.Database object at 0x10f49db80>"
+?? backend/app/agent_conversion/coze_adapter.py
+?? backend/app/agent_conversion/external_candidates.py
+?? backend/app/agent_conversion/openclaw_adapters.py
+?? backend/app/agent_conversion/production_line.py
+?? backend/app/agent_conversion/sources/mcp/codebase-memory-mcp.json
+?? backend/app/agent_conversion/sources/mcp/e2b-mcp-server.json
+?? backend/app/agent_conversion/sources/mcp/graphiti.json
+?? backend/app/agent_conversion/sources/mcp/mindsdb.json
+?? backend/app/agent_conversion/sources/mcp/octocode.json
+?? backend/app/agent_conversion/sources/mcp/serena.json
+?? backend/app/ai_capability_registry.py
+?? backend/app/api/conversation_router.py
+?? backend/app/api/frontend_v1_router.py
+?? backend/app/api/meeting_router.py
+?? backend/app/conversation_service.py
+?? backend/app/operating_intelligence.py
+?? backend/app/organization_projection.py
+?? backend/app/result_attention.py
+?? backend/app/runtime/first_run_delivery.py
+?? backend/app/runtime/general_workspace_delivery.py
+?? backend/curis.sqlite
+?? backend/curis_dev.db
+?? backend/data/
+?? backend/scripts/e2e_meeting_real_deepseek.py
+?? backend/tests/test_ai_capability_registry.py
+?? backend/tests/test_canonical_execution_scope.py
+?? backend/tests/test_canonical_usage_attribution.py
+?? backend/tests/test_conversation_productization.py
+?? backend/tests/test_conversation_usage.py
+?? backend/tests/test_coze_adapter.py
+?? backend/tests/test_database_canonical_usage_attribution_migration.py
+?? backend/tests/test_desktop_gateway_continuity.py
+?? backend/tests/test_employee_conversation.py
+?? backend/tests/test_employee_recruitment_avatar.py
+?? backend/tests/test_model_gateway_provider_protocols.py
+?? backend/tests/test_model_gateway_timeout.py
+?? backend/tests/test_openclaw_adapters.py
+?? backend/tests/test_operating_intelligence_projection.py
+?? backend/tests/test_organization_center_projection.py
+?? backend/tests/test_phase_b_builtin_organization.py
+?? backend/tests/test_runtime_execution_adapter.py
+?? backend/tests/test_runtime_first_arrival_api.py
+?? backend/tests/test_runtime_foundation_api.py
+?? backend/tests/test_runtime_foundation_isolation.py
+?? backend/tests/test_runtime_foundation_legacy_adapter.py
+?? backend/tests/test_runtime_foundation_persistence.py
+?? backend/tests/test_runtime_foundation_simulation.py
+?? backend/tests/test_runtime_materialization_api.py
+?? backend/tests/test_talent_capability_productization.py
+?? backend/tests/test_talent_market.py
+?? backend/tests/test_three_business_runtime_simulations.py
+?? backend/tests/test_v1_conversation_attention.py
+?? backend/tests/test_v1_first_run_delivery.py
+?? backend/tests/test_v1_frontend_batch1.py
+?? backend/tests/test_v1_general_operating_contract.py
+?? backend/tests/test_v1_general_workspace_contract.py
+?? backend/tests/test_v1_general_workspace_lifecycle_closure.py
+?? backend/tests/test_v1_general_workspace_p1_operating_closure.py
+?? backend/tests/test_v1_knowledge_library_productization.py
+?? backend/tests/test_v1_m4_m5_continuous_delivery.py
+?? backend/tests/test_v1_meeting_completed_reuse.py
+?? backend/tests/test_v1_meeting_cycle_budget.py
+?? backend/tests/test_v1_meeting_p7_mapping.py
+?? backend/tests/test_v1_meeting_post_result.py
+?? backend/tests/test_v1_meeting_recovery.py
+?? backend/tests/test_v1_meeting_room_productization.py
+?? backend/tests/test_v1_meeting_self_judgment_edge.py
+?? backend/tests/test_v1_meeting_token_calibration.py
+?? backend/tests/test_v1_p0_003_keychain.py
+?? backend/tests/test_v1_packaged_ceo_routes.py
+?? backend/tests/test_v1_result_title.py
+?? build_rd_pages.py
+?? curis-ui-prototype.bak/
+?? curis-ui-prototype/
+?? data/b_layer_pending_decisions.sqlite
+?? data/backups/
+?? data/curis.sqlite
+?? data/curis.sqlite.bak-20260806
+?? data/issue_pipeline.sqlite
+?? data/quality.sqlite
+?? deliverables/
+?? delivery/
+?? desktop/gen/
+?? desktop/icons/64x64.png
+?? desktop/icons/Square107x107Logo.png
+?? desktop/icons/Square142x142Logo.png
+?? desktop/icons/Square150x150Logo.png
+?? desktop/icons/Square284x284Logo.png
+?? desktop/icons/Square30x30Logo.png
+?? desktop/icons/Square310x310Logo.png
+?? desktop/icons/Square44x44Logo.png
+?? desktop/icons/Square71x71Logo.png
+?? desktop/icons/Square89x89Logo.png
+?? desktop/icons/StoreLogo.png
+?? desktop/icons/android/
+?? desktop/icons/icon.png
+?? desktop/icons/ios/
+?? desktop/package-lock.json
+?? desktop/runtime/recovery.py
+?? desktop/scripts/build-manual-dmg.sh
+?? desktop/tests/
+?? docs/00_Context/CURIS_FACT_BASELINE_2026-08-09.md
+?? docs/00_Context/CURIS_LEGACY_MIGRATION_MAP_2026-08-09.md
+?? docs/01_Product/AI_Capability_Current_State_Audit.md
+?? docs/01_Product/AI_Capability_Integration_Report.md
+?? docs/01_Product/AI_Capability_UI_Contract.md
+?? docs/01_Product/Agent_Adapter_Compatibility_Registry.md
+?? docs/01_Product/Agent_Adapter_Contract.md
+?? docs/01_Product/Agent_Adapter_Permission_Mapping_Matrix.md
+?? docs/01_Product/Blueprint_vs_UI_Diff_2026-08-06.md
+?? docs/01_Product/CEO_OPERATING_CORE_RECOVERY_AUDIT_2026-08-18.md
+?? docs/01_Product/CURIS_BUSINESS_TO_PRODUCT_TRANSLATION_LEDGER.md
+?? docs/01_Product/CURIS_CONTENT_GROWTH_AI_USER_OPERATING_BOUNDARY.md
+?? docs/01_Product/CURIS_CONTENT_GROWTH_BUSINESS_LOGIC_V2.md
+?? docs/01_Product/CURIS_CONTENT_GROWTH_BUSINESS_TO_PRODUCT_TRANSLATION.md
+?? docs/01_Product/CURIS_CONTENT_GROWTH_FULL_PRODUCT_CAPABILITY_DERIVATION.md
+?? docs/01_Product/CURIS_CONTENT_GROWTH_PRODUCT_LANGUAGE_DERIVATION.md
+?? docs/01_Product/CURIS_DOUYIN_REAL_PLATFORM_OPERATING_DEEP_DIVE.md
+?? docs/01_Product/CURIS_FULL_PRODUCT_STRUCTURE_AND_INTERACTION_INVENTORY.md
+?? docs/01_Product/CURIS_PRODUCT_CAPABILITY_DERIVATION_LEDGER.md
+?? docs/01_Product/CURIS_PRODUCT_DEFINITION_REBUILD.md
+?? docs/01_Product/CURIS_PRODUCT_DERIVATION_GAP_REGISTER.md
+?? docs/01_Product/CURIS_PRODUCT_DERIVATION_METHOD_V2_VALIDATION.md
+?? docs/01_Product/CURIS_PRODUCT_DERIVATION_REBUILD.md
+?? docs/01_Product/CURIS_PRODUCT_DERIVATION_ROUND1_CORRECTION.md
+?? docs/01_Product/CURIS_TALENT_SKILL_DISTRIBUTION_RESEARCH.md
+?? docs/01_Product/Curis_Agent_Computer_Access_Contract_Candidate.md
+?? docs/01_Product/Curis_Capability_Intelligence_SOP.md
+?? docs/01_Product/Curis_Default_Functional_Talent_Verification_2026-08-18.md
+?? docs/01_Product/Curis_Local_Agent_Computer_Access_Research.md
+?? docs/01_Product/Curis_Product_Visual_Master_Map_v1.0.html
+?? docs/01_Product/Curis_RD_Workspace_Design_Brief.md
+?? docs/01_Product/Curis_RD_Workspace_Reference_Synthesis.md
+?? docs/01_Product/Curis_Talent_Candidate_Package_2026-08-18.md
+?? docs/01_Product/Curis_Talent_Chinese_Productization_Batch1.md
+?? docs/01_Product/Curis_UI_Blueprint_Prototype.html
+?? docs/01_Product/Curis_UI_Evidence_Alignment_2026-08-09.md
+?? docs/01_Product/Curis_UI_Reference_Gap_Audit.md
+?? docs/01_Product/Curis_UI_Reference_Map.md
+?? docs/01_Product/MCP_Connector_Registry.md
+?? docs/01_Product/Model_Provider_Registry.md
+?? docs/01_Product/Product_Blueprint_Upgrade_Audit.md
+?? docs/01_Product/Skill_Expert_Registry.md
+?? docs/01_Product/THREE-DOCUMENT_CONSISTENCY_AUDIT_2026-08-18.md
+?? docs/01_Product/Talent_Library_Expansion_Report.md
+?? docs/01_Product/UI_Blueprint_Upgrade_Audit.md
+?? docs/02_Architecture/WORKSPACE_ENGINEERING_P0_DEFINITION.md
+?? docs/02_Architecture/WORKSPACE_ENGINEERING_RUNTIME_AND_EXTENSIBILITY_AUDIT.md
+?? docs/03_Design/BATCH_A_CONTRACT_REVIEW.md
+?? docs/03_Design/CONTENT_GROWTH_SHARED_CONTRACT_PLAN.md
+?? docs/03_Design/CURIS_COMPANY_MAP_ORGANIZATION_GRAPH_RESEARCH.md
+?? docs/03_Design/CURIS_COMPANY_MAP_VISUAL_EXPLORATION.html
+?? docs/03_Design/CURIS_DESIGN_DOCUMENT_CONSOLIDATION_AUDIT.md
+?? docs/03_Design/CURIS_SHARED_BUSINESS_WORKSPACE_MAIN_COMPOSITION_CLOSURE.md
+?? docs/03_Design/CURIS_SHARED_EMPLOYEE_WORKSTATION_PATTERN_CLOSURE.md
+?? docs/03_Design/CURIS_SHARED_EMPLOYEE_WORK_AREA_AND_COMPOSER_CONTRACT_CLOSURE.md
+?? docs/03_Design/CURIS_TRAE_VISUAL_DESIGN_RULES.md
+?? docs/03_Design/Curis_AiToEarn_Architecture_Review.md
+?? docs/03_Design/Curis_BATCH_B_CONTRACT_REVIEW.md
+?? docs/03_Design/Curis_BATCH_C_CONTRACT_REVIEW.md
+?? docs/03_Design/Curis_CEO_Decision_Pattern_Review.md
+?? docs/03_Design/Curis_Canonical_Content_Channel_Variant_Model.md
+?? docs/03_Design/Curis_Channel_Account_Contract_Candidate.md
+?? docs/03_Design/Curis_Channel_Account_Matrix_Model.md
+?? docs/03_Design/Curis_Company_OS_Shared_Authority_Consolidation_Review.md
+?? docs/03_Design/Curis_Content_Growth_Company_Evolution_Model.md
+?? docs/03_Design/Curis_Content_Growth_Content_Journey_Wireframe.html
+?? docs/03_Design/Curis_Content_Growth_Core_Interaction_Review.md
+?? docs/03_Design/Curis_Content_Growth_Core_Interaction_Spec.md
+?? docs/03_Design/Curis_Content_Growth_Domain_Authority_Consolidation_Review.md
+?? docs/03_Design/Curis_Content_Growth_Employee_Method_Experience.md
+?? docs/03_Design/Curis_Content_Growth_First_Run_Experience.md
+?? docs/03_Design/Curis_Content_Growth_First_Run_Wireframe.html
+?? docs/03_Design/Curis_Content_Growth_Home_Wireframe.html
+?? docs/03_Design/Curis_Content_Growth_Information_Architecture_Exploration.md
+?? docs/03_Design/Curis_Content_Growth_Operating_Model.md
+?? docs/03_Design/Curis_Content_Growth_Product_Model_Closure.md
+?? docs/03_Design/Curis_Content_Growth_Strategy_Evolution_Interaction.md
+?? docs/03_Design/Curis_Content_Growth_Strategy_Experience_Model.md
+?? docs/03_Design/Curis_Content_Growth_UX_Model_Exploration.md
+?? docs/03_Design/Curis_Content_Growth_User_Terminology_Map.md
+?? docs/03_Design/Curis_Content_Growth_Wireframe_A_Strategy.html
+?? docs/03_Design/Curis_Content_Growth_Wireframe_B_Employee.html
+?? docs/03_Design/Curis_Content_Growth_Wireframe_C_Evolution.html
+?? docs/03_Design/Curis_Content_Growth_Workspace_Composition_Options.md
+?? docs/03_Design/Curis_Content_Intent_Contract_Candidate.md
+?? docs/03_Design/Curis_Content_Production_Channel_Operations_Model.md
+?? docs/03_Design/Curis_Content_Variant_Publication_Contract_Candidate.md
+?? docs/03_Design/Curis_Design_System_Delta_RD_Workspace.md
+?? docs/03_Design/Curis_Desktop_Pane_Shell_Exploration_v1.md
+?? docs/03_Design/Curis_Douyin_Automation_Gap_Map.md
+?? docs/03_Design/Curis_Douyin_Automation_Requirements.md
+?? docs/03_Design/Curis_Douyin_Capability_Matrix.md
+?? docs/03_Design/Curis_Douyin_End_to_End_Automation_Feasibility.md
+?? docs/03_Design/Curis_Lightweight_Queue_Bottleneck_Contract_Candidate.md
+?? docs/03_Design/Curis_Multi_Channel_Architecture_Review.md
+?? docs/03_Design/Curis_Operating_Context_Office_Contract_Candidate.md
+?? docs/03_Design/Curis_Organization_Routing_Architecture.md
+?? docs/03_Design/Curis_Organization_Routing_Contract_Candidate.md
+?? docs/03_Design/Curis_RD_Workspace_High_Fidelity_v1.html
+?? docs/03_Design/Curis_RD_Workspace_UI_Drift_Audit_v1.md
+?? docs/03_Design/Curis_Responsibility_Requirement_Contract_Candidate.md
+?? docs/03_Design/Curis_Shared_Employee_Service_Relation_Contract_Candidate.md
+?? docs/03_Design/Curis_TTK_Workspace_Product_Model_Proposal.md
+?? docs/03_Design/Curis_TTK_Workspace_Reference_Research.md
+?? docs/03_Design/Curis_TTK_vs_XHS_Reuse_Matrix.md
+?? docs/03_Design/Curis_Target_Account_Contract_Candidate.md
+?? docs/03_Design/Curis_UI_Frontend_Handoff_Memo_2026-08-05.md
+?? docs/03_Design/Curis_UI_Frozen_Spec_2026-08-04.md
+?? docs/03_Design/Curis_UI_Review_2026-08-04.md
+?? docs/03_Design/Curis_Workspace_Engineering_CEO_Journey_High_Fidelity.html
+?? docs/03_Design/Curis_Workspace_Engineering_Company_Integration_Product_Delta.md
+?? docs/03_Design/Curis_Workspace_Engineering_High_Fidelity_Remake.html
+?? docs/03_Design/Curis_Workspace_Engineering_Product_Translation.md
+?? docs/03_Design/Curis_Workspace_Engineering_Product_Translation_Review.md
+?? docs/03_Design/Curis_Workspace_Engineering_Technical_Reality_Delta_Review.md
+?? docs/03_Design/Curis_Workspace_Engineering_Visual_Design_Closure.md
+?? docs/03_Design/Curis_Workspace_Shell.md
+?? docs/03_Design/Curis_XHS_Shell_Shared_Delta_Summary.md
+?? docs/03_Design/Curis_XHS_Workspace_Calendar_Pattern_Spec.md
+?? docs/03_Design/Curis_XHS_Workspace_Design_Brief.md
+?? docs/03_Design/Curis_XHS_Workspace_Design_Exploration_v1.md
+?? docs/03_Design/Curis_XHS_Workspace_Instance_Spec_v1.md
+?? docs/03_Design/Curis_XHS_Workspace_Interaction_Exploration_v2.md
+?? docs/03_Design/Curis_XHS_Workspace_Reference_Research.md
+?? docs/03_Design/Curis_XHS_Workspace_State_Semantics_Audit.md
+?? docs/03_Design/Curis_XHS_Workspace_UI_Authority_Map.md
+?? docs/03_Design/Curis_XHS_Workspace_Visual_v3.html
+?? docs/03_Design/Curis_XHS_Workspace_Visual_v4.html
+?? docs/03_Design/Frontend_Handoff_Instructions_2026-08-05.md
+?? docs/03_Design/Frontend_Team_Forced_Align_Handoff_v2_2026-08-06.md
+?? docs/03_Design/Frontend_Team_Structure_Align_Handoff_2026-08-05.md
+?? docs/03_Design/UI_Designer_Spec_2026-08-04.md
+?? docs/03_Design/UI_Exploration_Gap_Audit_2026-08-04.md
+?? docs/03_Design/WORKBUDDY_PROJECT_TO_CURIS_WORKSPACE_LONG_TERM_IA_REVIEW.md
+?? docs/03_Design/WORKSPACE_ENGINEERING_FINAL_IA_CLOSURE.md
+?? docs/03_Design/WORKSPACE_ENGINEERING_PANE_RESPONSIBILITY_CLOSURE.md
+?? docs/03_Design/WORKSPACE_ENGINEERING_VISUAL_DESIGN_REMAKE_CLOSURE.md
+?? docs/03_Design/research/
+?? docs/04_Development/AGENT_COMPUTER_ACCESS_RUNTIME_DELTA_PLAN.md
+?? docs/04_Development/CURIS_MASTER_DEVELOPMENT_STATE_2026-09-03.md
+?? docs/04_Development/RD_IMPLEMENTATION_GAP_AUDIT.md
+?? docs/04_Development/RD_IMPLEMENTATION_PLAN_v1.md
+?? docs/04_Development/RD_PHASE_2B_PRE_IMPLEMENTATION_AUDIT.md
+?? docs/04_Development/XHS_IMPLEMENTATION_GAP_AUDIT.md
+?? docs/04_Development/XHS_IMPLEMENTATION_PLAN_v1.md
+?? docs/04_Development/XHS_RUNTIME_ARCHITECTURE_REVIEW.md
+?? docs/05_Workspace_Engineering/CURIS_WORKSPACE_ENGINEERING_PRODUCT_HANDOFF.md
+?? docs/08_Change_Log/2026-08-07_DeepSeek_Integration_Verification.md
+?? docs/99_Archive/Product/
+?? docs/Content_Growth_Professional_Workspace_Research/
+?? docs/Content_Growth_Research/
+?? docs/XHS_Professional_Workspace_Research/
+?? docs/architecture-review-evoflow-reuse-2026-08-04.md
+?? docs/plan/curis-product-completion-roadmap-evoflow-2026-08-10.md
+?? docs/prototypes/full-product-html/
+?? docs/research/CURIS_AUTONOMOUS_OPERATION_CODEX_RESEARCH.md
+?? docs/research/CURIS_AUTONOMOUS_OPERATION_WORKBUDDY_RESEARCH.md
+?? docs/research/CURIS_AUTONOMOUS_OPERATION_lifecycle.svg
+?? docs/research/CURIS_AUTONOMOUS_OPERATION_states.svg
+?? docs/research/CURIS_TEAM_OPERATING_ENGINE_RESEARCH.md
+?? docs/research/codex-phase-2-verification/
+?? docs/research/final-hifi-acceptance/
+?? docs/research/full-product-rethink-2026-09-14/
+?? docs/research/system_competitive_research/
+?? docs/reviews/2026-08-04-curis-ui-audit-report.md
+?? docs/reviews/2026-08-05-frontend-ui-audit.json
+?? docs/reviews/2026-08-05-frontend-ui-audit.md
+?? docs/reviews/2026-08-06-align-baseline.md
+?? docs/reviews/2026-08-07-code-vs-blueprint-review.md
+?? docs/reviews/2026-08-08-product-audit/
+?? docs/reviews/20260809_desktop_packaging_001_review.md
+?? docs/reviews/20260809_desktop_runtime_flow_001_review.md
+?? docs/reviews/20260809_desktop_runtime_simulation_001_review.md
+?? docs/reviews/20260809_desktop_runtime_workitem_001_review.md
+?? docs/reviews/20260809_desktop_single_instance_001_review.md
+?? docs/reviews/20260810_desktop_runtime_execution_001_review.md
+?? docs/reviews/20260810_product_rederivation_review.md
+?? docs/reviews/20260810_product_ui_audit/
+?? docs/reviews/20260810_workspace_capability_supply_review_001_review.md
+?? docs/reviews/20260810_workspace_operating_cycle_closure_001_review.md
+?? docs/reviews/20260810_workspace_staffing_approval_activation_001_review.md
+?? docs/reviews/20260810_workspace_staffing_proposal_runtime_001_review.md
+?? docs/reviews/20260810_workspace_staffing_simulation_001_review.md
+?? docs/reviews/20260810_workspace_studio_blueprint_assembly_001_review.md
+?? docs/reviews/20260813_current_state_product_drift_audit/
+?? docs/reviews/20260813_product_rebaseline/
+?? docs/reviews/20260814_ai_capability_integration_001_review.md
+?? docs/reviews/BUSINESS_ACCOUNT_WORKSPACE_PRODUCT_CLARIFICATION.md
+?? docs/reviews/BUSINESS_SPACE_PAGE_CONTRACT_FINAL_REVIEW.md
+?? docs/reviews/BUSINESS_WORK_SURFACE_PAGE_CONTRACT.md
+?? docs/reviews/CEO_DESK_PAGE_CONTRACT_FINAL_REVIEW.md
+?? docs/reviews/CONTENT_GROWTH_AUTONOMY_GUARDRAIL_CALIBRATION_AUDIT.md
+?? docs/reviews/CONTENT_GROWTH_CHANNEL_CAPABILITY_EVIDENCE_AUDIT.md
+?? docs/reviews/CONTENT_GROWTH_PRE_IA_AUTHORITY_RECONCILIATION.md
+?? docs/reviews/CURIS-V1-M2.5-GENERAL-WORKSPACE-CONTEXT-001_review.md
+?? docs/reviews/CURIS_APP_ENTRY_LIFECYCLE_CONTRACT.md
+?? docs/reviews/CURIS_AUTONOMOUS_BUSINESS_OPERATION_SYNTHESIS.md
+?? docs/reviews/CURIS_AUTONOMOUS_OPERATING_V1_IMPLEMENTATION_READINESS.md
+?? docs/reviews/CURIS_AUTONOMOUS_OPERATING_V1_PHASE0_RUNTIME_TRUTH_AUDIT.md
+?? docs/reviews/CURIS_AUTONOMOUS_OPERATION_PRODUCT_SURFACE_MAPPING.md
+?? docs/reviews/CURIS_AVATAR_IDENTITY_PATTERN.md
+?? docs/reviews/CURIS_CANONICAL_BUSINESS_SPINE_AUTHORITY_REVIEW.md
+?? docs/reviews/CURIS_CANONICAL_CHILD_WORK_AND_MULTI_WORK_COMMIT_RECONCILIATION.md
+?? docs/reviews/CURIS_CANONICAL_USAGE_ATTRIBUTION_ARCHITECTURE_REVIEW.md
+?? docs/reviews/CURIS_CANONICAL_USAGE_ATTRIBUTION_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_CEO_ASSISTANT_HISTORICAL_PRODUCT_TRUTH_RECOVERY.md
+?? docs/reviews/CURIS_CODEX_MASTER_DEVELOPMENT_RECOVERY_2026-09-05.md
+?? docs/reviews/CURIS_CONTROLLED_BASELINE_PROMOTION_PLAN.md
+?? docs/reviews/CURIS_CORE_PRODUCT_AUTHORITY_RECONCILIATION.md
+?? docs/reviews/CURIS_CORE_PRODUCT_DEVIATION_REGISTER.md
+?? docs/reviews/CURIS_CORE_PRODUCT_TRUTH_LEDGER.md
+?? docs/reviews/CURIS_CREATE_BUSINESS_FLOW_CONTRACT.md
+?? docs/reviews/CURIS_CURRENT_VISUAL_SYSTEM_TRUTH.md
+?? docs/reviews/CURIS_EMPLOYEE_CONVERSATION_MODEL_EXPERIENCE_CONTRACT.md
+?? docs/reviews/CURIS_FIGMA_VISUAL_EXPLORATION_RETROSPECTIVE.md
+?? docs/reviews/CURIS_FIGMA_VISUAL_FRAME_MANIFEST.md
+?? docs/reviews/CURIS_GENERAL_WORKSPACE_CONTEXT_SUFFICIENCY_AUDIT.md
+?? docs/reviews/CURIS_KNOWLEDGE_CANONICAL_SCOPE_TYPED_WORK_REFERENCE_CONTRACT.md
+?? docs/reviews/CURIS_KNOWLEDGE_FUTURE_COMPATIBILITY_REVIEW.md
+?? docs/reviews/CURIS_LOCAL_STATE_AND_EVIDENCE_CLEANUP.md
+?? docs/reviews/CURIS_LOCAL_STATE_CLEANUP_EXECUTION.md
+?? docs/reviews/CURIS_MASTER_SHELL_VISUAL_EXECUTION_CONTRACT.md
+?? docs/reviews/CURIS_MINIMAL_SHARED_RUNTIME_STAGED_VALIDATION.md
+?? docs/reviews/CURIS_MULTI_SURFACE_PROFESSIONAL_WORKSPACE_UX_REVIEW.md
+?? docs/reviews/CURIS_MULTI_SURFACE_WORKSPACE_PACKAGE_CONTRACT_RESEARCH.md
+?? docs/reviews/CURIS_OPERATING_LIFECYCLE_CONTRACT_CANDIDATE.md
+?? docs/reviews/CURIS_PHASE_B_CORE_PRODUCT_RECONCILIATION_CONTRACT.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_ARCHITECTURE_INTERNAL_RESEARCH.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_AUTHORITY_RECONCILIATION_REVIEW.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_CEO_DECISION_PACKET.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_CROSS_TRACK_SYNTHESIS.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_QUALITY_MODEL_CANDIDATE.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_STRATEGY_AUTHORITY_RECONCILIATION_REVIEW.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_STRATEGY_RESEARCH.md
+?? docs/reviews/CURIS_PROFESSIONAL_WORKSPACE_TEAM_SURFACE_OPERATING_MODEL_RESEARCH.md
+?? docs/reviews/CURIS_SETTINGS_PRODUCT_CONFIGURATION_RESEARCH.md
+?? docs/reviews/CURIS_TEAM_OPERATING_ENGINE_CONTRACT_CANDIDATE.md
+?? docs/reviews/CURIS_THREE_LAYER_OPERATING_MODEL_RECONCILIATION.md
+?? docs/reviews/CURIS_TRAE_VISUAL_SYSTEM_ADDENDUM.md
+?? docs/reviews/CURIS_UNIVERSAL_PROFESSIONAL_WORKSPACE_MODEL_CANDIDATE.md
+?? docs/reviews/CURIS_V1_APP_ENTRY_FIGMA_BASELINE_AUDIT.md
+?? docs/reviews/CURIS_V1_APP_ENTRY_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_APP_READINESS_AUDIT.md
+?? docs/reviews/CURIS_V1_CEO_DESK_DESIGN_RECONCILIATION.md
+?? docs/reviews/CURIS_V1_CEO_DESK_OPERATING_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_CLOUD_MODEL_CONTINUITY_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_V1_COMPLETION_RECONCILIATION.md
+?? docs/reviews/CURIS_V1_CONVERSATION_ATTENTION_LIFECYCLE_REVIEW.md
+?? docs/reviews/CURIS_V1_CURRENT_UI_FOUNDATION.md
+?? docs/reviews/CURIS_V1_DEVELOPMENT_MASTER_PLAN.md
+?? docs/reviews/CURIS_V1_DISTRIBUTION_STRATEGY.md
+?? docs/reviews/CURIS_V1_EMPLOYEE_RECRUITMENT_AVATAR_CLOSURE_REVIEW.md
+?? docs/reviews/CURIS_V1_FINAL_UI_GAP_REVIEW.md
+?? docs/reviews/CURIS_V1_FINAL_UI_SURFACE_INVENTORY.md
+?? docs/reviews/CURIS_V1_FRONTEND_BATCH_1_FINAL_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_FRONTEND_BATCH_1_IMPLEMENTATION_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_FRONTEND_BATCH_1_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_V1_FRONTEND_CLEANUP_MAP.md
+?? docs/reviews/CURIS_V1_FRONTEND_IMPLEMENTATION_READINESS_REVIEW.md
+?? docs/reviews/CURIS_V1_GENERAL_WORKSPACE_LIFECYCLE_CLOSURE_REVIEW.md
+?? docs/reviews/CURIS_V1_GENERAL_WORKSPACE_NATIVE_INTERACTION_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_GENERAL_WORKSPACE_P1_FINAL_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_V1_GENERAL_WORKSPACE_P1_OPERATING_CLOSURE_REVIEW.md
+?? docs/reviews/CURIS_V1_GLOBAL_UI_SEVEN_AREA_FINAL_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_PRODUCTIZATION_REVIEW.md
+?? docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_PRODUCT_UX_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_PRODUCT_UX_RESEARCH.md
+?? docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_KNOWLEDGE_LIBRARY_UX_EXPLORATION.html
+?? docs/reviews/CURIS_V1_M4_M5_CONTINUOUS_DELIVERY_REVIEW.md
+?? docs/reviews/CURIS_V1_MEETING_AUTONOMY_MECHANISM_ADJUDICATION_2026-09-04.md
+?? docs/reviews/CURIS_V1_MEETING_CLOSURE_ENV_PREP_2026-09-04.md
+?? docs/reviews/CURIS_V1_MEETING_EMPLOYEE_SELF_JUDGMENT_DESIGN_2026-09-04.md
+?? docs/reviews/CURIS_V1_MEETING_ROOM_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_OPERATING_INTELLIGENCE_PRODUCTIZATION_REVIEW.md
+?? docs/reviews/CURIS_V1_OPERATING_INTELLIGENCE_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_ORGANIZATION_CENTER_PRODUCTIZATION_REVIEW.md
+?? docs/reviews/CURIS_V1_ORGANIZATION_CENTER_UI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_P0_003_KEYCHAIN_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_V1_RELEASE_DISTRIBUTION_RECOVERY_REVIEW.md
+?? docs/reviews/CURIS_V1_TALENT_CAPABILITY_PRODUCTIZATION_REVIEW.md
+?? docs/reviews/CURIS_V1_THREE_AREA_DESIGN_ASSET_RECOVERY.md
+?? docs/reviews/CURIS_V1_UI_DEPENDENCY_MATRIX.md
+?? docs/reviews/CURIS_V1_UI_FRONTEND_RECONCILIATION_AUDIT.md
+?? docs/reviews/CURIS_V1_UI_GAP_MAP.md
+?? docs/reviews/CURIS_V1_UI_INDEPENDENT_DELIVERY_REPORT.md
+?? docs/reviews/CURIS_V1_WHOLE_APP_LIVE_AI_ACCEPTANCE.md
+?? docs/reviews/CURIS_V1_WHOLE_APP_PRODUCT_GAP_CLOSURE_REVIEW.md
+?? docs/reviews/CURIS_VISUAL_BASELINE_REAL_PRODUCT_IMPLEMENTATION_REVIEW.md
+?? docs/reviews/CURIS_VISUAL_DIRECTION_SELECTION_BOARD.md
+?? docs/reviews/CURIS_VISUAL_TOKEN_MIGRATION_MAP.md
+?? docs/reviews/CURIS_WORKFLOW_RUNTIME_IMPLEMENTATION_AUDIT.md
+?? docs/reviews/CURIS_WORKSPACE_RESOLUTION_MODEL_CANDIDATE.md
+?? docs/reviews/CURIS_WORKSPACE_SURFACE_OWNERSHIP_MATRIX.md
+?? docs/reviews/CURIS_WORKSPACE_TEAM_SURFACE_RELATIONSHIP_MODEL.md
+?? docs/reviews/CURIS_WORKTREE_CLEANUP_AUDIT.md
+?? docs/reviews/CURIS_WORKTREE_G1_STAGED_VALIDATION.md
+?? docs/reviews/CURIS_WORKTREE_G1_STAGING_MANIFEST.md
+?? docs/reviews/CURIS_WORKTREE_G2_STAGED_VALIDATION.md
+?? docs/reviews/CURIS_WORKTREE_OWNERSHIP_AND_ISOLATION_PLAN.md
+?? docs/reviews/CURIS_WORKTREE_RECONCILIATION_DECISIONS.md
+?? docs/reviews/CURIS_WORKTREE_REMAINING_RECONCILIATION.md
+?? docs/reviews/CURIS_XHS_TEAM_SURFACE_OPERATING_MAP.md
+?? docs/reviews/Curis_Capability_Recovery_Audit_2026-08-14.md
+?? docs/reviews/DEPARTMENT_WORK_SURFACE_PAGE_CONTRACT.md
+?? docs/reviews/ORGANIZATION_CENTER_PAGE_CONTRACT_FINAL_REVIEW.md
+?? docs/reviews/RECENT_UNREGISTERED_ACCEPTED_TRUTH.md
+?? docs/reviews/align-baseline/
+?? docs/reviews/content-workspace-audit-2026-08-09/
+?? docs/reviews/content-workspace-runtime-review-2026-08-09/
+?? docs/reviews/curis-ui-audit-instruction.md
+?? docs/reviews/frontend-target-alignment-2026-08-09/
+?? docs/reviews/multi-surface-workspace-screenshots/
+?? docs/reviews/next-stage-product-plan-evoflow-2026-08-09/
+?? docs/reviews/runtime-foundation-review-2026-08-09/
+?? docs/reviews/three-business-runtime-simulation-plan-2026-08-09/
+?? docs/reviews/ui-runtime-migration-review-2026-08-09/
+?? frontend/app/ceo-office/analytics/OperatingIntelligence.js
+?? frontend/app/ceo-office/conversation/
+?? frontend/app/ceo-office/execution/pipeline/
+?? frontend/app/ceo-office/organization/OrganizationCenter.js
+?? frontend/app/ceo-office/organization/organizationCenter.module.css
+?? frontend/app/ceo-office/talent-market/
+?? frontend/app/ceo-office/workspace/department/
+?? frontend/app/platform/TalentProductionPanel.js
+?? frontend/app/welcome/
+?? frontend/components/terra/FirstRunGate.js
+?? frontend/components/terra/PipelineGraphView.js
+?? frontend/components/terra/TaskLauncher.js
+?? frontend/components/v1/
+?? frontend/lib/organizationProjection.js
+?? frontend/lib/talentMarket.js
+?? frontend/lib/v1FrontendApi.js
+?? frontend/public/
+?? frontend/tests/conversationAttention.test.mjs
+?? frontend/tests/conversationProductization.test.mjs
+?? frontend/tests/employeeConversation.test.mjs
+?? frontend/tests/employeeRecruitmentAvatar.test.mjs
+?? frontend/tests/knowledgeLibraryProductization.test.mjs
+?? frontend/tests/meetingRoomProductization.test.mjs
+?? frontend/tests/operatingIntelligence.test.mjs
+?? frontend/tests/organizationCenter.test.mjs
+?? frontend/tests/phaseBBuiltinOrganization.test.mjs
+?? frontend/tests/phaseBSpatialAssistant.test.mjs
+?? frontend/tests/rdWorkspaceExecution.test.mjs
+?? frontend/tests/runtimeFirstArrival.test.mjs
+?? frontend/tests/runtimeMaterialization.test.mjs
+?? frontend/tests/talentCapabilityProductization.test.mjs
+?? frontend/tests/v1FrontendBatch1.test.mjs
+?? frontend/tests/v1GeneralWorkspaceOperating.test.mjs
+?? frontend/tests/v1SevenAreaAcceptance.test.mjs
+?? issues/20260809_desktop_packaging_001.md
+?? issues/20260809_desktop_runtime_execution_001.md
+?? issues/20260809_desktop_runtime_flow_001.md
+?? issues/20260809_desktop_runtime_simulation_001.md
+?? issues/20260809_desktop_runtime_workitem_001.md
+?? issues/20260809_desktop_single_instance_001.md
+?? issues/20260809_runtime_api_001.md
+?? issues/20260809_runtime_first_arrival_001.md
+?? issues/20260809_runtime_foundation_001.md
+?? issues/20260809_runtime_materialization_001.md
+?? issues/20260809_runtime_simulation_001.md
+?? issues/20260809_runtime_workspace_foundation_001.md
+?? issues/20260809_three_business_workspace_ui_001.md
+?? issues/20260809_ui_runtime_migration_001.md
+?? issues/20260810_ceo_workforce_experience_ui_001.md
+?? issues/20260810_workspace_capability_supply_review_001.md
+?? issues/20260810_workspace_operating_cycle_closure_001.md
+?? issues/20260810_workspace_staffing_approval_activation_001.md
+?? issues/20260810_workspace_staffing_proposal_runtime_001.md
+?? issues/20260810_workspace_staffing_simulation_001.md
+?? issues/20260810_workspace_studio_blueprint_assembly_001.md
+?? issues/20260814_ai_capability_integration_001.md
+?? issues/20260814_talent_market_001.md
+?? issues/20260814_talent_market_phase2_002.md
+?? issues/20260820_autonomous_operating_v1_implementation_001.md
+?? issues/CURIS-CANONICAL-USAGE-ATTRIBUTION-001.md
+?? issues/CURIS-V1-CLOUD-MODEL-CONTINUITY-001.md
+?? issues/CURIS-V1-CONVERSATION-ATTENTION-LIFECYCLE-001.md
+?? issues/CURIS-V1-EMPLOYEE-RECRUITMENT-AVATAR-CLOSURE-001.md
+?? issues/CURIS-V1-FRONTEND-BATCH-1.md
+?? issues/CURIS-V1-GENERAL-WORKSPACE-LIFECYCLE-CLOSURE-001.md
+?? issues/CURIS-V1-GENERAL-WORKSPACE-P1-OPERATING-CLOSURE.md
+?? issues/CURIS-V1-GLOBAL-UI-SEVEN-AREA-FINAL-ACCEPTANCE-001.md
+?? issues/CURIS-V1-KNOWLEDGE-LIBRARY-PRODUCTIZATION-001.md
+?? issues/CURIS-V1-M2.5-GENERAL-WORKSPACE-CONTEXT-001.md
+?? issues/CURIS-V1-M4-M5-CONTINUOUS-DELIVERY-001.md
+?? issues/CURIS-V1-MEETING-ROOM-PRODUCTIZATION-001.md
+?? issues/CURIS-V1-OPERATING-INTELLIGENCE-PRODUCTIZATION-001.md
+?? issues/CURIS-V1-ORGANIZATION-CENTER-PRODUCTIZATION-001.md
+?? issues/CURIS-V1-RELEASE-DISTRIBUTION-RECOVERY-001.md
+?? issues/CURIS-V1-TALENT-CAPABILITY-PRODUCTIZATION-001.md
+?? issues/CURIS-V1-UI-INDEPENDENT-DELIVERY-EPIC.md
+?? issues/CURIS-V1-WHOLE-APP-LIVE-AI-ACCEPTANCE-001.md
+?? issues/CURIS-V1-WHOLE-APP-PRODUCT-GAP-CLOSURE-001.md
+?? issues/CURIS-VISUAL-BASELINE-REAL-PRODUCT-INTEGRATION-001.md
+?? issues/RD-WORKSPACE-INSTANCE-001.md
+?? issues/V1-P0-003-MACOS-KEYCHAIN-CREDENTIAL-PERSISTENCE.md
+?? issues/XHS-WORKSPACE-INSTANCE-001.md
+?? overview.md
+?? previews/
+?? rebuild_rd_default.py
+?? reproduce_rd_baseline_v1.py
+?? reviews/20260809_runtime_api_001_review.md
+?? reviews/20260809_runtime_first_arrival_001_review.md
+?? reviews/20260809_runtime_foundation_001_review.md
+?? reviews/20260809_runtime_materialization_001_review.md
+?? reviews/20260809_runtime_simulation_001_review.md
+?? reviews/20260809_runtime_workspace_foundation_001_review.md
+?? reviews/20260809_three_business_workspace_ui_001_review.md
+?? reviews/20260809_ui_runtime_migration_001_review.md
+?? reviews/20260810_ceo_workforce_experience_ui_001_review.md
+?? reviews/RD-WORKSPACE-INSTANCE-001_review.md
+?? reviews/XHS-WORKSPACE-INSTANCE-001_review.md

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><link rel="stylesheet" href="shared.css"><title>Curis · 夜行灯 / 章节协作</title>
+<style>
+/* CEO targeted revision: Writing only; shared and other-domain assets unchanged. */
+.presence{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0;margin-bottom:18px}
+.work-area{margin:0 0 22px;max-width:none;padding:0 0 18px;border-bottom:1px solid var(--line)}
+.work-area>header{border:0;padding:0}.thread{max-height:100px;min-height:0;resize:none}
+.composer textarea{min-height:48px}.feedback:empty{display:none}.empty-result{display:none}
+.chapter-layout{grid-template-columns:130px minmax(0,1fr)}.manuscript{width:100%;max-width:820px}
+#company-assistant{position:fixed;right:20px;bottom:18px;z-index:3;background:var(--paper);border-radius:24px;padding:9px 15px;font-size:12px}
+body.discussing #company-assistant{background:var(--bg);color:var(--muted);border-color:transparent}
+@media(max-width:700px){.chapter-layout{grid-template-columns:1fr}.presence-state{max-width:100%}}
+</style></head><body data-domain="writing"><div id="app"></div><script src="interaction.js"></script>
+<script>
+// Page-local adaptation of the existing memory-only exploration, not a new conversation system.
+const conversation = $('#conversation');
+$('.presence').after(conversation);
+$('.identity p').textContent='负责《夜行灯》创作';
+$('#target').querySelectorAll('option').forEach(o=>{if(o.value!==s.owner)o.remove();});
+const toggleButton=$('#conversation [data-action="toggle"]');
+const barButton=$('.presence [data-action="open-chat"]');
+barButton.setAttribute('aria-controls','conversation');
+const originalUpdate=update;
+function syncDiscussion(){
+ conversation.hidden=!conversationOpen;
+ $('#conversation-body').hidden=false;
+ toggleButton.textContent='收起讨论';
+ barButton.textContent=conversationOpen?'正在讨论':'一起讨论';
+ barButton.setAttribute('aria-expanded',String(conversationOpen));
+ document.body.classList.toggle('discussing',conversationOpen);
+}
+update=function(){
+ originalUpdate();
+ $('#employee-state').textContent=({idle:'第43章可继续修改',working:'正在处理这次修改（演示）',waiting:'等你补充人物身份信息',failed:'这次回复未完成，可重试',ready:'有修订候选可查看',merged:'草稿已更新，待审校',accepted:'正式稿已确认，尚未发布',rejected:'原稿保留，可继续修改'})[phase];
+ $('.title-copy p').textContent=`第43章 · 灯下 / ${currentVersion} · 正式 ${formal} · 线上 v2`;
+ syncDiscussion();
+};
+focusChat=function(){conversationOpen=true;syncDiscussion();$('#message').focus({preventScroll:true});conversation.scrollIntoView({block:'nearest'});};
+document.addEventListener('click',e=>{
+ if(e.target.closest('[data-action="toggle"]')){syncDiscussion();barButton.focus({preventScroll:true});}
+});
+conversationOpen=false;update();
+// The previous standalone page lacked the global launcher. Represent its independent,
+// collapsed Company-level identity only; do not simulate a second functional chat.
+const assistant=document.createElement('button');
+assistant.id='company-assistant';assistant.type='button';assistant.textContent='✧ CEO 助手';
+assistant.setAttribute('aria-label','CEO 助手 · 公司协调');
+assistant.addEventListener('click',()=>{
+ const dialog=$('#utility');
+ dialog.innerHTML='<h2 id="utility-title">CEO 助手 · 公司协调</h2><p>负责公司层面的目标与协调；本章创作仍由沈知远负责。</p><p class="muted">此独立探索只验证轻量入口与身份边界，不连接真实助手对话。</p><button type="button" data-action="close">返回章节</button>';
+ dialog.showModal();
+});
+document.body.append(assistant);
+</script></body></html>

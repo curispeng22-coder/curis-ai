@@ -1,0 +1,22 @@
+{
+  "directories": 57394,
+  "files": 349311,
+  "bytes": 15781960075,
+  "root_files": 50,
+  "semantic_readable": 16801,
+  "semantic_skipped_machine_files": 324452,
+  "unparsed_nontext_or_oversize": 8058,
+  "code": 212498,
+  "formal_source_code": 12302,
+  "html": 985,
+  "markdown": 14668,
+  "images": 2480,
+  "exploration_docs": 870,
+  "candidate_review_files": 2740,
+  "review_closure_files": 4047,
+  "authority_files": 110,
+  "backlog_files": 5629,
+  "unknown_semantic": 741,
+  "conflicts_proven": 0,
+  "ceo_gates_proven": 0
+}

@@ -1,0 +1,18 @@
+{
+  "main": {
+    "component": "object-list",
+    "title": "图文制作",
+    "objectType": "ContentGraphic"
+  },
+  "context": {
+    "component": "object-detail",
+    "title": "当前内容",
+    "objectType": "ContentGraphic"
+  },
+  "utility": {
+    "component": "object-create-form",
+    "title": "内容依据",
+    "objectType": "ContentGraphic",
+    "action": "core.domain-object.create"
+  }
+}

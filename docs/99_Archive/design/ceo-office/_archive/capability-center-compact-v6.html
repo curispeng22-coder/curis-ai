@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1536, initial-scale=1.0">
+<title>Curis · 能力中心（Terra 紧凑固定版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sidebar:#4a7c59; --sidebar-hover:#3d6649; --sidebar-active:#3a5f45;
+    --bg:#faf6f0; --surface:#fffefb; --surface-2:#f7f2ea; --surface-3:#f0ebe0;
+    --hero-bg:linear-gradient(135deg,#f5f0e6 0%,#faf8f3 50%,#f0ece2 100%);
+    --hero-border:#e8e2d8;
+    --txt:#1f241c; --txt-2:#4a5346; --txt-3:#7a8273;
+    --line:#e8e2d8; --line-2:#d9d2c6;
+    --primary:#4a7c59; --primary-dark:#2f523b; --primary-light:#e8f0e8; --primary-soft:#f0f6f0;
+    --accent:#705c30; --accent-light:#f5efe3;
+    --cyan:#3f7d6e; --green:#15935a; --green-soft:#e8f5ed;
+    --amber:#a8742a; --amber-soft:#f9f0e0; --red:#b83230; --red-soft:#fae8e7;
+    --purple:#6b4c9a; --purple-soft:#ede9f5;
+    --radius:16px; --radius-sm:12px;
+    --shadow:0 1px 2px rgba(74,85,66,.04),0 4px 12px rgba(74,85,66,.05);
+    --font-serif:'Literata','Noto Serif SC','Songti SC',serif;
+    --font-sans:'Nunito Sans','Inter','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:#e8e2d8;display:grid;place-items:center;min-height:100vh;overflow:auto;font-family:var(--font-sans);color:var(--txt)}
+  .app{width:1536px;height:1024px;background:var(--bg);display:flex;overflow:hidden;box-shadow:0 24px 60px rgba(31,36,28,.18)}
+
+  /* Sidebar */
+  .sidebar{width:176px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:24px 0;color:#fff;overflow:hidden}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 18px 28px;font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.3px}
+  .brand .logo{width:30px;height:30px;border:2px solid rgba(255,255,255,.7);border-radius:8px;display:grid;place-items:center;font-size:13px}
+  .nav{flex:1;overflow-y:auto;padding:0 12px;display:flex;flex-direction:column;gap:8px}
+  .nav-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;color:rgba(255,255,255,.9);cursor:pointer;white-space:nowrap;text-decoration:none}
+  .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+  .nav-item.active{background:var(--sidebar-active);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .nav-item .icon-svg{width:19px;height:19px;flex-shrink:0}
+  .nav-item .chevron{margin-left:auto;width:15px;height:15px;opacity:.7}
+  .nav-item.secondary{font-size:13px;font-weight:500;color:rgba(255,255,255,.8);padding:8px 12px 8px 40px}
+  .nav-item.secondary.active{background:rgba(255,255,255,.12);box-shadow:none}
+  .side-foot{padding:14px 16px;margin:8px 12px 0;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.75)}
+  .side-foot .ava{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700;font-size:11px}
+
+  /* Main */
+  .main{width:1360px;height:1024px;padding:12px 20px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px;overflow:hidden}
+  .main.home{grid-template-rows:72px 360px 280px 246px}
+  .main.list{grid-template-rows:72px 56px 1fr 1fr}
+  .span-12{grid-column:span 12}.span-9{grid-column:span 9}.span-8{grid-column:span 8}.span-7{grid-column:span 7}
+  .span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+  .card-hd{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;min-height:44px}
+  .card-title{font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+  .icon-box{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+  .icon-box.green{background:var(--green-soft);color:var(--green)}
+  .icon-box.cyan{background:#e8f4f1;color:var(--cyan)}
+  .icon-box.amber{background:var(--amber-soft);color:var(--amber)}
+  .icon-box.red{background:var(--red-soft);color:var(--red)}
+  .icon-box.primary{background:var(--primary-light);color:var(--primary-dark)}
+  .icon-box.purple{background:var(--purple-soft);color:var(--purple)}
+  .icon-box.surface{background:var(--surface-2);color:var(--txt-3)}
+  .icon-svg{width:1em;height:1em;fill:currentColor;display:inline-block;vertical-align:middle;flex-shrink:0}
+  .icon-box .icon-svg{width:18px;height:18px}
+  .btn .icon-svg{width:16px;height:16px}
+  .tag{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--primary-light);color:var(--primary-dark)}
+  .card-bd{flex:1;padding:14px 16px;position:relative;overflow:hidden}
+  .card-ft{padding:8px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--txt-3);flex-shrink:0;min-height:28px;display:flex;align-items:center}
+
+  /* Page header */
+  .page-head{grid-column:span 12;background:var(--hero-bg);border:1px solid var(--hero-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+  .page-head::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent)}
+  .ph-left{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+  .ph-title{font-family:var(--font-serif);font-size:24px;font-weight:700;margin:0;letter-spacing:-0.02em;line-height:1.1;color:var(--txt)}
+  .ph-sub{font-size:12px;color:var(--txt-2);display:flex;align-items:center;gap:10px}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(21,147,90,.12);display:inline-block;margin-right:4px}
+  .fact-strip{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .fact-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px 12px;min-width:88px;text-align:center}
+  .fact-item .lab{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);margin-bottom:2px}
+  .fact-item .vx{font-size:13px;font-weight:700;color:var(--txt)}
+  .search-box{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 12px;min-width:200px;color:var(--txt-3);font-size:12px}
+  .search-box .icon-svg{width:16px;height:16px}
+  .btn-new{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;border:none;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn-new:hover{background:var(--sidebar-hover)}
+  .btn-ghost{display:inline-flex;align-items:center;gap:5px;background:transparent;color:var(--primary);border:1px solid var(--primary);font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn-ghost:hover{background:var(--primary-light)}
+  .back-link{display:inline-flex;align-items:center;gap:5px;color:var(--primary);font-size:11px;font-weight:700;text-decoration:none;margin-bottom:3px;opacity:.85}
+  .back-link:hover{opacity:1}
+
+  /* Category filter bar */
+  .cat-bar{grid-column:span 12;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 16px;display:flex;align-items:center;gap:8px;overflow-x:auto}
+  .cat-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);color:var(--txt-2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none}
+  .cat-chip:hover{background:var(--primary-light);color:var(--primary-dark);border-color:var(--primary-light)}
+  .cat-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .cat-chip .icon-svg{width:14px;height:14px}
+  .cat-spacer{margin-left:auto;font-size:11px;color:var(--txt-3);display:flex;align-items:center;gap:5px}
+  .cat-spacer .icon-svg{width:14px;height:14px}
+
+  /* Home: module entry cards */
+  .module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;height:100%}
+  .module-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 14px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;transition:.15s;cursor:pointer;text-decoration:none;color:inherit}
+  .module-card:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(74,124,89,.12);transform:translateY(-1px)}
+  .module-card .bg-ico{position:absolute;right:-30px;bottom:-30px;width:160px;height:160px;opacity:.06;pointer-events:none;color:var(--primary)}
+  .module-card .bg-ico .icon-svg{width:100%;height:100%}
+  .m-top{display:flex;align-items:flex-start;gap:12px;position:relative;z-index:1}
+  .m-ico{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;flex-shrink:0}
+  .m-ico .icon-svg{width:28px;height:28px}
+  .m-ico.skill{background:var(--purple-soft);color:var(--purple)}
+  .m-ico.tool{background:#e8f4f1;color:var(--cyan)}
+  .m-ico.workflow{background:var(--green-soft);color:var(--green)}
+  .m-meta{flex:1;min-width:0}
+  .m-name{font-family:var(--font-serif);font-size:18px;font-weight:700;color:var(--txt);margin:0;line-height:1.2}
+  .m-desc{font-size:11.5px;color:var(--txt-3);line-height:1.5;margin-top:3px}
+  .m-stats{display:flex;align-items:center;gap:10px;position:relative;z-index:1;font-size:11.5px;color:var(--txt-2);font-weight:600}
+  .m-stats .d{display:flex;align-items:center;gap:4px}
+  .m-stats .d .icon-svg{width:13px;height:13px}
+  .m-stats .d.ok{color:var(--green)}
+  .m-stats .d.block{color:var(--amber)}
+  .m-preview{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+  .m-preview-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);text-decoration:none;color:inherit;font-size:12px;transition:.15s}
+  .m-preview-row:hover{border-color:var(--primary);background:var(--primary-soft)}
+  .m-preview-row .pico{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex-shrink:0}
+  .m-preview-row .pico .icon-svg{width:14px;height:14px}
+  .m-preview-row .pname{font-weight:700;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .m-preview-row .pmeta{font-size:10px;color:var(--txt-3);font-weight:600}
+  .m-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:6px;position:relative;z-index:1}
+  .m-enter{display:inline-flex;align-items:center;gap:5px;color:var(--primary);font-size:12px;font-weight:700}
+  .m-enter .icon-svg{width:14px;height:14px}
+
+  /* Source/Status strip */
+  .src-strip{display:flex;gap:14px;align-items:center;height:100%}
+  .src-card{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+  .src-card .k{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--txt-2)}
+  .src-card .k .icon-box{width:28px;height:28px}
+  .src-card .v{font-size:11.5px;color:var(--txt-3);line-height:1.5}
+
+  /* Pool grid (Agent/Model/MCP/API/CLI/Connector) */
+  .pool-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;height:100%;align-content:center}
+  .pool-tile{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .pool-tile .icon-box{width:36px;height:36px;border-radius:10px}
+  .pool-tile .icon-box .icon-svg{width:20px;height:20px}
+  .pool-tile .nm{font-size:13px;font-weight:700;color:var(--txt-2)}
+  .pool-tile .ct{font-size:10px;color:var(--txt-3);margin-top:2px;font-weight:600}
+
+  /* Capability cards (list pages) */
+  .cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;height:100%;align-content:start}
+  .cap-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px;transition:.15s;cursor:pointer;position:relative;overflow:hidden}
+  .cap-card:hover{border-color:var(--primary);box-shadow:0 6px 18px rgba(74,124,89,.10);transform:translateY(-1px)}
+  .cc-top{display:flex;align-items:flex-start;gap:10px}
+  .cc-ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}
+  .cc-ico .icon-svg{width:22px;height:22px}
+  .cc-ico.skill{background:var(--purple-soft);color:var(--purple)}
+  .cc-ico.tool{background:#e8f4f1;color:var(--cyan)}
+  .cc-ico.workflow{background:var(--green-soft);color:var(--green)}
+  .cc-ico.amber{background:var(--amber-soft);color:var(--amber)}
+  .cc-info{flex:1;min-width:0}
+  .cc-name{font-family:var(--font-serif);font-size:14.5px;font-weight:700;color:var(--txt);margin:0;line-height:1.2}
+  .cc-dev{font-size:11px;color:var(--txt-3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .cc-dev .badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:var(--surface-3);color:var(--txt-3)}
+  .cc-tags{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:4px}
+  .cc-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--primary-soft);color:var(--primary-dark)}
+  .cc-tag.cy{background:#e8f4f1;color:var(--cyan)}
+  .cc-tag.am{background:var(--amber-soft);color:var(--amber)}
+  .cc-tag.pu{background:var(--purple-soft);color:var(--purple)}
+  .cc-desc{font-size:11.5px;color:var(--txt-2);line-height:1.55;margin:0}
+  .cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);font-size:10.5px;color:var(--txt-3)}
+  .cc-stats .s{display:flex;align-items:center;gap:4px;font-weight:600}
+  .cc-stats .s .icon-svg{width:13px;height:13px}
+  .cc-stats .s strong{color:var(--txt-2);font-size:11.5px;font-weight:700}
+  .cc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+  .st-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.02em}
+  .st-available{background:var(--green-soft);color:var(--green)}
+  .st-blocked{background:var(--amber-soft);color:var(--amber)}
+  .st-official{background:var(--primary-light);color:var(--primary-dark)}
+  .st-custom{background:var(--purple-soft);color:var(--purple)}
+  .cc-foot .acts{display:flex;gap:6px}
+  .cc-foot .acts a{font-size:11px;color:var(--txt-3);text-decoration:none;font-weight:600;padding:3px 8px;border-radius:5px}
+  .cc-foot .acts a:hover{background:var(--primary-soft);color:var(--primary-dark)}
+  .cc-foot .acts a.primary{color:var(--primary)}
+
+  /* Empty card state */
+  .empty-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--radius);color:var(--txt-3);text-align:center;padding:24px}
+  .empty-card .icon-svg{width:32px;height:32px;color:var(--txt-3)}
+  .empty-card .t{font-family:var(--font-serif);font-size:13px;font-weight:700;color:var(--txt-2)}
+  .empty-card .d{font-size:11px;max-width:240px;line-height:1.5}
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden"><defs><symbol id="i-account_tree" viewBox="0 0 24 24"><path d="M22 11V3h-6v6h-2V3H8v8H6V3H2v8c0 2.76 2.24 5 5 5h3v4h8v-4h3c2.76 0 5-2.24 5-5zm-10 7h-4v-4h4v4z"/></symbol><symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol><symbol id="i-analytics" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></symbol><symbol id="i-arrow_back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol><symbol id="i-arrow_forward" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></symbol><symbol id="i-auto_awesome" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5 1.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></symbol><symbol id="i-block" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8z"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 11 6h3v4h2.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></symbol><symbol id="i-check_circle" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol><symbol id="i-checklist" viewBox="0 0 24 24"><path d="M6 6h2v2H6zm0 5h2v2H6zm0 5h2v2H6zm4-10h8v2h-8zm0 5h8v2h-8zm0 5h8v2h-8z"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></symbol><symbol id="i-construction" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6l-3 3-2.6-1.7c-1.2 2.4-.7 5.4 1.3 7.4 1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4zM7.6 9.4c-.7-.7-.7-1.8 0-2.5.7-.7 1.8-.7 2.5 0 .7.7.7 1.8 0 2.5-.7.7-1.8.7-2.5 0z"/></symbol><symbol id="i-dataset" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 18H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V8h2v2zm10 8h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8V8h8v2z"/></symbol><symbol id="i-error" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></symbol><symbol id="i-expand_less" viewBox="0 0 24 24"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></symbol><symbol id="i-extension" viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></symbol><symbol id="i-filter_list" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></symbol><symbol id="i-folder_open" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></symbol><symbol id="i-groups" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9z"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></symbol><symbol id="i-meeting_room" viewBox="0 0 24 24"><path d="M14 6v15H3v-2h2V3h9v1h5v15h2v2h-4V6h-3zm-4 5v2h2v-2h-2z"/></symbol><symbol id="i-memory" viewBox="0 0 24 24"><path d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2v-2h-2V7h-2V5h-2V3H9v2H7v2H5v2H3v6h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V9h-2zm-4 6h-2v2h-2v2H9v-2H7v-2H5v-6h2V7h2V5h2V3h2v2h2v2h2v2h2v6z"/></symbol><symbol id="i-monitoring" viewBox="0 0 24 24"><path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/></symbol><symbol id="i-person" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol><symbol id="i-polyline" viewBox="0 0 24 24"><path d="M15 16l-3 3-6-6 3-3 2 2 1.5-4.5L11.5 7 9 5l-6 6 3 3 1.5-1.5L8 13l3 3 1.5-1.5L13 14l4.5 1.5L18 18l6-6-3-3-1.5 1.5L18 11l-3-3z"/></symbol><symbol id="i-rocket_launch" viewBox="0 0 24 24"><path d="M19.43 12.98c-.37.58-3.63 3.02-8.65 3.75l2.98 2.98c.4.4 1.04.4 1.44 0l4.23-4.23c.4-.4.4-1.04 0-1.44l-1.79-1.79 1.79-1.79c.4-.4.4-1.04 0-1.44l-4.23-4.23c-.4-.4-1.04-.4-1.44 0l-2.98 2.98c.73-5.02 3.17-8.28 3.75-8.65.39-.25.9-.19 1.23.14l5.66 5.66c.33.33.39.84.14 1.23zM9.19 6.35c-2.04 2.29-3.44 5.58-3.57 5.89L2 10.69l4.81-4.81 2.38 1.47zM12 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></symbol><symbol id="i-school" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></symbol><symbol id="i-smart_toy" viewBox="0 0 24 24"><path d="M20 9V7h-2V5.5C18 4.12 16.88 3 15.5 3h-7C7.12 3 6 4.12 6 5.5V7H4v2h2v7.5c0 1.38 1.12 2.5 2.5 2.5h7c1.38 0 2.5-1.12 2.5-2.5V9h2zm-8 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-5-8V5.5c0-.28.22-.5.5-.5h7c.28 0 .5.22.5.5V9H7z"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></symbol><symbol id="i-terminal" viewBox="0 0 24 24"><path d="M20 19.59V8l-6-6H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c.45 0 .85-.15 1.19-.4l-4.43-4.43c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L20 19.59zM9 13c0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3-3 1.34-3 3z"/></symbol><symbol id="i-verified" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol><symbol id="i-view_in_ar" viewBox="0 0 24 24"><path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/></symbol><symbol id="i-warning" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol><symbol id="i-widgets" viewBox="0 0 24 24"><path d="M13 13v8h8v-8h-8zM3 21h8v-8H3v8zM3 3v8h8V3H3z"/></symbol></defs></svg>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">C</div><span>Curis</span></div>
+    <nav class="nav">
+      <div class="nav-group"><a class="nav-item"><svg class="icon-svg"><use href="#i-home"/></svg>总裁办公室<span class="chevron"><svg class="icon-svg"><use href="#i-expand_less"/></svg></span></a><a class="nav-item secondary"><svg class="icon-svg"><use href="#i-analytics"/></svg>决策中心</a><a class="nav-item secondary"><svg class="icon-svg"><use href="#i-share"/></svg>重要汇报</a><a class="nav-item secondary"><svg class="icon-svg"><use href="#i-meeting_room"/></svg>战略会议室</a></div>
+      <div class="nav-group"><a class="nav-item"><svg class="icon-svg"><use href="#i-folder_open"/></svg>项目中心</a><a class="nav-item"><svg class="icon-svg"><use href="#i-groups"/></svg>组织中心</a><a class="nav-item active"><svg class="icon-svg"><use href="#i-widgets"/></svg>能力中心<span class="chevron"><svg class="icon-svg"><use href="#i-expand_less"/></svg></span></a><a class="nav-item secondary " href="capability-skill-list.html"><svg class="icon-svg"><use href="#i-memory"/></svg>技能 Skill</a><a class="nav-item secondary " href="capability-tool-list.html"><svg class="icon-svg"><use href="#i-construction"/></svg>工具 Tool</a><a class="nav-item secondary " href="capability-workflow-list.html"><svg class="icon-svg"><use href="#i-polyline"/></svg>工作流 Workflow</a><a class="nav-item"><svg class="icon-svg"><use href="#i-rocket_launch"/></svg>成果中心</a><a class="nav-item"><svg class="icon-svg"><use href="#i-monitoring"/></svg>经营分析</a></div>
+      <div class="nav-group"><a class="nav-item"><svg class="icon-svg"><use href="#i-lightbulb"/></svg>头脑风暴室</a><a class="nav-item"><svg class="icon-svg"><use href="#i-school"/></svg>知识中心</a><a class="nav-item"><svg class="icon-svg"><use href="#i-checklist"/></svg>执行工作台</a></div>
+      <div class="nav-group"><a class="nav-item"><svg class="icon-svg"><use href="#i-settings"/></svg>公司设置</a></div>
+    </nav>
+    <div class="side-foot"><div class="ava">A</div><span>阿历克斯 · CEO</span></div>
+  </aside>
+  <main class="main home">
+  <section class="page-head">
+    <div class="ph-left">
+      <h1 class="ph-title">能力中心</h1>
+      <div class="ph-sub"><span class="status-dot"></span>能力资产总览 · 按模块浏览已接入能力</div>
+    </div>
+    <div class="fact-strip">
+      <div class="fact-item"><div class="lab">Skills</div><div class="vx">0</div></div>
+      <div class="fact-item"><div class="lab">Tools</div><div class="vx">0</div></div>
+      <div class="fact-item"><div class="lab">Workflows</div><div class="vx">0</div></div>
+      <div class="search-box"><svg class="icon-svg"><use href="#i-search"/></svg>搜索能力 / 模块</div>
+      <a class="btn-new"><svg class="icon-svg"><use href="#i-add"/></svg>接入能力</a>
+    </div>
+  </section><section class="card span-12">
+    <div class="card-hd"><div class="card-title"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-widgets"/></svg></span>能力模块</div><span class="tag">CAPABILITY MODULES</span></div>
+    <div class="card-bd" style="padding:18px 18px">
+      <div class="module-grid"><a class="module-card" href="capability-skill-list.html">
+        <div class="bg-ico"><svg class="icon-svg"><use href="#i-memory"/></svg></div>
+        <div class="m-top"><div class="m-ico skill"><svg class="icon-svg"><use href="#i-memory"/></svg></div><div class="m-meta"><h3 class="m-name">技能 Skill</h3><div class="m-desc">模型调用、推理策略、Agent 行为封装等可复用能力单元。</div></div></div>
+        <div class="m-stats"><span class="d"><svg class="icon-svg"><use href="#i-dataset"/></svg>0 个已接入</span><span class="d ok"><svg class="icon-svg"><use href="#i-check_circle"/></svg>可用 0</span><span class="d block"><svg class="icon-svg"><use href="#i-block"/></svg>阻塞 0</span></div>
+        <div class="m-preview"><a class="m-preview-row" href="capability-skill-list.html"><span class="pico skill"><svg class="icon-svg"><use href="#i-smart_toy"/></svg></span><span class="pname">GPT-4o 多轮对话</span><span class="pmeta">官方</span></a><a class="m-preview-row" href="capability-skill-list.html"><span class="pico skill"><svg class="icon-svg"><use href="#i-auto_awesome"/></svg></span><span class="pname">需求澄清助手</span><span class="pmeta">官方</span></a><a class="m-preview-row" href="capability-skill-list.html"><span class="pico skill"><svg class="icon-svg"><use href="#i-memory"/></svg></span><span class="pname">项目上下文记忆</span><span class="pmeta">自定义</span></a></div>
+        <div class="m-foot"><span class="m-enter">进入技能列表<svg class="icon-svg"><use href="#i-arrow_forward"/></svg></span></div>
+      </a>
+<a class="module-card" href="capability-tool-list.html">
+        <div class="bg-ico"><svg class="icon-svg"><use href="#i-construction"/></svg></div>
+        <div class="m-top"><div class="m-ico tool"><svg class="icon-svg"><use href="#i-construction"/></svg></div><div class="m-meta"><h3 class="m-name">工具 Tool</h3><div class="m-desc">MCP / API / CLI / Connector 等可被员工调用的外部工具。</div></div></div>
+        <div class="m-stats"><span class="d"><svg class="icon-svg"><use href="#i-dataset"/></svg>0 个已接入</span><span class="d ok"><svg class="icon-svg"><use href="#i-check_circle"/></svg>可用 0</span><span class="d block"><svg class="icon-svg"><use href="#i-block"/></svg>阻塞 0</span></div>
+        <div class="m-preview"><a class="m-preview-row" href="capability-tool-list.html"><span class="pico tool"><svg class="icon-svg"><use href="#i-globe"/></svg></span><span class="pname">GitHub 仓库查询</span><span class="pmeta">官方</span></a><a class="m-preview-row" href="capability-tool-list.html"><span class="pico tool"><svg class="icon-svg"><use href="#i-account_tree"/></svg></span><span class="pname">飞书文档读取</span><span class="pmeta">官方</span></a><a class="m-preview-row" href="capability-tool-list.html"><span class="pico tool"><svg class="icon-svg"><use href="#i-extension"/></svg></span><span class="pname">内部 API 调用</span><span class="pmeta">自定义</span></a></div>
+        <div class="m-foot"><span class="m-enter">进入工具列表<svg class="icon-svg"><use href="#i-arrow_forward"/></svg></span></div>
+      </a>
+<a class="module-card" href="capability-workflow-list.html">
+        <div class="bg-ico"><svg class="icon-svg"><use href="#i-polyline"/></svg></div>
+        <div class="m-top"><div class="m-ico workflow"><svg class="icon-svg"><use href="#i-polyline"/></svg></div><div class="m-meta"><h3 class="m-name">工作流 Workflow</h3><div class="m-desc">预定义的步骤编排，连接 Skill、Tool 与决策节点。</div></div></div>
+        <div class="m-stats"><span class="d"><svg class="icon-svg"><use href="#i-dataset"/></svg>0 个已接入</span><span class="d ok"><svg class="icon-svg"><use href="#i-check_circle"/></svg>可用 0</span><span class="d block"><svg class="icon-svg"><use href="#i-block"/></svg>阻塞 0</span></div>
+        <div class="m-preview"><a class="m-preview-row" href="capability-workflow-list.html"><span class="pico workflow"><svg class="icon-svg"><use href="#i-checklist"/></svg></span><span class="pname">日报 → 汇报发送</span><span class="pmeta">自定义</span></a><a class="m-preview-row" href="capability-workflow-list.html"><span class="pico workflow"><svg class="icon-svg"><use href="#i-analytics"/></svg></span><span class="pname">数据收集 → 分析</span><span class="pmeta">官方</span></a><a class="m-preview-row" href="capability-workflow-list.html"><span class="pico workflow"><svg class="icon-svg"><use href="#i-rocket_launch"/></svg></span><span class="pname">项目验收 → 归档</span><span class="pmeta">自定义</span></a></div>
+        <div class="m-foot"><span class="m-enter">进入工作流列表<svg class="icon-svg"><use href="#i-arrow_forward"/></svg></span></div>
+      </a></div>
+    </div>
+  </section><section class="card span-12">
+    <div class="card-hd"><div class="card-title"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-bolt"/></svg></span>能力接入状态</div></div>
+    <div class="card-bd">
+      <div class="src-strip">
+        <div class="src-card"><div class="k"><span class="icon-box green"><svg class="icon-svg"><use href="#i-check_circle"/></svg></span>可用</div><div class="v">已验证可调用，等待第一条真实记录。</div></div>
+        <div class="src-card"><div class="k"><span class="icon-box amber"><svg class="icon-svg"><use href="#i-block"/></svg></span>阻塞</div><div class="v">缺少凭证、参数或版本不兼容，待配置。</div></div>
+        <div class="src-card"><div class="k"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-verified"/></svg></span>官方</div><div class="v">来自 Admin 官方模板，可直接实例化。</div></div>
+        <div class="src-card"><div class="k"><span class="icon-box purple"><svg class="icon-svg"><use href="#i-extension"/></svg></span>自定义</div><div class="v">由当前 Workspace 自行创建或修改。</div></div>
+      </div>
+    </div>
+  </section><section class="card span-12">
+    <div class="card-hd"><div class="card-title"><span class="icon-box surface"><svg class="icon-svg"><use href="#i-dataset"/></svg></span>能力池</div><span class="tag">CAPABILITY POOL · 9 类</span></div>
+    <div class="card-bd">
+      <div class="pool-grid">
+        <div class="pool-tile"><span class="icon-box purple"><svg class="icon-svg"><use href="#i-smart_toy"/></svg></span><div><div class="nm">Agent</div><div class="ct">智能体适配器</div></div></div>
+        <div class="pool-tile"><span class="icon-box purple"><svg class="icon-svg"><use href="#i-memory"/></svg></span><div><div class="nm">Skill</div><div class="ct">推理技能</div></div></div>
+        <div class="pool-tile"><span class="icon-box purple"><svg class="icon-svg"><use href="#i-auto_awesome"/></svg></span><div><div class="nm">模型 Model</div><div class="ct">大模型注册</div></div></div>
+        <div class="pool-tile"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-construction"/></svg></span><div><div class="nm">Tool</div><div class="ct">工具调用</div></div></div>
+        <div class="pool-tile"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-extension"/></svg></span><div><div class="nm">MCP / API</div><div class="ct">外部协议</div></div></div>
+        <div class="pool-tile"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-terminal"/></svg></span><div><div class="nm">CLI</div><div class="ct">命令行</div></div></div>
+        <div class="pool-tile"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-account_tree"/></svg></span><div><div class="nm">Connector</div><div class="ct">业务连接器</div></div></div>
+        <div class="pool-tile"><span class="icon-box green"><svg class="icon-svg"><use href="#i-polyline"/></svg></span><div><div class="nm">Workflow</div><div class="ct">工作流编排</div></div></div>
+        <div class="pool-tile"><span class="icon-box surface"><svg class="icon-svg"><use href="#i-link"/></svg></span><div><div class="nm">Webhook</div><div class="ct">事件触发</div></div></div>
+      </div>
+    </div>
+    <div class="card-ft">能力层遵循产品架构：所有 9 类能力均可替换，不写死具体产品。当前默认展示 Skill / Tool / Workflow 三类。</div>
+  </section>
+  </main>
+</div>
+</body>
+</html>

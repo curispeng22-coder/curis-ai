@@ -1,0 +1,194 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://docs.aitoearn.ai/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 发布流程
+
+<Warning>
+  如果需要将内容一键发布到小红书、微信视频号或抖音，请使用 AiToEarn
+  浏览器插件。前往[通过插件发布](../plugin-publish)完成安装、授权和 Web API
+  接入。
+</Warning>
+
+<Info>
+  调用创建发布流程接口前，请先阅读本页完整流程，确认平台能力、账号授权、平台额外参数和素材上传都已完成。所有平台合计共享每月
+  1,000 次免费发布接口调用额度，额度按月刷新。你可以在
+  [国内站 API Key 页面](https://aitoearn.cn/zh-CN/developer/api-keys)或
+  [国际站 API Key 页面](https://aitoearn.ai/developer/api-keys)查看当前用量和剩余额度。X/Twitter（推特）发布除占用上述额度外，还会产生由
+  X/Twitter 官方收取的额外费用，详情请查看
+  [定价页「社交平台」](https://aitoearn.ai/pricing#pricing-table-social-publishing)。超出免费额度后，如需提升限额，新增发布额度按人民币 0.1
+  元/条计费。当前请联系我们办理；更便捷的自助提升方式将在后续提供。
+</Info>
+
+发布不是一个单独接口能完成的动作。你需要先确认平台能力、授权账号、准备平台额外参数、上传素材，最后创建发布流程。
+
+最简单的理解方式是：
+
+1. 选择要发到哪个平台。
+2. 授权这个平台的账号。
+3. 准备要发布的视频、图片、标题和正文。
+4. 补齐平台要求的额外参数。
+5. 创建发布流程。
+6. 查询发布结果。
+
+<Info>如果你还没有 API KEY，请先阅读 [获取API KEY](../api-key)。</Info>
+
+## 先下载 Demo
+
+建议先下载并运行最小 Demo，边看页面边对照下面的接口流程。
+
+[下载最小发布 Demo](https://ai-to-earn.oss-cn-beijing.aliyuncs.com/comment/assets/open-platform-demo.zip)
+
+Demo 运行方式：
+
+```bash theme={null}
+npm install
+npm run dev
+```
+
+默认访问：
+
+```text theme={null}
+http://localhost:5173/
+```
+
+Demo 顶部可以切换国内站和国际站。你可以分别填入对应站点的 API Key。
+
+## 第一步：读取平台能力
+
+先调用 [平台列表](/api-reference/get-api-v2-channels-platforms)，确认当前站点支持哪些平台，以及每个平台的发布能力。
+
+你需要重点看这些字段：
+
+* `data[n].platform`：平台标识，后续发布时会用到。
+* `data[n].contentLimits`：标题、正文、媒体数量等限制。
+* `data[n].mediaRules`：图片、视频格式、大小、时长等限制。
+* `data[n].optionSchema.properties`：平台发布时可填写的额外参数。
+
+举例：B 站发布视频通常需要分区；Pinterest 需要 Board；不同平台的参数不会完全一样，所以不要硬编码一套通用参数。
+
+## 第二步：授权账号并获取 accountId
+
+发布前，你需要先让用户授权目标平台账号。
+
+1. 调用 [发起平台授权](/api-reference/get-api-v2-channels-accounts-auth-platform)，获取授权入口。
+2. 引导用户打开授权页面并完成授权。
+3. 调用 [获取授权状态](/api-reference/get-api-v2-channels-accounts-auth-platform-status-session-id)，轮询授权是否完成。
+4. 授权成功后，调用 [账号列表](/api-reference/get-api-v2-channels-accounts)，获取可发布账号的 `accountId`。
+
+后续创建发布流程时，`items[n].accountId` 就填这里拿到的账号 ID。
+
+## 第三步：处理平台额外参数
+
+平台专属参数分两类处理。
+
+第一类是固定参数，来自 [平台列表](/api-reference/get-api-v2-channels-platforms) 的 `data[n].optionSchema`。例如固定枚举、开关、默认值、必填项，都可以直接按 schema 渲染表单，并写入创建发布流程时的 `items[n].option`。如果 schema 使用 `anyOf` / `oneOf`，按对应分支读取 `properties` 和 `required`。
+
+第二类是动态选项，适用于需要实时拉取列表、搜索，或先创建再选择的字段，例如 B 站分区、Threads 地点、Pinterest Board。这类字段先调用 [平台发布选项](/api-reference/get-api-v2-channels-platforms-platform-publish-options)。接口返回的 `field` 就是后续账号维度接口里的 `{field}`。
+
+查询动态选项：
+
+```text theme={null}
+GET /api/v2/channels/accounts/{accountId}/publish-options/{field}/values
+```
+
+创建动态选项：
+
+```text theme={null}
+POST /api/v2/channels/accounts/{accountId}/publish-options/{field}/values
+```
+
+只有 [平台发布选项](/api-reference/get-api-v2-channels-platforms-platform-publish-options) 返回 `createSchema` 的字段才支持创建；请求体按 `createSchema` 填。接口返回空数组时，说明当前平台没有需要动态查询或创建的选项，按 `optionSchema` 填 `items[n].option` 即可。
+
+## 第四步：准备可访问媒体资源
+
+发布接口需要公网可访问的媒体 URL。不要传本地文件路径、内网地址、需要登录或已过期的临时链接。
+
+如果你已经有符合目标发布环境访问要求的 CDN 或对象存储 URL，可以直接写入 `content.media` 或 `content.cover`。
+
+如果你没有自己的对象存储或 CDN，需要上传自定义资源，可以使用我们提供的 [资源上传](../asset-upload)。
+
+## 第五步：组织发布内容
+
+创建发布流程时，核心是 `content` 和 `items`。
+
+* `content`：跨平台共享内容，例如标题、正文、媒体、封面。
+* `items`：要发布到哪些账号。每个账号一项。
+* `items[n].overrides`：某个平台需要不同标题、正文或素材时使用。
+* `items[n].option`：平台专属参数，例如 B 站 `tid`、Pinterest `boardId`。
+
+示例结构：
+
+```json theme={null}
+{
+  "content": {
+    "title": "我的第一条开放平台发布",
+    "body": "这是一条通过 AiToEarn API 创建的发布内容。",
+    "media": [
+      {
+        "url": "https://assets.aitoearn.cn/example/video.mp4"
+      }
+    ],
+    "cover": {
+      "url": "https://assets.aitoearn.cn/example/cover.jpg"
+    }
+  },
+  "items": [
+    {
+      "platform": "bilibili",
+      "accountId": "account_xxx",
+      "option": {
+        "tid": 171
+      }
+    },
+    {
+      "platform": "pinterest",
+      "accountId": "account_yyy",
+      "option": {
+        "boardId": "board_zzz"
+      },
+      "overrides": {
+        "title": "Pinterest 专用标题"
+      }
+    }
+  ]
+}
+```
+
+实际请求体请以 [创建发布流程](/api-reference/post-api-v2-channels-publish-flows) 的参数说明为准。每个平台 `option` 的具体结构，可以查看 [平台列表](/api-reference/get-api-v2-channels-platforms) 返回的 `data[n].optionSchema.properties`。
+
+## 第六步：创建发布流程
+
+参数准备好后，调用 [创建发布流程](/api-reference/post-api-v2-channels-publish-flows)。
+
+创建成功后，你可以用返回的 `flowId` 调用 [发布流程详情](/api-reference/get-api-v2-channels-publish-flows-flow-id)，查看这个 Flow 下有哪些平台任务。
+
+如果你已经拿到具体发布记录 ID，可以调用 [发布记录详情](/api-reference/get-api-v2-channels-publish-records-record-id) 查询单个平台账号的发布状态、错误原因和作品链接。
+
+## 第七步：处理抖音短链发布
+
+抖音发布可能需要用户在手机端完成最后一步确认。
+
+推荐处理方式：
+
+1. 创建 Flow 后，轮询 [发布记录详情](/api-reference/get-api-v2-channels-publish-records-record-id)。
+2. 如果记录状态进入等待用户操作状态，调用 [App 拉起链接](/api-reference/get-api-v2-channels-publish-records-record-id-user-action)。
+3. 将返回的 `shortLink` 展示给用户，用户在手机端打开短链并唤起抖音。
+4. 用户完成抖音内发布后，继续轮询发布记录详情。
+5. 记录成功后，接口会返回作品链接；你的系统可以停止轮询并刷新发布历史。
+
+轮询建议：
+
+* `0`、`2`、`6`：继续等待，可以每 5 秒查询一次。
+* `8`：等待用户操作，需要获取 App 拉起链接。
+* `-1`、`5`、`9`：按失败或取消处理。
+
+## 接入顺序总结
+
+1. 获取 API KEY。
+2. 调用平台列表，选择站点和平台。
+3. 授权平台账号，拿到 `accountId`。
+4. 根据 `optionSchema` 填写平台额外参数；需要动态列表时再查询或创建选项值。
+5. 上传素材并确认资源。
+6. 创建发布流程。
+7. 查询发布记录，必要时处理 App 拉起链接。

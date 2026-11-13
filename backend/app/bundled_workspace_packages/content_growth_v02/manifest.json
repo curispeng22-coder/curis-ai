@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "curis.workspace-package/v1",
+  "packageId": "com.curis.local.content-growth",
+  "version": "0.2.0",
+  "coreCompatibility": ">=0.1.0 <0.2.0",
+  "workspace": {
+    "name": "内容增长工作空间",
+    "navigation": {
+      "label": "内容制作",
+      "icon": "i-file"
+    }
+  },
+  "surfaces": "surfaces.json",
+  "domainSchemas": {
+    "ContentWork": "schemas/content_work.json"
+  },
+  "actions": [
+    "core.domain-object.create"
+  ],
+  "capabilityRequirements": [],
+  "retention": "retain-business-data-read-only",
+  "canonicalEntityBindings": {
+    "ContentWork": "CONTENT_ITEM"
+  }
+}

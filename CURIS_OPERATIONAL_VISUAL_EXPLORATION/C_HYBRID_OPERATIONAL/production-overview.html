@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内容制作 · Production Overview · Curis</title>
+  <style>
+    :root {
+      --rail-w: 214px;
+      --topbar-h: 56px;
+      --blue: #2f5bff;
+      --wait: #8b929f;
+      --review: #c07d10;
+      --blocked: #d64545;
+      --ready: #0f9d63;
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-2: #f9fafb;
+      --border: #e8eaed;
+      --text-primary: #0e1116;
+      --text-secondary: #5b616b;
+      --text-tertiary: #8b929f;
+      --shadow: 0 1px 3px rgba(14, 17, 22, 0.06);
+      --radius: 8px;
+      --radius-sm: 6px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Rail */
+    .rail {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--rail-w);
+      background: #0e1116;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .rail-brand {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .rail-brand .logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
+    }
+    .rail-brand .host {
+      margin-top: 4px;
+      font-size: 11px; color: #8b929f;
+    }
+    .rail-workspace {
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.04);
+      margin: 12px 12px 0;
+      border-radius: var(--radius);
+    }
+    .rail-workspace .ws-name {
+      font-size: 12px; font-weight: 600;
+    }
+    .rail-workspace .ws-scope {
+      margin-top: 2px;
+      font-size: 11px; color: #8b929f;
+    }
+    .rail-nav {
+      flex: 1;
+      padding: 12px 12px;
+      overflow-y: auto;
+    }
+    .nav-group-title {
+      padding: 16px 10px 8px;
+      font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      color: #c6cad2;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: background .15s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); }
+    .nav-item.active { background: rgba(47,91,255,0.18); color: #fff; }
+    .nav-icon { width: 16px; height: 16px; display: grid; place-items: center; }
+    .rail-foot {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 11px; color: #8b929f;
+    }
+    .ceo-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #2f5bff; color: #fff; font-size: 10px; font-weight: 700;
+      display: grid; place-items: center;
+    }
+
+    /* Shell */
+    .app {
+      margin-left: var(--rail-w);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    .topbar {
+      height: var(--topbar-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 90;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; color: var(--text-secondary); }
+    .crumb { font-size: 12px; }
+    .crumb strong { color: var(--text-primary); font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .search {
+      width: 240px; height: 32px; border-radius: 16px;
+      border: 1px solid var(--border); background: var(--surface-2);
+      padding: 0 14px; font-size: 12px; color: var(--text-secondary);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px 5px 5px; border: 1px solid var(--border); border-radius: 16px;
+      font-size: 12px; font-weight: 500;
+    }
+    .user-pill .avatar {
+      width: 20px; height: 20px; border-radius: 50%; background: #2f5bff; color: #fff;
+      display: grid; place-items: center; font-size: 9px; font-weight: 700;
+    }
+
+    /* Main layout */
+    .main {
+      flex: 1;
+      padding: 32px 28px 24px;
+      max-width: 1440px;
+    }
+
+    /* Spatial top zone */
+    .zone-spatial {
+      padding-bottom: 32px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-title {
+      font-size: 32px; font-weight: 700; letter-spacing: -0.5px;
+      margin: 0 0 10px;
+    }
+    .scope-note {
+      font-size: 14px; color: var(--text-secondary); margin: 0 0 28px;
+    }
+    .judgment-strip {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .judgment-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px 22px 20px;
+      box-shadow: var(--shadow);
+    }
+    .judgment-card h3 {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-tertiary);
+      margin: 0 0 12px; font-weight: 600;
+    }
+    .ceo-summary {
+      display: flex; gap: 18px; flex-wrap: wrap;
+    }
+    .ceo-stat { display: flex; flex-direction: column; gap: 4px; }
+    .ceo-stat .num { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .ceo-stat .lab { font-size: 11px; color: var(--text-secondary); }
+    .ceo-stat .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    .decision-body { font-size: 14px; line-height: 1.6; color: var(--text-primary); }
+    .decision-body em { color: var(--blocked); font-style: normal; font-weight: 600; }
+
+    /* Controls */
+    .controls {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; gap: 16px;
+    }
+    .tabs { display: flex; gap: 4px; }
+    .tab {
+      padding: 7px 14px; border-radius: 16px;
+      font-size: 12px; font-weight: 500; color: var(--text-secondary);
+      cursor: pointer; border: 1px solid transparent;
+    }
+    .tab:hover { background: var(--surface-2); }
+    .tab.active { background: var(--text-primary); color: #fff; }
+    .filters { display: flex; gap: 10px; align-items: center; }
+    .select {
+      height: 32px; padding: 0 28px 0 12px;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); font-size: 12px; color: var(--text-primary);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235b616b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+    .btn {
+      height: 32px; padding: 0 14px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 12px; font-weight: 500; color: var(--text-primary);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* Operational zone */
+    .zone-operational {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .line-group { border-bottom: 1px solid var(--border); }
+    .line-group:last-child { border-bottom: none; }
+    .line-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .line-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; font-weight: 700;
+    }
+    .line-title .tag {
+      font-size: 10px; color: var(--text-tertiary); font-weight: 500;
+      padding: 2px 7px; border: 1px solid var(--border); border-radius: 10px;
+      background: #fff;
+    }
+    .line-meta { font-size: 11px; color: var(--text-secondary); }
+
+    /* Table */
+    .works-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .works-table th {
+      text-align: left; padding: 10px 14px;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-tertiary); font-weight: 600;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .works-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .works-table tr:last-child td { border-bottom: none; }
+    .works-table tr:hover td { background: #fafbfd; }
+    .work-title { font-weight: 600; color: var(--text-primary); }
+    .work-id {
+      font-size: 10px; color: var(--text-tertiary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      margin-top: 2px;
+    }
+    .account-pill, .method-pill, .stage-pill {
+      display: inline-flex; align-items: center;
+      padding: 3px 8px; border-radius: 10px; font-size: 11px;
+      background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border);
+    }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;
+    }
+    .state-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+    .state-working { background: rgba(47,91,255,0.10); color: var(--blue); }
+    .state-working::before { background: var(--blue); }
+    .state-waiting { background: rgba(139,146,159,0.12); color: var(--wait); }
+    .state-waiting::before { background: var(--wait); }
+    .state-review { background: rgba(192,125,16,0.10); color: var(--review); }
+    .state-review::before { background: var(--review); }
+    .state-blocked { background: rgba(214,69,69,0.10); color: var(--blocked); }
+    .state-blocked::before { background: var(--blocked); }
+    .state-ready { background: rgba(15,157,99,0.10); color: var(--ready); }
+    .state-ready::before { background: var(--ready); }
+    .owner {
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .owner .avatar {
+      width: 22px; height: 22px; border-radius: 50%; color: #fff;
+      display: grid; place-items: center; font-size: 10px; font-weight: 700;
+    }
+    .progress { width: 64px; }
+    .progress-bar {
+      height: 5px; border-radius: 3px; background: var(--border); overflow: hidden;
+    }
+    .progress-bar i {
+      display: block; height: 100%; border-radius: 3px; background: var(--blue);
+    }
+    .progress-num { font-size: 10px; color: var(--text-tertiary); margin-top: 4px; }
+    .artifact { font-size: 11px; color: var(--text-secondary); }
+    .next-step { font-size: 11px; color: var(--text-secondary); max-width: 220px; line-height: 1.45; }
+    .row-link { color: inherit; text-decoration: none; }
+    .row-link:hover .work-title { color: var(--blue); }
+
+    .footer-note {
+      margin-top: 28px; padding: 14px 0 8px;
+      border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--text-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <aside class="rail">
+    <div class="rail-brand">
+      <div class="logo">Curis</div>
+      <div class="host">一人公司</div>
+    </div>
+    <div class="rail-workspace">
+      <div class="ws-name">Content Growth</div>
+      <div class="ws-scope">Professional Workspace</div>
+    </div>
+    <nav class="rail-nav">
+      <div class="nav-group-title">Overview</div>
+      <div class="nav-item"><span class="nav-icon">◈</span> Dashboard</div>
+      <div class="nav-item"><span class="nav-icon">⊞</span> Content Pipeline</div>
+      <div class="nav-item active"><span class="nav-icon">▤</span> 内容制作</div>
+      <div class="nav-item"><span class="nav-icon">◐</span> Calendar</div>
+      <div class="nav-group-title">Execution</div>
+      <div class="nav-item"><span class="nav-icon">▣</span> Works</div>
+      <div class="nav-item"><span class="nav-icon">◎</span> Employees</div>
+      <div class="nav-item"><span class="nav-icon">✓</span> QA Queue</div>
+      <div class="nav-item"><span class="nav-icon">⚇</span> Library</div>
+    </nav>
+    <div class="rail-foot">
+      <div class="ceo-avatar">CEO</div>
+      <span>CEO perspective</span>
+    </div>
+  </aside>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="crumb">Content Growth / <strong>内容制作</strong></div>
+      </div>
+      <div class="topbar-right">
+        <input class="search" type="text" placeholder="搜索 works、账号、责任人…" />
+        <div class="user-pill"><div class="avatar">CEO</div>创始人</div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="zone-spatial">
+        <h1 class="page-title">内容制作</h1>
+        <p class="scope-note">经营来源：抖音｜创始人IP · 数字人口播的反馈周期与稳定之境</p>
+        <div class="judgment-strip">
+          <div class="judgment-card">
+            <h3>CEO-level summary</h3>
+            <div class="ceo-summary">
+              <div class="ceo-stat"><span class="num">7</span><span class="lab">全部 Works</span></div>
+              <div class="ceo-stat"><span class="num" style="color:var(--blue)">2</span><span class="lab"><span class="dot" style="background:var(--blue)"></span>执行中</span></div>
+              <div class="ceo-stat"><span class="num" style="color:var(--wait)">2</span><span class="lab"><span class="dot" style="background:var(--wait)"></span>等待中</span></div>
+              <div class="ceo-stat"><span class="num" style="color:var(--review)">1</span><span class="lab"><span class="dot" style="background:var(--review)"></span>Review</span></div>
+              <div class="ceo-stat"><span class="num" style="color:var(--blocked)">1</span><span class="lab"><span class="dot" style="background:var(--blocked)"></span>Blocked</span></div>
+              <div class="ceo-stat"><span class="num" style="color:var(--ready)">1</span><span class="lab"><span class="dot" style="background:var(--ready)"></span>可发布</span></div>
+              <div class="ceo-stat"><span class="num">5</span><span class="lab">Employees</span></div>
+            </div>
+          </div>
+          <div class="judgment-card">
+            <h3>Next decision needed</h3>
+            <div class="decision-body">
+              W-205 因缺创始人授权照片而 <em>Blocked</em>；W-203 为创始人 IP 长文章，正在等待人工 Review 事实表述。两项均需要 CEO 输入，建议优先处理以释放下游队列。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="controls">
+        <div class="tabs">
+          <div class="tab active">全部</div>
+          <div class="tab">图文制作</div>
+          <div class="tab">口播制作</div>
+          <div class="tab">视频制作</div>
+          <div class="tab">长文章制作</div>
+        </div>
+        <div class="filters">
+          <select class="select"><option>状态：全部</option><option>执行中</option><option>等待中</option><option>Review</option><option>Blocked</option><option>可发布</option></select>
+          <select class="select"><option>账号：已选 1 个</option><option>小红书｜品牌号</option><option>小红书｜创始人IP</option><option>抖音｜品牌号</option><option>抖音｜创始人IP</option><option>公众号｜品牌官方号</option><option>公众号｜创始人号</option></select>
+          <button class="btn btn-primary">+ 新建 Work</button>
+        </div>
+      </div>
+
+      <section class="zone-operational">
+        <!-- 口播制作 -->
+        <div class="line-group">
+          <div class="line-header">
+            <div class="line-title">口播制作 <span class="tag">视频（口播类）</span></div>
+            <div class="line-meta">数字人口播 · 真人素材口播 · 2 works</div>
+          </div>
+          <table class="works-table">
+            <thead>
+              <tr>
+                <th style="width:22%">Work</th>
+                <th style="width:12%">账号</th>
+                <th style="width:10%">方法</th>
+                <th style="width:12%">阶段</th>
+                <th style="width:9%">状态</th>
+                <th style="width:10%">Owner</th>
+                <th style="width:8%">进度</th>
+                <th style="width:9%">Artifact</th>
+                <th>Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <a class="row-link" href="w202-work.html">
+                    <div class="work-title">AI 会不会取代你的岗位</div>
+                    <div class="work-id">W-202 · 9:16 · 60s · 1080×1920</div>
+                  </a>
+                </td>
+                <td><span class="account-pill">抖音｜创始人IP</span></td>
+                <td><span class="method-pill">数字人口播</span></td>
+                <td><span class="stage-pill">数字人口播合成</span></td>
+                <td><span class="state-pill state-working">执行中</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#1f7ae0">高</div>高戈</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:56%"></i></div><div class="progress-num">56%</div></div></td>
+                <td><span class="artifact">脚本 v3</span></td>
+                <td><div class="next-step">用言舟 v2 生成口播，试听后进入剪辑</div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="work-title">3 个让 AI 写得更像你的方法</div>
+                  <div class="work-id">W-204 · 9:16 · 25s</div>
+                </td>
+                <td><span class="account-pill">抖音｜品牌号</span></td>
+                <td><span class="method-pill">数字人口播</span></td>
+                <td><span class="stage-pill">等待数字人队列</span></td>
+                <td><span class="state-pill state-waiting">等待中</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#0f9d63">周</div>周砚</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:45%"></i></div><div class="progress-num">45%</div></div></td>
+                <td><span class="artifact">脚本 v1</span></td>
+                <td><div class="next-step">言舟队列空闲后自动继续</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 图文制作 -->
+        <div class="line-group">
+          <div class="line-header">
+            <div class="line-title">图文制作 <span class="tag">图文</span></div>
+            <div class="line-meta">图文排版 · 3 works</div>
+          </div>
+          <table class="works-table">
+            <thead>
+              <tr>
+                <th style="width:22%">Work</th>
+                <th style="width:12%">账号</th>
+                <th style="width:10%">方法</th>
+                <th style="width:12%">阶段</th>
+                <th style="width:9%">状态</th>
+                <th style="width:10%">Owner</th>
+                <th style="width:8%">进度</th>
+                <th style="width:9%">Artifact</th>
+                <th>Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="work-title">AI 时代的职场效率清单</div>
+                  <div class="work-id">W-201 · 3:4 · 8 页</div>
+                </td>
+                <td><span class="account-pill">小红书｜品牌号</span></td>
+                <td><span class="method-pill">图文排版</span></td>
+                <td><span class="stage-pill">封面与包装</span></td>
+                <td><span class="state-pill state-working">执行中</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#d97706">乔</div>乔叶</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:74%"></i></div><div class="progress-num">74%</div></div></td>
+                <td><span class="artifact">内页文案 v2</span></td>
+                <td><div class="next-step">乔叶出结论前置封面 v2，随后提交人工把关</div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="work-title">创业第 180 天</div>
+                  <div class="work-id">W-205 · 3:4 · 6 页</div>
+                </td>
+                <td><span class="account-pill">小红书｜创始人IP</span></td>
+                <td><span class="method-pill">图文排版</span></td>
+                <td><span class="stage-pill">缺创始人授权照片</span></td>
+                <td><span class="state-pill state-blocked">Blocked</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#0e8f7e">徐</div>徐白</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:30%;background:var(--blocked)"></i></div><div class="progress-num">30%</div></div></td>
+                <td><span class="artifact">正文 v2</span></td>
+                <td><div class="next-step">需 CEO 提供 2 张授权照片（AR-1）</div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="work-title">数据卡点自查表</div>
+                  <div class="work-id">W-207 · 3:4 · 9 页</div>
+                </td>
+                <td><span class="account-pill">抖音｜品牌号</span></td>
+                <td><span class="method-pill">图文排版</span></td>
+                <td><span class="stage-pill">责任未配置</span></td>
+                <td><span class="state-pill state-waiting">等待中</span></td>
+                <td><div class="owner"><span style="color:var(--text-tertiary)">—</span></div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:0%"></i></div><div class="progress-num">0%</div></div></td>
+                <td><span class="artifact">—</span></td>
+                <td><div class="next-step">缺内容制作责任人，已进入组织路由等待分配</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 长文章制作 -->
+        <div class="line-group">
+          <div class="line-header">
+            <div class="line-title">长文章制作 <span class="tag">文章</span></div>
+            <div class="line-meta">长文章 · 1 work</div>
+          </div>
+          <table class="works-table">
+            <thead>
+              <tr>
+                <th style="width:22%">Work</th>
+                <th style="width:12%">账号</th>
+                <th style="width:10%">方法</th>
+                <th style="width:12%">阶段</th>
+                <th style="width:9%">状态</th>
+                <th style="width:10%">Owner</th>
+                <th style="width:8%">进度</th>
+                <th style="width:9%">Artifact</th>
+                <th>Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="work-title">一人公司如何搭建内容系统</div>
+                  <div class="work-id">W-203 · 2,400 字 · 系统图 1 张</div>
+                </td>
+                <td><span class="account-pill">公众号｜品牌官方号</span></td>
+                <td><span class="method-pill">长文章</span></td>
+                <td><span class="stage-pill">待人工把关</span></td>
+                <td><span class="state-pill state-review">Review</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#0f9d63">周</div>周砚</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:88%;background:var(--review)"></i></div><div class="progress-num">88%</div></div></td>
+                <td><span class="artifact">初稿 v1</span></td>
+                <td><div class="next-step">创始人 IP 内容必须人工 Review，等待确认</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 视频制作 -->
+        <div class="line-group">
+          <div class="line-header">
+            <div class="line-title">视频制作 <span class="tag">视频（非口播）</span></div>
+            <div class="line-meta">混剪 · 屏幕演示 · 1 work</div>
+          </div>
+          <table class="works-table">
+            <thead>
+              <tr>
+                <th style="width:22%">Work</th>
+                <th style="width:12%">账号</th>
+                <th style="width:10%">方法</th>
+                <th style="width:12%">阶段</th>
+                <th style="width:9%">状态</th>
+                <th style="width:10%">Owner</th>
+                <th style="width:8%">进度</th>
+                <th style="width:9%">Artifact</th>
+                <th>Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="work-title">上周热点：AI 职场报告</div>
+                  <div class="work-id">W-206 · 9:16 · 45s</div>
+                </td>
+                <td><span class="account-pill">抖音｜品牌号</span></td>
+                <td><span class="method-pill">混剪</span></td>
+                <td><span class="stage-pill">可发布成品</span></td>
+                <td><span class="state-pill state-ready">可发布</span></td>
+                <td><div class="owner"><div class="avatar" style="background:#1f7ae0">高</div>高戈</div></td>
+                <td><div class="progress"><div class="progress-bar"><i style="width:100%;background:var(--ready)"></i></div><div class="progress-num">100%</div></div></td>
+                <td><span class="artifact">成片 v1</span></td>
+                <td><div class="next-step">进入发布队列排期</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer-note">Direction C — Hybrid Operational · Visual exploration only</div>
+    </main>
+  </div>
+</body>
+</html>

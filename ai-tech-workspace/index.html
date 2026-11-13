@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 科技 Workspace · 交互原型入口</title>
+  <style>
+    :root {
+      --ui-bg: #0b0c10;
+      --ui-surface: #111319;
+      --ui-line: #1f2230;
+      --ui-text: #e8ebf3;
+      --ui-text-2: #a0a7b7;
+      --ui-text-3: #6b7280;
+      --ui-accent: #8aa4ff;
+      --ui-accent-2: #ff9a76;
+      --ui-r-md: 12px;
+      --ui-sp-3: 12px;
+      --ui-sp-4: 16px;
+      --ui-sp-6: 24px;
+      --ui-sp-8: 32px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: radial-gradient(1200px 800px at 20% -10%, #141a2c 0%, #0b0c10 60%) fixed; color: var(--ui-text); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 72px 32px 120px; }
+    .kicker { display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; color: var(--ui-text-2); text-transform: uppercase; margin-bottom: var(--ui-sp-4); padding: 6px 10px; border:1px solid var(--ui-line); border-radius: 999px; background: var(--ui-surface); }
+    .kicker b { color: var(--ui-accent); font-weight: 600; }
+    h1 { font-size: 38px; line-height: 1.15; margin: 0 0 var(--ui-sp-4); letter-spacing: -0.02em; }
+    h1 b { color: var(--ui-accent); }
+    .lede { max-width: 780px; font-size: 15px; line-height: 1.75; color: var(--ui-text-2); margin-bottom: var(--ui-sp-8); }
+    .contract { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-6); margin-bottom: var(--ui-sp-8); }
+    .contract h2 { margin: 0 0 var(--ui-sp-3); font-size: 16px; letter-spacing: 0.02em; }
+    .contract ul { margin: 0; padding: 0 0 0 20px; color: var(--ui-text-2); font-size: 14px; line-height: 1.9; }
+    .contract ul li strong { color: var(--ui-text); }
+    .grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: var(--ui-sp-6); }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-6); position: relative; overflow: hidden; }
+    .card .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--ui-accent); text-transform: uppercase; margin-bottom: 8px; }
+    .card h3 { margin: 0 0 10px; font-size: 22px; }
+    .card p { color: var(--ui-text-2); font-size: 14px; line-height: 1.75; margin: 0 0 20px; }
+    .cta-row { display:flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 500; text-decoration: none; }
+    .btn-primary { background: var(--ui-accent); color: #0b0c10; border: 1px solid var(--ui-accent); }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-ghost { background: transparent; color: var(--ui-text); border: 1px solid var(--ui-line); }
+    .btn-ghost:hover { border-color: var(--ui-accent); color: var(--ui-accent); }
+    .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: var(--ui-text-3); margin-top: 12px; }
+    .states { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (max-width: 640px) { .states { grid-template-columns: 1fr; } }
+    .state { padding: 12px 14px; border: 1px solid var(--ui-line); border-radius: 10px; background: #0d0f14; font-size: 13px; color: var(--ui-text-2); }
+    .state b { display: block; color: var(--ui-text); margin-bottom: 4px; font-size: 13px; }
+    .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--ui-line); color: var(--ui-text-2); font-size: 11px; letter-spacing: .02em; }
+    .verification { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; font-size: 13px; color: var(--ui-text-2); }
+    .verification .row { display: flex; align-items: center; gap: 8px; }
+    .verification .row::before { content: "✓"; color: #6cd6a0; font-weight: 700; }
+    .foot { margin-top: 48px; color: var(--ui-text-3); font-size: 12px; display:flex; align-items:center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .foot a { color: var(--ui-accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="kicker"><b>Prototype</b> · Closure · UX Candidate</div>
+    <h1>XHS Professional Workspace<br><b>Interactive HTML Prototype</b></h1>
+    <p class="lede">
+      内容在本轮已冻结。不新增 Surface / Dashboard / 模块。唯一解决：
+      <b>在任意专业工作面看到员工，一点即 Employee Quick Panel → 立即协作；对象 → Utility 不再混淆。</b>
+    </p>
+
+    <section class="contract">
+      <h2>Employee Interaction Contract（一句说明）</h2>
+      <ul>
+        <li><strong>员工身份（头像 / 姓名 / Presence Chip / Station 头）</strong>一律打开 <strong>Employee Quick Panel</strong>（Utility）。</li>
+        <li>Panel 内 5 秒可见：<strong>当前职责 / 当前工作 / 当前状态 / 当前上下文 / 当前交接 / 最近结果</strong>。</li>
+        <li>主操作<strong>「直接对话」</strong>一步进入继承当前 Bounded Context 的对话；次操作进入<strong>当前工作 / 当前交接</strong>；Deep Work 走<strong>完整员工工作站</strong>。</li>
+        <li><strong>研究对象 → Research Detail；内容对象 → Content Detail；交接链接 → Handoff Detail。</strong>不再全部落到同一个 Content Utility。</li>
+        <li><strong>无需先到 Team 页面</strong>；Main 保持安静，不重复 Surface Tabs；Context 折叠可恢复；CEO Assistant 保持全局浮层。</li>
+      </ul>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <div class="eyebrow">Entry · Prototype 入口</div>
+        <h3>从经营概览开始自由点击</h3>
+        <p>顶部原型控件可在 14 个工作面间切换；员工与对象点击均已绑定，Utility 根据点击对象类型自动切换对应视图。</p>
+        <div class="cta-row">
+          <a class="btn-primary" href="pages/overview.html">打开 AI 科技 · 经营总览 →</a>
+          <a class="btn-ghost" href="pages/research.html#emp=wy,obj=research:r1">直接进入：研究与洞察（王颖 Employee Quick Panel 预开）</a>
+        </div>
+        <div class="path">File: pages/overview.html · 共享 css/tokens.css · css/shell.css · js/app.js（Closure v2）</div>
+      </section>
+
+      <section class="card">
+        <div class="eyebrow">Static states · ≤ 4 个关键状态</div>
+        <h3>本轮关键静态快照</h3>
+        <div class="states">
+          <div class="state"><b>State 1 · Research Normal</b><a href="pages/research.html" style="color:var(--ui-accent);">research.html</a><br><span class="tag">研究工作面</span></div>
+          <div class="state"><b>State 2 · 王颖 Employee Quick Panel</b><a href="pages/research.html#emp=wy" style="color:var(--ui-accent);">research.html#emp=wy</a><br><span class="tag">身份 → Quick Panel</span></div>
+          <div class="state"><b>State 3 · 直接对话 / Full Workstation</b><a href="pages/research.html#emp=wy" style="color:var(--ui-accent);">research.html#emp=wy</a> → 点击「直接对话」或「打开完整员工工作站」<br><span class="tag">一步对话 / Deep 模式</span></div>
+          <div class="state"><b>State 4 · Handoff Detail</b><a href="pages/research.html#obj=research:r1" style="color:var(--ui-accent);">research.html#obj=research:r1</a> → 点击“交接至 内容运营：生成 3 个实测选题”<br><span class="tag">Handoff 对象 → Utility</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top: var(--ui-sp-8);">
+      <div class="eyebrow">Verified scenarios · 已验证路径</div>
+      <h3>建议 CEO 按以下顺序亲自点击验证</h3>
+      <div class="verification">
+        <div class="row">经营概览 → 研究与洞察</div>
+        <div class="row">研究洞察卡片 → Research Detail（Utility）</div>
+        <div class="row">点击「王颖 · 研究」Presence Chip → Employee Quick Panel</div>
+        <div class="row">Quick Panel → 直接对话（可输入发送，自动回应）</div>
+        <div class="row">查看当前工作 → Content / Research Detail</div>
+        <div class="row">查看交接 → Handoff Detail（路径 + 证据 + 下一步）</div>
+        <div class="row">Full Employee Workstation → 联系 / 交接 / 证据</div>
+        <div class="row">返回 Research → Content 列表 → Content Object Detail</div>
+        <div class="row">列表 ⇄ 日历切换；日历日程点击 → Content Detail</div>
+        <div class="row">增长 & Team 页面的员工点击 → Employee Quick Panel</div>
+        <div class="row">Context 折叠 / 恢复（Main 顶栏 + Context 头）</div>
+        <div class="row">CEO Assistant 打开 / 关闭（Overlay）</div>
+        <div class="row">1440×900 主验收（默认）</div>
+        <div class="row">1280×800 适配（访问 pages/1280.html 或缩放到 1280）</div>
+      </div>
+    </section>
+
+    <div class="foot">
+      <div>本原型仍为 <strong>UX Candidate</strong>，不修改 Product Blueprint / Authority / 生产代码。</div>
+      <div>Path：<a href="pages/overview.html">pages/overview.html</a> · CSS：<a href="css/tokens.css">tokens.css</a> / <a href="css/shell.css">shell.css</a> · JS：<a href="js/app.js">app.js</a></div>
+    </div>
+  </main>
+</body>
+</html>

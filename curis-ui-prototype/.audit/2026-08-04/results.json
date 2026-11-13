@@ -1,0 +1,1633 @@
+{
+  "ceo-desk.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemLight": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemDark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "operating.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "business.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app-shell",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "ai-organization.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "220px 1fr",
+        "w": 1440,
+        "h": 2161,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "220px 1fr",
+        "w": 1440,
+        "h": 2161,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-portal.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "systemLight": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "systemDark": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "grid",
+        "cols": "220px 1220px",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-studio.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "systemLight": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "systemDark": {
+      "btnPrimary": 1,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "founding-flow.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemLight": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemDark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "decision-room.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": null,
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": null,
+      "cSidebar": null,
+      "cCard": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "meeting.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": null,
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "finance.html": {
+    "error": "TimeoutError: Navigation timeout of 30000 ms exceeded"
+  },
+  "knowledge.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(164, 167, 175)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(98, 104, 115)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "calendar.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1095,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(164, 167, 175)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1095,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(98, 104, 115)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemLight": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1095,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(98, 104, 115)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "systemDark": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1095,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(164, 167, 175)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "assets.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 0,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-runtime-software.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 4,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 2501,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 4,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 2501,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-runtime-xhs.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 4,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1716,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(164, 167, 175)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 4,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1716,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(98, 104, 115)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-runtime-shortvideo.html": {
+    "dark": {
+      "btnPrimary": 1,
+      "primaryClass": 3,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(34, 37, 41)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 1,
+      "primaryClass": 3,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "app",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 900,
+        "childCount": 1,
+        "sidebarW": 220,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "workspace-runtime-department.html": {
+    "dark": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1348,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cTopbar": {
+        "bg": "rgb(25, 26, 29)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cSidebar": {
+        "bg": "rgb(29, 31, 34)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "cCard": {
+        "bg": "rgb(32, 34, 38)",
+        "color": "rgb(226, 227, 231)"
+      },
+      "theme": "system"
+    },
+    "light": {
+      "btnPrimary": 0,
+      "primaryClass": 1,
+      "fab": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false,
+      "assistantDrawer": true,
+      "badge": true,
+      "shell": {
+        "cls": "shell",
+        "display": "flex",
+        "cols": "none",
+        "w": 1440,
+        "h": 1348,
+        "childCount": 2,
+        "sidebarW": 220,
+        "mainX": 220,
+        "mainW": 1220,
+        "mainY": 0,
+        "scrollW": 1440
+      },
+      "cBody": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(41, 43, 48)"
+      },
+      "theme": "system"
+    },
+    "consoleErr": [
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  }
+}

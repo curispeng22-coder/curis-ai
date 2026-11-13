@@ -1,0 +1,29 @@
+classDiagram
+    class DepartmentMetrics {
+        +str type_key
+        +str observed_at
+        +list~dict~ event_stream
+        +list~str~ available_fields
+        +str schema_version
+    }
+    class DepartmentObservability {
+        -Database _db
+        -EvolutionEventLog _event_log
+        +__init__(database, event_log)
+        +get_department_event_stream(type_key, limit) list~dict~
+        +get_department_metrics(type_key) DepartmentMetrics
+        «future hook» suggest_self_improvement(type_key, observation) dict
+    }
+    class EvolutionEventLog {
+        +get_all() list~dict~
+        +get_by_correlation_id(correlation_id) list~dict~
+        +record(correlation_id, event_type, payload) dict
+    }
+    class DepartmentCatalog {
+        +get_manifest(type_key) DepartmentManifest
+        +list_types() list~DepartmentType~
+    }
+    DepartmentObservability ..> EvolutionEventLog : reads (read-only projection get_all)
+    DepartmentObservability ..> DepartmentCatalog : validates type_key as index
+    DepartmentObservability ..> DepartmentMetrics : returns (no stats computed)
+    DepartmentObservability ..> EvolutionEventLog : «future» get_by_correlation_id for D3.impl

@@ -1,0 +1,354 @@
+[
+  {
+    "repo": "microsoft/playwright",
+    "html_url": "https://github.com/microsoft/playwright",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-14T15:45:05Z",
+    "updated_at": "2026-09-14T16:18:00Z",
+    "license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "commit": {
+      "sha": "52a0e72005b4e8cef47b3174b6fb502636380023",
+      "date": "2026-09-14T15:45:05Z",
+      "url": "https://github.com/microsoft/playwright/commit/52a0e72005b4e8cef47b3174b6fb502636380023"
+    },
+    "release": {
+      "tag_name": "v1.63.0",
+      "published_at": "2026-09-04T22:40:31Z",
+      "html_url": "https://github.com/microsoft/playwright/releases/tag/v1.63.0",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/microsoft__playwright__README.md",
+      "sha256": "1bf217a9a995a6b6d799a83dd8fdf6559af665b3f8324a0734572a99f40915c4",
+      "url": "https://github.com/microsoft/playwright/blob/52a0e72005b4e8cef47b3174b6fb502636380023/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/microsoft__playwright__LICENSE",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "url": "https://github.com/microsoft/playwright/blob/52a0e72005b4e8cef47b3174b6fb502636380023/LICENSE"
+    }
+  },
+  {
+    "repo": "microsoft/playwright-mcp",
+    "error": "<urlopen error [Errno 54] Connection reset by peer>"
+  },
+  {
+    "repo": "browser-use/browser-use",
+    "html_url": "https://github.com/browser-use/browser-use",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-13T20:04:16Z",
+    "updated_at": "2026-09-14T16:29:25Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "843819cb8131e1370948d381ede9be7f8366ddc4",
+      "date": "2026-09-13T19:45:27Z",
+      "url": "https://github.com/browser-use/browser-use/commit/843819cb8131e1370948d381ede9be7f8366ddc4"
+    },
+    "release": {
+      "tag_name": "0.13.10",
+      "published_at": "2026-09-04T03:28:53Z",
+      "html_url": "https://github.com/browser-use/browser-use/releases/tag/0.13.10",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/browser-use__browser-use__README.md",
+      "sha256": "0cf61424017e5d88361b33dcbc6e1326c9eb52a1501e857caebe92b80f78f64f",
+      "url": "https://github.com/browser-use/browser-use/blob/843819cb8131e1370948d381ede9be7f8366ddc4/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/browser-use__browser-use__LICENSE",
+      "sha256": "135c57671b0ee957669b05a0ca00cc06f645496d351e2e732832c6e276da9a5e",
+      "url": "https://github.com/browser-use/browser-use/blob/843819cb8131e1370948d381ede9be7f8366ddc4/LICENSE"
+    }
+  },
+  {
+    "repo": "BerriAI/litellm",
+    "html_url": "https://github.com/BerriAI/litellm",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-14T16:49:56Z",
+    "updated_at": "2026-09-14T16:31:57Z",
+    "license": {
+      "key": "other",
+      "name": "Other",
+      "spdx_id": "NOASSERTION",
+      "url": null,
+      "node_id": "MDc6TGljZW5zZTA="
+    },
+    "commit": {
+      "sha": "9e1ed40db3376dc8e7b9392aa104653ca22d3fdb",
+      "date": "2026-09-14T15:00:25Z",
+      "url": "https://github.com/BerriAI/litellm/commit/9e1ed40db3376dc8e7b9392aa104653ca22d3fdb"
+    },
+    "release": {
+      "tag_name": "v1.100.1",
+      "published_at": "2026-09-10T16:58:02Z",
+      "html_url": "https://github.com/BerriAI/litellm/releases/tag/v1.100.1",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/BerriAI__litellm__README.md",
+      "sha256": "ebe61352cba96500d8401d646d9ef167aaf475ce7f72e8e113e13ae60a43d7f5",
+      "url": "https://github.com/BerriAI/litellm/blob/9e1ed40db3376dc8e7b9392aa104653ca22d3fdb/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/BerriAI__litellm__LICENSE",
+      "sha256": "b170d6bf8e8835dd357e011681db028f4d51e2fb0ea892058f56e01fb39b8273",
+      "url": "https://github.com/BerriAI/litellm/blob/9e1ed40db3376dc8e7b9392aa104653ca22d3fdb/LICENSE"
+    }
+  },
+  {
+    "repo": "anomalyco/models.dev",
+    "html_url": "https://github.com/anomalyco/models.dev",
+    "default_branch": "dev",
+    "archived": false,
+    "pushed_at": "2026-09-14T16:46:51Z",
+    "updated_at": "2026-09-14T16:46:56Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "c142a1f8d11298643ebf9313fa889415775b3a4a",
+      "date": "2026-09-14T16:46:50Z",
+      "url": "https://github.com/anomalyco/models.dev/commit/c142a1f8d11298643ebf9313fa889415775b3a4a"
+    },
+    "release": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/anomalyco__models.dev__README.md",
+      "sha256": "2767d37ee90f6d71a876ef33347c04776cf16591f0051ac27f7369f8accd09cf",
+      "url": "https://github.com/anomalyco/models.dev/blob/c142a1f8d11298643ebf9313fa889415775b3a4a/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/anomalyco__models.dev__LICENSE",
+      "sha256": "dc2dc41c9fea2fd3c41c21c6f484844cab367800b88ff24781f980ad3a9d160a",
+      "url": "https://github.com/anomalyco/models.dev/blob/c142a1f8d11298643ebf9313fa889415775b3a4a/LICENSE"
+    }
+  },
+  {
+    "repo": "agronholm/apscheduler",
+    "html_url": "https://github.com/agronholm/apscheduler",
+    "default_branch": "master",
+    "archived": false,
+    "pushed_at": "2026-09-10T21:21:50Z",
+    "updated_at": "2026-09-14T10:10:38Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "6a2a8851bafeb01dfe48e3b54be6dd3b3d4eae96",
+      "date": "2026-09-10T21:21:50Z",
+      "url": "https://github.com/agronholm/apscheduler/commit/6a2a8851bafeb01dfe48e3b54be6dd3b3d4eae96"
+    },
+    "release": {
+      "tag_name": "3.11.3",
+      "published_at": "2026-06-28T19:39:26Z",
+      "html_url": "https://github.com/agronholm/apscheduler/releases/tag/3.11.3",
+      "prerelease": false
+    },
+    "README.md": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "LICENSE": {
+      "error": "HTTP Error 404: Not Found"
+    }
+  },
+  {
+    "repo": "dbos-inc/dbos-transact-py",
+    "html_url": "https://github.com/dbos-inc/dbos-transact-py",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-14T16:44:49Z",
+    "updated_at": "2026-09-14T09:42:54Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "83805fd84494c85ea09105443884a2786152d921",
+      "date": "2026-09-11T22:42:50Z",
+      "url": "https://github.com/dbos-inc/dbos-transact-py/commit/83805fd84494c85ea09105443884a2786152d921"
+    },
+    "release": {
+      "tag_name": "2.31.1",
+      "published_at": "2026-09-08T17:01:55Z",
+      "html_url": "https://github.com/dbos-inc/dbos-transact-py/releases/tag/2.31.1",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/dbos-inc__dbos-transact-py__README.md",
+      "sha256": "df60929ba52bb202f5f6bf14c921240beb3d86be3c3694ea3c65d2af5000d8b7",
+      "url": "https://github.com/dbos-inc/dbos-transact-py/blob/83805fd84494c85ea09105443884a2786152d921/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/dbos-inc__dbos-transact-py__LICENSE",
+      "sha256": "546662b7f6b9fa4770f564fa7d8e63c40595c0643380b1723d6adc55552154d5",
+      "url": "https://github.com/dbos-inc/dbos-transact-py/blob/83805fd84494c85ea09105443884a2786152d921/LICENSE"
+    }
+  },
+  {
+    "repo": "temporalio/sdk-python",
+    "html_url": "https://github.com/temporalio/sdk-python",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-14T16:31:06Z",
+    "updated_at": "2026-09-14T11:28:40Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "ab25ed693f7ec77589346e66c98db299a8c9c9fe",
+      "date": "2026-09-12T05:37:12Z",
+      "url": "https://github.com/temporalio/sdk-python/commit/ab25ed693f7ec77589346e66c98db299a8c9c9fe"
+    },
+    "release": {
+      "tag_name": "1.32.0",
+      "published_at": "2026-08-24T21:33:14Z",
+      "html_url": "https://github.com/temporalio/sdk-python/releases/tag/1.32.0",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/temporalio__sdk-python__README.md",
+      "sha256": "7117e0b9bfe81412c5026657957d709b430a129498cbe5880217697a6e799fcd",
+      "url": "https://github.com/temporalio/sdk-python/blob/ab25ed693f7ec77589346e66c98db299a8c9c9fe/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/temporalio__sdk-python__LICENSE",
+      "sha256": "d7706f28d144dabf07e4946553a4d117d1dab5cda6bf34a602959b4a2fa86b38",
+      "url": "https://github.com/temporalio/sdk-python/blob/ab25ed693f7ec77589346e66c98db299a8c9c9fe/LICENSE"
+    }
+  },
+  {
+    "repo": "docling-project/docling",
+    "html_url": "https://github.com/docling-project/docling",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-14T10:06:55Z",
+    "updated_at": "2026-09-14T16:00:54Z",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "commit": {
+      "sha": "014e8e357b24aa9d5113317fa454df8a70de9aeb",
+      "date": "2026-09-14T08:57:00Z",
+      "url": "https://github.com/docling-project/docling/commit/014e8e357b24aa9d5113317fa454df8a70de9aeb"
+    },
+    "release": {
+      "tag_name": "v2.127.0",
+      "published_at": "2026-09-14T08:57:03Z",
+      "html_url": "https://github.com/docling-project/docling/releases/tag/v2.127.0",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/docling-project__docling__README.md",
+      "sha256": "64e3e937b3cebc5f0da738f79a1546c6004eed448ee7b356325b19ebfc2fddf3",
+      "url": "https://github.com/docling-project/docling/blob/014e8e357b24aa9d5113317fa454df8a70de9aeb/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/docling-project__docling__LICENSE",
+      "sha256": "edb765d1e3e60d0c7a7d5fba5f2bb2c3c29f7465cecb5c22cf1185c884954e4c",
+      "url": "https://github.com/docling-project/docling/blob/014e8e357b24aa9d5113317fa454df8a70de9aeb/LICENSE"
+    }
+  },
+  {
+    "repo": "tesseract-ocr/tesseract",
+    "html_url": "https://github.com/tesseract-ocr/tesseract",
+    "default_branch": "main",
+    "archived": false,
+    "pushed_at": "2026-09-11T05:17:27Z",
+    "updated_at": "2026-09-14T15:32:59Z",
+    "license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "commit": {
+      "sha": "8ae68101439b3f7df123499a784e8896c805179d",
+      "date": "2026-09-11T05:17:03Z",
+      "url": "https://github.com/tesseract-ocr/tesseract/commit/8ae68101439b3f7df123499a784e8896c805179d"
+    },
+    "release": {
+      "tag_name": "5.5.3",
+      "published_at": "2026-07-24T18:33:22Z",
+      "html_url": "https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.3",
+      "prerelease": false
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/tesseract-ocr__tesseract__README.md",
+      "sha256": "1a14c7cd54039ffb79e05aff12841f48d4d4da50f231ee98e7e9bb6138d03e7a",
+      "url": "https://github.com/tesseract-ocr/tesseract/blob/8ae68101439b3f7df123499a784e8896c805179d/README.md"
+    },
+    "LICENSE": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/tesseract-ocr__tesseract__LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "url": "https://github.com/tesseract-ocr/tesseract/blob/8ae68101439b3f7df123499a784e8896c805179d/LICENSE"
+    }
+  },
+  {
+    "repo": "FFmpeg/FFmpeg",
+    "html_url": "https://github.com/FFmpeg/FFmpeg",
+    "default_branch": "master",
+    "archived": false,
+    "pushed_at": "2026-09-14T12:44:39Z",
+    "updated_at": "2026-09-14T16:14:58Z",
+    "license": {
+      "key": "other",
+      "name": "Other",
+      "spdx_id": "NOASSERTION",
+      "url": null,
+      "node_id": "MDc6TGljZW5zZTA="
+    },
+    "commit": {
+      "sha": "639ee849526cfe61ceb312776335c245b98bd9d4",
+      "date": "2026-09-14T12:44:07Z",
+      "url": "https://github.com/FFmpeg/FFmpeg/commit/639ee849526cfe61ceb312776335c245b98bd9d4"
+    },
+    "release": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "README.md": {
+      "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/g1-g6-contract-closure-2026-09-15/evidence/FFmpeg__FFmpeg__README.md",
+      "sha256": "7e30f809d40454ebc467cf473a063d7306f5eb836dca6b80668c4427d8845914",
+      "url": "https://github.com/FFmpeg/FFmpeg/blob/639ee849526cfe61ceb312776335c245b98bd9d4/README.md"
+    },
+    "LICENSE": {
+      "error": "HTTP Error 404: Not Found"
+    }
+  }
+]

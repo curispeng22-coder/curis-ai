@@ -1,0 +1,25 @@
+{
+  "packageId": "com.curis.local.content-growth",
+  "version": "0.2.0",
+  "digest": "90cc938b70d64a4888385ec40a6844879881409511e9544dec354ef91882a0a6",
+  "published": true,
+  "decision": {
+    "kind": "CG_DEFINITION_PUBLICATION",
+    "digest": "90cc938b70d64a4888385ec40a6844879881409511e9544dec354ef91882a0a6",
+    "owner": "Curis V1 交付负责人",
+    "path": "docs/reviews/CURIS_LOCAL_USE_BETA_DEFINITION_ADMISSION_20261018.md",
+    "sha256": "3ef27ba83a4ec3a40d7a26787b8539009aab1c336a009f9ea3c41cb5c11e47d9",
+    "scope": "LOCAL_BETA_DEFINITION_ONLY"
+  },
+  "scope": [
+    "LOCAL_FOUR_FORM_SCRIPT_AUTHORING",
+    "MANUAL_ADOPTION",
+    "CAPABILITY_GATED_TEXT_SUGGESTION"
+  ],
+  "support": "Exact Core/App version; isolated evidence pending",
+  "retention": "retain-business-data-read-only",
+  "migration": "NO_AUTOMATIC_MIGRATION",
+  "providerFeeGrant": false,
+  "notice": "本地 Beta：四格式文本与脚本、人工选择及验证导出；未连接平台，不自动发布。员工模型能力与费用授权另行核对。",
+  "publicRelease": false
+}

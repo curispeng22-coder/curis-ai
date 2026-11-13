@@ -1,0 +1,62 @@
+[
+  {
+    "number": 569,
+    "title": "小红书账号删除后重新添加，前端页面显示是新号，实际后端发布的内容还是旧的账号",
+    "state": "closed",
+    "created_at": "2026-06-29T03:40:54Z",
+    "updated_at": "2026-07-30T08:27:42Z",
+    "closed_at": "2026-07-30T08:27:42Z",
+    "html_url": "https://github.com/yikart/AiToEarn/issues/569",
+    "body": "### Self Checks\n\n- [x] I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).\n- [x] I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.\n- [x] I can provide the report in English if needed to help more contributors participate in the discussion.\n- [x] Please do not modify this template :) and fill in all the required fields.\n\n### Aitoearn version\n\n最新版本\n\n### Please select your platform\n\nWindows\n\n### Steps to reproduce\n\n删除账号，重新同步，前端账号显示正确，发布错误账号\n\n### ✔️ Expected Behavior\n\n1\n\n### ❌ Actual Behavior\n\n_No response_"
+  },
+  {
+    "number": 583,
+    "title": "插件无法识别 rednote.com 登录会话：国际用户（+852 注册）RedNote 始终显示 \"Not Logged In\"",
+    "state": "open",
+    "created_at": "2026-08-04T02:29:21Z",
+    "updated_at": "2026-08-04T02:29:21Z",
+    "closed_at": null,
+    "html_url": "https://github.com/yikart/AiToEarn/issues/583",
+    "body": "**环境**\n- AiToEarn 账号：国际版 aitoearn.ai（用户名 user_emGraWHP）\n- 浏览器插件 v3.3.0（Chrome Web Store），International 模式\n- macOS + Chrome\n\n**问题**\n小红书账号使用香港手机号（+852）注册。国际账号在 xiaohongshu.com 扫码登录后会被强制跳转到 rednote.com，因此 xiaohongshu.com 域名下无法保持登录会话。\n\n已在 rednote.com 与 creator.rednote.com 完成登录，但插件 Platform Accounts 中 RedNote 始终显示「Not Logged In」，无法添加小红书账号。\n\n**复现步骤**\n1. 用 +852 手机号注册小红书账号\n2. 安装 AiToEarn 浏览器插件，切换到 International 模式\n3. 在 rednote.com 及 creator.rednote.com 登录同一小红书账号\n4. 打开插件 / aitoearn.ai 的频道连接弹窗，RedNote 显示「Not Logged In」\n\n**期望**\n- 国际版插件支持检测 rednote.com 的登录会话；或\n- 在文档中说明非 +86 注册的国际用户连接小红书账号的正确方式\n\n谢谢！\n"
+  },
+  {
+    "number": 584,
+    "title": "微信视频号授权频繁掉线，一天内需多次重新登录",
+    "state": "closed",
+    "created_at": "2026-08-06T15:00:08Z",
+    "updated_at": "2026-08-10T11:01:43Z",
+    "closed_at": "2026-08-10T11:01:42Z",
+    "html_url": "https://github.com/yikart/AiToEarn/issues/584",
+    "body": "### 问题描述\n\n微信视频号授权后**掉线非常频繁**，通常不到一天就需要重新扫码登录，多次实测（2026-08）：\n- 早上授权 → 当天晚上发布时就显示「已离线」\n- 发布面板中视频号账号头像变半透明，平台行直接消失\n- 需要重新走「频道管理 → 重新授权 → 扫码」才能恢复\n\n这个和 #19（2025-07-28 反馈，官方回复「暂时没办法」）是同一问题，至今仍未解决，想确认：\n1. 这是微信侧 OAuth/cookie 有效期限制，还是插件侧会话保持问题？\n2. 是否有计划延长授权有效期，或自动刷新机制？\n3. 其他平台（快手/B站/小红书）没有这个问题，只有视频号这样，是否有绕开方案？\n\n### 环境\n- Windows 10 + Chrome 扩展方式接入\n- AiToEarn 网页端发布\n\n### 影响\n视频号是主要分发渠道之一，频繁掉线导致每次发布前都要人工扫码，严重影响使用。"
+  },
+  {
+    "number": 586,
+    "title": "TikTok Direct Post can duplicate posts after ambiguous retries",
+    "state": "open",
+    "created_at": "2026-08-12T09:21:23Z",
+    "updated_at": "2026-08-12T09:21:23Z",
+    "closed_at": null,
+    "html_url": "https://github.com/yikart/AiToEarn/issues/586",
+    "body": "## Bug\n\nTikTok Direct Post tasks can create more than one public post when a transient failure occurs after TikTok has accepted the publish request but before AiToEarn persists the returned `publish_id`.\n\n## Failure sequence\n\n1. AiToEarn calls TikTok's Direct Post initialization endpoint.\n2. TikTok creates the publish operation and returns a `publish_id`.\n3. The upload or local persistence path fails.\n4. The task is treated as retryable and returns to the publish queue.\n5. The retry initializes a second TikTok publish operation for the same task.\n\nAn ambiguous timeout during initialization has the same risk because the client cannot know whether TikTok accepted the request.\n\n## Expected behavior\n\n- Persist `publish_id` before any upload or follow-up work.\n- After a remote checkpoint exists, reconcile status instead of calling Direct Post initialization again.\n- Do not automatically retry ambiguous TikTok publish-init failures.\n- If TikTok reports multiple public post IDs for one `publish_id`, preserve the first canonical ID and retain all IDs for incident diagnosis.\n\n## Validation\n\nA patch with focused regression tests is ready. It covers the checkpoint-before-upload sequence, credential-refresh re-entry, disabled ambiguous retries, reconciliation after checkpointed failures, and multiple public post IDs.\n"
+  },
+  {
+    "number": 587,
+    "title": "fix(tiktok): prevent duplicate posts after retryable failures",
+    "state": "closed",
+    "created_at": "2026-08-12T09:22:41Z",
+    "updated_at": "2026-08-12T10:02:06Z",
+    "closed_at": "2026-08-12T10:02:06Z",
+    "html_url": "https://github.com/yikart/AiToEarn/pull/587",
+    "body": "# Pull Request\n\n## 🧩 Issue Link\n\nFixes #586\n\n## 📝 Description\n\nTikTok Direct Post tasks no longer repeat a remote publish operation after AiToEarn has received and saved its `publish_id`. The provider checkpoints that ID before upload or follow-up work. A later failure now enters status reconciliation instead of returning to publish initialization, including credential-refresh re-entry.\n\nTikTok also disables automatic retries for ambiguous failures that happen before a checkpoint. This favors a visible failed task over a possible duplicate public post. If TikTok reports multiple public post IDs, AiToEarn keeps the first post as canonical and retains every reported ID for incident diagnosis.\n\n## ✅ Validation\n\n- 69 focused TikTok, publish-task, queue, and state tests passed.\n- Changed-file ESLint passed.\n- `aitoearn-server` and all 15 build dependencies compiled successfully.\n- `git diff --check` passed.\n\nRepository-wide lint still reports pre-existing errors in `config/config.yaml` and `relay-exception.filter.ts`; neither file is changed by this PR.\n\n## 🚀 Deployment note\n\nThe fix affects hosted Relay traffic only after the `aitoearn.ai` backend deploys this change.\n"
+  },
+  {
+    "number": 549,
+    "title": "🐛 抖音短链接生成失败：返回 15100 短链接不存在",
+    "state": "open",
+    "created_at": "2026-06-05T20:47:36Z",
+    "updated_at": "2026-07-10T09:32:52Z",
+    "closed_at": null,
+    "html_url": "https://github.com/yikart/AiToEarn/issues/549",
+    "body": "## 问题描述\n\n通过 MCP 调用 `publishPostToDouyin` 创建抖音发布任务时，返回的短链接无法打开，接口返回错误：\n\n```json\n{\"data\":{},\"code\":15100,\"message\":\"短链接不存在\",\"timestamp\":1780692179463}\n```\n\n## 复现步骤\n\n1. 调用 `publishPostToDouyin` 创建发布任务\n2. 获得返回的短链接，例如：\n   - `https://aitoearn.cn/api/shortLink/Z1fur88f`（第一次）\n   - `https://aitoearn.cn/api/shortLink/eH0CJg3c`（第二次重试）\n3. 在手机浏览器中打开链接\n4. 返回错误：`{\"code\":15100,\"message\":\"短链接不存在\"}`\n\n## 预期行为\n\n短链接应该可以正常打开，并跳转到抖音 APP 完成发布确认。\n\n## 实际行为\n\n所有生成的短链接都返回 `15100 短链接不存在` 错误，无法完成抖音发布流程。\n\n## 环境信息\n\n- MCP 工具：`publishPostToDouyin`\n- 平台：抖音 (douyin)\n- 账号类型：douyin\n- 尝试次数：3 次（均失败）\n- FlowId 示例：\n  - `ac1a006c-a709-49bc-9998-574878cd75c2`\n  - `8e316695-72ba-4413-b786-0fa93908773a`\n\n## 补充说明\n\n其他平台的发布功能（如小红书通过 workLink 提交）工作正常，仅抖音短链接生成存在问题。\n\n## 期望修复\n\n请检查抖音短链接生成服务是否正常运行，或提供替代的发布确认方式。"
+  }
+]

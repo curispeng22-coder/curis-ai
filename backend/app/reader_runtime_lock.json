@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "mode": "PUBLIC_READ_ONLY_READER",
+  "complete": false,
+  "executionAuthorized": false,
+  "state": "PENDING_SEPARATE_RUNTIME_GATE",
+  "browserImageDigest": null,
+  "proxyImageDigest": null,
+  "guestDependencyClosure": null,
+  "hostHelperClosure": null,
+  "licenseSbom": null
+}

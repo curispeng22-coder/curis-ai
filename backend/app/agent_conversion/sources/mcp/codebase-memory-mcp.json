@@ -1,0 +1,18 @@
+{
+  "server": "codebase-memory-mcp",
+  "name": "Codebase Memory MCP",
+  "description": "把代码库索引为持久化知识图谱：tree-sitter AST 支持 158 种语言，Hybrid LSP 语义解析（Python/TS/Go/Rust/Java 等 11 种）；单静态二进制、零依赖、100% 本地运行，无需 API key。",
+  "license": "MIT",
+  "_source_url": "https://github.com/DeusData/codebase-memory-mcp",
+  "_original_name": "codebase-memory-mcp",
+  "_scan_batch": "2026-08-31 持续扫描第三批",
+  "_note": "工具列表为按官方 README 描述的代表性摘录，以仓库实际暴露为准。",
+  "tools": [
+    {"name": "index_repository", "description": "索引代码仓库，构建持久化知识图谱。"},
+    {"name": "search_graph", "description": "在知识图谱中做语义检索代码实体。"},
+    {"name": "trace_path", "description": "追踪函数与调用路径。"},
+    {"name": "query_graph", "description": "结构化查询代码关系。"},
+    {"name": "detect_changes", "description": "检测代码变更并增量更新图谱。"},
+    {"name": "get_architecture", "description": "获取仓库架构概览。"}
+  ]
+}

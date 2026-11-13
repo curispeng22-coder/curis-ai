@@ -1,0 +1,869 @@
+{
+  "ai-organization.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 187,
+      "13": 12,
+      "14": 15,
+      "16": 3,
+      "20": 2
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "+创建公司从第一间办公室开始开始 →",
+      "保存当前资源判断",
+      "调整能力与成本",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 126
+  },
+  "assets.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 15,
+      "13": 4,
+      "14": 55,
+      "16": 1,
+      "20": 2,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "全部",
+      "软件开发",
+      "小红书",
+      "抖音 / TikTok",
+      "公司知识",
+      "业务结果",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 106
+  },
+  "business.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 115,
+      "13": 18,
+      "14": 15,
+      "16": 5,
+      "20": 9,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "创建第一间业务软件开发、小红书或抖音 / TikTok开始创",
+      "开始创建公司 →",
+      "开始创建公司 →",
+      "扩大投入",
+      "查看 工作空间",
+      "暂停业务",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 132
+  },
+  "calendar.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 109,
+      "13": 4,
+      "14": 12,
+      "16": 1,
+      "20": 1,
+      "28": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "新建自动任务",
+      "连接日历 / 平台",
+      "编辑",
+      "立即运行",
+      "连接",
+      "立即运行",
+      "待创建公司",
+      "立即运行",
+      "待创建公司",
+      "立即运行",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 197
+  },
+  "ceo-day-demo.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 2,
+      "13": 2,
+      "16": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 0,
+    "navGroups": [],
+    "dead": [],
+    "firstScreen": 7
+  },
+  "ceo-desk.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 109,
+      "13": 17,
+      "14": 18,
+      "16": 6,
+      "20": 5,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "创建公司",
+      "去内容办公室 →",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 190
+  },
+  "decision-room.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 17,
+      "13": 17,
+      "14": 37,
+      "16": 3,
+      "20": 2,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "批准抖音 / TikTok 运营工作空间搭建方案 v0.3 ",
+      "小红书放量投放授权：是否在确认品牌安全阈值后开启来源：小红书",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 110
+  },
+  "finance.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 119,
+      "13": 4,
+      "14": 21,
+      "16": 2,
+      "20": 6,
+      "28": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "补录收入",
+      "生成 CEO 财务简报",
+      "打开业务版图",
+      "补录收入",
+      "记录成本",
+      "查看成果库",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 142
+  },
+  "founding-flow.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 27,
+      "13": 6,
+      "14": 9,
+      "16": 2,
+      "20": 1,
+      "28": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 0,
+    "navGroups": [],
+    "dead": [
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 77
+  },
+  "index.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 27,
+      "13": 6,
+      "14": 9,
+      "16": 2,
+      "20": 1,
+      "28": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 0,
+    "navGroups": [],
+    "dead": [
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 77
+  },
+  "knowledge.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 56,
+      "13": 4,
+      "14": 17,
+      "16": 1,
+      "20": 5,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "导入资料",
+      "连接外部知识库",
+      "搜索",
+      "全部",
+      "竞品",
+      "平台规则",
+      "内容素材",
+      "研发",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 119
+  },
+  "meeting.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 47,
+      "13": 4,
+      "14": 8,
+      "16": 2,
+      "20": 1,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "开始创建公司 →",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 86
+  },
+  "operating.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 161,
+      "13": 15,
+      "14": 24,
+      "16": 1,
+      "20": 7,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 187
+  },
+  "workspace-portal.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 64,
+      "13": 7,
+      "14": 9,
+      "16": 2,
+      "20": 5,
+      "24": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "创建第一间办公室先说出你想经营什么，再选择业务模板或从零搭建",
+      "开始创建公司",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 124
+  },
+  "workspace-runtime-department.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 157,
+      "13": 7,
+      "14": 20,
+      "20": 6
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 1,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "全部",
+      "待决策",
+      "关注",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "查看证据",
+      "推进到下一阶段",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 222
+  },
+  "workspace-runtime-shortvideo.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 217,
+      "13": 7,
+      "14": 18,
+      "20": 6
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "全部",
+      "待决策",
+      "关注",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "通过",
+      "打回",
+      "通过",
+      "打回",
+      "是否批准日更频率提升至 2 条待 CEO 确认",
+      "查看证据",
+      "推进到下一阶段",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 252
+  },
+  "workspace-runtime-software.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 168,
+      "13": 7,
+      "14": 18,
+      "20": 6
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "全部",
+      "待决策",
+      "关注",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "通过",
+      "打回",
+      "v0.2 验收通过待 CEO 确认",
+      "退回修改 / 请求现场演示待 CEO 确认",
+      "查看证据",
+      "推进到下一阶段",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 240
+  },
+  "workspace-runtime-xhs.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 177,
+      "13": 7,
+      "14": 18,
+      "20": 6
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "全部",
+      "待决策",
+      "关注",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "移动至下一阶段 →",
+      "通过",
+      "打回",
+      "待发布品牌/敏感确认待 CEO 确认",
+      "授权平台 API 后放量待 CEO 确认",
+      "查看证据",
+      "推进到下一阶段",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 252
+  },
+  "workspace-shell-reference.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 113,
+      "13": 6,
+      "14": 9,
+      "20": 6
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "移动至下一阶段 →",
+      "待发布笔记品牌/敏感表达确认待 CEO 确认",
+      "授权后是否放量投放待 CEO 确认",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 179
+  },
+  "workspace-studio.html": {
+    "external": 0,
+    "externalUrls": [],
+    "ariaModal": 0,
+    "roleDialog": 0,
+    "sizes": {
+      "12": 115,
+      "13": 7,
+      "14": 9,
+      "16": 2,
+      "20": 1
+    },
+    "tiny": 0,
+    "hits": {},
+    "outlets": 0,
+    "navItems": 11,
+    "navGroups": [
+      {
+        "label": "",
+        "items": 5
+      },
+      {
+        "label": "",
+        "items": 2
+      },
+      {
+        "label": "",
+        "items": 4
+      }
+    ],
+    "dead": [
+      "深色",
+      "浅色",
+      "自动",
+      "100%",
+      "布局",
+      "历史",
+      "开始创建公司 →",
+      "修复问题",
+      "运行模拟",
+      "查看影响",
+      "运行模拟",
+      "生成决策包\n              汇总当前上下文，整理",
+      "标记需关注项\n              识别页面中状态异常",
+      "解释当前状态\n              用一句话总结当前页"
+    ],
+    "firstScreen": 57
+  }
+}

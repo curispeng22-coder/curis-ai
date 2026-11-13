@@ -1,0 +1,169 @@
+- complementary:
+  - generic: Curis · 一人公司
+  - generic: Content Growth
+  - generic: Professional Workspace
+  - navigation:
+    - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）":
+      - generic: 经营
+      - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）": "2"
+    - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量":
+      - generic: 研究与选题
+      - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量": "3"
+    - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）":
+      - generic: 内容制作
+      - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）": "7"
+    - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）":
+      - generic: 发布
+      - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）": "4"
+    - generic "连接异常账号：绑定状态不是 ok 的账号数量":
+      - generic: 账号
+      - generic "连接异常账号：绑定状态不是 ok 的账号数量": "2"
+    - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）":
+      - generic: 复盘
+      - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）": "3"
+    - generic "待准备资产：尚未就绪的素材 / 授权请求数量":
+      - generic: 素材
+      - generic "待准备资产：尚未就绪的素材 / 授权请求数量": "2"
+  - generic: 经营进行中
+  - generic: 下一检查 09-18 10:00
+  - generic: 你
+  - generic: CEO 视角
+- banner:
+  - button "←"
+  - generic: Content Growth
+  - generic: /
+  - generic: 经营
+  - generic: /
+  - generic: 整体经营
+  - generic: 经营边界
+  - generic: 团队持续经营中
+- generic: 经营
+- button "经营边界"
+- button "整体经营"
+- generic "小红书 小红书 ▾":
+  - img "小红书"
+  - text: 小红书 ▾
+- generic "抖音 抖音 ▾":
+  - img "抖音"
+  - text: 抖音 ▾
+- generic "微信公众号 微信公众号 ▾":
+  - img "微信公众号"
+  - text: 微信公众号 ▾
+- generic "找 林岚 交流":
+  - generic: 林
+  - generic: 林岚
+  - emphasis: 团队负责人
+- generic: "0"
+- generic: 相关工作
+- button "责任与团队"
+- textbox "直接说你对经营的想法或问题，例如：这周资源优先给谁？"
+- button "交给团队"
+- generic: 想指定某个人：点左侧员工名
+- generic: 林
+- text: 林岚 · 团队负责人
+- generic: 整体经营 判断
+- generic: 本轮 经营周期 进行中
+- generic: 本周判断：抖音｜品牌号实验窗口 09-20 截止，结论前置已见完播提升；小红书｜创始人号库存 2 天内断档，需补 1 条；公众号无自动发布权限，2 条需人工发布。
+- generic: 78%
+- generic: 下一轮就绪
+- generic: "2"
+- generic: 阻塞项
+- generic: 09-18
+- generic: 下一检查 10:00
+- generic: 本轮重点与资源安排
+- generic: 为何投入这里
+- text: 小红书｜品牌号
+- generic: 核心
+- generic: 核心账号，预算与产能优先保障
+- text: 抖音｜品牌号
+- generic: 核心
+- generic: 实验窗口 09-20 截止，需保证样本量
+- text: 抖音｜创始人IP
+- generic: 重点
+- generic: 1 个 工作 被阻塞（缺授权照片），需 CEO 提供
+- generic: 当前 计划
+- generic: 保住 抖音｜品牌号 实验样本；补齐 小红书｜创始人IP 库存；公众号人工发布 2 条
+- generic: 容量
+- generic: 制作 4 个 工作 并行 · 数字人队列 2 位 · 包装 1 人
+- generic: 预算
+- generic: ¥8,000 / 轮 · 已用 ¥3,240 · 在途 ¥1,860 · 剩余 ¥2,900
+- generic: 供应与节奏健康
+- generic: 内容供应状况
+- generic: 待研究
+- generic: "4"
+- generic: 已确认选题
+- generic: "6"
+- generic: 制作中
+- generic: "4"
+- generic: 待把关
+- generic: "2"
+- generic: 待发布
+- generic: "5"
+- generic: 等待数据
+- generic: "3"
+- generic: 即将断档
+- generic: "1"
+- generic: 阻塞
+- generic: "2"
+- generic: 即将断档 / 阻塞
+- text: 小红书｜创始人IP
+- generic: 即将断档
+- generic: 库存约 2 天 · 库存 2 天内断档，已标记需补 1 条
+- text: 抖音｜创始人IP
+- generic: 即将断档
+- generic: 库存约 3 天 · 1 个 工作 被阻塞（缺授权照片），需 CEO 提供
+- generic: 下一轮与待决定事项
+- generic: 下一轮准备 78%
+- generic: 下一 计划
+- generic: 维持 3 平台节奏；抖音｜品牌号 实验结束后立 CTA 位置实验；小红书｜创始人IP 转观点类
+- generic: 下一检查
+- generic: 09-18 10:00 · 负责人 林岚
+- generic: 就绪度
+- generic: 78%（阻塞 2 项）
+- generic: 说明
+- generic: 下一轮已准备好 6 个选题与 2 条可发布成品；阻塞 2 项（授权照片 / 数据授权）
+- generic: 需要 CEO 的决定（2）
+- text: 抖音｜品牌号 是否允许从“AI 效率”扩展到“职场成长”话题
+- generic: 等待 CEO
+- generic: 定位变更 · 必须 CEO 确认
+- generic: 建议：先做 2 周小样本（每周 1 条），09-30 用数据决定是否纳入定位
+- text: 数字人「陈屿」声音授权续期 ¥1,200/年
+- generic: 等待 CEO
+- generic: 预算 · 需 CEO 批准
+- generic: 建议：续期 1 年，或改用言舟 v3 配音并保留历史版本
+- button "查看完整经营边界"
+- generic: 当前经营边界（经营授权范围）
+- button "✕"
+- generic: 边界与授权
+- text: 重点账号
+- generic: 团队可自主
+- generic: 小红书｜品牌号、抖音｜品牌号
+- text: 发布频率范围
+- generic: 团队可自主
+- generic: 小红书 2-3 篇/周 · 抖音 3-5 条/周 · 公众号 2 篇/月
+- text: 自动发布许可
+- generic: 团队可自主
+- generic: 小红书 ✅ · 抖音 ✅（仅已审核版本）· 公众号 ❌ 必须人工
+- text: 必须人工 审核
+- generic: 需 CEO
+- generic: 所有创始人IP 内容；所有含数据/承诺/客户信息的表述
+- text: 当前预算
+- generic: 团队可自主
+- generic: ¥8,000 / 轮 · 已用 ¥3,240 · 在途 ¥1,860 · 剩余 ¥2,900
+- text: 可用数字人
+- generic: 团队可自主
+- generic: 言舟 v2 ✅ · 苏黎 v3 ✅ · 陈屿 v1 ⚠️ 声音授权待续期
+- text: 策略边界
+- generic: 需 CEO
+- generic: 定位 / 受众 / 商业模型变更必须 CEO 确认
+- generic: 等待 CEO 的决定（2）
+- text: 抖音｜品牌号 是否允许从“AI 效率”扩展到“职场成长”话题
+- generic: 等待 CEO
+- generic: 定位变更 · 必须 CEO 确认 · 影响：内容池预计扩大 40%；风险是稀释“AI 效率”专业度，且与 目标 v2 的成功标准不一致
+- generic: 建议：先做 2 周小样本（每周 1 条），09-30 用数据决定是否纳入定位
+- text: 数字人「陈屿」声音授权续期 ¥1,200/年
+- generic: 等待 CEO
+- generic: 预算 · 需 CEO 批准 · 影响：不续期则 W-203 及后续公众号配音需更换音色，旧作品保留原版本
+- generic: 建议：续期 1 年，或改用言舟 v3 配音并保留历史版本
+- button "知道了"
+- button "取消"

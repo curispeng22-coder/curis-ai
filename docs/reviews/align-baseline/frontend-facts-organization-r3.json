@@ -1,0 +1,171 @@
+{
+  "default": {
+    "brandText": "CCuris",
+    "groupLabels": [],
+    "items": [
+      {
+        "href": "/ceo-office",
+        "label": "CEO 工作台",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/analytics",
+        "label": "经营",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/projects",
+        "label": "业务",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/organization",
+        "label": "工作空间",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/settings",
+        "label": "设置",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/help",
+        "label": "帮助与反馈",
+        "has3px": false,
+        "activeBg": true
+      }
+    ],
+    "hasMoreToggle": true,
+    "moreAriaExpanded": "false",
+    "morePanelVisible": false,
+    "footerText": "设置帮助与反馈齐齐活林 · Admin",
+    "state": "default"
+  },
+  "moreOpen": {
+    "brandText": "CCuris",
+    "groupLabels": [
+      "经营工具",
+      "公司资源"
+    ],
+    "items": [
+      {
+        "href": "/ceo-office",
+        "label": "CEO 工作台",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/analytics",
+        "label": "经营",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/projects",
+        "label": "业务",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/organization",
+        "label": "工作空间",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/organization",
+        "label": "AI 团队",
+        "has3px": true,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/organization",
+        "label": "业务部门",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/organization/employees",
+        "label": "AI 员工管理",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/meeting",
+        "label": "会议工作台",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/decisions",
+        "label": "决策室",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/brainstorm",
+        "label": "头脑风暴室",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/execution",
+        "label": "执行工作台",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/company-runtime",
+        "label": "成果库",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/knowledge",
+        "label": "知识库",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/finance",
+        "label": "财务",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/calendar",
+        "label": "日历",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/capabilities",
+        "label": "能力中心",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/settings",
+        "label": "设置",
+        "has3px": false,
+        "activeBg": true
+      },
+      {
+        "href": "/ceo-office/help",
+        "label": "帮助与反馈",
+        "has3px": false,
+        "activeBg": true
+      }
+    ],
+    "hasMoreToggle": true,
+    "moreAriaExpanded": "true",
+    "morePanelVisible": true,
+    "footerText": "设置帮助与反馈齐齐活林 · Admin",
+    "state": "more-open"
+  }
+}

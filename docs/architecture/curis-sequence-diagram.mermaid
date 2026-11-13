@@ -1,0 +1,64 @@
+sequenceDiagram
+    autonumber
+    actor CEO
+    participant API as issue_pipeline_api
+    participant NLP as NLParser(增强)
+    participant GR as TaskGraph
+    participant SCH as Scheduler
+    participant PR as PipelineRuntime
+    participant RES as CapabilityResolver
+    participant CAT as CapabilityCatalog
+    participant DA as DevAgent适配器
+    participant RV as ResultReviewer
+    participant PS as ProjectState
+    participant LM as LessonMemory
+
+    CEO->>API: POST /submit "目标"
+    API->>NLP: parse(goal)
+    NLP-->>API: 澄清追问 / 结构化计划(DAG)
+    API->>GR: build_graph(plan)
+    GR-->>API: TaskGraph(含 deps)
+    API-->>CEO: {graph_id, status}
+
+    CEO->>API: POST /auto-run
+    API->>SCH: start(graph)
+    loop 常驻调度循环
+        SCH->>GR: ready_nodes(done)
+        GR-->>SCH: [node]
+        SCH->>PR: run_node(node, graph)
+        PR->>RES: resolve(node.cap_requirement)
+        RES->>CAT: get + list(backup_chain)
+        CAT-->>RES: 能力元数据(含 live_status)
+        RES->>DA: 探活 execute("")
+        DA-->>RES: {status}
+        RES-->>PR: CapabilityHandle(首选→降级链)
+        PR->>DA: handle.execute(prompt)
+        DA-->>PR: {output, status}
+        PR->>RV: review(result)
+        alt 通过
+            RV-->>PR: passes=true
+            PR->>PS: aggregate(graph)
+            PR->>LM: record(success)
+            PR-->>SCH: node.done
+        else 失败
+            RV-->>PR: passes=false
+            PR->>RES: 取下一级备用能力
+            RES-->>PR: 新 Handle
+            PR->>DA: 重试 execute
+            alt 备用成功
+                PR->>PS: aggregate
+                PR->>LM: record(降级成功)
+                PR-->>SCH: node.done
+            else 超过重规划阈值
+                PR->>GR: _replan(node)
+                GR-->>PR: 新子图
+                PR-->>SCH: 继续
+            else 硬卡点
+                PR-->>API: escalation → CEO
+                API-->>CEO: 关键决策请求
+            end
+        end
+    end
+    GR-->>SCH: is_complete()
+    SCH-->>API: 完成
+    API-->>CEO: 查看成果

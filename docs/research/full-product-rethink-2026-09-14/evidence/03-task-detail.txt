@@ -1,0 +1,97 @@
+- region "Notifications alt+T"
+- complementary:
+  - link "AiToEarn":
+    - /url: /
+    - img "AiToEarn"
+  - navigation:
+    - link "淘金广场":
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link "我的团队":
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link "AI Agent":
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link "内容管理":
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link "AI发布":
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link "热门内容":
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link "数据统计":
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link "AI打卡":
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link "AI互动":
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link "产品定价":
+      - /url: /pricing
+      - generic: 产品定价
+  - button "我的频道":
+    - generic: 我的频道
+  - button "浏览器插件 未安装":
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button "搜索菜单":
+  - link "开放平台":
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link "API Keys":
+    - /url: /developer/api-keys
+  - button "U user_FBVvPDQC":
+    - generic: U
+    - generic "user_FBVvPDQC"
+- main:
+  - button "返回":
+    - text: 返回
+  - button "刷新":
+    - text: 刷新
+  - img "小红书"
+  - text: 小红书
+  - generic: 邀请中
+  - heading "AiToEarn小红书推广" [level=1]
+  - text: 推广任务
+  - generic "商家已备好可直接发布的作品，接受任务后可一键发布，无需自己创作，通常 1-2 分钟左右即可完成。":
+    - text: 一键发
+  - generic: 线上推广
+  - text: CPE奖励
+  - generic: 收益总览
+  - generic: 最多可赚
+  - generic: ¥
+  - text: "50.00"
+  - generic: 每千次互动
+  - button "互动分规则：点赞×1 + 收藏×1 + 评论×1":
+  - generic: ¥200.00
+  - generic: CPM/CPE/里程碑封顶
+  - button "播放、互动与里程碑奖励合计不超过该单条封顶金额。":
+  - generic: ¥50.00
+  - button "AI 会综合任务奖励、完成难度与结算规则智能评估性价比；分数越高，代表任务越值得优先接取。推荐分处于测试状态，仅供参考。":
+  - generic: AI推荐分
+  - generic: "85"
+  - generic: 招募进度
+  - text: 16/50
+  - button "接受任务"
+  - generic: 接单后提交时限
+  - button "您接单后2小时内必须完成任务，不然任务会过期":
+  - generic: 2小时
+  - text: 适用平台
+  - img "小红书"
+  - text: 小红书
+  - generic: 任务要求
+  - paragraph: 作品30天内不允许删除
+  - button "举报":
+    - generic: 举报
+  - link "京ICP备19059131号-15":
+    - /url: https://beian.miit.gov.cn
+  - link "京公网安备11010502060417号":
+    - /url: https://beian.mps.gov.cn/#/query/webSearch?code=11010502060417
+    - generic: 京公网安备11010502060417号
+- alert: AiToEarn小红书推广 ¥200.00/ 千次互动 - AiToEarn淘金广场
+- listbox "Typeahead menu"
+- listbox "Typeahead menu"

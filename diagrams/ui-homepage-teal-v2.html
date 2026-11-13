@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Curis Workspace — CEO 驾驶舱</title>
+<style>
+:root{--t50:#F0FDFA;--t100:#CCFBF1;--t300:#5EEAD4;--t400:#2DD4BF;--t500:#14B8A6;--t600:#0D9488;--t700:#0F766E;--t800:#115E59;--bg:#F7FCFA;--card:#FFF;--sub:#EDF7F5;--sb-bg:#FAFEFD;--tx:#0F2922;--tx2:#4A635C;--tx3:#7B9590;--ok:#10B981;--ok-bg:#ECFDF5;--warn:#F59E0B;--warn-bg:#FFFBEB;--err:#EF4444;--err-bg:#FEF2F2;--info:#06B6D4;--info-bg:#ECFEFF;--pur:#8B5CF6;--pur-bg:#F5F3FF;--blu:#3B82F6;--bd:#DEF2EC;--bd2:#C5E5DB;--sh-sm:0 1px 2px rgba(15,41,34,.04);--sh-md:0 4px 12px rgba(15,41,34,.07);--rs:8px;--rm:12px;--rl:14px;--rxl:20px;--rp:999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;display:flex;height:100vh;overflow:hidden}
+.sb{width:212px;min-width:212px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px 12px;position:sticky;top:0;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:9px;padding:2px 6px 12px}
+.bi{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 12px rgba(20,184,166,.30)}
+.bt h1{font-size:14px;font-weight:700;letter-spacing:.3px}.bt p{font-size:10px;color:var(--tx3);margin-top:1px}
+.nl{display:flex;flex-direction:column;gap:1px;flex:1}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:var(--rm);font-size:12.5px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.ni svg{width:16px;height:16px;flex-shrink:0;opacity:.65}
+.ni:hover{background:var(--sub);color:var(--tx)}.ni:hover svg{opacity:1}
+.ni.on{background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(20,184,166,.28)}.ni.on svg{opacity:1;color:#fff}
+.sbb{padding-top:8px;border-top:1px solid var(--bd);margin-top:auto}
+.uc{display:flex;align-items:center;gap:8px;padding:4px}
+.ua{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pur),#A78BFA);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
+.uh4{font-size:12px;font-weight:700}.usp{font-size:10px;color:var(--tx3)}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0;box-shadow:0 0 6px rgba(16,185,129,.5)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.tb{height:56px;flex:0 0 56px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 28px;background:var(--card);border-bottom:1px solid var(--bd)}
+.tg h2{font-size:17px;font-weight:700;letter-spacing:.2px}.tg h2 em{color:var(--t600);font-style:normal}.tg p{font-size:12px;color:var(--tx3);margin-top:1px}
+.tr{display:flex;align-items:center;gap:12px}
+.se{display:flex;align-items:center;gap:8px;background:var(--sub);border:1px solid var(--bd);border-radius:var(--rp);padding:7px 14px;width:260px;color:var(--tx3);font-size:12.5px}
+.se svg{width:15px;height:15px;opacity:.55}
+.rs{font-size:12.5px;color:var(--tx2);padding:6px 12px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--card);cursor:pointer}
+.lt{font-size:12.5px;color:var(--tx2);cursor:pointer}
+.ta{width:34px;height:34px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);transition:all .15s}
+.ta:hover{border-color:var(--t300)}.ta svg{width:16px;height:16px}
+.am{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0}
+.ct{padding:12px 24px;height:calc(100vh - 56px);display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.sh{display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+.sh h3{font-size:14px;font-weight:700}
+.sh .mr{font-size:12px;color:var(--t600);cursor:pointer;display:flex;align-items:center;gap:3px}.sh .mr::after{content:'→';font-size:10px}
+/* KPI */
+.kr{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex:0 0 72px}
+.kc{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:9px 13px;box-shadow:var(--sh-sm);transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden}
+.kc:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.kct{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.kci{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kci svg{width:15px;height:15px}
+.kcl{font-size:11px;color:var(--tx3);font-weight:500}
+.kcv{font-size:21px;font-weight:800;letter-spacing:.2px;line-height:1.05}
+.kctd{font-size:10px;font-weight:600;margin-top:1px;display:flex;align-items:center;gap:2px}
+.kctd.up{color:var(--ok)}.kctd.dn{color:var(--err)}.kctd.flat{color:var(--tx3)}
+.ksp{position:absolute;bottom:0;left:0;right:0;height:26px;opacity:.08;pointer-events:none}
+.pw{height:4px;background:var(--sub);border-radius:var(--rp);overflow:hidden;margin-top:5px}
+.pb{height:100%;border-radius:var(--rp)}
+/* 2-col rows */
+.r2c{display:grid;grid-template-columns:1fr 1.65fr;gap:10px;min-height:0;flex:0 0 auto}
+.r2c > .cd:first-child{justify-content:center}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:10px 14px;box-shadow:var(--sh-sm);display:flex;flex-direction:column;min-height:0}
+.cdt{font-size:13px;font-weight:700;margin-bottom:8px;flex:0 0 auto}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fl{font-size:11px;color:var(--tx3);margin-bottom:2px}
+.fv{font-size:19px;font-weight:800;letter-spacing:.1px}
+.fa{font-size:10.5px;font-weight:600;margin-top:1px;display:inline-flex;align-items:center;gap:2px}
+.fa.up{color:var(--ok)}.fa.dn{color:var(--err)}
+.ch{height:120px;min-height:0;margin-top:2px;position:relative}
+.cl{display:flex;gap:12px;margin-top:4px;justify-content:flex-end;flex:0 0 auto}
+.ld{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--tx3)}
+.ldot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* Dept + Task */
+.depttask{flex:1 1 0}
+.dmg{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:1fr 1fr;gap:9px;flex:1;min-height:0}
+.dc{border:1px solid var(--bd);border-radius:10px;padding:9px 11px;transition:transform .15s;cursor:pointer;display:flex;flex-direction:column;justify-content:center}
+.dc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.dh{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.di{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.di svg{width:14px;height:14px}
+.dn{font-size:12px;font-weight:700}
+.ds{font-size:10px;font-weight:600;margin-left:auto;padding:2px 7px;border-radius:var(--rp);background:var(--ok-bg);color:var(--ok)}
+.dst{font-size:10.5px;color:var(--tx2);line-height:1.45}.dst strong{color:var(--tx)}
+.dp{height:4px;background:var(--sub);border-radius:var(--rp);overflow:hidden;margin-top:5px}
+.db{height:100%;border-radius:var(--rp)}
+/* Task table */
+.tt{width:100%;border-collapse:collapse}
+.tt th{text-align:left;font-size:10.5px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;padding:4px 9px;border-bottom:1px solid var(--bd)}
+.tt td{padding:5px 9px;font-size:12px;vertical-align:middle;border-bottom:1px dashed var(--bd)}
+.tt tr:last-child td{border-bottom:none}
+.tt tbody tr{height:30px}
+.tdn{font-weight:700;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdd{color:var(--tx2);font-size:11px}
+.tdo{display:flex;align-items:center;gap:6px}
+.tda{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0}
+.pp{font-size:10px;font-weight:600;padding:1px 8px;border-radius:var(--rp);display:inline-flex}
+.ph{background:var(--err-bg);color:var(--err)}.pm{background:var(--warn-bg);color:var(--warn)}.pl{background:var(--info-bg);color:var(--info)}
+.sp{font-size:10px;font-weight:600;padding:1px 8px;border-radius:var(--rp)}
+.spr{background:var(--info-bg);color:#0891B2}.spd{background:var(--ok-bg);color:#059669}
+.pbo{width:64px}.pbb{height:5px;background:var(--sub);border-radius:var(--rp);overflow:hidden}.pbi{height:100%;border-radius:var(--rp)}
+/* Analytics 3-col */
+.r3c{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:1 1 0;min-height:0}
+.dw{display:flex;align-items:center;gap:14px;flex:1;min-height:0}
+.dnc{width:84px;height:84px;flex-shrink:0;position:relative}
+.dnh{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.dnt{font-size:9px;color:var(--tx3)}.dna{font-size:12px;font-weight:800}
+.dnl{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.dlr{display:flex;align-items:center;gap:6px;font-size:11px}
+.ldr{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.dln{color:var(--tx2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dlc{font-weight:700}.dlp{color:var(--tx3);font-size:10px}
+.bl{display:flex;flex-direction:column;gap:7px;flex:1;justify-content:center}
+.br{display:flex;align-items:center;gap:9px}
+.brl{font-size:11px;color:var(--tx2);width:62px;flex-shrink:0;text-align:right}
+.brt{flex:1;height:15px;background:var(--sub);border-radius:4px;overflow:hidden}
+.brf{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9.5px;font-weight:600;color:#fff;min-width:28px}
+.brc{font-size:11px;color:var(--tx3);width:38px;flex-shrink:0;text-align:right}
+.nfl{display:flex;flex-direction:column;gap:0;flex:1;justify-content:center}
+.nfi{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px dashed var(--bd)}
+.nfi:last-child{border-bottom:none}
+.nd{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.nb{flex:1;min-width:0;min-width:0}.nt{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ntm{font-size:10px;color:var(--tx3);margin-top:1px}
+/* Quick actions */
+.qa{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex:0 0 56px}
+.qb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 6px;border:1px solid var(--bd);border-radius:var(--rl);background:var(--card);cursor:pointer;transition:all .15s;box-shadow:var(--sh-sm)}
+.qb:hover{border-color:var(--t300);transform:translateY(-2px);box-shadow:var(--sh-md)}
+.qbi{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qbi svg{width:16px;height:16px}
+.qbl{font-size:11.5px;font-weight:700;color:var(--tx)}.qbd{font-size:9.5px;color:var(--tx3);text-align:center}
+.qbp{border:2px dashed var(--bd2);background:transparent;box-shadow:none}.qbp:hover{border-color:var(--t400)}
+.ft{display:none}
+@media(max-width:1280px){.kr{grid-template-columns:repeat(3,1fr)}.dmg{grid-template-columns:repeat(2,1fr)}.r3c{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.kr{grid-template-columns:repeat(2,1fr)}.r2c,.r3c{grid-template-columns:1fr}.qa{grid-template-columns:repeat(3,1fr)}.sb{display:none}.ct{overflow-y:auto;height:auto}}
+@media(max-width:640px){.kr{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.qa{grid-template-columns:repeat(2,1fr)}.tb{flex-direction:column;align-items:flex-start;gap:8px;padding:12px;height:auto}.tr{width:100%;justify-content:space-between}.se{flex:1;min-width:0}.ct{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<aside class="sb">
+<div class="brand"><div class="bi">C</div><div class="bt"><h1>Curis Workspace</h1><p>一人公司的操作系统</p></div></div>
+<nav class="nl">
+<button class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>公司总览</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>员工系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>部门管理</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg>任务系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>工作流</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg>知识库</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>能力中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>经营范围</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>AI 成本</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 14 11 10 15 16 19 6"/></svg>财务中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>报告中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>系统设置</button>
+</nav>
+<div class="sbb"><div class="uc"><div class="ua">C</div><div><div class="uh4">Curis</div><div class="usp">v0.3</div></div><span class="sd"></span></div></div>
+</aside>
+<div class="main">
+<header class="tb">
+<div class="tg"><h2>下午好，<em>Curis CEO</em> 👋</h2><p>欢迎回来！这是公司今天的运营概览。</p></div>
+<div class="tr">
+<div class="se"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>搜索任务、员工、文档…</div>
+<div class="rs">当前角色：<strong>CEO</strong></div>
+<div class="lt">🌐 中文</div>
+<button class="ta" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13 21a2 2 0 01-2 0"/></svg></button>
+<div class="am">C</div>
+</div>
+</header>
+<div class="ct">
+
+<!-- KPI 6-col -->
+<section class="kr">
+<article class="kc"><div class="kct"><div class="kci" style="background:var(--t100);color:var(--t700)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><span class="kcl">公司运行状态</span></div><div class="kcv" style="color:var(--t700)">正常运行</div><div class="kctd up">健康度 96%</div><svg class="ksp" viewBox="0 0 200 26" preserveAspectRatio="none"><polyline points="0,20 25,14 50,18 75,8 100,12 125,6 150,10 175,7 200,4" fill="none" stroke="var(--t500)" stroke-width="2"/><polyline points="0,23 25,21 50,22 75,18 100,20 125,16 150,18 175,17 200,15" fill="none" stroke="var(--t300)" stroke-width="1.5"/></svg></article>
+<article class="kc"><div class="kct"><div class="kci" style="background:var(--ok-bg);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="kcl">活跃员工</span></div><div class="kcv">12<span style="font-size:14px;color:var(--tx3)"> / 18</span></div><div class="kctd up">在线 12 人</div></article>
+<article class="kc"><div class="kct"><div class="kci" style="background:var(--pur-bg);color:var(--pur)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg></div><span class="kcl">进行中任务</span></div><div class="kcv">9</div><div class="kctd up">↑ 较昨日 +2</div></article>
+<article class="kc"><div class="kct"><div class="kci" style="background:var(--warn-bg);color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="kcl">今日完成任务</span></div><div class="kcv">6</div><div class="kctd up">↑ 较昨日 +60%</div></article>
+<article class="kc"><div class="kct"><div class="kci" style="background:var(--ok-bg);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="kcl">今日收益</span></div><div class="kcv">¥128.60</div><div class="kctd up">↑ +12.5%</div></article>
+<article class="kc"><div class="kct"><div class="kci" style="background:#FFF7ED;color:#EA580C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><span class="kcl">今日净收益</span></div><div class="kcv">¥115.80</div><div class="kctd up">↑ +11.5%</div></article>
+</section>
+
+<!-- Finance + Chart -->
+<section class="r2c">
+<div class="cd"><div class="cdt">财务概览（今日）</div><div class="fg">
+<div><div class="fl">总收益</div><div class="fv">¥128.60</div><div class="fa up">较昨日 ↑12.5%</div></div>
+<div><div class="fl">总成本（AI 支出）</div><div class="fv">¥12.80</div><div class="fa dn">较昨日 ↑8.5%</div></div>
+<div><div class="fl">净收益</div><div class="fv">¥115.80</div><div class="fa up">较昨日 ↑11.3%</div></div>
+</div></div>
+<div class="cd">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="cdt" style="margin-bottom:0">收益趋势（近 7 天）</div>
+<div class="cl"><span class="ld"><i class="ldot" style="background:var(--ok)"></i>总收益</span><span class="ld"><i class="ldot" style="background:var(--err)"></i>总成本</span><span class="ld"><i class="ldot" style="background:#3B82F6"></i>净收益</span><select style="font-size:10.5px;border:1px solid var(--bd);border-radius:4px;padding:1px 5px;color:var(--tx2);background:transparent"><option>7天</option><option>30天</option></select></div></div>
+<div class="ch"><svg viewBox="0 0 520 120" width="100%" height="100%" preserveAspectRatio="none">
+<g stroke="#E8FCF7" stroke-width="1"><line x1="0" y1="30" x2="520" y2="30"/><line x1="0" y1="60" x2="520" y2="60"/><line x1="0" y1="90" x2="520" y2="90"/></g>
+<g fill="var(--tx3)" font-size="9.5"><text x="20" y="117">05-14</text><text x="92" y="117">05-15</text><text x="164" y="117">05-16</text><text x="236" y="117">05-17</text><text x="308" y="117">05-18</text><text x="380" y="117">05-19</text><text x="452" y="117">05-20</text></g>
+<polyline points="20,78 92,64 164,72 236,56 308,62 380,52 452,48" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round"/>
+<polyline points="20,105 92,103 164,104 236,102 308,103 380,101 452,102" fill="none" stroke="#EF4444" stroke-width="2" stroke-dasharray="4,3" stroke-linecap="round"/>
+<polygon points="20,44 92,32 164,40 236,28 308,36 380,26 452,34 452,115 20,115" fill="url(#gg)" opacity=".12"/>
+<polyline points="20,44 92,32 164,40 236,28 308,36 380,26 452,34" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round"/>
+<g fill="#10B981"><circle cx="20" cy="44" r="3"/><circle cx="92" cy="32" r="3"/><circle cx="164" cy="40" r="3"/><circle cx="236" cy="28" r="3"/><circle cx="308" cy="36" r="3"/><circle cx="380" cy="26" r="3"/><circle cx="452" cy="34" r="3"/></g>
+<defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/></linearGradient></defs>
+</svg></div>
+</div>
+</section>
+
+<!-- Dept + Task -->
+<div class="sh"><h3>部门运行状态 &amp; 任务看板</h3><span class="mr">查看全部</span></div>
+<section class="r2c depttask">
+<div class="cd" style="padding:11px 13px">
+<div class="dmg">
+<div class="dc"><div class="dh"><div class="di" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><span class="dn">研发部</span><span class="ds">运行中 →</span></div><div class="dst">活跃 <strong>6</strong>/8 · 完成 <strong>4</strong> · 率 <strong>75%</strong></div><div class="dp"><div class="db" style="width:75%;background:var(--t500)"></div></div></div>
+<div class="dc"><div class="dh"><div class="di" style="background:linear-gradient(135deg,var(--ok),#34D399)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="20" y2="5"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="19" x2="14" y2="19"/></svg></div><span class="dn">运营部</span><span class="ds">运行中 →</span></div><div class="dst">活跃 <strong>3</strong>/4 · 进行 <strong>2</strong> · 率 <strong>50%</strong></div><div class="dp"><div class="db" style="width:50%;background:var(--ok)"></div></div></div>
+<div class="dc"><div class="dh"><div class="di" style="background:linear-gradient(135deg,var(--pur),#A78BFA)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 3 21 3 21 21 3 21"/><polyline points="7 14 11 10 15 16 21 6"/></svg></div><span class="dn">财务部</span><span class="ds">运行中 →</span></div><div class="dst">活跃 <strong>2</strong>/3 · 进行 <strong>2</strong> · 率 <strong>66%</strong></div><div class="dp"><div class="db" style="width:66%;background:var(--pur)"></div></div></div>
+<div class="dc"><div class="dh"><div class="di" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="1"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></div><span class="dn">内容部</span><span class="ds">运行中 →</span></div><div class="dst">活跃 <strong>2</strong>/5 · 进行 <strong>1</strong> · 率 <strong>40%</strong></div><div class="dp"><div class="db" style="width:40%;background:#F59E0B"></div></div></div>
+</div></div>
+<div class="cd"><div class="cdt">任务看板（进行中）</div>
+<table class="tt"><thead><tr><th>任务名称</th><th>部门</th><th>负责人</th><th>优先级</th><th>截止</th><th>进度</th><th>状态</th></tr></thead><tbody>
+<tr><td class="tdn">用户认证模块开发</td><td class="tdd">研发部</td><td class="tdo"><div class="tda" style="background:#3B82F6">J</div>John</td><td><span class="pp ph">高</span></td><td>今天</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:85%;background:var(--t500)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">用户增长策略优化</td><td class="tdd">运营部</td><td class="tdo"><div class="tda" style="background:var(--ok)">M</div>Mike</td><td><span class="pp pm">中</span></td><td>明天</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:60%;background:var(--ok)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">AI 投资项目评估</td><td class="tdd">投资部</td><td class="tdo"><div class="tda" style="background:var(--pur)">E</div>Emma</td><td><span class="pp ph">高</span></td><td>明天</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:30%;background:var(--pur)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">内容发布计划制定</td><td class="tdd">内容部</td><td class="tdo"><div class="tda" style="background:#F59E0B">L</div>Lily</td><td><span class="pp pl">低</span></td><td>后天</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:85%;background:#F59E0B"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">登录页 UI 设计</td><td class="tdd">研发部</td><td class="tdo"><div class="tda" style="background:#3B82F6">A</div>Alice</td><td><span class="pp pm">中</span></td><td>后天</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:90%;background:#3B82F6"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+</tbody></table></div>
+</section>
+
+<!-- AI Cost + TOP5 + Notifications -->
+<section class="r3c">
+<div class="cd"><div class="cdt">AI 成本分布（今日）</div><div class="dw">
+<div class="dnc"><svg viewBox="0 0 110 110" width="84" height="84">
+<circle cx="55" cy="55" r="46" fill="none" stroke="#F0FDF9" stroke-width="14"/>
+<circle cx="55" cy="55" r="46" fill="none" stroke="#3B82F6" stroke-width="14" stroke-dasharray="144.7 289.03" stroke-dashoffset="0" transform="rotate(-90 55 55)" stroke-linecap="round"/>
+<circle cx="55" cy="55" r="46" fill="none" stroke="#F59E0B" stroke-width="14" stroke-dasharray="72.35 361.37" stroke-dashoffset="-144.7" transform="rotate(-90 55 55)" stroke-linecap="round"/>
+<circle cx="55" cy="55" r="46" fill="none" stroke="#10B981" stroke-width="14" stroke-dasharray="57.88 375.84" stroke-dashoffset="-217.05" transform="rotate(-90 55 55)" stroke-linecap="round"/>
+<circle cx="55" cy="55" r="46" fill="none" stroke="#9CA3AF" stroke-width="14" stroke-dasharray="14.47 419.26" stroke-dashoffset="-274.93" transform="rotate(-90 55 55)" stroke-linecap="round"/>
+</svg><div class="dnh"><span class="dnt">总成本</span><span class="dna">¥12.80</span></div></div>
+<div class="dnl">
+<div class="dlr"><span class="ldr" style="background:#3B82F6"></span><span class="dln">GPT-4o</span><span class="dlc">¥6.40</span></div>
+<div class="dlr"><span class="ldr" style="background:#F59E0B"></span><span class="dln">Claude 3.5</span><span class="dlc">¥3.20</span></div>
+<div class="dlr"><span class="ldr" style="background:var(--ok)"></span><span class="dln">Embedding</span><span class="dlc">¥2.56</span></div>
+<div class="dlr"><span class="ldr" style="background:#9CA3AF"></span><span class="dln">其他</span><span class="dlc">¥0.64</span></div>
+</div></div></div>
+
+<div class="cd"><div class="cdt">能力使用 TOP5</div><div class="bl">
+<div class="br"><span class="brl">代码生成</span><div class="brt"><div class="brf" style="width:80%;background:#3B82F6">320</div></div><span class="brc">320</span></div>
+<div class="br"><span class="brl">文案分析</span><div class="brt"><div class="brf" style="width:65%;background:var(--t500)">256</div></div><span class="brc">256</span></div>
+<div class="br"><span class="brl">数据分析</span><div class="brt"><div class="brf" style="width:50%;background:var(--pur)">198</div></div><span class="brc">198</span></div>
+<div class="br"><span class="brl">内容创作</span><div class="brt"><div class="brf" style="width:42%;background:var(--warn)">165</div></div><span class="brc">165</span></div>
+<div class="br"><span class="brl">投资分析</span><div class="brt"><div class="brf" style="width:25%;background:var(--ok)">98</div></div><span class="brc">98</span></div>
+</div></div>
+
+<div class="cd"><div class="cdt">系统通知</div><div class="nfl">
+<div class="nfi"><span class="nd" style="background:var(--ok)"></span><div class="nb"><div class="nt">任务完成：产品需求文档已归档</div><div class="ntm">10 分钟前</div></div></div>
+<div class="nfi"><span class="nd" style="background:var(--warn)"></span><div class="nb"><div class="nt">新人入职：Engineer John 已加入研发部</div><div class="ntm">30 分钟前</div></div></div>
+<div class="nfi"><span class="nd" style="background:var(--pur)"></span><div class="nb"><div class="nt">成本预警：今日 AI 成本超昨日 8.5%</div><div class="ntm">2 小时前</div></div></div>
+<div class="nfi"><span class="nd" style="background:var(--info)"></span><div class="nb"><div class="nt">系统更新：核心已更新至 v1.0.3</div><div class="ntm">3 小时前</div></div></div>
+</div></div>
+</section>
+
+<!-- Quick Actions -->
+<section class="qa">
+<div class="qb"><div class="qbi" style="background:var(--t100);color:var(--t700)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><span class="qbl">创建任务</span></div>
+<div class="qb"><div class="qbi" style="background:var(--pur-bg);color:var(--pur)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><span class="qbl">分配员工</span></div>
+<div class="qb"><div class="qbi" style="background:var(--info-bg);color:var(--info)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><span class="qbl">启动工作流</span></div>
+<div class="qb"><div class="qbi" style="background:var(--warn-bg);color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="qbl">查看报告</span></div>
+<div class="qb"><div class="qbi" style="background:var(--ok-bg);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><span class="qbl">经营范围</span></div>
+<div class="qb qbp"><div class="qbi" style="border:2px dashed var(--bd2);background:none;color:var(--tx3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span class="qbl">自定义</span></div>
+</section>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</body></html>

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "version_source": "skill-release-manifest.json"
+  },
+  "project": {
+    "resolvedLane": "complex_html_page",
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      { "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md", "readStatus": "loaded", "bodyRead": true }
+    ],
+    "contextReadScope": "lane-runtime-contracts, design-project-file-format, orchestration-summary-contract",
+    "validationRunDiscipline": "validate-design-workspace + validate-finish-readiness",
+    "lowValueCallWatchdog": { "maxIdleSteps": 3, "noProgressNextAction": "stop" },
+    "operation": "create",
+    "deviceType": "desktop",
+    "designRead": "enterprise workspace / ceo dashboard / warm-cream-green / high-density / sidebar-layout",
+    "designDials": { "layoutVariance": 2, "motionIntensity": 1, "visualDensity": 4 }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "cssFilePath": "colors_and_type.css",
+    "styleConstraints": {
+      "radiusMax": 16,
+      "staticShadowAlphaMax": 0.05
+    }
+  },
+  "pages": [
+    {
+      "nodeId": "page-ceo-office",
+      "htmlSrc": "pages/ceo-office.html",
+      "title": "总裁办公室 / 总部驾驶舱"
+    },
+    {
+      "nodeId": "page-org-center",
+      "htmlSrc": "pages/org-center.html",
+      "title": "组织中心"
+    },
+    {
+      "nodeId": "page-capability-center",
+      "htmlSrc": "pages/capability-center.html",
+      "title": "能力中心"
+    }
+  ]
+}

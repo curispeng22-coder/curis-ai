@@ -1,0 +1,54 @@
+sequenceDiagram
+    participant Admin as Platform Admin
+    participant API as main.py (/api/platform/*)
+    participant Svc as CatalogAuthoringService
+    participant DB as Database
+    participant Fold as CatalogFoldService
+    participant WS as Workspace (/api/catalog/*)
+
+    Note over Admin,WS: === Gate D: 写官方 Persona + 只读目录输出 ===
+    Admin->>API: POST /api/platform/personas (pt_*)
+    API->>API: _require_platform_admin(request)
+    API->>Svc: create_persona(payload)
+    Svc->>Svc: 校验 persona_id 前缀(pt_) + archetype 枚举
+    Svc->>DB: insert persona_templates
+    DB-->>Svc: row
+    Svc-->>API: 201 PersonaTemplate
+    API-->>Admin: 201
+
+    WS->>API: GET /api/catalog/templates?type=persona
+    API->>Fold: list_catalog(type=persona)
+    Fold->>DB: select persona_templates
+    DB-->>Fold: rows
+    Fold->>Fold: fold() → TemplateCatalogEntry (source 收窄 official)
+    Fold-->>API: entries
+    API-->>WS: 9 字段 entry（含 metadata.archetype）
+
+    Note over Admin,WS: === Gate E: Employee 注入（创建实例携带 persona_ref 快照） ===
+    participant Inst as CompanyInstantiationService
+    participant ET as EmployeeTemplateContract
+    participant PT as persona_templates
+    Inst->>ET: create_employee_instance(department_id, et_backend_engineer)
+    ET->>DB: 读 employee_templates (et_backend_engineer)
+    DB-->>ET: template {persona_ref: pt_direct_executor, default_skill, default_tool}
+    ET->>DB: insert employee_instances (含 persona_ref/default_skill/default_tool 快照)
+    ET->>DB: insert template_version_snapshots (employee, et_backend_engineer, v1.0.0)
+    DB-->>ET: employee_instance
+    ET-->>Inst: instance (含 persona_ref)
+
+    Note over Admin,WS: === Gate F: 从 ccp_ai_software_company 实例化 ===
+    Admin->>API: POST /api/platform/company-packages/ccp_ai_software_company/instantiate
+    API->>API: _require_platform_admin(request)
+    API->>Inst: instantiate("ccp_ai_software_company", tenant_id)
+    Inst->>DB: 读 company_packages → refs
+    Inst->>ET: create_department_instance(dt_engineering)
+    ET->>DB: insert department_instances + snapshot(department, dt_engineering)
+    loop 6× et_*
+        Inst->>ET: create_employee_instance(dept_id, et_*)
+        ET->>DB: insert employee_instances(含 persona_ref 快照) + snapshot(employee, et_*)
+    end
+    loop wl_* → wt_*
+        Inst->>DB: ensure workflow_templates(wt_*) + insert workflow_instances + snapshot
+    end
+    Inst-->>API: {company_id, departments[], employees[], workflows[], snapshots[]}
+    API-->>Admin: 200 实例化摘要

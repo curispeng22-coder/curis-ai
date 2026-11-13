@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis · 组织中心（Terra 效果图）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6f0; --canvas:#f1ede4; --surface:#fbf8f1; --surface-2:#f5f1e8;
+    --primary:#4a7c59; --primary-strong:#3a6649; --primary-soft:#e4efe6;
+    --tertiary:#705c30; --tertiary-soft:#efe3c8;
+    --on-primary:#fbf8f1;
+    --text-1:#2e3230; --text-2:#5c625c; --text-3:#8a8f84;
+    --border:#e3ded2; --border-strong:#cdc6b4;
+    --ok:#4a7c59; --warn:#a8742a; --risk:#c0843a; --error:#b83230; --info:#3f7d6e; --decision:#8a6d2f;
+    --shadow-soft:0 4px 20px rgba(46,50,48,0.06);
+    --shadow-card:0 2px 10px rgba(46,50,48,0.05);
+    --r-panel:12px; --r-lg:16px; --r-ctrl:8px; --side-w:176px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',PingFang SC,'Microsoft YaHei',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased}
+  .mat{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';}
+
+  /* Sidebar */
+  .sidebar{position:fixed;left:0;top:0;width:var(--side-w);height:100vh;background:var(--primary);color:var(--on-primary);display:flex;flex-direction:column;padding:20px 12px;z-index:50}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
+  .brand .logo{width:30px;height:30px;border-radius:9px;background:var(--on-primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+  .brand .name{font-size:15px;font-weight:700;line-height:1.1}
+  .brand .sub{font-size:10px;opacity:.8;letter-spacing:.04em}
+  .create-btn{width:100%;background:var(--tertiary);color:var(--on-primary);border:none;border-radius:var(--r-ctrl);padding:9px 10px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;margin-bottom:14px;transition:background .15s}
+  .create-btn:hover{background:#5e4c27}
+  .nav{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-ctrl);color:rgba(251,248,241,.82);font-size:13.5px;font-weight:500;text-decoration:none;transition:background .15s,color .15s;cursor:pointer}
+  .nav-item:hover{background:rgba(251,248,241,.10);color:var(--on-primary)}
+  .nav-item.active{background:rgba(251,248,241,.16);color:var(--on-primary);font-weight:600}
+  .nav-item .mat{font-size:20px}
+  .nav-item .chev{margin-left:auto;font-size:18px;opacity:.7}
+  .sub-nav{margin:1px 0 2px 30px;display:flex;flex-direction:column;gap:1px}
+  .sub-nav a{font-size:12.5px;color:rgba(251,248,241,.7);text-decoration:none;padding:6px 10px;border-radius:6px;transition:background .15s}
+  .sub-nav a:hover{background:rgba(251,248,241,.10);color:var(--on-primary)}
+  .sub-nav a.on{color:var(--on-primary);font-weight:600}
+  .side-foot{margin-top:10px;padding-top:12px;border-top:1px solid rgba(251,248,241,.18);display:flex;align-items:center;gap:9px}
+  .side-foot .ava{width:32px;height:32px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--primary-soft)}
+  .side-foot .nm{font-size:13px;font-weight:600;color:var(--on-primary);line-height:1.1}
+  .side-foot .rl{font-size:10.5px;opacity:.8}
+
+  /* Main */
+  .main{margin-left:var(--side-w);min-height:100vh;display:flex;flex-direction:column;background:var(--canvas)}
+  .topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:30}
+  .topbar .pt{font-size:18px;font-weight:700;color:var(--primary)}
+  .topbar .status{display:flex;gap:16px;margin-top:3px;font-size:12px;color:var(--text-2)}
+  .topbar .status span{display:flex;align-items:center;gap:5px}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)}
+  .topbar .right{display:flex;align-items:center;gap:18px}
+  .search{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:7px 14px}
+  .search input{border:none;background:transparent;outline:none;font-size:13px;width:150px;color:var(--text-1);font-family:inherit}
+  .search .mat{font-size:18px;color:var(--text-3)}
+  .tabs{display:flex;gap:18px;font-size:13px;font-weight:500}
+  .tabs a{color:var(--text-2);text-decoration:none;padding-bottom:2px;cursor:pointer}
+  .tabs a.on{color:var(--primary);border-bottom:2px solid var(--primary);font-weight:600}
+
+  .content{padding:24px;display:flex;flex-direction:column;gap:16px;flex:1}
+  .page-id .h{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .page-id .s{font-size:14px;color:var(--text-2);margin-top:6px}
+
+  .row{display:grid;gap:16px}
+  .row.r-48{grid-template-columns:4fr 8fr}
+  .row.r-84{grid-template-columns:8fr 4fr}
+  .row.r-75{grid-template-columns:7fr 5fr}
+  .row.r-12{grid-template-columns:1fr}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-panel);padding:20px;box-shadow:var(--shadow-card)}
+  .panel > .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .panel > .ph .t{font-size:16px;font-weight:600}
+  .panel > .ph .ic{color:var(--primary)}
+  .panel > .ph .more{cursor:pointer;color:var(--text-3)}
+
+  /* Fact strip compact */
+  .fact-strip{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;align-items:stretch}
+  .fact{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-panel);padding:16px 18px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:4px}
+  .fact .lab{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+  .fact .big{font-size:26px;font-weight:700;color:var(--text-1);line-height:1}
+  .fact .meta{font-size:12px;color:var(--text-2)}
+  .fact-action{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-panel);padding:0 22px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-card)}
+  .fact-action button{background:var(--primary);color:var(--on-primary);border:none;border-radius:var(--r-ctrl);padding:10px 18px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .15s}
+  .fact-action button:hover{background:var(--primary-strong)}
+
+  .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px}
+  .tag.ok{background:var(--primary-soft);color:var(--primary-strong)}
+  .tag.warn{background:#f6ecd9;color:var(--warn)}
+  .tag.off{background:var(--surface-2);color:var(--text-2)}
+
+  /* Org spatial stage (8) */
+  .stage{position:relative;border-radius:var(--r-panel);overflow:hidden;min-height:240px;
+    background:radial-gradient(120% 90% at 25% 15%,#e9f1e7 0%,rgba(233,241,231,0) 55%),radial-gradient(120% 90% at 85% 85%,#f3ece0 0%,rgba(243,236,224,0) 55%),linear-gradient(160deg,#dfe9dd,#eceae0);
+    border:1px solid var(--border);box-shadow:var(--shadow-soft);
+    display:flex;align-items:center;justify-content:center}
+  .stage .node{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;box-shadow:var(--shadow-soft);display:flex;flex-direction:column;gap:4px;text-align:center;width:150px}
+  .stage .node .nm{font-size:13.5px;font-weight:600}
+  .stage .node .d{font-size:11.5px;color:var(--text-3)}
+  .stage .node.org{width:170px}
+  .stage .cap{position:absolute;left:16px;bottom:14px;font-size:12px;color:var(--text-2);background:rgba(251,248,241,.7);padding:4px 10px;border-radius:999px}
+
+  /* Org health facts (4) */
+  .hf{display:flex;flex-direction:column;gap:14px}
+  .hf .it{display:flex;flex-direction:column;gap:3px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+  .hf .it:last-child{border-bottom:none;padding-bottom:0}
+  .hf .it .k{font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px}
+  .hf .it .v{font-size:18px;font-weight:700;color:var(--text-1)}
+  .hf .it .d{font-size:12px;color:var(--text-2)}
+
+  /* Department space two columns */
+  .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .dept{display:flex;gap:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-panel);padding:16px;transition:box-shadow .15s}
+  .dept:hover{box-shadow:var(--shadow-soft)}
+  .dept .thumb{width:84px;height:84px;border-radius:12px;flex-shrink:0;background:linear-gradient(150deg,#e3ecdf,#efe7d8);display:flex;align-items:center;justify-content:center;color:var(--primary);border:1px solid var(--border)}
+  .dept .info{flex:1;min-width:0}
+  .dept .info .nm{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .dept .info .ld{font-size:12.5px;color:var(--text-2);margin-top:3px}
+  .dept .info .st{font-size:11.5px;color:var(--text-3);margin-top:8px;display:flex;gap:14px}
+  .dept .info .st b{color:var(--text-1);font-weight:600}
+
+  /* AI employees (7) */
+  .emp{display:flex;align-items:center;gap:12px;padding:11px;border-radius:10px;transition:background .15s;cursor:pointer;border:1px solid transparent}
+  .emp:hover{background:var(--surface-2);border-color:var(--border)}
+  .emp .ava{width:42px;height:42px;border-radius:12px;flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+  .emp .tx{flex:1;min-width:0}
+  .emp .tx .nm{font-size:13.5px;font-weight:600;color:var(--text-1)}
+  .emp .tx .rl{font-size:12px;color:var(--text-2)}
+  .emp .st{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+  .emp .st.on{background:var(--primary-soft);color:var(--primary-strong)}
+  .emp .st.wait{background:var(--surface-2);color:var(--text-2)}
+
+  /* Boundary (5) */
+  .boundary{background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:var(--r-panel);padding:16px 20px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+  .boundary .l{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text-2)}
+  .boundary .l .mat{color:var(--primary);font-size:20px}
+  .boundary .links{display:flex;flex-direction:column;gap:8px;font-size:11.5px}
+  .boundary .links a{color:var(--text-2);text-decoration:none}
+  .boundary .links a:hover{color:var(--primary)}
+
+  @media (max-width:1100px){
+    .fact-strip{grid-template-columns:1fr 1fr}
+    .row.r-48,.row.r-84,.row.r-75{grid-template-columns:1fr}
+    .dept-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo">C</div>
+    <div><div class="name">Curis Workspace</div><div class="sub">AI OPERATING SYSTEM</div></div>
+  </div>
+  <button class="create-btn"><span class="mat">add</span>新建任务</button>
+  <nav class="nav">
+    <a class="nav-item"><span class="mat">business_center</span>总裁办公室<span class="mat chev">expand_more</span></a>
+    <div class="sub-nav">
+      <a>决策中心</a><a>重要汇报</a><a>战略会议室</a>
+    </div>
+    <a class="nav-item"><span class="mat">account_tree</span>项目中心</a>
+    <a class="nav-item active"><span class="mat" style="font-variation-settings:'FILL' 1">groups</span>组织中心</a>
+    <a class="nav-item"><span class="mat">psychology</span>能力中心</a>
+    <a class="nav-item"><span class="mat">monitoring</span>经营分析</a>
+    <a class="nav-item"><span class="mat">bolt</span>头脑风暴室</a>
+    <a class="nav-item"><span class="mat">menu_book</span>知识中心</a>
+    <a class="nav-item"><span class="mat">terminal</span>执行工作台</a>
+    <a class="nav-item"><span class="mat">settings</span>公司设置</a>
+  </nav>
+  <div class="side-foot">
+    <div class="ava"><svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" fill="#dfe9dd"/><circle cx="16" cy="13" r="6" fill="#caa47e"/><path d="M6 30c0-6 4.5-9 10-9s10 3 10 9z" fill="#caa47e"/><path d="M9 10c1-4 5-5 7-5s6 1 7 5c-2-1.5-4-2-7-2s-5 .5-7 2z" fill="#5b4636"/></svg></div>
+    <div><div class="nm">陈昭</div><div class="rl">CEO</div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="pt">组织中心</div>
+      <div class="status"><span><i class="dot ok"></i>组织运行正常</span><span><i class="dot warn"></i>1 部门有阻塞</span></div>
+    </div>
+    <div class="right">
+      <div class="search"><span class="mat">search</span><input placeholder="搜索组织…"/></div>
+      <div class="tabs"><a class="on">总览</a><a>部门</a><a>员工</a></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Page identity + org facts -->
+    <div class="row r-48">
+      <div class="page-id">
+        <div class="h">组织总览</div>
+        <div class="s">以部门空间呈现公司组织</div>
+      </div>
+      <div class="fact-strip">
+        <div class="fact"><div class="lab">部门总数</div><div class="big">2</div><div class="meta">真实部门</div></div>
+        <div class="fact"><div class="lab">AI 员工</div><div class="big">7</div><div class="meta">在岗 6 · 待命 1</div></div>
+        <div class="fact"><div class="lab">进行中项目</div><div class="big">5</div><div class="meta">跨 2 部门</div></div>
+        <div class="fact-action"><button><span class="mat">add_business</span>新建部门</button></div>
+      </div>
+    </div>
+
+    <!-- Org spatial overview (8) + health facts (4) -->
+    <div class="row r-84">
+      <div class="stage">
+        <div class="node org"><div class="nm">星云研发公司</div><div class="d">CEO 办公室</div></div>
+        <div class="cap">组织空间总览（效果图占位）</div>
+      </div>
+      <div class="panel">
+        <div class="ph"><div class="t">组织健康事实</div></div>
+        <div class="hf">
+          <div class="it"><div class="k"><span class="mat" style="font-size:16px;color:var(--primary)">favorite</span>员工情绪</div><div class="v">88</div><div class="d">运行正常</div></div>
+          <div class="it"><div class="k"><span class="mat" style="font-size:16px;color:var(--info)">hub</span>部门负载</div><div class="v">均衡</div><div class="d">AI 研发中心偏满</div></div>
+          <div class="it"><div class="k"><span class="mat" style="font-size:16px;color:var(--warn)">warning</span>活动阻塞</div><div class="v">1</div><div class="d">AI 内容中心</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department space (12) -->
+    <div class="panel">
+      <div class="ph"><div class="t">部门空间</div><span class="mat more">open_in_full</span></div>
+      <div class="dept-grid">
+        <div class="dept">
+          <div class="thumb"><span class="mat" style="font-size:34px">hub</span></div>
+          <div class="info">
+            <div class="nm">AI 研发中心<span class="tag ok"><i class="dot" style="background:var(--ok)"></i>运行中</span></div>
+            <div class="ld">负责人：林见 · 当前项目 3</div>
+            <div class="st"><span>AI 员工 <b>4</b></span><span>进行中任务 <b>12</b></span><span>阻塞 <b>0</b></span></div>
+          </div>
+        </div>
+        <div class="dept">
+          <div class="thumb"><span class="mat" style="font-size:34px">campaign</span></div>
+          <div class="info">
+            <div class="nm">AI 内容中心<span class="tag warn"><i class="dot" style="background:var(--warn)"></i>有阻塞</span></div>
+            <div class="ld">负责人：苏明 · 当前项目 2</div>
+            <div class="st"><span>AI 员工 <b>3</b></span><span>进行中任务 <b>7</b></span><span>阻塞 <b>1</b></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI employees (7) + boundary (5) -->
+    <div class="row r-75">
+      <div class="panel">
+        <div class="ph"><div class="t">AI 员工</div><span class="mat more">groups</span></div>
+
+        <div class="emp">
+          <div class="ava"><svg viewBox="0 0 42 42" width="42" height="42"><rect width="42" height="42" fill="#e7efe6"/><circle cx="21" cy="17" r="8" fill="#d8b48a"/><path d="M7 40c0-8 6-12 14-12s14 4 14 12z" fill="#d8b48a"/><path d="M11 14c1-6 7-7 10-7s9 1 10 7c-3-2-6-3-10-3s-7 1-10 3z" fill="#7a5d44"/></svg></div>
+          <div class="tx"><div class="nm">灵犀</div><div class="rl">研发负责人 · AI 研发中心</div></div>
+          <div class="st on">在岗</div>
+        </div>
+        <div class="emp">
+          <div class="ava"><svg viewBox="0 0 42 42" width="42" height="42"><rect width="42" height="42" fill="#f1ece0"/><circle cx="21" cy="17" r="8" fill="#c9a06f"/><path d="M7 40c0-8 6-12 14-12s14 4 14 12z" fill="#c9a06f"/><path d="M11 14c1-6 7-7 10-7s9 1 10 7c-3-2-6-3-10-3s-7 1-10 3z" fill="#4a3a2c"/></svg></div>
+          <div class="tx"><div class="nm">墨言</div><div class="rl">内容策划 · AI 内容中心</div></div>
+          <div class="st on">在岗</div>
+        </div>
+        <div class="emp">
+          <div class="ava"><svg viewBox="0 0 42 42" width="42" height="42"><rect width="42" height="42" fill="#e9efe3"/><circle cx="21" cy="17" r="8" fill="#d8b48a"/><path d="M7 40c0-8 6-12 14-12s14 4 14 12z" fill="#d8b48a"/><path d="M11 14c1-6 7-7 10-7s9 1 10 7c-3-2-6-3-10-3s-7 1-10 3z" fill="#5b4636"/></svg></div>
+          <div class="tx"><div class="nm">砺锋</div><div class="rl">测试工程师 · AI 研发中心</div></div>
+          <div class="st on">在岗</div>
+        </div>
+        <div class="emp">
+          <div class="ava"><svg viewBox="0 0 42 42" width="42" height="42"><rect width="42" height="42" fill="#f0e8dc"/><circle cx="21" cy="17" r="8" fill="#c9a06f"/><path d="M7 40c0-8 6-12 14-12s14 4 14 12z" fill="#c9a06f"/><path d="M11 14c1-6 7-7 10-7s9 1 10 7c-3-2-6-3-10-3s-7 1-10 3z" fill="#3a2e22"/></svg></div>
+          <div class="tx"><div class="nm">知微</div><div class="rl">数据分析 · AI 内容中心</div></div>
+          <div class="st wait">待命</div>
+        </div>
+      </div>
+
+      <div class="boundary">
+        <div class="l"><span class="mat">verified</span>组织运行边界</div>
+        <div class="links">
+          <a>· 仅显示真实部门与员工归属</a>
+          <a>· 负责人缺失不推测</a>
+          <a>· 工作状态以明确 Runtime 字段为准</a>
+          <a>· 缺失项显示「暂无事实」</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

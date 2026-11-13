@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小红书自动化 Workflow — Curis CEO Office</title>
+  <link rel="stylesheet" href="../assets/project-detail-prototype.css">
+  <script src="../assets/navigation-ia.js" defer></script>
+  <link rel="stylesheet" href="../assets/navigation-ia.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">CURIS</div>
+      <nav class="nav" aria-label="产品导航">
+        <div class="nav-label">总部</div>
+        <a href="ceo-home.html">⌂ <span>总裁办公室</span></a>
+        <div class="nav-label">公司空间</div>
+        <a class="active" href="project-center.html">▣ <span>项目中心</span></a>
+        <a class="sub" href="project-miniapp-detail.html">微信小程序研发</a>
+        <a class="sub active" href="project-xhs-workflow-detail.html">小红书自动化</a>
+        <a href="org-center.html">♧ <span>组织中心</span></a>
+        <a href="capability-center.html">◇ <span>能力中心</span></a>
+        <div class="nav-label">工作台</div>
+        <a href="execution.html">› <span>执行工作台</span></a>
+        <a href="knowledge.html">▤ <span>知识中心</span></a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="page-top">
+        <div>
+          <a class="back" href="project-center.html">‹ 返回全部项目总览</a>
+          <div class="title-row">
+            <h1 class="title">小红书自动化 Workflow</h1>
+            <span class="badge planning" data-project-status>规划中</span>
+          </div>
+          <p class="subtitle">内容增长部 · Workflow 项目 · 示例项目详情</p>
+        </div>
+        <div class="header-actions">
+          <span class="prototype-label">原型示范数据 · 本地预览</span>
+          <button class="btn primary" type="button" data-open-create>配置并创建 Workflow</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <article class="card hero-main">
+          <div class="hero-kicker">项目目标</div>
+          <h2>把选题到发布排期变成一条可追踪的内容流水线</h2>
+          <p class="hero-goal">内容增长部只需要提交主题、人群和品牌语气，Workflow 负责生成草稿、检查重复和敏感词，再把内容送入人工审核；未经审核不会自动发布。</p>
+          <div class="hero-meta">
+            <span>负责人 <strong>苏然 · 内容增长负责人</strong></span>
+            <span>所属部门 <strong>内容增长部</strong></span>
+            <span>触发方式 <strong>工作日 09:30 + 手动试运行</strong></span>
+          </div>
+        </article>
+        <article class="card hero-side">
+          <div class="owner">
+            <div class="avatar">苏</div>
+            <div><div class="owner-name">苏然</div><div class="owner-role">Workflow 负责人 · 内容增长部</div></div>
+          </div>
+          <div class="fact-grid">
+            <div class="fact"><div class="fact-label">节点</div><div class="fact-value">5<small> 个</small></div></div>
+            <div class="fact"><div class="fact-label">审批点</div><div class="fact-value">2<small> 个</small></div></div>
+            <div class="fact"><div class="fact-label">发布渠道</div><div class="fact-value">1<small> 个</small></div></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="card" style="margin-bottom:14px">
+        <div class="card-hd"><span class="card-title">Workflow 节点</span><span class="card-meta">每个节点都有输入、输出和失败去向</span></div>
+        <div class="card-bd">
+          <div class="workflow">
+            <div class="node"><div class="node-state" data-node-state>已配置</div><h3>1 · 选题输入</h3><p>主题、人群、语气<br>来源：内容选题库</p></div>
+            <div class="node"><div class="node-state" data-node-state>已配置</div><h3>2 · 生成草稿</h3><p>标题、正文、话题<br>能力：文案 Skill</p></div>
+            <div class="node"><div class="node-state" data-node-state>已配置</div><h3>3 · 内容检查</h3><p>重复、敏感词、长度<br>失败转人工处理</p></div>
+            <div class="node wait"><div class="node-state" data-node-state>待接入</div><h3>4 · 人工审核</h3><p>负责人确认后<br>才允许进入排期</p></div>
+            <div class="node wait"><div class="node-state" data-node-state>待接入</div><h3>5 · 发布排期</h3><p>小红书连接器<br>当前不自动发布</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card span7">
+          <div class="card-hd"><span class="card-title">触发与输入</span><span class="card-meta">运行前必须明确</span></div>
+          <div class="card-bd"><div class="list">
+            <div class="list-row"><span class="dot"></span><div><div class="row-title">定时触发</div><div class="row-meta">工作日 09:30 · 上海时区</div></div><span class="row-end">已配置</span></div>
+            <div class="list-row"><span class="dot"></span><div><div class="row-title">内容选题库</div><div class="row-meta">字段：主题、人群、品牌语气、参考链接</div></div><span class="row-end">已配置</span></div>
+            <div class="list-row"><span class="dot amber"></span><div><div class="row-title">发布渠道连接器</div><div class="row-meta">小红书发布连接器尚未接入，当前只生成排期建议</div></div><span class="row-end">未接入</span></div>
+          </div></div>
+        </article>
+        <article class="card span5">
+          <div class="card-hd"><span class="card-title">安全护栏</span><span class="card-meta">不可跳过</span></div>
+          <div class="card-bd"><div class="list">
+            <div class="list-row"><span class="dot green"></span><div><div class="row-title">人工审核门</div><div class="row-meta">没有审核记录，不进入发布排期</div></div></div>
+            <div class="list-row"><span class="dot green"></span><div><div class="row-title">敏感词与重复检查</div><div class="row-meta">检查失败时转人工处理</div></div></div>
+            <div class="list-row"><span class="dot amber"></span><div><div class="row-title">外部凭证状态</div><div class="row-meta">未读取，不显示连接成功</div></div></div>
+          </div></div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span5">
+          <div class="card-hd"><span class="card-title">关联能力</span><span class="card-meta">按节点分配</span></div>
+          <div class="card-bd"><div class="tag-list"><span class="tag">content-planning</span><span class="tag">brand-tone</span><span class="tag">copywriting</span><span class="tag tool">内容选题库 Tool</span><span class="tag tool">图片素材库 Tool</span><span class="tag workflow">审核 Workflow</span></div></div>
+        </article>
+        <article class="card span7">
+          <div class="card-hd"><span class="card-title">最近一次运行</span><span class="badge waiting">预览状态</span></div>
+          <div class="card-bd">
+            <div class="runbar"><div class="run-status"><span class="dot"></span>本地预览 · 2026-07-29 09:30</div><div class="run-actions"><button class="btn ghost" type="button" data-preview-run>试运行预览</button></div></div>
+            <div class="callout" style="margin-top:12px"><strong>输出</strong><span>生成 1 条标题草稿、1 条正文草稿和 3 个话题建议；尚未提交人工审核，也没有发布动作。</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="card execution-card">
+        <div class="card-hd"><span class="card-title">执行任务与资源配置</span><span class="card-meta">点击员工头像可覆盖本次执行配置</span></div>
+        <div class="card-bd">
+          <div class="task-list-grid">
+            <div class="execution-task" data-resource-scope="xhs-copy">
+              <button class="task-avatar" type="button" data-open-resource-picker data-scope="xhs-copy" data-agent="林倩" aria-label="配置林倩">林</button>
+              <div class="task-copy"><div class="task-name">生成小红书标题与正文草稿</div><div class="task-state">执行员工：林倩 · 内容策划</div></div>
+              <div class="task-resources"><span class="resource-chip model" data-resource-chip="model">模型 · Claude 3.5</span><span class="resource-chip skill" data-resource-chip="skill">Skill · content-planning</span><span class="resource-chip tool" data-resource-chip="tool">Tool · 内容选题库</span></div>
+            </div>
+            <div class="execution-task" data-resource-scope="xhs-review">
+              <button class="task-avatar" type="button" data-open-resource-picker data-scope="xhs-review" data-agent="苏然" aria-label="配置苏然">苏</button>
+              <div class="task-copy"><div class="task-name">检查敏感词并提交人工审核</div><div class="task-state">执行员工：苏然 · Workflow 负责人</div></div>
+              <div class="task-resources"><span class="resource-chip model" data-resource-chip="model">模型 · Curis Auto</span><span class="resource-chip skill" data-resource-chip="skill">Skill · brand-tone</span><span class="resource-chip tool" data-resource-chip="tool">Tool · 内容选题库</span></div>
+            </div>
+          </div>
+          <div class="dialog-box" data-resource-scope="xhs-dialog">
+            <textarea placeholder="向当前执行员工描述任务，例如：基于今天的主题生成三版标题，并保留品牌语气…"></textarea>
+            <div class="dialog-toolbar"><button class="resource-trigger" type="button" data-open-resource-picker data-scope="xhs-dialog">⚙ 配置模型 / Skill / Tool</button><span class="resource-chip model" data-resource-chip="model">模型 · Curis Auto</span><span class="resource-chip skill" data-resource-chip="skill">Skill · content-planning</span><span class="resource-chip tool" data-resource-chip="tool">Tool · 内容选题库</span><span class="dialog-note">仅作用于本次对话</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-bottom:14px">
+        <div class="card-hd"><span class="card-title">Workflow 创建路径</span><span class="card-meta">先定义边界，再允许运行</span></div>
+        <div class="card-bd"><div class="stepper">
+          <div class="step done"><div class="step-num">1</div><div class="step-label">基本信息</div><div class="step-desc">名称、部门、负责人</div></div>
+          <div class="step done"><div class="step-num">2</div><div class="step-label">触发与输入</div><div class="step-desc">时间、字段、来源</div></div>
+          <div class="step active"><div class="step-num">3</div><div class="step-label">节点与护栏</div><div class="step-desc">生成、检查、审核、排期</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-label">确认创建</div><div class="step-desc">保存 Workflow 草稿</div></div>
+        </div></div>
+      </section>
+
+      <div class="footer-note">当前页面用于解释 Workflow 项目的创建和运行边界。试运行只更新本地预览状态；外部平台连接器、凭证和真实发布必须在后续接入后才可启用。</div>
+    </main>
+  </div>
+
+  <div class="modal" data-create-modal hidden>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="workflow-create-title">
+      <header class="modal-head"><div><h2 id="workflow-create-title">配置小红书自动化 Workflow</h2><p>把每个节点的输入、审批和失败去向先定义清楚。</p></div><button class="close" type="button" data-close-create aria-label="关闭">×</button></header>
+      <form class="form" data-create-form>
+        <div class="form-grid">
+          <div class="field"><label for="xhs-name">Workflow 名称</label><input id="xhs-name" value="小红书自动化 Workflow" required></div>
+          <div class="field"><label for="xhs-dept">所属部门</label><select id="xhs-dept"><option>内容增长部</option><option>AI 内容中心</option></select></div>
+          <div class="field"><label for="xhs-trigger">触发方式</label><select id="xhs-trigger"><option>工作日 09:30</option><option>手动试运行</option></select></div>
+          <div class="field"><label for="xhs-approval">审核人</label><input id="xhs-approval" value="苏然" required></div>
+          <div class="field full"><label for="xhs-input">输入字段</label><textarea id="xhs-input" required>主题、人群、品牌语气、参考链接</textarea></div>
+        </div>
+        <div class="callout"><strong>创建规则</strong><span>必须存在人工审核节点；发布连接器未接入时，Workflow 只能生成草稿和排期建议。</span></div>
+        <div class="form-foot"><button class="btn ghost" type="button" data-close-create>取消</button><button class="btn primary" type="submit">创建 Workflow 草稿</button></div>
+      </form>
+    </section>
+  </div>
+  <div class="resource-overlay" data-resource-overlay hidden>
+    <aside class="resource-panel" role="dialog" aria-modal="true" aria-labelledby="resource-title">
+      <header class="resource-panel-head"><div><h2 data-resource-title>配置本次对话资源</h2><p data-resource-subtitle>模型、Skill 和 Tool 可在执行前切换。</p></div><button class="resource-close" type="button" data-close-resource aria-label="关闭">×</button></header>
+      <div class="resource-tabs"><button class="resource-tab active" type="button" data-resource-tab="model">模型</button><button class="resource-tab" type="button" data-resource-tab="skill">Skill</button><button class="resource-tab" type="button" data-resource-tab="tool">Tool</button></div>
+      <div class="resource-options" data-resource-options></div>
+      <footer class="resource-panel-foot"><div class="resource-summary" data-resource-summary></div><button class="btn primary" type="button" data-apply-resources>应用配置</button><div class="resource-source-note">目录来自能力中心的可用资源。这里是原型示范数据，正式版本需要显示真实可用状态与权限。</div></footer>
+    </aside>
+  </div>
+  <div class="toast" data-toast hidden></div>
+  <script src="../assets/project-detail-prototype.js" defer></script>
+</body>
+</html>

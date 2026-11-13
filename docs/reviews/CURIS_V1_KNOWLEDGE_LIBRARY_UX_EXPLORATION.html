@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curis · Knowledge Library UX Exploration</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif;color:#24222b;background:#f5f4f8;line-height:1.5}
+    *{box-sizing:border-box}body{margin:0}.shell{max-width:1180px;margin:0 auto;padding:36px 24px 60px}
+    .eyebrow{color:#806be5;font-size:12px;font-weight:750;letter-spacing:.12em}.header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:24px}
+    h1{margin:8px 0 8px;font-size:32px;letter-spacing:-.03em}.lede{max-width:720px;color:#666270;margin:0}.badge{border:1px solid #d8d4e7;border-radius:999px;padding:8px 12px;color:#6b6380;background:#fff;font-size:12px;white-space:nowrap}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.tabs button{border:1px solid #d9d5e2;background:#fff;color:#5e5868;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:650}.tabs button[aria-selected="true"]{background:#806be5;color:#fff;border-color:#806be5}
+    .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:16px}.panel{background:#fff;border:1px solid #e1dee8;border-radius:16px;padding:20px;box-shadow:0 8px 26px rgba(50,40,80,.05)}
+    .panel h2{font-size:18px;margin:0 0 6px}.panel h3{font-size:14px;margin:20px 0 6px}.muted{color:#77727f;font-size:13px}.list{display:grid;gap:10px;margin-top:14px}.row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:13px 0;border-top:1px solid #eeeaf2}.row:first-child{border-top:0;padding-top:0}.row strong{font-size:14px}.row small{display:block;color:#847e8c;margin-top:3px}.state{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;background:#f0edf9;color:#6555bd;white-space:nowrap}.state.warn{background:#fff4dc;color:#956a1e}.state.dim{background:#f0eff2;color:#746f79}
+    .notice{margin-top:16px;padding:12px 14px;border-left:3px solid #806be5;background:#f5f2ff;color:#5d5670;font-size:13px}.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}.step{background:#f8f7fb;border:1px solid #e2deec;border-radius:10px;padding:9px 11px;font-size:12px}.arrow{color:#aaa3b5}.footer{margin-top:24px;color:#85808c;font-size:12px}
+    @media(max-width:760px){.header,.grid{display:block}.badge{display:inline-block;margin-top:16px}.panel{margin-bottom:16px}h1{font-size:27px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="header">
+      <div><div class="eyebrow">RESEARCH / DESIGN EXPLORATION</div><h1>资料库 · Knowledge Library</h1><p class="lede">用于比较产品心智、空间层级和状态处理的轻量探索。它不定义最终视觉，也不覆盖 Curis Current Product/UI Authority。</p></div>
+      <div class="badge">NOT CURRENT UI AUTHORITY<br>DESIGN FIXTURE ONLY</div>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="UX directions">
+      <button role="tab" aria-selected="true" data-variant="reference">C · 公司参考空间（推荐）</button>
+      <button role="tab" aria-selected="false" data-variant="file">A · 文件库</button>
+      <button role="tab" aria-selected="false" data-variant="kb">B · 知识库</button>
+    </div>
+
+    <section class="grid">
+      <article class="panel" id="variant-panel" aria-live="polite"></article>
+      <aside class="panel">
+        <h2>当前范围</h2>
+        <p class="muted">Company → Business → Workspace</p>
+        <div class="list">
+          <div class="row"><div><strong>来源</strong><small>手工、本地文本、Work/Result 引用、未来外部连接</small></div><span class="state">可追溯</span></div>
+          <div class="row"><div><strong>资料 ≠ 证据</strong><small>Knowledge 提供依据；Evidence 证明结果</small></div><span class="state">边界</span></div>
+          <div class="row"><div><strong>真实状态</strong><small>可用 · 待连接 · 数据较旧 · 需要核实 · 未记录</small></div><span class="state warn">不猜测</span></div>
+          <div class="row"><div><strong>实现事实</strong><small>当前有手工/.md/.txt、有限搜索和 bounded Context</small></div><span class="state dim">PARTIAL</span></div>
+        </div>
+        <div class="notice">这张探索板不创建 LibraryItem、CitationDB 或第二套 Context/Result 真源。</div>
+      </aside>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>核心状态</h2>
+      <p class="muted">以下状态可在同一结构内切换，不要求七张独立页面。</p>
+      <div class="tabs" id="states" role="tablist" aria-label="Library states">
+        <button role="tab" aria-selected="true" data-state="empty">Empty Library</button>
+        <button role="tab" aria-selected="false" data-state="overview">Library Overview</button>
+        <button role="tab" aria-selected="false" data-state="search">Search Results</button>
+        <button role="tab" aria-selected="false" data-state="read">Reading / Reference Detail</button>
+        <button role="tab" aria-selected="false" data-state="work">Select From Work</button>
+        <button role="tab" aria-selected="false" data-state="stale">Source Stale / Unavailable</button>
+        <button role="tab" aria-selected="false" data-state="used">Used By Work / Result</button>
+      </div>
+      <div id="state-panel"></div>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Work ↔ Library ↔ Result</h2>
+      <div class="flow"><span class="step">表达经营意图</span><span class="arrow">→</span><span class="step">解析当前 scope</span><span class="arrow">→</span><span class="step">搜索 / 选择资料</span><span class="arrow">→</span><span class="step">带入 Work Context</span><span class="arrow">→</span><span class="step">Result / Evidence</span><span class="arrow">→</span><span class="step">反查使用关系</span></div>
+      <p class="muted" style="margin:14px 0 0">选择资料后应返回原始 Work；资料详情可以反查被哪些 Work、Result、Meeting 或 Decision 使用。内容不复制，关系可追踪。</p>
+    </section>
+    <div class="footer">Status: Review · Authority Class: RESEARCH · STOP FOR CEO REVIEW · No implementation</div>
+  </main>
+  <script>
+    const variants = {
+      reference: {title:"公司参考空间",summary:"公司的资料入口与经营依据。阅读体验保持熟悉，但默认让来源、scope、freshness 和使用关系可见。",primary:["Overview：当前 scope、资料覆盖、最近使用、需核实事项","Browse / Search：按 Company / Business / Workspace、来源和 freshness 筛选","Read / Detail：主区阅读，右侧按需显示来源事实与使用关系","Select From Work：从原 Work 打开轻量选择器并返回原上下文"],note:"推荐：把 File Library 的可浏览性与 Knowledge Base 的检索能力放进 Company Truth，而不是建立一个独立 RAG 产品。"},
+      file: {title:"文件库",summary:"先回答文件在哪里、如何导入和打开。适合首次理解，但不能独立承担经营引用。",primary:["Recent / Sources：最近资料与来源根目录","Folders / Browse：按来源路径浏览","Reader：内容阅读与基础元信息","Import：手工资料或已配置的 .md/.txt"],note:"仅作为交互借鉴：不要让文件数量、文件夹层级替代 Business / Workspace 的责任语义。"},
+      kb: {title:"知识库",summary:"先回答能搜索到什么知识、为什么命中。适合快速检索，但需要补回原始来源和 Work 关系。",primary:["Search-first：标题、摘要、正文、标签与 scope","Result preview：短摘要、命中原因、来源与更新时间","Collections：按 Business / Workspace 聚合","Reference action：带入当前 Work Context"],note:"仅作为检索借鉴：不要创建第二套 Knowledge / Context / Result 真源。"}
+    };
+    const states = {
+      empty:["没有真实资料", "该 scope 目前没有 Company / Business / Workspace 参考，不展示假文件。", ["新建手工资料","导入已配置的 Markdown/Text","连接未来来源（若可用）"]],
+      overview:["资料库总览", "展示当前 scope 的真实资料、来源覆盖、最近使用和待核实事项；不放虚构的健康分数。", ["浏览来源","搜索资料","打开需核实"]],
+      search:["搜索结果", "每一行说明匹配内容、所属 scope、来源和 freshness；没有真实值就显示未记录。", ["阅读原文","选择到当前 Work","查看使用关系"]],
+      read:["阅读 / 资料详情", "正文在主区，来源事实、更新时间、权限和引用句柄按需出现；不把 Knowledge 伪装成 Evidence。", ["复制引用","打开来源","查看 Used by Work / Result"]],
+      work:["从 Work 选择资料", "选择器继承当前 Work 的 Company / Business / Workspace 范围，选择后回到原 Conversation / Work。", ["筛选 scope","选择 / 移除引用","返回原工作现场"]],
+      stale:["来源较旧或不可用", "明确显示最后可知版本与原因；允许重新连接或带着警示继续，不静默当作当前事实。", ["重新连接","查看最后版本","进入需要核实"]],
+      used:["被哪些 Work / Result 使用", "从资料反查原始 Work、Result、Evidence、Meeting 或 Decision；只显示真实关系。", ["打开原 Work","查看 Result / Evidence","返回资料详情"]]
+    };
+    function renderVariant(key){const v=variants[key];document.querySelector('#variant-panel').innerHTML=`<h2>${v.title}</h2><p class="muted">${v.summary}</p><div class="list">${v.primary.map((x,i)=>`<div class="row"><div><strong>${i+1}. ${x.split('：')[0]}</strong><small>${x.includes('：')?x.split('：').slice(1).join('：'):''}</small></div><span class="state">Surface</span></div>`).join('')}</div><div class="notice">${v.note}</div>`}
+    function renderState(key){const s=states[key];document.querySelector('#state-panel').innerHTML=`<h3>${s[0]}</h3><p class="muted">${s[1]}</p><div class="flow">${s[2].map((x,i)=>`<span class="step">${i+1}. ${x}</span>`).join('<span class="arrow">·</span>')}</div>`}
+    document.querySelectorAll('[data-variant]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-variant]').forEach(x=>x.setAttribute('aria-selected',x===b));renderVariant(b.dataset.variant)}));
+    document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-state]').forEach(x=>x.setAttribute('aria-selected',x===b));renderState(b.dataset.state)}));
+    renderVariant('reference');renderState('empty');
+  </script>
+</body>
+</html>

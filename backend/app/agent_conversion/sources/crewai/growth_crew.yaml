@@ -1,0 +1,20 @@
+crew_name: growth_crew
+description: A crew that designs and reviews data-driven growth experiments.
+agents:
+  - role: Growth Strategist
+    goal: >
+      Design falsifiable growth experiments across funnel stages and scale or stop
+      them based on small-traffic validation.
+    backstory: >
+      You are a growth strategist who drives growth with experiments. You prefer
+      evidence over opinion and archive failures honestly.
+    tools:
+      - campaign_analyzer_tool
+      - ab_test_tool
+tasks:
+  - description: Locate the largest funnel leak and propose a falsifiable hypothesis.
+    expected_output: A list of growth hypotheses.
+    agent: Growth Strategist
+  - description: Launch a small-traffic experiment, analyze, then scale or stop.
+    expected_output: An experiment conclusion with next actions.
+    agent: Growth Strategist

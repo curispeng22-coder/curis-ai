@@ -1,0 +1,147 @@
+- banner:
+  - link "妍语网":
+    - /url: /
+    - generic "妍语网":
+      - generic: 妍语网
+  - navigation:
+    - link "创意工作台":
+      - /url: /tools
+      - button "创意工作台":
+        - text: 创意工作台
+    - link "我的作品":
+      - /url: /my-works
+      - button "我的作品":
+        - text: 我的作品
+    - button "小说工作流":
+      - text: 小说工作流
+    - button "剧本工作流":
+      - text: 剧本工作流
+    - link "智能体":
+      - /url: /advisor
+      - button "智能体":
+        - text: 智能体
+    - link "素材库":
+      - /url: /prompts
+      - button "素材库":
+        - text: 素材库
+    - link "会员中心":
+      - /url: /pricing
+      - button "会员中心":
+        - text: 会员中心
+  - button "查看创作额度":
+    - generic: "-9,294"
+  - button "8 861****8781":
+    - generic: "8"
+    - generic: 861****8781
+- main:
+  - generic "动画 idle"
+  - complementary:
+    - generic: CURIS-RESEARCH-TEST 雾港来信
+    - button "收起侧边栏":
+    - paragraph: 创作流程
+    - button "创作方向":
+      - generic: 创作方向
+    - button "搭建框架":
+      - generic: 搭建框架
+    - button "世界观细化":
+      - generic: 世界观细化
+    - button "角色设定":
+      - generic: 角色设定
+    - button "主线剧情":
+      - generic: 主线剧情
+    - button "分卷及亮点":
+      - generic: 分卷及亮点
+    - button "锁定框架":
+      - generic: 锁定框架
+    - button "章节大纲":
+      - generic: 章节大纲
+    - button "确认大纲":
+      - generic: 确认大纲
+    - button "正文写作":
+      - generic: 正文写作
+    - text: 共 913 字
+    - generic: 0 章
+    - paragraph: AI 模型
+    - combobox:
+      - generic: MiniMax 快速
+      - generic: 免费
+      - generic: 1.0×
+    - button "保存进度":
+      - text: 保存进度
+    - button "保存当前模型和思考模式为默认偏好":
+    - button "返回首页":
+  - heading "CURIS-RESEARCH-TEST 雾港来信" [level=1]
+  - paragraph: 步骤 10/10 · 正文写作
+  - complementary:
+    - generic: 章节目录
+    - generic: 0/0 章
+    - button "收起目录":
+    - paragraph: 全局批量操作
+    - button "批量生成":
+      - text: 批量生成
+    - button "批量润色":
+      - text: 批量润色
+    - button "卷连续性审计":
+      - text: 卷连续性审计
+    - paragraph: 暂无章节
+    - generic: 空白 0 章
+    - generic: 完成 0/0
+    - generic: 待回收伏笔 7
+  - button "大纲":
+    - generic: 大纲
+  - generic: 雾港迷局
+  - generic: /
+  - generic: 第1章
+  - generic: 《
+  - textbox "章节标题…" [disabled]: 凌晨两点的来信
+  - generic: 》
+  - generic: 1/1
+  - button "章节大纲 暴风雨前三天，林夜在档案室核对三艘失踪渔船的登记，发现同一页被替换。苏婉清带来父亲留下的船锚吊坠。航标钟严格在凌晨两点鸣响一次，此前和此后都不再响。钟响时门缝出现未来来信，笔迹与林夜相同，末句提示不要相信编号071的记录。两人决定先核验纸张和档案，不贸然相信预言。只写本章相遇、发现和选择，不提前揭露幕后黑手；结尾停在071号档案柜锁孔有新划痕。":
+    - generic: 章节大纲
+    - generic: 暴风雨前三天，林夜在档案室核对三艘失踪渔船的登记，发现同一页被替换。苏婉清带来父亲留下的船锚吊坠。航标钟严格在凌晨两点鸣响一次，此前和此后都不再响。钟响时门缝出现未来来信，笔迹与林夜相同，末句提示不要相信编号071的记录。两人决定先核验纸张和档案，不贸然相信预言。只写本章相遇、发现和选择，不提前揭露幕后黑手；结尾停在071号档案柜锁孔有新划痕。
+  - generic: 生成
+  - button "AI续写" [disabled]:
+    - text: AI续写
+  - button "重新生成" [disabled]:
+    - text: 重新生成
+  - button "AI扩写" [disabled]:
+    - text: AI扩写
+  - button "AI润色" [disabled]:
+    - text: AI润色
+  - generic: 辅助
+  - button "提示词":
+    - text: 提示词
+  - button "伏笔 7":
+    - text: 伏笔
+    - generic: "7"
+  - button "人物档案":
+    - text: 人物档案
+  - button "保存":
+    - generic: 保存
+  - button "复制":
+    - generic: 复制
+  - button "已锁定":
+    - generic: 已锁定
+  - button "导出":
+    - generic: 导出
+  - generic: 章节已锁定 · 点击工具栏锁定按钮解锁
+  - textbox "在此编写正文，或点击上方「AI生成」按钮一键生成…" [disabled]: 雾气从港区飘进地下室，沿着走廊裂缝渗入档案室。林夜放下手中的登记本，目光落在泛黄的纸页上。 三艘渔船，上个月，接连失踪。 他将三份档案并排摊开，手指沿折痕滑过，停在第二页与第三页的连接处。纸张纤维的走向不对劲，像是被人用力撕开后又重新粘合。油墨颜色也存在细微差异——正文的墨迹偏黄，而出事日期那一行却泛着幽蓝的光泽。 林夜皱起眉头。他在这个岗位待了三年，从未见过这种痕迹。 “林夜，还在加班？” 清亮的女声从门口传来。苏婉清抱着一摞新送达的文件走进来，灯光在她脸颊上投下柔和的阴影。她脖子上挂着一枚吊坠，铜质船锚被磨得发亮，链子缠在她指间。 “核对失踪船只的登记。”林夜没有抬头，“你有没有发现，这三艘船的编号都是单数结尾？” 苏婉清将文件放在桌上，走到他身边看向档案。她的呼吸在昏暗中变得清晰。 “确实奇怪。”她的声音压得很低，“我父亲的船也是这个编号。” 林夜这才抬起眼。 苏婉清的父亲苏远山，十年前失踪于那场海啸。整艘船三十七人，只有她父亲一人留下遗物——就是这枚船锚吊坠。她为此成为档案员，在这个被所有人遗忘的角落蛰伏多年。 这时，沉闷的钟声从港区深处传来。 凌晨两点。 航标钟的鸣响穿透档案室的墙壁，在霉味与纸张间回荡。这是整座港口唯一不受干扰的铁律——每日凌晨两点整，钟声只响一次，绝不多响一声。 就在钟声落下的瞬间，林夜看见一张纸片从门缝滑入。 他起身拾起。纸张微凉，比档案室任何一份文件都要细腻。上面是手写的字，墨迹未干，却透着一股古怪的熟悉感。 字迹与他的笔迹一模一样。 「下一个大潮夜会有更多船消失。不要相信071。」 苏婉清凑过来，目光落在纸上，瞳孔骤然收缩。 “你写的？” “不是我。”林夜摇头，指尖摩挲着纸张边缘，“但这笔迹……我每天都在写。” 两人对视。 “先验证纸张和档案。”苏婉清说，声音稳得不像话，“别急着相信预言。” 林夜点头，将信纸折好收进口袋。 苏婉清握住父亲的吊坠，指节泛白。灯塔的钟声还在回响，像某种古老的警告。 林夜走向档案室深处的071号柜。 柜门紧锁，锁孔边缘却有一道新划痕，金属反光还未被灰尘覆盖。 他的动作顿住了。
+  - generic: "913"
+  - generic: 字
+- contentinfo:
+  - generic "妍语网":
+    - generic: 妍语网
+  - link "隐私政策":
+    - /url: /privacy
+  - link "用户协议":
+    - /url: /terms
+  - generic: © 2026 霸州妍语科技有限公司 版权所有
+  - generic: "|"
+  - link "冀ICP备2026026097号":
+    - /url: https://beian.miit.gov.cn/
+  - generic: "|"
+  - link "网安备案 冀公网安备13108102000680号":
+    - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13108102000680
+    - img "网安备案"
+    - text: 冀公网安备13108102000680号
+- region "Notifications alt+T"

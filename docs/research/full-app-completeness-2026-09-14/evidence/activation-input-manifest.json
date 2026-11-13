@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/PRODUCT_DOCUMENT_POINTER.md",
+    "sha256": "79234932ac431b451839059e223b349959888d7008eb1ecbc6628b8c76f96986"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/CURRENT_STATE.md",
+    "sha256": "fcdc3e125f8c1e7837faed2dea66bc35d542ea3a941fa3fe0f719da51da33bfc"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Blueprint.html",
+    "sha256": "1be87f0f98025e29cb8c983db2a0c3188cf44340f7d0304e40869a9b0af225b4"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Master_Map.md",
+    "sha256": "0cfa9043118e00604a5ab981f528c515c0acdb77b16393ef292a2fe68a329b62"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_UI_Blueprint.html",
+    "sha256": "41bfd24747de8d2bdffd3fb67c1741e1e813d9783d237b74fe202e4010cd5728"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Context.md",
+    "sha256": "7d2b66f3da380aded9f92f99a72478e4266cc3fd692a9e6afca01813617b184f"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md",
+    "sha256": "c6be0f985be1edd2416e9105ce60e0d8e0390f19f4b7eb4d04410bf670c832ca"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Company_OS_Shared_Authority.md",
+    "sha256": "8fb89c34bc77bba623f2e8b42713bf80b84e310e19e11be8a7db3d9befd07e8c"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md",
+    "sha256": "3e600e5aab7dd89089bf949cb6b095fbea0086e6213cb6ea1d5ac81f633e6302"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Content_Growth_Domain_Authority.md",
+    "sha256": "ce9331cb98d9210d9f348e4ad4967474100674b3ccf27c939b64d6bc2f7c7494"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/CURIS_VISUAL_STANDARD_V1.md",
+    "sha256": "fc5f00564bd0a753a5cf4b4c414611451c5807cfdac1106cbd3629230cc749a0"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_PRODUCT_TRUTH_CONSOLIDATION_REVIEW.md",
+    "sha256": "3e16bd4dd0c63741a218e2c3b46206f48f260cc9ffc5b8bda6549a3e6868d59d"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/full-app-completeness-2026-09-14/CURIS_FULL_PRODUCT_EXPRESSION_V2.md",
+    "sha256": "fb02299a4db4a9c89c83c06bc484fd5ddc51119ed5d5b07ba2a956fa86515d8a"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/full-app-completeness-2026-09-14/CURIS_FULL_APP_CAPABILITY_COMPLETENESS_DERIVATION.md",
+    "sha256": "df7d9fd7fbaf83ef8b5ba64bb195412ea1a0be2c94e8ce3492b6f6f97437a61d"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/full-app-completeness-2026-09-14/CURIS_FULL_PRODUCT_EXPERIENCE_MAP.md",
+    "sha256": "634a1f3f774f28083f4ea72a3cc400619a7af1c3caa0fd1155c7f5bf615f9b1a"
+  }
+]

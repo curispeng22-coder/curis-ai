@@ -1,0 +1,1 @@
+{"name":"curis-desktop","private":true,"version":"0.1.0","scripts":{"build:runtime":"./scripts/build-runtime.sh","build":"pnpm build:runtime && CURIS_SKIP_RUNTIME_BUILD=1 tauri build --bundles app","build:dmg":"./scripts/build-manual-dmg.sh"},"devDependencies":{"@tauri-apps/cli":"^2.11.4"}}

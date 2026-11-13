@@ -1,0 +1,72 @@
+services:
+  egress:
+    image: envoyproxy/envoy:v1.31-latest@sha256:caa5b411be1633b90023592a34a7e010c933d6e60206c758f631485e53006865
+    command: ["envoy", "-c", "/etc/envoy/egress.yaml", "--log-level", "info"]
+    volumes:
+      - ./egress.yaml:/etc/envoy/egress.yaml:ro
+    networks:
+      edge: {}
+      workspace_internal:
+        ipv4_address: 172.30.0.4
+    healthcheck:
+      test: ["CMD", "envoy", "--mode", "validate", "-c", "/etc/envoy/egress.yaml"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  gateway:
+    image: envoyproxy/envoy:v1.31-latest@sha256:caa5b411be1633b90023592a34a7e010c933d6e60206c758f631485e53006865
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--log-level", "info"]
+    ports:
+      - "127.0.0.1:${CURIS_GATEWAY_PORT:-8080}:8080"
+    volumes:
+      - ./.generated/envoy.yaml:/etc/envoy/envoy.yaml:ro
+    networks:
+      edge: {}
+      workspace_internal:
+        ipv4_address: 172.30.0.2
+    depends_on:
+      - workspace
+
+  workspace:
+    build:
+      context: ../../..
+      dockerfile: deploy/curis/gateway/Dockerfile.workspace
+    environment:
+      CURIS_PRODUCT: workspace
+      CURIS_ENV: ${CURIS_WORKSPACE_ENVIRONMENT:-production}
+      CURIS_DB: ${CURIS_WORKSPACE_DB:-/srv/curis/data/curis.sqlite}
+      CURIS_D1_FROZEN: ${CURIS_D1_FROZEN:-1}
+      CURIS_D1_EXECUTE_ENABLED: ${CURIS_D1_EXECUTE_ENABLED:-0}
+      CURIS_IDENTITY_MODE: gateway
+      CURIS_TRUSTED_GATEWAY_ISSUER: ${OIDC_ISSUER:?OIDC_ISSUER is required}
+      CURIS_TRUSTED_GATEWAY_CIDRS: 172.30.0.2/32
+      CURIS_IDENTITY_AUDIT_KEY: ${CURIS_IDENTITY_AUDIT_KEY:?CURIS_IDENTITY_AUDIT_KEY is required}
+      CURIS_LOCAL_OWNER_ENABLED: ${CURIS_LOCAL_OWNER_ENABLED:-0}
+      CURIS_LOCAL_GOOGLE_OIDC_ENABLED: ${CURIS_LOCAL_GOOGLE_OIDC_ENABLED:-0}
+      CURIS_MODEL_GATEWAY_PROFILE: ${CURIS_MODEL_GATEWAY_PROFILE:-}
+      CURIS_MODEL_GATEWAY_BASE_URL: ${CURIS_MODEL_GATEWAY_BASE_URL:-}
+      CURIS_MODEL_GATEWAY_API_KEY: ${CURIS_MODEL_GATEWAY_API_KEY:-}
+      CURIS_MODEL_GATEWAY_ID: ${CURIS_MODEL_GATEWAY_ID:-}
+      CURIS_MODEL_GATEWAY_MODEL: ${CURIS_MODEL_GATEWAY_MODEL:-}
+    volumes:
+      - ${CURIS_DATA_DIR:-../../../data}:/srv/curis/data
+    extra_hosts:
+      - "api.openai.com:172.30.0.4"
+      - "oauth2.googleapis.com:172.30.0.4"
+    depends_on:
+      egress:
+        condition: service_healthy
+    expose:
+      - "8002"
+    networks:
+      workspace_internal:
+        ipv4_address: 172.30.0.3
+
+networks:
+  edge: {}
+  workspace_internal:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

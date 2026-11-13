@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis Operating Intelligence · Consolidated UX Exploration — ACCEPTED UX BASELINE（DEMO）</title>
+<style>
+  :root{
+    --bg:#0e131a; --panel:#151c26; --panel2:#1b2430; --line:#2a3543;
+    --txt:#e6edf3; --dim:#93a1b1; --accent:#3fb950; --accent2:#58a6ff;
+    --warn:#e3a008; --danger:#f85149; --purple:#bc8cff; --teal:#39d0d8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:13px;line-height:1.55;display:flex;flex-direction:column}
+  .demo{background:repeating-linear-gradient(45deg,#3a2a00,#3a2a00 12px,#4a3500 12px,#4a3500 24px);
+    color:#ffd966;border-bottom:1px solid #6b4e00;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.5px;text-align:center}
+  .accepted{background:#0d2818;color:#56d364;border-bottom:1px solid #1a7f43;padding:5px 16px;font-size:11px;font-weight:700;letter-spacing:.5px;text-align:center}
+  .top{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .top h1{font-size:15px;margin:0;font-weight:700}
+  .top .sub{color:var(--dim);font-size:11px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{background:var(--panel2);color:var(--dim);border:0;padding:6px 12px;cursor:pointer;font-size:12px}
+  .seg button.on{background:var(--accent2);color:#06243f;font-weight:700}
+  .seg.time button.on{background:var(--accent);color:#06210f}
+  .wrap{display:flex;flex:1;min-height:0}
+  .side{width:210px;background:var(--panel);border-right:1px solid var(--line);padding:10px;overflow:auto;flex-shrink:0}
+  .side .grp{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin:12px 4px 4px}
+  .side .navroot{color:var(--accent2);font-size:12px;font-weight:700;margin:8px 4px 2px;letter-spacing:.5px}
+  .side button{display:block;width:100%;text-align:left;background:transparent;color:var(--txt);border:0;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:12px;margin:1px 0}
+  .side button:hover{background:var(--panel2)}
+  .side button.on{background:var(--panel2);color:var(--accent2);font-weight:700}
+  .side button.sub{margin-left:14px;font-size:11px;color:var(--dim)}
+  .main{flex:1;padding:18px 22px;overflow:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0}
+  .card h3{margin:0 0 8px;font-size:14px;color:var(--accent2)}
+  .grid{display:grid;gap:10px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .kpi .k{color:var(--dim);font-size:10px}
+  .kpi .v{font-size:18px;font-weight:700;margin-top:2px}
+  .kpi .d{font-size:11px;margin-top:2px}
+  .up{color:var(--accent)}.down{color:var(--danger)}.flat{color:var(--dim)}
+  .chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim);margin:2px 3px 2px 0}
+  .c-verified{background:rgba(63,185,80,.12);color:var(--accent);border-color:rgba(63,185,80,.4)}
+  .c-manual{background:rgba(227,160,8,.12);color:var(--warn);border-color:rgba(227,160,8,.4)}
+  .c-unknown{background:rgba(248,81,73,.12);color:var(--danger);border-color:rgba(248,81,73,.4)}
+  .c-stale{background:rgba(188,140,255,.12);color:var(--purple);border-color:rgba(188,140,255,.4)}
+  .c-ext{background:rgba(57,208,216,.12);color:var(--teal);border-color:rgba(57,208,216,.4)}
+  .pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:4px;background:var(--panel2);color:var(--dim);margin-left:6px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:0}
+  .bizcard{cursor:pointer;transition:.15s}.bizcard:hover{border-color:var(--accent2)}
+  .bar{height:8px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:4px}
+  .bar > i{display:block;height:100%;background:var(--accent2)}
+  .bar.warn > i{background:var(--warn)}.bar.bad > i{background:var(--danger)}
+  .tag-ok{color:var(--accent)}.tag-warn{color:var(--warn)}.tag-bad{color:var(--danger)}
+  .note{border-left:3px solid var(--warn);background:var(--panel2);padding:8px 12px;border-radius:0 6px 6px 0;color:var(--dim);font-size:12px;margin:8px 0}
+  .note.ok{border-color:var(--accent);color:var(--txt)}
+  .analyst{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:6px 0}
+  .analyst .lbl{font-weight:700;font-size:11px;letter-spacing:.5px}
+  .fact{color:var(--accent)}.interp{color:var(--accent2)}.unk{color:var(--danger)}.rec{color:var(--warn)}
+  .qa{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .qa button{background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:16px;padding:5px 11px;cursor:pointer;font-size:11px}
+  .qa button:hover{border-color:var(--accent2)}
+  .hidden{display:none!important}
+  .only-b,.only-c{display:none}
+  body.variant-b .only-b{display:block}
+  body.variant-c .only-b,body.variant-c .only-c{display:block}
+  body.variant-a .only-a,body.variant-c .only-a{display:block}
+  body.variant-a .only-b{display:none}
+  .crumb{color:var(--dim);font-size:11px;margin-bottom:6px}
+  .crumb b{color:var(--accent2)}
+  .empty{color:var(--danger);font-weight:700;border:1px dashed var(--danger);border-radius:8px;padding:10px 12px;background:rgba(248,81,73,.06)}
+  .footnote{color:var(--dim);font-size:11px;margin-top:18px;border-top:1px solid var(--line);padding-top:10px}
+  a.act{color:var(--accent2);cursor:pointer;text-decoration:underline;font-size:11px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--purple));display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#06121f;font-size:13px;flex-shrink:0}
+  .avatar.sm{width:26px;height:26px;font-size:11px}
+  .brief{display:flex;gap:12px;align-items:flex-start}
+  .brief .who{font-weight:700;font-size:13px}
+  .brief .role{color:var(--dim);font-size:11px}
+  .brief .line{margin-top:6px;font-size:13px}
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .team-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+  .team-card .meta{font-size:11px;color:var(--dim)}
+  .rep-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0}
+  .rep-card .h{display:flex;justify-content:space-between;align-items:center}
+  .rep-card .t{font-weight:700;font-size:13px}
+  .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;color:var(--dim);margin:8px 0}
+  .meta-grid b{color:var(--txt);font-weight:600}
+  .conv{max-width:760px;margin-top:8px}
+  .msg{display:flex;gap:10px;margin:10px 0}
+  .msg .bubble{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;max-width:88%}
+  .msg.ceo{flex-direction:row-reverse}
+  .msg.ceo .bubble{background:rgba(88,166,255,.14);border-color:rgba(88,166,255,.4)}
+  .msg .who{font-size:10px;color:var(--dim);margin-bottom:3px}
+  .task{background:rgba(227,160,8,.08);border:1px solid rgba(227,160,8,.4);border-radius:8px;padding:9px 12px;margin:8px 0;font-size:12px}
+  .badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+  .b-run{background:rgba(227,160,8,.18);color:var(--warn)}
+  .b-done{background:rgba(63,185,80,.18);color:var(--accent)}
+  .b-req{background:rgba(88,166,255,.18);color:var(--accent2)}
+  .b-pro{background:rgba(188,140,255,.18);color:var(--purple)}
+  .chain{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--dim);margin:8px 0}
+  .chain .node{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+  .chain .arr{color:var(--accent2)}
+  .btn{display:inline-block;background:var(--accent2);color:#06243f;font-weight:700;border:0;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;margin:4px 4px 4px 0}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  .btn.warn{background:var(--warn);color:#2a1c00}
+  .stage-rev .agree{color:var(--accent)}.stage-rev .disagree{color:var(--danger)}
+  .scenario-note{background:rgba(57,208,216,.08);border:1px dashed rgba(57,208,216,.5);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--teal)}
+  /* NEW: visualization + org */
+  .vizseg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:4px 0 6px}
+  .vizseg button{background:var(--panel2);color:var(--dim);border:0;border-right:1px solid var(--line);padding:5px 13px;cursor:pointer;font-size:11px}
+  .vizseg button:last-child{border-right:0}
+  .vizseg button.on{background:var(--accent2);color:#06243f;font-weight:700}
+  .vizseg button .rec{opacity:.6;font-size:10px;margin-left:3px}
+  .svgwrap{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
+  .svgwrap svg{width:100%;height:auto;display:block}
+  .heat{display:grid;gap:3px;margin-top:8px}
+  .heat .hcell{padding:9px 6px;text-align:center;font-size:11px;border-radius:4px;color:#eaf2f8}
+  .heat .hhead{background:transparent;color:var(--dim);font-weight:700}
+  .caprow{display:grid;grid-template-columns:150px 1fr 120px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .caprow:last-child{border-bottom:0}
+  .cap-track{height:14px;background:var(--line);border-radius:8px;overflow:hidden;position:relative}
+  .cap-load{height:100%;border-radius:8px}
+  .tree{font-size:12px;line-height:1.45}
+  .tree .lvl1{font-weight:700;color:var(--accent2);margin:8px 0 2px}
+  .tree .lvl2{margin:2px 0 2px 16px;color:var(--txt)}
+  .tree .lvl3{margin:2px 0 2px 34px;color:var(--dim);display:flex;align-items:center;gap:8px}
+  .tree .dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);flex-shrink:0}
+  .tree .dot.purple{background:var(--purple)}
+  .tree .dot.warn{background:var(--warn)}
+  .orgmode{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:12px}
+  .orgmode b{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="demo">⚠️ DEMO DATA — NOT RUNTIME TRUTH · 本页为 UX 整合探索示意，所有数字/人员/报告均为模拟，不代表 Curis 运行时真实数据。Analyst Organization = 真实 AI Employee 承担分析责任，本演示用模拟 Employee 展示交互。可视化属「展示层」，不引入新 Metric/Runtime/Schema。</div>
+<div class="accepted">✅ ACCEPTED — OPERATING INTELLIGENCE UX BASELINE · 2026-08-18 CEO FINAL ACCEPTANCE · 产品 UX 真相（Product Truth Delta），非 Runtime / Schema Authority · 由 FINAL PRODUCT ARCHITECTURE DELTA 统一消费</div>
+<div class="top">
+  <div>
+    <h1>Curis 经营洞察 · Consolidated UX Exploration</h1>
+    <div class="sub">整合 6 项已接受研究 · Semantic-safe Switching · 默认职能分析组织 · 不进入 Current Product Truth · 2026-08-18 Consolidation</div>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <div class="seg" id="variantSeg">
+      <button data-v="a" onclick="setVariant('a')">Variant A · Dashboard</button>
+      <button data-v="b" onclick="setVariant('b')">Variant B · Analyst</button>
+      <button data-v="c" onclick="setVariant('c')">Variant C · Hybrid</button>
+    </div>
+    <div class="seg time" id="timeSeg">
+      <button data-t="today" onclick="setTime('today')">Today</button>
+      <button data-t="7d" onclick="setTime('7d')">7D</button>
+      <button data-t="30d" class="on" onclick="setTime('30d')">30D</button>
+      <button data-t="month" onclick="setTime('month')">Month</button>
+      <button data-t="quarter" onclick="setTime('quarter')">Quarter</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- LEFT NAV: Curis-style (§12) — NOT a BI function menu -->
+  <div class="side">
+    <div class="navroot">经营洞察</div>
+    <button class="on" onclick="show('overview',this)">· 公司经营</button>
+    <button onclick="show('business',this)">· 业务分析</button>
+    <button onclick="show('employee',this)">· 组织与员工</button>
+    <button onclick="show('benchmark',this)">· 模型与能力</button>
+    <button onclick="show('reports',this)">· 分析报告</button>
+    <button onclick="show('companybrief',this)">· 专项研究（Company Analyst）</button>
+
+    <div class="grp">范围 Scope</div>
+    <button class="sub" onclick="alert('DEMO：切换到 Department 范围（研究示意）')">Department</button>
+    <button class="sub" onclick="alert('DEMO：切换到 Model / Agent 范围（研究示意）')">Model / Agent</button>
+    <button class="sub" onclick="alert('DEMO：切换到 Workflow / Stage（研究示意）')">Workflow / Stage</button>
+
+    <div class="grp">演示路径</div>
+    <button class="sub" onclick="document.getElementById('qaXhs').click()">问小陈 → 质疑 → 调查</button>
+    <button class="sub" onclick="show('companybrief',allBtns()[5])">Company Analyst 委派</button>
+    <button class="sub" onclick="show('noanalyst',allBtns()[5])">无分析师状态</button>
+    <button class="sub" onclick="show('employee',allBtns()[2])">默认职能分析组织</button>
+  </div>
+
+  <div class="main" id="main">
+
+    <!-- 1. COMPANY OVERVIEW (REWORKED §11: analyst-team homepage) -->
+    <div id="view-overview">
+      <div class="crumb">Scope: <b>Company · Curis</b> · 时间: <b id="curTime">30D</b></div>
+
+      <!-- Company Analyst Brief (hero) -->
+      <div class="card">
+        <div class="brief">
+          <div class="avatar">司</div>
+          <div style="flex:1">
+            <div class="who">司衡 · Company Analyst <span class="pill">公司级经营分析责任</span></div>
+            <div class="role">Curis 全局 Operating Intelligence 负责人 · 不是 BI 机器人</div>
+            <div class="line">近 30 天公司整体产出增长 <b class="up">+5%</b>，但<b class="down"> 内容增长部成本增长 +27% 显著快于结果增长 +8%</b>。建议优先关注该部成本结构。</div>
+            <div class="qa">
+              <button class="btn" onclick="show('conversation',allBtns()[0]);openConv('company')">和他讨论</button>
+              <button class="btn ghost" onclick="show('companybrief',allBtns()[5])">查看完整分析</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Operating Signals -->
+      <div class="card">
+        <h3>公司经营信号（少量真实指标）</h3>
+        <div class="grid g4">
+          <div class="kpi"><div class="k">成本（30D）</div><div class="v">¥12,480</div><div class="d down">▲ 8%</div></div>
+          <div class="kpi"><div class="k">产出 Result</div><div class="v">326</div><div class="d up">▲ 5%</div></div>
+          <div class="kpi"><div class="k">Acceptance</div><div class="v">91%</div><div class="d flat">—</div></div>
+          <div class="kpi"><div class="k">组织负载</div><div class="v">78%</div><div class="d">公司级负载比例</div></div>
+        </div>
+        <div class="note only-a">Variant A：以图表面板为主，CEO 自行读图。</div>
+        <div class="note only-b only-c ok">首页主心智 = 「我的 AI 分析团队准备了什么」，不是 KPI 卡片集合。</div>
+      </div>
+
+      <!-- Default Analytics Org (compact, links to full) -->
+      <div class="card">
+        <h3>我的分析团队组织（默认职能分析组织）</h3>
+        <div class="tree">
+          <div class="lvl1">Curis（公司）</div>
+          <div class="lvl2">├ 空间工程部（Curis 默认职能支撑部门）</div>
+          <div class="lvl2">└ 数据分析部（默认职能分析组织）</div>
+          <div class="lvl3"><span class="dot purple"></span> 司衡 · Company Analyst — 公司级经营分析责任</div>
+          <div class="lvl3"><span class="dot"></span> 小陈 · 小红书分析师 → 指派 小红书运营</div>
+          <div class="lvl3"><span class="dot"></span> 小陆 · 抖音分析师 → 指派 抖音运营</div>
+          <div class="lvl3"><span class="dot"></span> 研析 · 研发分析师 → 指派 Curis 产品研发</div>
+        </div>
+        <div class="note ok">Company Analyst（司衡）明确属于 <b>数据分析部</b>，不替代 Business Analyst。Business Analyst 默认由数据分析部 Employee 指派（Mode A），成熟 Business 可自有数据分析 Role/Employee（Mode B）。完整组织树、Capacity/Load、Workflow 见 <a class="act" onclick="show('employee',allBtns()[2])">组织与员工 →</a></div>
+      </div>
+
+      <!-- Business Reports by Business Analyst -->
+      <div class="card">
+        <h3>业务分析报告（由各 Business 分析师产出）</h3>
+        <div class="rep-card">
+          <div class="h"><div class="t">《小红书经营周报》</div><span class="chip c-verified">Scheduled · Weekly</span></div>
+          <div class="meta-grid">
+            <div>Scope: <b>小红书运营</b></div><div>Author: <b>小陈 · 小红书分析师</b></div><div>Period: <b>W33</b></div>
+          </div>
+          <div class="qa">
+            <button class="btn ghost" onclick="show('report',allBtns()[4])">查看</button>
+            <button class="btn" id="qaXhs" onclick="show('conversation',allBtns()[0]);openConv('xhs')">问小陈</button>
+          </div>
+        </div>
+        <div class="rep-card">
+          <div class="h"><div class="t">《抖音经营周报》</div><span class="chip c-verified">Scheduled · Weekly</span></div>
+          <div class="meta-grid">
+            <div>Scope: <b>抖音运营</b></div><div>Author: <b>小陆 · 抖音分析师</b></div><div>Period: <b>W33</b></div>
+          </div>
+          <div class="qa"><button class="btn ghost" onclick="alert('DEMO：打开《抖音经营周报》（研究示意）')">查看</button><button class="btn" onclick="alert('DEMO：进入与小陆的完整对话（研究示意）')">问小陆</button></div>
+        </div>
+        <div class="rep-card">
+          <div class="h"><div class="t">《研发质量周报》</div><span class="chip c-verified">Scheduled · Weekly</span></div>
+          <div class="meta-grid">
+            <div>Scope: <b>Curis 产品研发</b></div><div>Author: <b>研析 · 研发分析师</b></div><div>Period: <b>W33</b></div>
+          </div>
+          <div class="qa"><button class="btn ghost" onclick="alert('DEMO：打开《研发质量周报》（研究示意）')">查看</button><button class="btn" onclick="alert('DEMO：进入与研析的完整对话（研究示意）')">问分析师</button></div>
+        </div>
+      </div>
+
+      <!-- Cross-company Analysis -->
+      <div class="card">
+        <h3>跨公司分析（Company Analyst 视角）</h3>
+        <div class="team-grid">
+          <div class="kpi"><div class="k">Model Benchmark</div><div class="v" style="font-size:13px;font-weight:600">小红书选题策划对比</div><a class="act" onclick="show('benchmark',allBtns()[3])">查看 →</a></div>
+          <div class="kpi"><div class="k">Cost Efficiency</div><div class="v" style="font-size:13px;font-weight:600">内容增长部异常</div><a class="act" onclick="show('companybrief',allBtns()[5])">查看 →</a></div>
+          <div class="kpi"><div class="k">Organization Capacity</div><div class="v" style="font-size:13px;font-weight:600">空岗 / 负载</div><a class="act" onclick="show('employee',allBtns()[2])">查看 →</a></div>
+        </div>
+        <div class="note">Industry Research 为未来能力，不在首页占位（保留未来扩展）。</div>
+      </div>
+
+      <div class="note ok">CEO 已确认（FINAL DECISIONS，仅更新 UX 表达，未改 Frozen）：① 经营洞察 = Curis 第七一级导航；② 空间工程部 / 数据分析部 名称确认（空间工程部 = 默认职能支撑部门，与数据分析部同属 Company Support Organization，非 Business）；③ 当前 5 类核心 Visualization 已足够，不继续为展示补图；④ Composition 跟随当前 Metric 口径，不建单一全局口径；⑤ 首页移除 Industry Research Vision 占位，未来能力保留。</div>
+      <div class="scenario-note">演示路径：点「问小陈」→ 在完整对话区质疑结论 → 要求继续调查 → 小陈创建真实 Analysis Task 并返回新报告 → 可请求第二位分析师复核。所有分析责任归属于真实 Employee，不是匿名 AI。</div>
+    </div>
+
+    <!-- 2. BUSINESS ANALYSIS (cleaned §十 + visualizations) -->
+    <div id="view-business" class="hidden">
+      <div class="crumb">Company · Curis → <b>Business · 小红书运营</b> → <a class="act" onclick="show('overview',allBtns()[0])">返回</a></div>
+      <div class="card">
+        <h3>小红书运营 · 经营分析 <span class="chip c-verified">Business Analyst 值守：小陈</span></h3>
+        <!-- CLEANED §十: removed "Goal 达成 86%" and "当前经营结果 健康"; replaced with calculated progress + explicit Calculation Contract -->
+        <div class="grid g3">
+          <div class="kpi"><div class="k">Goal（声明目标）</div><div class="v" style="font-size:14px">建立小红书品牌阵地，月涨粉 5k+</div></div>
+          <div class="kpi"><div class="k">本月累计涨粉</div><div class="v">+4.1k</div><div class="d tag-warn">▼ 放缓</div></div>
+          <div class="kpi"><div class="k">目标进度（计算口径）</div><div class="v">82%</div><div class="d"><span class="chip c-manual">= 4.1k / 5k · 计算依据可见</span></div></div>
+        </div>
+        <div class="grid g3" style="margin-top:10px">
+          <div class="kpi"><div class="k">Cost / Usage（30D）</div><div class="v">¥3,120</div><div class="d down">▲ 6%</div></div>
+          <div class="kpi"><div class="k">Result Quality</div><div class="v">92%</div></div>
+          <div class="kpi"><div class="k">Review / Rework</div><div class="v">3 / 1</div></div>
+        </div>
+        <div class="note">进度 82% 由「本月累计涨粉 ÷ 目标 5k」计算得出，非综合评分。External Result：<span class="chip c-ext">小红书平台回执 待连接</span> — 涨粉/互动数据尚未自动流入，当前外部结果 <span class="chip c-unknown">Unknown</span>，不显示为 0。</div>
+        <div class="qa">
+          <button class="btn ghost" onclick="show('domain',allBtns()[1])">看 Shared + Domain Metrics</button>
+          <button class="btn ghost" onclick="show('employee',allBtns()[2])">看 Employee 贡献</button>
+          <button class="btn" onclick="show('report',allBtns()[4])">看报告</button>
+          <button class="btn" onclick="show('conversation',allBtns()[0]);openConv('xhs')">问小陈（本 Business 分析师）</button>
+          <button class="btn ghost" onclick="alert('DEMO：跳回 Business Workspace 原入口（不在 Insights 编辑）')">回到 Workspace</button>
+        </div>
+      </div>
+
+      <!-- VISUALIZATION 2: 小红书经营趋势 (Line + Baseline + events, semantic-safe) -->
+      <div class="card">
+        <h3>小红书经营趋势（涨粉周趋势）</h3>
+        <div class="vizseg">
+          <button class="on" data-vizgroup="trend" data-viztype="line" onclick="switchViz('trend','line')">Line<span class="rec">推荐</span></button>
+          <button data-vizgroup="trend" data-viztype="bar" onclick="switchViz('trend','bar')">Bar</button>
+          <button data-vizgroup="trend" data-viztype="table" onclick="switchViz('trend','table')">Table</button>
+        </div>
+        <!-- Line -->
+        <div class="svgwrap" id="viz-trend-line">
+          <svg viewBox="0 0 660 240" role="img" aria-label="涨粉周趋势折线图">
+            <line x1="50" y1="56" x2="620" y2="56" stroke="#e3a008" stroke-width="1.5" stroke-dasharray="6 5"/>
+            <text x="624" y="60" fill="#e3a008" font-size="10">上期基线 4.8k</text>
+            <!-- grid -->
+            <line x1="50" y1="20" x2="50" y2="200" stroke="#2a3543"/>
+            <line x1="50" y1="200" x2="620" y2="200" stroke="#2a3543"/>
+            <!-- event W31 -->
+            <line x1="392" y1="20" x2="392" y2="200" stroke="#bc8cff" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="396" y="30" fill="#bc8cff" font-size="10">W31 选题调整</text>
+            <!-- event W33 -->
+            <line x1="620" y1="20" x2="620" y2="200" stroke="#f85149" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="500" y="215" fill="#f85149" font-size="10">W33 平台限流</text>
+            <!-- trend line -->
+            <polyline points="50,104 164,86 278,65 392,47 506,59 620,77" fill="none" stroke="#3fb950" stroke-width="2.5"/>
+            <circle cx="50" cy="104" r="3.5" fill="#3fb950"/>
+            <circle cx="164" cy="86" r="3.5" fill="#3fb950"/>
+            <circle cx="278" cy="65" r="3.5" fill="#3fb950"/>
+            <circle cx="392" cy="47" r="3.5" fill="#3fb950"/>
+            <circle cx="506" cy="59" r="3.5" fill="#3fb950"/>
+            <circle cx="620" cy="77" r="3.5" fill="#3fb950"/>
+            <!-- x labels -->
+            <text x="50" y="216" fill="#93a1b1" font-size="10">W28</text>
+            <text x="164" y="216" fill="#93a1b1" font-size="10">W29</text>
+            <text x="278" y="216" fill="#93a1b1" font-size="10">W30</text>
+            <text x="392" y="216" fill="#93a1b1" font-size="10">W31</text>
+            <text x="506" y="216" fill="#93a1b1" font-size="10">W32</text>
+            <text x="620" y="216" fill="#93a1b1" font-size="10">W33</text>
+            <text x="10" y="24" fill="#93a1b1" font-size="10">涨粉(k)</text>
+          </svg>
+        </div>
+        <!-- Bar -->
+        <div class="svgwrap hidden" id="viz-trend-bar">
+          <svg viewBox="0 0 660 240" role="img" aria-label="涨粉周趋势柱状图">
+            <line x1="50" y1="20" x2="50" y2="200" stroke="#2a3543"/>
+            <line x1="50" y1="200" x2="620" y2="200" stroke="#2a3543"/>
+            <rect x="30" y="104" width="40" height="96" fill="#3fb950"/>
+            <rect x="144" y="86" width="40" height="114" fill="#3fb950"/>
+            <rect x="258" y="65" width="40" height="135" fill="#3fb950"/>
+            <rect x="372" y="47" width="40" height="153" fill="#3fb950"/>
+            <rect x="486" y="59" width="40" height="141" fill="#3fb950"/>
+            <rect x="600" y="77" width="40" height="123" fill="#3fb950"/>
+            <text x="50" y="216" fill="#93a1b1" font-size="10">W28</text>
+            <text x="164" y="216" fill="#93a1b1" font-size="10">W29</text>
+            <text x="278" y="216" fill="#93a1b1" font-size="10">W30</text>
+            <text x="392" y="216" fill="#93a1b1" font-size="10">W31</text>
+            <text x="506" y="216" fill="#93a1b1" font-size="10">W32</text>
+            <text x="620" y="216" fill="#93a1b1" font-size="10">W33</text>
+          </svg>
+        </div>
+        <!-- Table -->
+        <div class="hidden" id="viz-trend-table">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <tr style="color:var(--dim)"><td>周</td><td>涨粉(k)</td><td>环比</td></tr>
+            <tr><td>W28</td><td>3.2</td><td class="flat">—</td></tr>
+            <tr><td>W29</td><td>3.8</td><td class="up">▲ 19%</td></tr>
+            <tr><td>W30</td><td>4.5</td><td class="up">▲ 18%</td></tr>
+            <tr><td>W31</td><td>5.1</td><td class="up">▲ 13%</td></tr>
+            <tr><td>W32</td><td>4.7</td><td class="down">▼ 8%</td></tr>
+            <tr><td>W33</td><td>4.1</td><td class="down">▼ 13%</td></tr>
+          </table>
+        </div>
+        <div class="note">同一 Dataset；切换只改变 <b>展示形式</b>，不改变 Metric/Period 真相。折线为推荐（时间序列），柱/表为语义兼容替代。事件标记为真实经营事件，非猜测。</div>
+      </div>
+
+      <!-- VISUALIZATION 3: 内容表现分析 (Heatmap, semantic-safe) -->
+      <div class="card">
+        <h3>内容表现分析（发布时段 × 内容类型 · 平均涨粉 k）</h3>
+        <div class="vizseg">
+          <button class="on" data-vizgroup="content" data-viztype="heatmap" onclick="switchViz('content','heatmap')">Heatmap<span class="rec">推荐</span></button>
+          <button data-vizgroup="content" data-viztype="table" onclick="switchViz('content','table')">Table</button>
+        </div>
+        <div id="viz-content-heatmap">
+          <div class="heat" style="grid-template-columns:70px repeat(4,1fr)">
+            <div class="hcell hhead"></div><div class="hcell hhead">图文</div><div class="hcell hhead">短视频</div><div class="hcell hhead">中视频</div><div class="hcell hhead">直播切片</div>
+            <div class="hcell hhead">早 6-9</div><div class="hcell" style="background:#1f5f37">2.1</div><div class="hcell" style="background:#2a8a4a">3.4</div><div class="hcell" style="background:#1f5f37">1.8</div><div class="hcell" style="background:#173a26">0.9</div>
+            <div class="hcell hhead">午 11-13</div><div class="hcell" style="background:#2a8a4a">2.8</div><div class="hcell" style="background:#39c45f">4.1</div><div class="hcell" style="background:#1f5f37">2.2</div><div class="hcell" style="background:#173a26">1.1</div>
+            <div class="hcell hhead">晚 18-21</div><div class="hcell" style="background:#56e878">4.6</div><div class="hcell" style="background:#56e878">5.2</div><div class="hcell" style="background:#39c45f">3.9</div><div class="hcell" style="background:#1f5f37">2.0</div>
+            <div class="hcell hhead">夜 21-24</div><div class="hcell" style="background:#39c45f">3.9</div><div class="hcell" style="background:#39c45f">4.4</div><div class="hcell" style="background:#2a8a4a">3.1</div><div class="hcell" style="background:#1f5f37">1.6</div>
+          </div>
+          <div class="note">热力图直观显示「晚 18-21 + 短视频」为最佳发布组合。仅展示分布，不替代折线趋势。</div>
+        </div>
+        <div class="hidden" id="viz-content-table">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <tr style="color:var(--dim)"><td>时段＼类型</td><td>图文</td><td>短视频</td><td>中视频</td><td>直播切片</td></tr>
+            <tr><td>早 6-9</td><td>2.1</td><td>3.4</td><td>1.8</td><td>0.9</td></tr>
+            <tr><td>午 11-13</td><td>2.8</td><td>4.1</td><td>2.2</td><td>1.1</td></tr>
+            <tr><td>晚 18-21</td><td>4.6</td><td>5.2</td><td>3.9</td><td>2.0</td></tr>
+            <tr><td>夜 21-24</td><td>3.9</td><td>4.4</td><td>3.1</td><td>1.6</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- VISUALIZATION 3b: 内容类型构成 (Composition, semantic-safe) -->
+      <div class="card">
+        <h3>内容类型构成（发布量构成）</h3>
+        <div class="vizseg">
+          <button class="on" data-vizgroup="composition" data-viztype="stacked" onclick="switchViz('composition','stacked')">Stacked<span class="rec">推荐</span></button>
+          <button data-vizgroup="composition" data-viztype="donut" onclick="switchViz('composition','donut')">Donut</button>
+          <button data-vizgroup="composition" data-viztype="table" onclick="switchViz('composition','table')">Table</button>
+        </div>
+        <div id="viz-composition-stacked">
+          <div class="bar" style="height:22px;margin-top:8px"><i style="width:31.8%;background:#58a6ff"></i><i style="width:43.9%;background:#3fb950"></i><i style="width:17.4%;background:#e3a008"></i><i style="width:6.8%;background:#bc8cff"></i></div>
+          <div class="grid g4" style="margin-top:8px;font-size:11px">
+            <div><span class="chip" style="border-color:#58a6ff;color:#58a6ff">图文 42 (31.8%)</span></div>
+            <div><span class="chip" style="border-color:#3fb950;color:#3fb950">短视频 58 (43.9%)</span></div>
+            <div><span class="chip" style="border-color:#e3a008;color:#e3a008">中视频 23 (17.4%)</span></div>
+            <div><span class="chip" style="border-color:#bc8cff;color:#bc8cff">直播切片 9 (6.8%)</span></div>
+          </div>
+        </div>
+        <div class="hidden" id="viz-composition-donut">
+          <div class="svgwrap">
+            <svg viewBox="0 0 200 160" role="img" aria-label="内容类型构成环形图">
+              <g transform="rotate(-90 100 80)">
+                <circle cx="100" cy="80" r="60" fill="none" stroke="#58a6ff" stroke-width="26" stroke-dasharray="119.9 257.1" stroke-dashoffset="0"/>
+                <circle cx="100" cy="80" r="60" fill="none" stroke="#3fb950" stroke-width="26" stroke-dasharray="165.4 211.6" stroke-dashoffset="-119.9"/>
+                <circle cx="100" cy="80" r="60" fill="none" stroke="#e3a008" stroke-width="26" stroke-dasharray="65.6 311.4" stroke-dashoffset="-285.3"/>
+                <circle cx="100" cy="80" r="60" fill="none" stroke="#bc8cff" stroke-width="26" stroke-dasharray="25.6 351.4" stroke-dashoffset="-350.9"/>
+              </g>
+              <text x="100" y="84" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="700">132 篇</text>
+            </svg>
+          </div>
+          <div class="grid g4" style="margin-top:4px;font-size:11px">
+            <div><span class="chip" style="border-color:#58a6ff;color:#58a6ff">图文 31.8%</span></div>
+            <div><span class="chip" style="border-color:#3fb950;color:#3fb950">短视频 43.9%</span></div>
+            <div><span class="chip" style="border-color:#e3a008;color:#e3a008">中视频 17.4%</span></div>
+            <div><span class="chip" style="border-color:#bc8cff;color:#bc8cff">直播切片 6.8%</span></div>
+          </div>
+        </div>
+        <div class="hidden" id="viz-composition-table">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <tr style="color:var(--dim)"><td>内容类型</td><td>发布量</td><td>占比</td></tr>
+            <tr><td>图文</td><td>42</td><td>31.8%</td></tr>
+            <tr><td>短视频</td><td>58</td><td>43.9%</td></tr>
+            <tr><td>中视频</td><td>23</td><td>17.4%</td></tr>
+            <tr><td>直播切片</td><td>9</td><td>6.8%</td></tr>
+            <tr><td>合计</td><td>132</td><td>100%</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SHARED + DOMAIN (unchanged concept) -->
+    <div id="view-domain" class="hidden">
+      <div class="crumb">Business · <b>小红书运营</b> · Metrics</div>
+      <div class="card">
+        <h3>Shared Metrics（跨业务可比 · 平台定义）</h3>
+        <div class="grid g3">
+          <div class="kpi"><div class="k">Execution Duration（均）</div><div class="v">42s</div><div class="d"><span class="chip c-verified">Runtime</span></div></div>
+          <div class="kpi"><div class="k">Cost（30D）</div><div class="v">¥3,120</div><div class="d"><span class="chip c-verified">ai_usage</span></div></div>
+          <div class="kpi"><div class="k">Result / Acceptance</div><div class="v">92%</div></div>
+          <div class="kpi"><div class="k">Review / Rework</div><div class="v">3 / 1</div></div>
+          <div class="kpi"><div class="k">Employee / Model 使用</div><div class="v">4 / 2</div></div>
+          <div class="kpi"><div class="k">Human Intervention</div><div class="v">2</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Domain Metrics（本业务声明 · 来源标注）</h3>
+        <div class="grid g3">
+          <div class="kpi"><div class="k">曝光</div><div class="v">128k</div><div class="d"><span class="chip c-ext">小红书回执·待连接</span></div></div>
+          <div class="kpi"><div class="k">阅读</div><div class="v">41k</div><div class="d"><span class="chip c-ext">小红书回执·待连接</span></div></div>
+          <div class="kpi"><div class="k">点赞</div><div class="v">6.2k</div></div>
+          <div class="kpi"><div class="k">收藏</div><div class="v">1.9k</div></div>
+          <div class="kpi"><div class="k">评论</div><div class="v">880</div></div>
+          <div class="kpi"><div class="k">涨粉</div><div class="v">+4.1k</div><div class="d tag-warn">▼ 放缓</div></div>
+          <div class="kpi"><div class="k">转化</div><div class="v">73</div><div class="d"><span class="chip c-unknown">Unknown 口径</span></div></div>
+        </div>
+        <div class="note">同一外壳、同一时间/过滤/报告/Analyst：切换 Business 只换 Domain 区，CEO <b>不会觉得每个 Business 是一套不同 BI 软件</b>。</div>
+      </div>
+    </div>
+
+    <!-- 4. EMPLOYEE / ORG (default analytics org + capacity/load + workflow) -->
+    <div id="view-employee" class="hidden">
+      <div class="crumb">Business · 小红书运营 → <b>Employee / Organization 分析</b></div>
+
+      <!-- DEFAULT FUNCTIONAL ANALYTICS ORGANIZATION (Delta B) -->
+      <div class="card">
+        <h3>默认职能分析组织（Product Delta B）</h3>
+        <div class="tree">
+          <div class="lvl1">Curis（公司）</div>
+          <div class="lvl2">├ 空间工程部（Curis 默认职能支撑部门）</div>
+          <div class="lvl2">└ 数据分析部（默认职能分析组织）</div>
+          <div class="lvl3"><span class="dot purple"></span> 司衡 · <b>Company Analyst</b> — 公司级经营分析责任（属于数据分析部）</div>
+          <div class="lvl3"><span class="dot"></span> 小陈 · 小红书分析师 → 指派 <b>小红书运营</b></div>
+          <div class="lvl3"><span class="dot"></span> 小陆 · 抖音分析师 → 指派 <b>抖音运营</b></div>
+          <div class="lvl3"><span class="dot"></span> 研析 · 研发分析师 → 指派 <b>Curis 产品研发</b></div>
+        </div>
+        <div class="orgmode"><b>Mode A（默认）：</b> Business Analyst 由「数据分析部」Employee 指派到各 Business（小陈→小红书运营，小陆→抖音运营，研析→研发）。</div>
+        <div class="orgmode"><b>Mode B（成熟 Business）：</b> 业务成熟后可自有数据分析 Role/Employee（如抖音运营自建转化分析师岗），不再依赖部门指派。</div>
+        <div class="note ok">Company Analyst（司衡）明确归属数据分析部，不替代 Business Analyst；跨公司异常由 CA 发起、BA 执行、CA 独立汇总（见专项研究）。此树仅表达已确认 Product Delta，<b>不改动 Runtime/Schema</b>。</div>
+      </div>
+
+      <!-- VISUALIZATION 4: Organization Capacity / Load -->
+      <div class="card">
+        <h3>Organization Capacity / Load（负载比例 / 空岗）</h3>
+        <div class="caprow">
+          <div>文案岗 · 沈一</div>
+          <div class="cap-track"><div class="cap-load" style="width:88%;background:#e3a008"></div></div>
+          <div>负载 88%</div>
+        </div>
+        <div class="caprow">
+          <div>选题岗 · 白露</div>
+          <div class="cap-track"><div class="cap-load" style="width:70%;background:#3fb950"></div></div>
+          <div>负载 70%</div>
+        </div>
+        <div class="caprow">
+          <div>发布岗 · 程野</div>
+          <div class="cap-track"><div class="cap-load" style="width:95%;background:#e3a008"></div></div>
+          <div>负载 95% · Rework 3</div>
+        </div>
+        <div class="caprow">
+          <div>数据分析岗</div>
+          <div class="cap-track"><div class="cap-load" style="width:0%;background:#2a3543"></div></div>
+          <div>空岗 · 无指定 Employee</div>
+        </div>
+        <div class="note">负载 = 实际占用比例；<b>Capability（能力）≠ Capacity（容量）</b>——增员提升 Capacity，不自动提升单员工 Capability。空岗触发组织信号，链回招聘/组队入口（不在 Insights 内编辑）。程野执行次数最多但质量偏低且有返工，<b>不自动判"最佳员工"</b>。状态词（接近饱和/过载等）须有定义合同后再表达；当前仅展示负载比例与空岗事实，不做无依据判断。</div>
+      </div>
+
+      <!-- VISUALIZATION 5: Workflow Funnel -->
+      <div class="card">
+        <h3>Workflow（选题 → 转化 · Funnel）</h3>
+        <div class="svgwrap">
+          <svg viewBox="0 0 680 270" role="img" aria-label="选题到转化漏斗">
+            <!-- 选题 120 -->
+            <rect x="80" y="20" width="500" height="30" rx="4" fill="#58a6ff"/>
+            <text x="335" y="40" text-anchor="middle" fill="#06243f" font-size="12" font-weight="700">选题 120</text>
+            <text x="600" y="40" fill="#93a1b1" font-size="10">—</text>
+            <!-- 创作 98 -->
+            <rect x="126" y="60" width="408" height="30" rx="4" fill="#3fb950"/>
+            <text x="335" y="80" text-anchor="middle" fill="#06243f" font-size="12" font-weight="700">创作 98</text>
+            <text x="600" y="80" fill="#f85149" font-size="10">▼ 18%</text>
+            <!-- 审核 90 -->
+            <rect x="142" y="100" width="375" height="30" rx="4" fill="#39d0d8"/>
+            <text x="335" y="120" text-anchor="middle" fill="#06243f" font-size="12" font-weight="700">审核 90</text>
+            <text x="600" y="120" fill="#f85149" font-size="10">▼ 8%</text>
+            <!-- 发布 86 -->
+            <rect x="151" y="140" width="358" height="30" rx="4" fill="#bc8cff"/>
+            <text x="335" y="160" text-anchor="middle" fill="#06243f" font-size="12" font-weight="700">发布 86</text>
+            <text x="600" y="160" fill="#f85149" font-size="10">▼ 4%</text>
+            <!-- 互动 54 -->
+            <rect x="217" y="180" width="225" height="30" rx="4" fill="#e3a008"/>
+            <text x="335" y="200" text-anchor="middle" fill="#2a1c00" font-size="12" font-weight="700">互动 54</text>
+            <text x="600" y="200" fill="#f85149" font-size="10">▼ 37%</text>
+            <!-- 转化 19 -->
+            <rect x="290" y="220" width="79" height="30" rx="4" fill="#f85149"/>
+            <text x="335" y="240" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">转化 19</text>
+            <text x="600" y="240" fill="#f85149" font-size="10">▼ 65%</text>
+          </svg>
+        </div>
+        <div class="note">漏斗展示 Stage / Failure / Rework / Handoff / Bottleneck：最大流失在「互动 → 转化」（65%），为内容增长核心瓶颈。Semantic-safe 替代可为 Sankey（如未来支持），本演示以 Funnel 表达。</div>
+      </div>
+
+      <div class="card">
+        <h3>员工贡献（执行次数 ≠ 表现）</h3>
+        <div class="row"><span>沈一 · 文案岗</span><span>执行 38 · 质量 94% · Acceptance 96%</span></div>
+        <div class="row"><span>白露 · 选题岗</span><span>执行 29 · 质量 90% · Acceptance 91%</span></div>
+        <div class="row"><span>程野 · 发布岗</span><span>执行 51 · 质量 82% · Rework 3 · <span class="tag-warn">观察</span></span></div>
+        <div class="row"><span>数据分析岗</span><span><span class="chip c-stale">空岗 · 无指定 Employee</span></span></div>
+        <div class="note">空岗触发组织信号，链回招聘/组队入口（不在 Insights 内编辑）。</div>
+      </div>
+    </div>
+
+    <!-- 5. BENCHMARK (real viz: sorted bar + small multiples + scatter + table) -->
+    <div id="view-benchmark" class="hidden">
+      <div class="crumb">Scope · Model/Agent → <b>Benchmark：小红书选题策划</b></div>
+      <div class="card">
+        <h3>Comparability（样本为何可比）</h3>
+        <div class="qa">
+          <span class="chip c-verified">Role=小红书策划师</span>
+          <span class="chip c-verified">Task Type=选题策划</span>
+          <span class="chip c-verified">Stage=创作</span>
+          <span class="chip c-verified">Business=小红书运营</span>
+          <span class="chip c-verified">Complexity=中</span>
+          <span class="chip c-verified">Sample Size=各 60+</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Model / Agent Benchmark（10–20 模型视角示例：3 模型）</h3>
+        <div class="vizseg">
+          <button class="on" data-vizgroup="benchmark" data-viztype="bar" onclick="switchViz('benchmark','bar')">Bar<span class="rec">推荐</span></button>
+          <button data-vizgroup="benchmark" data-viztype="scatter" onclick="switchViz('benchmark','scatter')">Scatter</button>
+          <button data-vizgroup="benchmark" data-viztype="table" onclick="switchViz('benchmark','table')">Table</button>
+        </div>
+
+        <!-- Bar (sorted horizontal) + small multiples -->
+        <div id="viz-benchmark-bar">
+          <div class="svgwrap">
+            <svg viewBox="0 0 660 170" role="img" aria-label="成本排序横向条形图">
+              <text x="10" y="28" fill="#93a1b1" font-size="11">按 Cost 升序</text>
+              <text x="10" y="48" fill="#e6edf3" font-size="12">Gemini</text>
+              <rect x="120" y="36" width="291" height="20" rx="4" fill="#3fb950"/>
+              <text x="420" y="51" fill="#e6edf3" font-size="11">¥0.16 · 一次通过率 84%</text>
+              <text x="10" y="88" fill="#e6edf3" font-size="12">Claude</text>
+              <rect x="120" y="76" width="327" height="20" rx="4" fill="#58a6ff"/>
+              <text x="456" y="91" fill="#e6edf3" font-size="11">¥0.18 · 一次通过率 92%</text>
+              <text x="10" y="128" fill="#e6edf3" font-size="12">GPT</text>
+              <rect x="120" y="116" width="400" height="20" rx="4" fill="#e3a008"/>
+              <text x="529" y="131" fill="#e6edf3" font-size="11">¥0.22 · 一次通过率 80%</text>
+            </svg>
+          </div>
+          <div class="note">Small Multiples（各模型关键指标迷你条）：</div>
+          <div class="grid g3">
+            <div class="kpi"><div class="k">Gemini</div><div class="bar"><i style="width:84%"></i></div><div class="d">一次通过率 84%</div></div>
+            <div class="kpi"><div class="k">Claude</div><div class="bar"><i style="width:92%"></i></div><div class="d">一次通过率 92%</div></div>
+            <div class="kpi"><div class="k">GPT</div><div class="bar"><i style="width:80%"></i></div><div class="d">一次通过率 80%</div></div>
+          </div>
+          <div class="note">结论示例：<b>Claude 成本低 18%、一次通过率高 12%、平均耗时高 8%</b>。联合指标呈现，<b>不排单一名次排行榜</b>。Cost 最低（Gemini）≠ 最好。</div>
+        </div>
+
+        <!-- Scatter Cost × Quality -->
+        <div class="hidden" id="viz-benchmark-scatter">
+          <div class="svgwrap">
+            <svg viewBox="0 0 660 240" role="img" aria-label="成本与质量散点图">
+              <line x1="50" y1="20" x2="50" y2="200" stroke="#2a3543"/>
+              <line x1="50" y1="200" x2="620" y2="200" stroke="#2a3543"/>
+              <!-- axes labels -->
+              <text x="300" y="228" fill="#93a1b1" font-size="10">Cost (¥) →</text>
+              <text x="14" y="40" fill="#93a1b1" font-size="10">一次通过率</text>
+              <!-- quadrant medians -->
+              <line x1="335" y1="20" x2="335" y2="200" stroke="#2a3543" stroke-dasharray="4 4"/>
+              <line x1="50" y1="116" x2="620" y2="116" stroke="#2a3543" stroke-dasharray="4 4"/>
+              <!-- points -->
+              <circle cx="240" cy="116" r="7" fill="#3fb950"/>
+              <text x="240" y="138" text-anchor="middle" fill="#3fb950" font-size="10">Gemini 0.16/84%</text>
+              <circle cx="335" cy="68" r="7" fill="#58a6ff"/>
+              <text x="335" y="58" text-anchor="middle" fill="#58a6ff" font-size="10">Claude 0.18/92%</text>
+              <circle cx="525" cy="140" r="7" fill="#e3a008"/>
+              <text x="525" y="160" text-anchor="middle" fill="#e3a008" font-size="10">GPT 0.22/80%</text>
+            </svg>
+          </div>
+          <div class="note">散点表示 Cost × Quality 权衡：右上（低成本高质量）为优区；Claude 偏高质量、Gemini 偏低成本、GPT 双低。无单一"最佳"。</div>
+        </div>
+
+        <!-- Table with Sample Size / Comparability / Evidence -->
+        <div class="hidden" id="viz-benchmark-table">
+          <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:12px">
+            <tr style="color:var(--dim)"><td>Provider</td><td>Duration</td><td>Token</td><td>Cost</td><td>一次通过率</td><td>Rework</td><td>Sample Size</td><td>Comparability</td><td>Evidence</td></tr>
+            <tr><td>Claude</td><td>46s</td><td>9.1k</td><td>¥0.18</td><td class="tag-ok">92%</td><td>1</td><td>64</td><td>同 Role/Task/Stage</td><td>Runtime + 人工复核</td></tr>
+            <tr><td>GPT</td><td>43s</td><td>11.4k</td><td>¥0.22</td><td>80%</td><td>3</td><td>61</td><td>同 Role/Task/Stage</td><td>Runtime + 人工复核</td></tr>
+            <tr><td>Gemini</td><td>41s</td><td>8.7k</td><td>¥0.16</td><td>84%</td><td>2</td><td>62</td><td>同 Role/Task/Stage</td><td>Runtime + 人工复核</td></tr>
+          </table>
+          <div class="note">必须显示 Sample Size（各 60+）、Comparability（同 Role/Task/Stage/Complexity）、Evidence（Runtime + 人工复核）。<b>样本不足时禁止比较</b>（见数据不足状态）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. REPORTS LIST -->
+    <div id="view-reports" class="hidden">
+      <div class="crumb"><b>分析报告</b> · 由 AI Employee 作为正式工作成果产出</div>
+      <div class="card">
+        <h3>报告库（按 Scope / 时间 / Responsibility）</h3>
+        <div class="rep-card">
+          <div class="h"><div class="t">《小红书经营日报》</div><span class="chip c-verified">Daily · Scheduled</span></div>
+          <div class="meta-grid">
+            <div>Scope: <b>小红书运营</b></div><div>Responsibility: <b>小红书分析师</b></div><div>Author: <b>小陈</b></div>
+            <div>Period: <b>2026-08-17</b></div><div>Trigger: <b>Scheduled</b></div><div>Review: <b>待 CEO 确认</b></div>
+          </div>
+          <div class="qa"><button class="btn ghost" onclick="show('report',allBtns()[4])">查看报告</button><button class="btn" onclick="show('conversation',allBtns()[0]);openConv('xhs')">问小陈</button></div>
+        </div>
+        <div class="rep-card">
+          <div class="h"><div class="t">《内容增长部成本异常专项分析》</div><span class="chip c-pro">Proactive · Company Analyst</span></div>
+          <div class="meta-grid">
+            <div>Scope: <b>内容增长部</b></div><div>Responsibility: <b>Company Analyst</b></div><div>Author: <b>司衡</b></div>
+            <div>Period: <b>30D</b></div><div>Trigger: <b>Proactive</b></div><div>Review: <b>已复核</b></div>
+          </div>
+          <div class="qa"><button class="btn ghost" onclick="show('companybrief',allBtns()[5])">查看分析</button><button class="btn" onclick="show('conversation',allBtns()[0]);openConv('check')">和司衡讨论</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. SINGLE REPORT DETAIL (reworked §3 header) -->
+    <div id="view-report" class="hidden">
+      <div class="crumb">Report → <b>《小红书经营日报》</b> → <a class="act" onclick="show('reports',allBtns()[4])">返回库</a></div>
+      <div class="card">
+        <h3>《小红书经营日报》</h3>
+        <div class="meta-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div>Report: <b>小红书经营日报</b></div>
+          <div>Scope: <b>小红书运营</b></div>
+          <div>Period: <b>2026-08-17</b></div>
+          <div>Analysis Responsibility: <b>小红书数据分析岗</b></div>
+          <div>Author Employee: <b>小陈（小红书分析师）</b></div>
+          <div>Business / Dept: <b>小红书运营 / 内容增长部</b></div>
+          <div>Trigger: <b>Scheduled（Daily）</b></div>
+          <div>Data Sources: <b>ai_usage · Manual(沈一) · 小红书回执(待连接)</b></div>
+          <div>Model/Agent provenance: <b>Claude + Curis Analyst</b></div>
+          <div>Created At: <b>2026-08-18 00:00</b></div>
+          <div>Review / Verification: <b>待 CEO 确认</b></div>
+          <div>Type: <b>Daily</b></div>
+        </div>
+        <div class="analyst"><span class="lbl fact">FACTS：</span> 发布 6 篇，总曝光 128k，涨粉 +4.1k（较上周 -12%）。</div>
+        <div class="analyst"><span class="lbl interp">INTERPRETATION：</span> 涨粉放缓可能与选题重复度上升有关；互动率稳定。</div>
+        <div class="analyst"><span class="lbl unk">UNKNOWN：</span> 外部转化口径未对齐，转化数不可比。</div>
+        <div class="analyst"><span class="lbl rec">RECOMMENDATION：</span> 建议专项分析"选题多样性"，并优先接通小红书平台回执。</div>
+        <div class="analyst"><span class="lbl">EVIDENCE：</span> <a class="act" onclick="show('trust',null)">查看来源与原始数据 →</a></div>
+        <div class="qa">
+          <button class="btn" onclick="show('conversation',allBtns()[0]);openConv('xhs')">问小陈（质疑 / 追问）</button>
+          <button class="btn ghost" onclick="alert('DEMO：与 Analyst 继续讨论')">继续讨论</button>
+          <button class="btn ghost" onclick="show('review',allBtns()[0])">请求复核</button>
+          <button class="btn ghost" onclick="alert('DEMO：召开 Meeting')">召开 Meeting</button>
+          <button class="btn ghost" onclick="alert('DEMO：进入 Decision')">进入 Decision</button>
+          <button class="btn ghost" onclick="show('business',allBtns()[1])">回到 Business</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. CONVERSATION (full main-area, not chat box) (§4-§7) -->
+    <div id="view-conversation" class="hidden">
+      <div class="crumb">Conversation Surface · CEO ↔ <b id="convName">小陈</b>（小红书分析师） · 与员工 Workspace 中 Conversation 同一记录</div>
+      <div class="card">
+        <div class="brief">
+          <div class="avatar" id="convAvatar">陈</div>
+          <div style="flex:1">
+            <div class="who" id="convTitle">小陈 · 小红书分析师 <span class="pill" id="convResp">Responsibility: 小红书运营经营分析</span></div>
+            <div class="role">Main 区完整对话（非右侧小聊天框）。点击下方路径按钮逐步体验 CEO 质疑 → 调查 → 复核闭环。</div>
+          </div>
+        </div>
+        <div class="conv" id="convThread">
+          <!-- base report recap -->
+          <div class="msg"><div class="avatar sm">陈</div><div class="bubble"><div class="who">小陈</div>
+            《小红书经营日报》结论：涨粉较上周下降 12%，可能与选题重复度上升有关。</div></div>
+
+          <!-- step 1: CEO challenge -->
+          <div id="conv-step1" class="hidden">
+            <div class="msg ceo"><div class="avatar sm" style="background:linear-gradient(135deg,var(--warn),var(--accent2))">C</div><div class="bubble"><div class="who">CEO</div>为什么你认为是选题导致的？</div></div>
+            <div class="msg"><div class="avatar sm">陈</div><div class="bubble"><div class="who">小陈</div>
+              <span class="lbl fact">FACT：</span> 涨粉 -12%；发布频率未下降；最近 20 篇内容选题相似度提高。<br>
+              <span class="lbl interp">INTERPRETATION：</span> 选题重复可能造成触达疲劳。<br>
+              <span class="lbl unk">UNKNOWN：</span> 当前 External Connector 未提供完整曝光来源结构，无法证明因果。<br>
+              <span class="lbl">EVIDENCE：</span> 内容样本 / 历史选题 / 当前 Manual+External 数据。<br>
+              <span class="lbl rec">RECOMMENDATION：</span> 建议做一次"选题多样性专项分析"。</div></div>
+          </div>
+
+          <!-- step 2: CEO asks alternative hypothesis + creates task -->
+          <div id="conv-step2" class="hidden">
+            <div class="msg ceo"><div class="avatar sm" style="background:linear-gradient(135deg,var(--warn),var(--accent2))">C</div><div class="bubble"><div class="who">CEO</div>我觉得可能是平台流量变化，你去验证一下。</div></div>
+            <div class="task"><span class="badge b-req">ANALYSIS TASK CREATED</span> 真实分析任务已创建 · Responsibility 仍归<b> 小陈</b> · 任务：「平台流量变化 vs 选题重复 — 归因验证」</div>
+            <div class="task" id="convTaskRun" style="display:none"><span class="badge b-run">RUNNING</span> 小陈正在执行：拉取发布时段流量基准、对比选题相似度与单篇涨粉相关性、检索平台公开流量波动信号…</div>
+            <div class="qa"><button class="btn" id="convRunBtn" onclick="runAnalysisTask()">运行分析任务 ▶</button></div>
+          </div>
+
+          <!-- step 3: new report returns to same conversation -->
+          <div id="conv-step3" class="hidden">
+            <div class="msg"><div class="avatar sm">陈</div><div class="bubble"><div class="who">小陈 · 新报告《选题多样性归因验证》</div>
+              <span class="lbl fact">FACT：</span> 同期平台大盘流量持平；高相似度选题组单篇涨粉比低相似度组低 19%。<br>
+              <span class="lbl interp">INTERPRETATION：</span> 更支持"选题重复"假设，平台流量变化非主因。<br>
+              <span class="lbl unk">UNKNOWN：</span> 仍缺完整曝光来源结构，相关≠因果。<br>
+              <span class="lbl rec">RECOMMENDATION：</span> 执行"选题多样性"专项 + 接通小红书回执确认。</div></div>
+            <div class="task"><span class="badge b-done">DONE</span> 新 Report 已回写同一 Conversation · CEO 可继续判断</div>
+            <div class="qa">
+              <button class="btn" onclick="show('review',allBtns()[0])">请求第二位分析师复核</button>
+              <button class="btn ghost" onclick="alert('DEMO：召开 Meeting 讨论选题策略')">召开 Meeting</button>
+              <button class="btn ghost" onclick="show('report',allBtns()[4])">查看报告正文</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="qa" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
+          <button class="btn ghost" onclick="reveal('conv-step1')">① CEO 质疑结论</button>
+          <button class="btn ghost" onclick="reveal('conv-step2')">② 要求继续调查（建 Task）</button>
+          <button class="btn ghost" onclick="show('business',allBtns()[1])">回到 Business</button>
+          <button class="btn ghost" onclick="show('reports',allBtns()[4])">回到报告库</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. SECOND ANALYST REVIEW (§6) -->
+    <div id="view-review" class="hidden">
+      <div class="crumb">Report → 请求复核 → <b>Second Analyst Review</b></div>
+      <div class="card stage-rev">
+        <h3>复核：原创分析 vs 独立复核</h3>
+        <div class="analyst"><span class="lbl">Original Analysis：</span> 小陈（小红书分析师）提出"选题重复导致涨粉下降"。</div>
+        <div class="analyst"><span class="lbl">Reviewer：</span> 司衡（Company Analyst）· 受 CEO 委派复核。同时满足 <b>Independence</b>（独立于原分析，公司级角色不与 Business Analyst 重叠）与 <b>Relevant Analysis Capability</b>（具备经营分析专业能力，可审小红书增长分析）。</div>
+        <div class="analyst"><span class="lbl agree">Agreement：</span> 认同 FACT（涨粉 -12%、发布频次不变、选题相似度上升）；认同"选题重复"为更强解释。</div>
+        <div class="analyst"><span class="lbl disagree">Disagreement：</span> 复核认为"平台流量变化"不能仅以大盘持平排除——建议补充分时段流量结构。</div>
+        <div class="analyst"><span class="lbl">EVIDENCE：</span> 复用小陈样本 + 独立检索公开流量波动区间。</div>
+        <div class="analyst"><span class="lbl unk">UNKNOWN：</span> 仍缺小红书回执的曝光来源拆解。</div>
+        <div class="analyst"><span class="lbl rec">Final Recommendation：</span> 采用"选题多样性专项"为主动作，同时将"分时段流量结构"列入待验证清单，待 Connector 接通后定案。</div>
+        <div class="note">复核人硬性要求：<b>Independence + Relevant Analysis Capability 二者必须同时满足</b>。不再以"研发分析师复核小红书增长分析"为例（研发分析师不具备该业务的相关分析能力）。复核不是简单点赞/通过——明确 Agreement / Disagreement / Evidence / Unknown / Final Recommendation，且独立复核人不能修改其他 Business 的分析责任。</div>
+        <div class="qa"><button class="btn ghost" onclick="alert('DEMO：召开 Meeting 定案')">召开 Meeting</button><button class="btn ghost" onclick="show('conversation',allBtns()[0]);openConv('xhs')">回到对话</button></div>
+      </div>
+    </div>
+
+    <!-- 10. COMPANY ANALYST BRIEF + DELEGATION (§7) -->
+    <div id="view-companybrief" class="hidden">
+      <div class="crumb">专项研究 → <b>Company Analyst 主动分析</b></div>
+      <div class="card">
+        <div class="brief">
+          <div class="avatar">司</div>
+          <div style="flex:1">
+            <div class="who">司衡 · Company Analyst <span class="pill">公司级经营分析责任</span></div>
+            <div class="role">不替代 Business Analyst；从全局看 Department / Business / Cost / Model / Risk</div>
+          </div>
+        </div>
+        <h3 style="margin-top:10px">《内容增长部成本异常专项分析》<span class="chip c-pro">Proactive</span></h3>
+        <div class="analyst"><span class="lbl fact">FACT：</span> 内容增长部 30D AI Cost ↑27%；61% 增量来自抖音运营；Result 数量仅 ↑8%。</div>
+        <div class="analyst"><span class="lbl interp">INTERPRETATION：</span> 成本增长明显高于产出增长。</div>
+        <div class="analyst"><span class="lbl unk">UNKNOWN：</span> 抖音 External Result 尚未完整接入，无法确认成本增长是否带来更高业务价值。</div>
+        <div class="analyst"><span class="lbl rec">RECOMMENDATION：</span> 请求抖音 Business Analyst 补充 30D 业务效果分析。</div>
+        <div class="qa">
+          <button class="btn" onclick="delegateToBiz()">让抖音分析师查一下</button>
+          <button class="btn ghost" onclick="show('conversation',allBtns()[0]);openConv('company')">和司衡讨论</button>
+        </div>
+      </div>
+
+      <div id="cb-delegate" class="card hidden">
+        <h3>真实责任流（Company Analyst → Business Analyst → 汇总）</h3>
+        <div class="chain">
+          <span class="node">司衡 · Company Analyst</span><span class="arr">→ Handoff / Assigned Analysis Request</span>
+          <span class="node">小陆 · 抖音 Business Analyst</span><span class="arr">→ 专项分析</span>
+          <span class="node">《抖音 30D 业务效果》Report</span><span class="arr">→ 司衡 汇总</span>
+          <span class="node">CEO</span>
+        </div>
+        <div class="analyst"><span class="lbl">抖音 Business Analyst（小陆）返回专项：</span><br>
+          <span class="lbl fact">FACT：</span> 抖音 30D Cost ↑17%（占部增量 61%）；曝光 +22% 但涨粉仅 +5%，互动率持平。<br>
+          <span class="lbl interp">INTERPRETATION：</span> 增量成本主要投向高曝光低转化内容，性价比偏低。<br>
+          <span class="lbl unk">UNKNOWN：</span> 外部转化链路未完整接入，无法量化 GMV 贡献。<br>
+          <span class="lbl rec">RECOMMENDATION：</span> 重分配 30% 预算至高互动选题，并接通抖音回执确认转化。</div>
+        <div class="analyst"><span class="lbl">司衡 汇总：</span> 内容增长部成本异常主因为抖音"高曝光低转化"投放；建议优先级高于小红书选题专项。已更新跨部门建议清单。</div>
+        <div class="note ok">Business Report 的 INTERPRETATION <b>不会被自动升级为 Company Fact</b>——Company Analyst 将其作为额外分析输入，独立给出带 Evidence 的汇总。</div>
+        <div class="qa"><button class="btn ghost" onclick="alert('DEMO：召开跨部门 Meeting')">召开 Meeting</button><button class="btn ghost" onclick="show('overview',allBtns()[0])">回到首页</button></div>
+      </div>
+    </div>
+
+    <!-- 11. NO ANALYST EMPLOYEE (§9) -->
+    <div id="view-noanalyst" class="hidden">
+      <div class="crumb">Business · 公众号运营 → <b>无负责分析师</b></div>
+      <div class="card">
+        <h3>「为什么最近 Result 下降？」</h3>
+        <div class="empty">当前没有负责「公众号运营经营分析」的 Employee。系统不会假装存在一个匿名 AI Analyst。</div>
+        <div class="grid g2" style="margin-top:10px">
+          <div class="kpi"><div class="k">可选动作</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+              <button class="btn ghost" onclick="alert('DEMO：创建临时分析任务（≠ 永久岗位）')">创建临时分析任务</button>
+              <button class="btn ghost" onclick="alert('DEMO：指派现有 Employee 临时承担')">指派现有 Employee</button>
+            </div>
+          </div>
+          <div class="kpi"><div class="k">长期责任</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+              <button class="btn ghost" onclick="alert('DEMO：创建数据分析岗位（进入组织/招聘入口）')">创建数据分析岗位</button>
+              <button class="btn ghost" onclick="alert('DEMO：从人才与能力招募分析师')">从人才与能力招募分析师</button>
+            </div>
+          </div>
+        </div>
+        <div class="note">「创建临时任务」≠ 自动创建永久岗位。只有当该 Business 长期重复需要分析，才可能形成稳定 Role（见组织成长模型）。</div>
+      </div>
+    </div>
+
+    <!-- 12. MEETING (loop closure) -->
+    <div id="view-meeting" class="hidden">
+      <div class="crumb">Analysis → <b>Meeting</b> → Decision</div>
+      <div class="card">
+        <h3>经营会议：小红书选题策略 / 抖音成本</h3>
+        <div class="analyst"><span class="lbl">参会：</span> CEO · 小陈（小红书分析师）· 小陆（抖音分析师）· 司衡（Company Analyst）</div>
+        <div class="analyst"><span class="lbl">议题：</span> ① 小红书选题多样性专项 ② 抖音高曝光低转化预算重分配</div>
+        <div class="analyst"><span class="lbl">决议草案：</span> 启动选题多样性专项；抖音重分配 30% 预算；两周后复评 External Result 接入情况。</div>
+        <div class="qa"><button class="btn" onclick="show('decision',allBtns()[0])">形成 Decision →</button><button class="btn ghost" onclick="show('overview',allBtns()[0])">返回</button></div>
+      </div>
+    </div>
+
+    <!-- 13. DECISION (loop closure end) -->
+    <div id="view-decision" class="hidden">
+      <div class="crumb">Meeting → <b>Decision</b> → 改变下一轮经营</div>
+      <div class="card">
+        <h3>Decision：内容增长部 Q3 调整</h3>
+        <div class="analyst"><span class="lbl">Decision：</span> 批准选题多样性专项 + 抖音预算重分配 30%；要求 14 天内接通抖音/小红书回执。</div>
+        <div class="analyst"><span class="lbl">Action：</span> 调整 Workflow（小红书选题岗增加多样性校验）· 调整 Role Staffing（抖音增设转化分析师岗待招募）· 更换部分 Model 策略（测试高互动选题下的 Gemini）。</div>
+        <div class="note ok">经营洞察本身<b>不成为第二套 Business Editor</b>——决策通过原产品入口（Meeting/Decision/Workspace）落地，新数据回流 Company OS，下一轮分析自动反映 Before/After。</div>
+        <div class="qa"><button class="btn ghost" onclick="show('beforeafter',allBtns()[0])">查看 Before/After 框架</button><button class="btn ghost" onclick="show('overview',allBtns()[0])">回到首页</button></div>
+      </div>
+    </div>
+
+    <!-- 14. DATA TRUST -->
+    <div id="view-trust" class="hidden">
+      <div class="crumb"><b>数据真实性</b> · Source / Freshness / Unknown</div>
+      <div class="card">
+        <h3>指标可信度（不铺满技术标签）</h3>
+        <div class="row"><span>Cost（30D）</span><span><span class="chip c-verified">Verified · ai_usage</span> <span class="chip c-ext">更新 2h 前</span></span></div>
+        <div class="row"><span>曝光（小红书）</span><span><span class="chip c-ext">External · 待连接</span> <span class="chip c-stale">Stale / 无数据</span></span></div>
+        <div class="row"><span>涨粉</span><span><span class="chip c-manual">Manual Entry · 录入人 沈一 · 昨天</span> <span class="chip c-verified">可信度 中</span></span></div>
+        <div class="row"><span>转化</span><span><span class="chip c-unknown">Unknown 口径未对齐</span></span></div>
+        <div class="note">CEO 不必懂技术，但能回答：这数字从哪来、最新吗、能信吗。External 不可用显示为"待连接/无数据"，<b>绝不显示 0 或空冒充</b>；Manual Entry 明确标注录入人与可信度。</div>
+      </div>
+    </div>
+
+    <!-- 15. TIME -->
+    <div id="view-time" class="hidden">
+      <div class="crumb"><b>时间范围</b> · 当前: <span id="timeLabel">30D</span></div>
+      <div class="card">
+        <h3>时间切换与对比</h3>
+        <div class="qa">
+          <button onclick="setTime('today')">Today</button><button onclick="setTime('7d')">7D</button>
+          <button onclick="setTime('30d')">30D</button><button onclick="setTime('month')">Month</button>
+          <button onclick="setTime('quarter')">Quarter</button><button onclick="alert('DEMO：Custom 范围')">Custom</button>
+        </div>
+        <div class="kpi" style="margin-top:10px"><div class="k">成本趋势（<span id="timeLabel2">30D</span>）</div><div class="bar"><i style="width:72%"></i></div><div class="d dim">支持 Previous Period 对比；Before/After 见下一状态</div></div>
+      </div>
+    </div>
+
+    <!-- 16. BEFORE/AFTER -->
+    <div id="view-beforeafter" class="hidden">
+      <div class="crumb"><b>Before / After</b> · 模型切换（小红书选题策划）</div>
+      <div class="card">
+        <h3>Model 切换前 vs 后（需变更事件标记）</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr style="color:var(--dim)"><td>指标</td><td>Before（GPT ×30）</td><td>After（Claude ×30）</td><td>变化</td></tr>
+          <tr><td>Cost</td><td>¥0.22</td><td>¥0.18</td><td class="tag-ok">▼ 18%</td></tr>
+          <tr><td>一次通过率</td><td>80%</td><td>92%</td><td class="tag-ok">▲ 12%</td></tr>
+          <tr><td>平均耗时</td><td>43s</td><td>46s</td><td class="tag-warn">▲ 8%</td></tr>
+        </table>
+        <div class="note">Before/After 依赖 `model_switch_event` 标记 + 可比样本集；无标记时只给 Period 对比，<b>不给因果结论</b>。同样适用于 Role 增员前/后、Workflow 调整前/后、Business Duplicate 后不同 Business。</div>
+      </div>
+    </div>
+
+    <!-- 17. INSUFFICIENT -->
+    <div id="view-insufficient" class="hidden">
+      <div class="crumb"><b>数据不足状态</b></div>
+      <div class="card">
+        <h3>Model Benchmark：抖音运营 · 选题策划</h3>
+        <div class="empty">⚠️ 样本不足，暂不比较。当前可比样本：Claude 4 / GPT 2 / Gemini 0（阈值 ≥ 20）。请积累更多执行或放宽可比维度后再比较。</div>
+        <div class="note">禁止在样本不足时给出可疑"排行榜"或因果结论。</div>
+      </div>
+    </div>
+
+    <!-- 18. EXTERNAL / MANUAL -->
+    <div id="view-external" class="hidden">
+      <div class="crumb"><b>External 不可用 / Manual Entry</b></div>
+      <div class="card">
+        <h3>小红书外部结果</h3>
+        <div class="empty">外部平台数据源：<span class="chip c-stale">NOT_CONNECTED / Analytics UNAVAILABLE</span> — 曝光/阅读/点赞等 Domain Metrics 暂无自动回执。</div>
+        <div class="kpi" style="margin-top:10px"><div class="k">涨粉（人工补录）</div><div class="v">+4.1k</div>
+          <div class="d"><span class="chip c-manual">Manual Entry · 录入人 沈一 · 2026-08-17 · 可信度 中</span></div></div>
+        <div class="note">人工补录是合法路径，但必须标注来源/录入人/时间/可信度，<b>不能悄悄变成 Verified External Data</b>。</div>
+      </div>
+    </div>
+
+    <div class="footnote">DEMO DATA — NOT RUNTIME TRUTH。本整合可视化仅用于 CEO 视觉评审经营洞察的 Analyst Organization + 可视化 + Semantic-safe Switching + 默认职能分析组织方向。所有数字/人员为模拟，不代表 Runtime。已消费研究：Operating Intelligence 产品研究 / Analytics UX / Analyst Organization Delta / Data Visualization Research / Semantic-safe Switching / Default Analytics Org。完整研究见 deliverables/product-strategy/ 各研究文档。</div>
+  </div>
+</div>
+
+<script>
+  function setVariant(v){
+    document.body.className = 'variant-'+v;
+    document.querySelectorAll('#variantSeg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  }
+  function setTime(t){
+    var label = {today:'Today', '7d':'7D', '30d':'30D', month:'Month', quarter:'Quarter'}[t];
+    document.getElementById('curTime').textContent = label;
+    document.getElementById('timeLabel').textContent = label;
+    document.getElementById('timeLabel2').textContent = label;
+    document.querySelectorAll('#timeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.t===t));
+  }
+  function allBtns(){ return document.querySelectorAll('.side button'); }
+  function show(id, btn){
+    document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden'));
+    document.getElementById('view-'+id).classList.remove('hidden');
+    document.querySelectorAll('.side button').forEach(b=>b.classList.remove('on'));
+    if(btn) btn.classList.add('on');
+    document.getElementById('main').scrollTop = 0;
+  }
+  function reveal(id){
+    var el = document.getElementById(id);
+    if(el) el.classList.remove('hidden');
+    document.getElementById('main').scrollTop = 9999;
+  }
+  // Semantic-safe Visualization Switching: only semantically-compatible types offered
+  function switchViz(group, type){
+    var prefix = 'viz-'+group+'-';
+    ['line','bar','table','scatter','heatmap','stacked','donut'].forEach(function(t){
+      var el = document.getElementById(prefix+t);
+      if(el) el.classList.add('hidden');
+    });
+    var target = document.getElementById(prefix+type);
+    if(target) target.classList.remove('hidden');
+    document.querySelectorAll('[data-vizgroup="'+group+'"]').forEach(function(b){
+      b.classList.toggle('on', b.dataset.viztype===type);
+    });
+  }
+  // Conversation context: which analyst CEO is talking to
+  function openConv(kind){
+    var name = '小陈', avatar='陈', resp='Responsibility: 小红书运营经营分析', title='小陈 · 小红书分析师';
+    if(kind==='company'){ name='司衡'; avatar='司'; resp='Responsibility: 公司级经营分析'; title='司衡 · Company Analyst'; }
+    if(kind==='check'){ name='司衡'; avatar='司'; resp='Responsibility: 公司级经营分析'; title='司衡 · Company Analyst'; }
+    document.getElementById('convName').textContent = name;
+    document.getElementById('convAvatar').textContent = avatar;
+    document.getElementById('convResp').textContent = resp;
+    document.getElementById('convTitle').innerHTML = title + ' <span class="pill">'+resp+'</span>';
+    ['conv-step1','conv-step2','conv-step3'].forEach(function(s){document.getElementById(s).classList.add('hidden');});
+    document.getElementById('convTaskRun').style.display='none';
+    document.getElementById('convRunBtn').style.display='inline-block';
+  }
+  function runAnalysisTask(){
+    document.getElementById('convTaskRun').style.display='block';
+    document.getElementById('convRunBtn').style.display='none';
+    setTimeout(function(){
+      document.getElementById('convTaskRun').innerHTML='<span class="badge b-done">DONE</span> 小陈执行完成 · 新 Report 已生成';
+      reveal('conv-step3');
+    }, 700);
+  }
+  function delegateToBiz(){
+    document.getElementById('cb-delegate').classList.remove('hidden');
+    document.getElementById('main').scrollTop = 9999;
+  }
+  setVariant('c');
+  setTime('30d');
+</script>
+</body>
+</html>

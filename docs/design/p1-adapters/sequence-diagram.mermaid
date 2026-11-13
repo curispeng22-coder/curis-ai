@@ -1,0 +1,65 @@
+%% ── 4.1 注册一个真实能力（Admin / seed） ──
+sequenceDiagram
+    participant Admin as Admin/Seed
+    participant Cat as CapabilityCatalog
+    participant DB as Database
+    participant EV as EvolutionEventLog
+
+    Admin->>Cat: create(capability_key="wb-cli", type="cli",
+           adapter_config={bin:"codebuddy", args_template:[...], env_refs:{...}},
+           runtime_meta={backup_chain:[...], credentials_ref:"env:CODEBUDDY_API_KEY"})
+    Cat->>Cat: is_valid_adapter_config("cli", cfg)
+    Cat->>DB: save_official_model(..., adapter_config_json=cfg)
+    Cat->>EV: record("capability.created")
+    Cat-->>Admin: {capability_key, type, adapter_config, ...}
+
+%% ── 4.2 运行时：解析 → 构造适配器 → 执行（含员工能力组合 P1-2） ──
+sequenceDiagram
+    participant PR as PipelineRuntime
+    participant ECS as EmployeeCapabilityService
+    participant RES as CapabilityResolver
+    participant CAT as CapabilityCatalog
+    participant FAC as DevAgentFactory
+    participant AD as CapabilityAdapter(Cli/Http/Mcp/...)
+    participant CV as CredentialVault
+
+    PR->>PR: run_node(node, graph)
+    PR->>ECS: get_preferred_capabilities(node.owner_employee_id)
+    ECS-->>PR: ["wb-cli", "openai-gpt4o"]
+    PR->>RES: resolve(CapabilityRequirement(cap_type=node.type,
+           prefer_employee_bindings=["wb-cli","openai-gpt4o"]))
+
+    RES->>CAT: list(type_filter) + get(primary/backup)
+    CAT-->>RES: 候选能力(含 adapter_config, live_status)
+    RES->>RES: _select_primary (员工偏好优先) → _build_chain(backup_chain)
+    RES->>FAC: build(chosen_cap)
+    FAC->>FAC: 按 cap.type 构造 CliAdapter/HttpApiAdapter/...
+    FAC-->>RES: adapter 实例
+    RES-->>PR: CapabilityHandle(adapter=adapter, backup_keys=[...])
+
+    PR->>AD: handle.execute(prompt)
+    alt 需要鉴权
+        AD->>CV: resolve("env:CODEBUDDY_API_KEY")
+        CV-->>AD: secret
+        AD->>AD: 注入 env/headers
+    end
+    AD->>AD: 执行（subprocess / httpx / mcp stdio / webhook）
+    AD-->>PR: {output, status:"success", total_tokens, estimated_cost}
+    PR->>PR: ResultReviewer.review(result)
+
+%% ── 4.3 外部 Agent 统一接入（P1-3）：登记即能力 ──
+sequenceDiagram
+    participant Seed as seed_external_agents()
+    participant Cat as CapabilityCatalog
+    participant DB as Database
+
+    Seed->>Cat: create("workbuddy-cli", type="cli",
+           adapter_config={bin:"codebuddy", args_template:["run","--agent","{agent}","--prompt-file","{prompt_file}"],
+           env_refs:{"CODEBUDDY_API_KEY":"env:CODEBUDDY_API_KEY"}, filesystem_mutating:true})
+    Seed->>Cat: create("anthropic-claude", type="api",
+           adapter_config={method:"POST", url:"https://api.anthropic.com/v1/messages",
+           headers_ref:{"x-api-key":"env:ANTHROPIC_API_KEY","anthropic-version":"2023-06-01"},
+           body_template:{model:"claude-sonnet-4...", messages:[{role:"user",content:"{prompt}"}]},
+           response_path:"content.0.text"})
+    Note over Seed,DB: codex-cli / openai-codex / workbuddy-api 同理登记<br/>→ 外部 Agent 不再需要 bespoke DevAgent 类即可被 resolver 调度
+    Cat->>DB: save_official_model(...)

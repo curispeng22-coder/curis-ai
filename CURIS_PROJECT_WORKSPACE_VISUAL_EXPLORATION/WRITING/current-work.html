@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CW-43 · 完成第43章候选正文</title>
+  <style>
+    :root {
+      --canvas: #F7F8FA;
+      --base: #FFFFFF;
+      --surface1: #F1F3F5;
+      --surface2: #E9EDF1;
+      --border: #DDE2E7;
+      --text-primary: #1D232A;
+      --text-secondary: #4D5661;
+      --text-tertiary: #7C8794;
+      --iris: #806BE5;
+      --iris-soft: #F0EDFC;
+      --working: #806BE5;
+      --waiting: #7C8794;
+      --review: #D97706;
+      --blocked: #DC2626;
+      --ready: #16A34A;
+      --completed: #16A34A;
+      --planned: #7C8794;
+      --amber-soft: #FEF3C7;
+      --amber-border: #FDE68A;
+      --red-soft: #FEE2E2;
+      --green-soft: #DCFCE7;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+    .nav-rail {
+      width: 220px;
+      background: var(--base);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 28px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-primary);
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--iris);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+    }
+    .nav-section {
+      padding: 0 12px;
+      margin-bottom: 20px;
+    }
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 10px 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--surface1); color: var(--text-primary); }
+    .nav-item.active {
+      background: var(--iris-soft);
+      color: var(--iris);
+      font-weight: 600;
+    }
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+    .nav-spacer { flex: 1; }
+    .nav-user {
+      padding: 16px 20px 0;
+      border-top: 1px solid var(--border);
+      margin: 0 12px;
+    }
+    .nav-user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      padding: 24px 32px 40px;
+      max-width: 1440px;
+    }
+    .workspace {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .manuscript-pane {
+      flex: 0 0 55%;
+      max-width: 760px;
+    }
+    .side-pane {
+      flex: 0 0 45%;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .panel {
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .candidate-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface1);
+    }
+    .candidate-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .candidate-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .badge.candidate {
+      background: var(--iris-soft);
+      color: var(--iris);
+      border: 1px solid #DED7F9;
+    }
+    .badge.status {
+      background: var(--amber-soft);
+      color: var(--review);
+      border: 1px solid var(--amber-border);
+    }
+    .candidate-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-secondary {
+      background: var(--base);
+      border-color: var(--border);
+      color: var(--text-secondary);
+    }
+    .manuscript-body {
+      padding: 28px 32px 32px;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--text-primary);
+    }
+    .ms-section {
+      margin-bottom: 28px;
+    }
+    .ms-section-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .ms-text {
+      text-indent: 2em;
+      margin: 0;
+    }
+    .ms-text + .ms-text {
+      margin-top: 0.8em;
+    }
+    .candidate-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface1);
+    }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .meta-chip strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .work-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .work-id-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .work-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .work-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .work-sub {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .owner-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      background: var(--iris-soft);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--iris);
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-pill.working { background: var(--iris-soft); color: var(--working); }
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 65%;
+      background: var(--iris);
+      border-radius: 100px;
+    }
+    .progress-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 36px;
+      text-align: right;
+    }
+    .context-row {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface1);
+    }
+    .context-item {
+      flex: 1;
+    }
+    .context-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 3px;
+    }
+    .context-value {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .conversation {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .conv-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+    }
+    .message {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .message.me { flex-direction: row-reverse; }
+    .message-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .message.me .message-avatar {
+      background: var(--text-primary);
+      color: #fff;
+    }
+    .message.employee .message-avatar {
+      background: var(--iris-soft);
+      color: var(--iris);
+    }
+    .message-body {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+    .message.me .message-body {
+      background: var(--surface1);
+      border-bottom-right-radius: 3px;
+    }
+    .message.employee .message-body {
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 3px;
+    }
+    .message-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 3px;
+    }
+    .decision-strip {
+      padding: 16px 20px;
+      background: var(--amber-soft);
+      border-bottom: 1px solid var(--amber-border);
+    }
+    .decision-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .decision-reason {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--base);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius-sm);
+    }
+    .option-radio {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--text-tertiary);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .option-radio.recommended {
+      border-color: var(--iris);
+      background: var(--iris);
+      box-shadow: inset 0 0 0 3px #fff;
+    }
+    .option-content {
+      flex: 1;
+    }
+    .option-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .option-detail {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .recommendation {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: var(--radius-sm);
+    }
+    .recommendation strong { color: var(--iris); }
+    .decision-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--text-primary);
+      color: #fff;
+    }
+    .context-panel {
+      padding: 16px 20px;
+    }
+    .context-panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .context-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .ctx-field {
+      padding: 10px 12px;
+      background: var(--surface1);
+      border-radius: var(--radius-sm);
+    }
+    .ctx-field.full { grid-column: 1 / -1; }
+    .ctx-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+    .ctx-field-value {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .ctx-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .ctx-tag {
+      padding: 3px 7px;
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .utility-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface1);
+    }
+    .utility-tab {
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .utility-tab.active {
+      color: var(--iris);
+      border-bottom-color: var(--iris);
+      font-weight: 600;
+    }
+    .utility-body {
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-height: 80px;
+    }
+    .footer {
+      margin-top: 36px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="nav-rail">
+      <div class="logo">
+        <div class="logo-mark">C</div>
+        <span>Curis</span>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">业务空间</div>
+        <div class="nav-item active">
+          <span class="nav-icon">&#9998;</span>
+          <span>写作 · 《长夜》</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#9733;</span>
+          <span>CEO perspective</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128214;</span>
+          <span>资料库</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">创作</div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128196;</span>
+          <span>手稿</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128100;</span>
+          <span>角色</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128336;</span>
+          <span>时间线</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#127758;</span>
+          <span>世界观</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">员工</div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128188;</span>
+          <span>Works</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">&#128101;</span>
+          <span>Employees</span>
+        </div>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <div class="nav-user-row">
+          <div class="user-avatar">CEO</div>
+          <span>作者 / CEO</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="workspace">
+        <!-- Manuscript / Candidate Pane -->
+        <section class="manuscript-pane panel">
+          <div class="candidate-header">
+            <div class="candidate-title-row">
+              <div class="candidate-title">第43章 Candidate A</div>
+              <span class="badge candidate">CANDIDATE</span>
+              <span class="badge status">PREVIEW</span>
+            </div>
+            <div class="candidate-actions">
+              <button class="btn btn-secondary">查看完整版</button>
+              <button class="btn btn-secondary">生成 Candidate B</button>
+            </div>
+          </div>
+          <div class="manuscript-body">
+            <div class="ms-section">
+              <div class="ms-section-label">开头</div>
+              <p class="ms-text">修车厂的灯是坏的，只有沈默手里的手机亮着。他把光对准林舟的脸，像是要从那张脸上找出一道裂缝。</p>
+            </div>
+            <div class="ms-section">
+              <div class="ms-section-label">中段</div>
+              <p class="ms-text">“你钥匙上的编号，”沈默说，“和我父亲当年那把一样。”林舟没有立刻回答。他低头看着地上那滩机油，像是在看很多年前的一个雨夜。</p>
+            </div>
+            <div class="ms-section">
+              <div class="ms-section-label">接近结尾</div>
+              <p class="ms-text">“沈默，”他终于开口，“有些门打开了，就再也关不上。”话音未落，修车厂外传来老周的咳嗽声。</p>
+            </div>
+          </div>
+          <div class="candidate-meta">
+            <span class="meta-chip"><strong>字数</strong> 约 2,400 字</span>
+            <span class="meta-chip"><strong>视角</strong> 第三人称限知 · 沈默</span>
+            <span class="meta-chip"><strong>情绪</strong> 压抑 · 逐渐收紧</span>
+            <span class="meta-chip"><strong>Canon Check</strong> 通过 4/4</span>
+          </div>
+        </section>
+
+        <!-- Conversation + Context Pane -->
+        <section class="side-pane">
+          <div class="panel">
+            <div class="work-header">
+              <div class="work-id-row">
+                <span class="work-id">CW-43</span>
+                <span class="owner-pill">林墨 · 长篇写作编辑 AI</span>
+                <span class="status-pill working">执行中</span>
+              </div>
+              <div class="work-title">完成第43章候选正文</div>
+              <div class="work-sub">第43章 · 林舟与沈默在修车厂对峙</div>
+              <div class="progress-row">
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+                <div class="progress-text">65%</div>
+              </div>
+            </div>
+            <div class="context-row">
+              <div class="context-item">
+                <div class="context-label">Chapter Goal</div>
+                <div class="context-value">生成第43章候选正文，为作者提供可判断的写作方向</div>
+              </div>
+            </div>
+            <div class="conversation">
+              <div class="conv-title">Employee Conversation</div>
+              <div class="message me">
+                <div class="message-avatar">我</div>
+                <div class="message-body">
+                  <div class="message-name">作者</div>
+                  林墨，第43章我想让林舟和沈默在修车厂有一次真正对峙，但不要急着亮底牌。
+                </div>
+              </div>
+              <div class="message employee">
+                <div class="message-avatar">林</div>
+                <div class="message-body">
+                  <div class="message-name">林墨</div>
+                  明白。我基于第42章结尾的钥匙线索，准备了两版方向。在生成正文前，想先请你判断：你希望林舟身份在本章揭露，还是继续压到第45章？
+                </div>
+              </div>
+              <div class="message me">
+                <div class="message-avatar">我</div>
+                <div class="message-body">
+                  <div class="message-name">作者</div>
+                  两种都不违反Canon，对吗？
+                </div>
+              </div>
+              <div class="message employee">
+                <div class="message-avatar">林</div>
+                <div class="message-body">
+                  <div class="message-name">林墨</div>
+                  对。两种都不违反当前Canon，但会改变第三卷节奏。A 方向提前揭露会加速主线；B 方向保留信息差，读者悬念更久，但需要你为45章准备更强反转。
+                </div>
+              </div>
+            </div>
+            <div class="decision-strip">
+              <div class="decision-title">第43章方向选择</div>
+              <div class="decision-reason">两种方向都符合Canon，但改变第三卷节奏</div>
+              <div class="options">
+                <div class="option">
+                  <div class="option-radio"></div>
+                  <div class="option-content">
+                    <div class="option-label">A. 本章提前揭露林舟身份</div>
+                    <div class="option-detail">主线加速，第44章可直接进入行动线。需要为后续章节准备更强反转，否则悬疑张力下降。</div>
+                  </div>
+                </div>
+                <div class="option">
+                  <div class="option-radio recommended"></div>
+                  <div class="option-content">
+                    <div class="option-label">B. 保留信息差到第45章</div>
+                    <div class="option-detail">悬念延续，本章以威胁与暗示收尾。第43章可能显得“原地踏步”，需要足够的情感推进。</div>
+                  </div>
+                </div>
+              </div>
+              <div class="recommendation">
+                <strong>推荐：B</strong> — 第三卷目前节奏偏快，保留一章的情感蓄力会让45章的揭露更有重量。
+              </div>
+              <div class="decision-actions">
+                <button class="btn btn-primary">选择方向 B</button>
+                <button class="btn btn-secondary">选择方向 A</button>
+                <button class="btn btn-secondary">让林墨按 B 继续</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="context-panel">
+              <div class="context-panel-title">Compact Context</div>
+              <div class="context-fields">
+                <div class="ctx-field full">
+                  <div class="ctx-field-label">Chapter Goal</div>
+                  <div class="ctx-field-value">修车厂对峙，推动林舟/沈默关系质变</div>
+                </div>
+                <div class="ctx-field">
+                  <div class="ctx-field-label">Scene</div>
+                  <div class="ctx-field-value">林舟与沈默在修车厂对峙</div>
+                </div>
+                <div class="ctx-field">
+                  <div class="ctx-field-label">Recent Story</div>
+                  <div class="ctx-field-value">第42章沈默发现钥匙编号与父亲遗物一致</div>
+                </div>
+                <div class="ctx-field full">
+                  <div class="ctx-field-label">Relevant Canon</div>
+                  <div class="ctx-tags">
+                    <span class="ctx-tag">林舟卧底身份</span>
+                    <span class="ctx-tag">钥匙编号线索</span>
+                    <span class="ctx-tag">老周知情未说</span>
+                  </div>
+                </div>
+                <div class="ctx-field">
+                  <div class="ctx-field-label">Characters</div>
+                  <div class="ctx-tags">
+                    <span class="ctx-tag">林舟</span>
+                    <span class="ctx-tag">沈默</span>
+                    <span class="ctx-tag">老周</span>
+                  </div>
+                </div>
+                <div class="ctx-field">
+                  <div class="ctx-field-label">World Rule</div>
+                  <div class="ctx-field-value">2010 年南方小城，雨夜与修车厂是重要意象</div>
+                </div>
+                <div class="ctx-field full">
+                  <div class="ctx-field-label">Style</div>
+                  <div class="ctx-field-value">克制、短句、对话少而重</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="utility-tabs">
+              <div class="utility-tab active">Manuscript</div>
+              <div class="utility-tab">Outline</div>
+              <div class="utility-tab">Characters</div>
+              <div class="utility-tab">Canon</div>
+              <div class="utility-tab">Timeline</div>
+              <div class="utility-tab">Evidence</div>
+            </div>
+            <div class="utility-body">
+              当前展示：第43章 Candidate A 预览。可在其他标签中查看大纲、角色卡、Canon 条目、时间线事件与连续性证据。
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        Writing Project Workspace · Visual exploration only
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

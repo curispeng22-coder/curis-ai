@@ -1,0 +1,242 @@
+[
+  {
+    "file": "docs/prototypes/full-product-html/CURIS_HTML_CURRENT_TRUTH_DRIFT_RECHECK.md",
+    "before": "f19e7e14338a4746ec456b33fe94def1add9674380fe56cc1b1b76b32309a87b",
+    "after": "b74ba310fc4f32c4169c937e8d1453c95cbb42091747689d16bc447f1211ae9f",
+    "mtime": "2026-09-13T06:06:16.221615"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/HIFI_VISUAL_BEFORE_AFTER_GALLERY.html",
+    "before": "e946578909170aee5bcfbafeedc7cd088ae8e60b2fcfc7a7c3f48ea4d75ceafc",
+    "after": "458ee9f7d1fc43d79afdfcd5c268c01dfde51ee2646f8a0eed2adbc91fb79996",
+    "mtime": "2026-09-13T06:05:54.002125"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/HIFI_VISUAL_REVIEW_GALLERY.html",
+    "before": "8adab1c00b5436050d51e7113a293b87340799db0a7b02da8dd7481ec8c2fa61",
+    "after": "dbfc52cfd4e58e8917ef27b3f5c8ba101e2119bfe031aaa391b5a5cba2068554",
+    "mtime": "2026-09-13T06:05:54.001846"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/40-error.png",
+    "before": "b87e38a3db853e2c7ba28f539327d6cdb5eb28a003da35cf39bd2bc3cbc715cd",
+    "after": "ed0dac3b0ee57ecd418d926efba78735743f3a9d047817b1274629b23dd56062",
+    "mtime": "2026-09-13T06:05:07.764064"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/06-workspace-rd-diff.png",
+    "before": "915c320908e79bdb38b43f184bdc5d14242d21c0ab016997e9c4b58e3030f809",
+    "after": "2f4b0c5e25d5b1ec1d6bf2394c2fa4bc2e875beb210673a7847635cee2ce9606",
+    "mtime": "2026-09-13T06:04:07.073967"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/11-skill-detail.png",
+    "before": "12cd98cbe70d4f655b177028328dfeb7285d45d2e425bc4813456b84157af692",
+    "after": "8bb3ac32a1f9f52441852249abaa0fd26ba3172d2dfd7f77e7c0de51fe3d1803",
+    "mtime": "2026-09-13T06:04:23.510417"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/39-empty-workspace.png",
+    "before": "6c0b316afff3226c0f8b3180ae6b9b780c8851dd0fc8031911e0d65e60173488",
+    "after": "06a8865c418ea88d20a18032dcdeea2a3bd95f6929832588dcc699dd244f65b4",
+    "mtime": "2026-09-13T06:05:05.477279"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/10-talent-skills.png",
+    "before": "8d3500c669817181d3e2a1975c0e84d6ee6dafbb7f38e4e770ca05d14fb1f08e",
+    "after": "f85fc09375ca34ffe34e105bbb0a6378a9e0177970f9fb7cd6ca495211b0956e",
+    "mtime": "2026-09-13T06:04:21.284608"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/08-employee-conversation.png",
+    "before": "f20147bfb9220050a4db890bad02d8f6277707eb7676273de80fd2e8f4303c94",
+    "after": "bb22877671cde90bf537a81e457d188841a965fd84ba18fff59fdaf137a4a118",
+    "mtime": "2026-09-13T06:04:11.747604"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/04-workspace-xhs-content.png",
+    "before": "12ab5582b045441d6e41e8ab751d7e1e7e4741ea3ebca57f79adb97a5692b19a",
+    "after": "f87018e13d073166f5c7b8bb897c94d8369e16a81ddd7bb8d45a4013843a07f9",
+    "mtime": "2026-09-13T06:03:57.889247"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/15-settings.png",
+    "before": "81f6d420dad1aa552a461d568160a024bddd1dd4ac6b87b30027ea2831490e8d",
+    "after": "8d424306a8bb9cc71e6b4aae1ab143944bca23d5073a5d5a16c4c48250267242",
+    "mtime": "2026-09-13T06:04:32.743539"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/35-composer-attachment.png",
+    "before": "a2093c088238cecdd2a9ca57f396e6a7ce2d75f427e86bc3d1d1fd05b948189b",
+    "after": "4f86d8c6373c7f688cca2707185c9d918c63ebfe3177fabba5298d4436ce4612",
+    "mtime": "2026-09-13T06:04:56.104027"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/24-models.png",
+    "before": "7b06bf6350de8f7c97b4f937ae8666ec608bb998c4ced74f8b0ffb9c0b111fbf",
+    "after": "926c750b056b9735924219b8a40402ea31644dfb9abc3109618d44e3c2f6a2b2",
+    "mtime": "2026-09-13T06:04:37.496960"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/02-business.png",
+    "before": "4cb165026d15551b0f10c64064427d27250063d9ff51f9c1dc75229fdb448430",
+    "after": "d3fe3b9f3a364c621eb01dc5c447560d818e96bf6fb347f4f68cd7df32315470",
+    "mtime": "2026-09-13T06:03:53.284974"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/16-settings-usage.png",
+    "before": "e5117d44a86fa082ecae2a8912a0b973db4c0bb99465aa83d39b01c9c360be66",
+    "after": "e24cd98b749de6ef22baba354fbbd1fb88ca7f4e6a3addaebb67730a53dfefea",
+    "mtime": "2026-09-13T06:04:35.185902"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/30-cg-business.png",
+    "before": "f3ca4f39cea83dcf328329d901bb426ac8e9b1f2db7a4aad6e59ebebc259b148",
+    "after": "95afdb8302616a15faf20d7b0469340b765a7cf6c81aa57aee8d2453bc689a56",
+    "mtime": "2026-09-13T06:03:55.621146"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/09-talent-home.png",
+    "before": "12c2ed0bfefb7a9a6a58afebc6dadce4e11c45f6fc1b1f12f2183033adf1ea41",
+    "after": "7e0cc80c43a607eac75ec74384b63fb0ca64547afa3a82e77c233c50d70de7b9",
+    "mtime": "2026-09-13T06:04:16.630556"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/27-result-utility.png",
+    "before": "9dacc78b1fa70adfdc8d0b36961d50e0b8d32e632c102981b01827e3e3f57db1",
+    "after": "f087152e1bcf436f2e3601c4b991079f7613c1b41e2da5a69083a3a0dddfece9",
+    "mtime": "2026-09-13T06:04:44.410305"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/32-expert-marketplace.png",
+    "before": "ce936e5360ac267408bd81aa64367ed9b85776bce0e8fe653edad9ea92a45381",
+    "after": "8b046996b4850b2cbd743afb00da36b48f1a3d774f798df811e2346a50d943fa",
+    "mtime": "2026-09-13T06:04:18.933803"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/34-composer-focus.png",
+    "before": "dd051e4829a658141a60b3b636391d88b442a2d789540227ceeb406a245b1ede",
+    "after": "12f9bbd6c1bf60c4e1875e79ac19e46035938ba20a385a88e3de4322d31237d8",
+    "mtime": "2026-09-13T06:04:53.762265"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/22-activate.png",
+    "before": "d00a99b9b041b270478bc6f6eadc8af9cf20f423216f055487c0080cdbbccd85",
+    "after": "0d81e571003f88ed4c61b7aa9fe66c8c17aca7032dc324e1700864cfba155e87",
+    "mtime": "2026-09-13T06:04:51.466690"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/12-insights.png",
+    "before": "9cb3a18e3053263683253d07d5c7e2bca8993f811f745efdec4826b53dad9011",
+    "after": "fea2beeb4ee89e4daa36499d836aad753943cbe29b6d3eb9bfe01cc80b506a66",
+    "mtime": "2026-09-13T06:04:25.787995"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/37-permission.png",
+    "before": "33c652aced17941f9ca8359c2bc1da06d8a24eeaaa458c32416a9ef9f45f0d4a",
+    "after": "a512fddf44183fbdc6f712813e98f366d630d6a23c34761f9f965f764f163049",
+    "mtime": "2026-09-13T06:05:00.784394"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/26-assistant-expanded.png",
+    "before": "a2b476bdf238b60782fed54498b7bbafce2c6e9989278b9e897508714fc381e3",
+    "after": "14520416aae3fc84bb0513efff220bd2e243aeec8a16e46cd543bf475f395909",
+    "mtime": "2026-09-13T06:04:49.047191"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/19-work-progress.png",
+    "before": "ecbc6f853488afb955fda316f84d56bb60cb6ea787f482acf6e22f3168a7514b",
+    "after": "6f629571669d61b1831565b145cad5507a50bb665eeef1dd27e752b317dff6d9",
+    "mtime": "2026-09-13T06:04:42.084224"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/14-meeting.png",
+    "before": "82763d9140a3704d41a1d5a1b37ca7326fd61ccb4af322f40b7e39154fed9b3a",
+    "after": "7f4c6ef3a068d110ef900d800d11b2c27a0a08ef035bffa861d4b18c63248f24",
+    "mtime": "2026-09-13T06:04:30.477415"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/38-needs-ceo.png",
+    "before": "c4cd5a459a5500717f14423c509e3d6ced9d5bb78881ae7af7fac483c2243baf",
+    "after": "afb8ab68a8818d5a62caeb5a9656202b3400c6ce9e8eaa007631d308464c9a33",
+    "mtime": "2026-09-13T06:05:03.112556"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/33-result-source.png",
+    "before": "f9190e06c239242f2c6ee00fd1d7151692b378df308814466da8686b0c27524a",
+    "after": "996e7d117032e3260772173cc5366d075c1cad516c80aca7ff00a67ee79e4bee",
+    "mtime": "2026-09-13T06:04:46.656124"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/28-employee-utility.png",
+    "before": "c4be36ed0e8229f24eb76acdc72485533ceb1c7aa064f9063e1bb38711ac3277",
+    "after": "6796fa003284834f05273435ad47bf23822daf9fe30a2f69cfea961070e8867b",
+    "mtime": "2026-09-13T06:04:14.229059"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/07-org-map.png",
+    "before": "0c42f91e99a4d39ae355940e3c94d29ee00f39be785e596a5305900eccfa161a",
+    "after": "b47ae19b7e1c08bb7b6d3833541f3ee24621bc990fa7cfee52f02dc3e260bd5a",
+    "mtime": "2026-09-13T06:04:09.464577"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/13-knowledge.png",
+    "before": "9731666c7ba1723ab543a0b4f229d1b3a47e0d7dff4e765b8d04b887d81177fc",
+    "after": "fd18f5677a421a4a9b5ab1c9e54423dd94cd59d5ceb2aba069a54b293220ecff",
+    "mtime": "2026-09-13T06:04:28.064961"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/36-composer-running.png",
+    "before": "8f73693100b61db210f0056380af8947a60ea03c8bd5e9765ee179a631bd7840",
+    "after": "0f76cdd16e3dfd616da571ad81c08116eb9a17955ce51a9757e70d3fe1a6a534",
+    "mtime": "2026-09-13T06:04:58.467083"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/17-search.png",
+    "before": "6a7f52bbabef5ef3657d4bb0b9c34e3f1178e78de2d4f22ee816c6067cc03237",
+    "after": "02f316f4562f4fde45489d7c62dcdd52c8eceaa8bbbbd7034e2bc9ee8b24a4df",
+    "mtime": "2026-09-13T06:04:39.773116"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/01-ceo-desk.png",
+    "before": "8a802207ba5cab3417a44ce360345e97b9cd5faa284e2c2b4f6ce63a07bc2f3b",
+    "after": "e66e8851be2b1d569ff933fc885b8fd9c27eae7db3e0ef93b9e9294b6bb8acbc",
+    "mtime": "2026-09-13T06:03:51.051024"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/05-workspace-rd.png",
+    "before": "b552fd71ae5149ec396eeb51b29c8db72239013e15d4e0ff7dc0b4e3d6b787c3",
+    "after": "eb5e8bc05bb52215695c1d6b9b255bf5ba03ccd1d4d9f7ec9a6ceca4d013a190",
+    "mtime": "2026-09-13T06:04:04.727890"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/41-cg-calendar.png",
+    "before": "a99b1b37fdb603b3d47225e82e3092024046af76848bd4acf482d9c74d7ea47c",
+    "after": "fd3fd67e95ee008a1e602c7172e3e9e47d926140e5e08f44bc7910c29230b086",
+    "mtime": "2026-09-13T06:04:00.168236"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/31-rd-business.png",
+    "before": "f6b6967bb770f20abf240cb49d709c3b4a24f0eb2f82d424c246ac02e74db207",
+    "after": "1e61cc495a55db89cf8acb1bf9a1dbe5026003b81cea85d7c082545f25257461",
+    "mtime": "2026-09-13T06:04:02.452477"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/screenshots/03-workspace-xhs.png",
+    "before": "e09462faacc1a171390b270c7e3610373c4e134fc79a58bfd877e4b504bd96aa",
+    "after": "8daea3cdc7d9ccf31529d63b3298ac465a524bb5acd9df4330b09824a84b2b4e",
+    "mtime": "2026-09-13T06:03:07.113247"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/js/views-business.js",
+    "before": "fd1b9a9e0fb45dc44b08fe401948df26090119cd7c5486b077cddfa23b2a9ac5",
+    "after": "bd8afe7deb45faef4c4b58a790387815bd7156a64fac71ca45997f367afcf241",
+    "mtime": "2026-09-13T06:03:01.004797"
+  },
+  {
+    "file": "docs/prototypes/full-product-html/js/app.js",
+    "before": "b39e98e565e4e3a18150cffbd6215831ef0fbafb301bcad1b3a3311248ba4f1d",
+    "after": "add62063f9c3950eab17f9b99517f08ef77554ebb6006e708f90f72714ef02ba",
+    "mtime": "2026-09-13T06:02:39.191926"
+  }
+]

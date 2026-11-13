@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1536, initial-scale=1.0">
+<title>Curis · CEO 总部驾驶舱（Terra 紧凑版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet">
+<style>
+  :root{
+    --sidebar:#4a7c59;
+    --sidebar-hover:#3d6649;
+    --sidebar-active:#3a5f45;
+    --bg:#faf6f0;
+    --panel:#fffefb;
+    --panel-2:#f7f2ea;
+    --txt:#1f241c;
+    --txt-2:#4a5346;
+    --txt-3:#7a8273;
+    --line:#e8e2d8;
+    --line-2:#d9d2c6;
+    --primary:#4a7c59;
+    --primary-light:#e8f0e8;
+    --accent:#705c30;
+    --accent-light:#f5efe3;
+    --cyan:#3f7d6e;
+    --green:#15935a;
+    --amber:#a8742a;
+    --red:#b83230;
+    --gold:#8a6d2f;
+    --shadow:0 1px 3px rgba(74,85,66,.06),0 4px 16px rgba(74,85,66,.05);
+    --radius:14px;
+    --radius-sm:10px;
+    --font-serif:'Literata','Noto Serif SC','Songti SC',serif;
+    --font-sans:'Nunito Sans','Inter','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--font-sans)}
+  .app{display:flex;height:100vh;width:100vw;overflow:hidden}
+
+  /* Sidebar */
+  .sidebar{
+    width:176px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;
+    padding:20px 0;color:#fff;overflow:hidden
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:0 18px 22px;font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.3px}
+  .brand .logo{width:28px;height:28px;border:2px solid rgba(255,255,255,.7);border-radius:7px;display:grid;place-items:center;font-size:12px}
+  .nav{flex:1;overflow-y:auto;padding:0 12px}
+  .nav-group{margin-bottom:18px}
+  .nav-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.55);padding:0 8px 6px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,.85);cursor:pointer;transition:background .15s;white-space:nowrap}
+  .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+  .nav-item.active{background:var(--sidebar-active);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .nav-item .icon{font-size:18px;font-variation-settings:'FILL' 1}
+  .side-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7)}
+  .side-foot .ava{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700}
+
+  /* Main */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg);padding:18px 22px;gap:14px}
+  .header{display:flex;align-items:flex-end;justify-content:space-between;min-height:58px;flex-shrink:0}
+  .header-left{display:flex;flex-direction:column;gap:6px}
+  .header h1{font-family:var(--font-serif);font-size:32px;font-weight:700;margin:0;letter-spacing:.5px;color:var(--txt)}
+  .header .sub{display:flex;align-items:center;gap:14px;color:var(--txt-2);font-size:13.5px}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(21,147,90,.15)}
+  .header-right{text-align:right}
+  .header-right .label{font-size:11px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .header-right .value{font-size:14px;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .header-right .value .icon{font-size:16px;color:var(--amber);font-variation-settings:'FILL' 1}
+
+  /* Cards */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+  .card-hd{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .card-title{font-family:var(--font-serif);font-size:14px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+  .card-title .icon{font-size:18px;color:var(--primary);font-variation-settings:'FILL' 1}
+  .card-bd{flex:1;overflow-y:auto;padding:14px;position:relative}
+  .card-bd::-webkit-scrollbar{width:5px}
+  .card-bd::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+  .card-ft{padding:10px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);flex-shrink:0}
+  .tag{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:var(--primary-light);color:var(--primary)}
+
+  /* Rows */
+  .row{display:flex;gap:14px;flex-shrink:0}
+  .row .col{flex:1;min-width:0}
+  .row .col-7{flex:7}
+  .row .col-5{flex:5}
+  .row .col-3{flex:3}
+  .row .col-2{flex:2}
+  .row .col-8{flex:8}
+  .row .col-4{flex:4}
+
+  .r1{height:230px}
+  .r2{height:200px}
+  .r3{height:170px}
+  .r4{height:110px}
+
+  /* Pulse */
+  .pulse-row{display:flex;gap:10px}
+  .pulse-card{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;display:flex;gap:12px;align-items:flex-start}
+  .pulse-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0;font-variation-settings:'FILL' 1}
+  .pulse-icon.green{background:#e8f5ed;color:var(--green)}
+  .pulse-icon.cyan{background:#e8f4f1;color:var(--cyan)}
+  .pulse-icon.amber{background:#f9f0e0;color:var(--amber)}
+  .pulse-text h4{font-size:13px;font-weight:700;margin:0 0 4px;color:var(--txt)}
+  .pulse-text p{font-size:11px;margin:0;color:var(--txt-3);line-height:1.35}
+  .pulse-line{position:absolute;bottom:10px;left:14px;right:14px;height:18px;opacity:.35}
+
+  /* Office visual */
+  .office-visual{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;min-height:0}
+  .office-visual svg{width:100%;height:100%;max-height:150px}
+  .office-labels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .office-label{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);border:1px solid var(--line-2)}
+  .office-link{font-size:12px;color:var(--cyan);display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:600}
+  .office-link .icon{font-size:14px}
+
+  /* Empty states */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;text-align:center;color:var(--txt-3)}
+  .empty-state .icon{font-size:36px;color:var(--line-2);font-variation-settings:'FILL' 0}
+  .empty-state p{font-size:13px;margin:0}
+  .empty-state .hint{font-size:11px;max-width:70%;line-height:1.4}
+
+  /* Dept row */
+  .dept-row{display:flex;gap:12px;height:100%}
+  .dept-card{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);display:flex;overflow:hidden}
+  .dept-left{width:110px;border-right:1px solid var(--line);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#fffefb,#f7f2ea)}
+  .dept-left .icon{font-size:28px;color:var(--primary);font-variation-settings:'FILL' 1}
+  .dept-left h4{font-size:13px;font-weight:700;margin:0;color:var(--txt);font-family:var(--font-serif)}
+  .dept-right{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+  .dept-row-line{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .dept-row-line:last-child{border-bottom:none}
+  .dept-row-line .k{color:var(--txt-2)}
+  .dept-row-line .v{color:var(--txt-3);font-size:11px}
+
+  /* Data footer */
+  .data-mini{display:flex;align-items:center;justify-content:space-between;height:100%;gap:20px}
+  .data-mini .chart{flex:1;height:60px;display:flex;align-items:flex-end;gap:3px;opacity:.5}
+  .data-mini .bar{flex:1;background:var(--line-2);border-radius:2px 2px 0 0;min-height:8px}
+  .data-mini .text{font-size:13px;color:var(--txt-3);text-align:center;flex:2}
+
+  /* Scroll locks */
+  .no-scroll{overflow:hidden}
+  .scroll-y{overflow-y:auto}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">C</div><span>Curis</span></div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-title">总裁办公室</div>
+        <div class="nav-item active"><span class="icon material-symbols-rounded">home</span>决策中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">chat</span>重要汇报</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">meeting_room</span>战略会议室</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><span class="icon material-symbols-rounded">folder_open</span>项目中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">groups</span>组织中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">widgets</span>能力中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">monitoring</span>经营分析</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">lightbulb</span>头脑风暴室</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">school</span>知识中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">checklist</span>执行工作台</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><span class="icon material-symbols-rounded">settings</span>公司设置</div>
+      </div>
+    </nav>
+    <div class="side-foot"><div class="ava">A</div><span>阿历克斯 · CEO</span></div>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="header-left">
+        <h1>总裁办公室</h1>
+        <div class="sub">
+          <span style="display:flex;align-items:center;gap:8px"><span class="status-dot"></span>公司运行正常</span>
+          <span>一人掌舵，AI 团队持续运行</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="label">当前核心项目目标</div>
+        <div class="value"><span class="icon material-symbols-rounded">target</span>尚未建立核心项目</div>
+      </div>
+    </header>
+
+    <div class="row r1">
+      <div class="col-5 card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">activity_zone</span>今日公司脉搏</div>
+          <span class="tag">LIVE</span>
+        </div>
+        <div class="card-bd">
+          <div class="pulse-row">
+            <div class="pulse-card">
+              <div class="pulse-icon green"><span class="material-symbols-rounded">trending_up</span></div>
+              <div class="pulse-text"><h4>项目推进</h4><p>暂无已读取事实</p></div>
+            </div>
+            <div class="pulse-card">
+              <div class="pulse-icon cyan"><span class="material-symbols-rounded">share</span></div>
+              <div class="pulse-text"><h4>部门运行</h4><p>暂无已读取事实</p></div>
+            </div>
+            <div class="pulse-card">
+              <div class="pulse-icon amber"><span class="material-symbols-rounded">warning</span></div>
+              <div class="pulse-text"><h4>明确阻塞</h4><p>暂无已读取事实</p></div>
+            </div>
+          </div>
+          <svg class="pulse-line" viewBox="0 0 400 30" preserveAspectRatio="none">
+            <path d="M0,22 Q50,20 100,15 T200,18 T300,12 T400,16" fill="none" stroke="var(--line-2)" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="col-7 card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">view_in_ar</span>实时办公室</div>
+          <span class="tag">效果图占位</span>
+        </div>
+        <div class="card-bd office-visual">
+          <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="iso" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#e8f0e8"/>
+                <stop offset="100%" style="stop-color:#f0e8d8"/>
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2.5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <g transform="translate(60,40)">
+              <polygon points="0,30 140,0 280,30 140,60" fill="url(#iso)" stroke="var(--line-2)" stroke-width="1"/>
+              <polygon points="0,30 0,70 140,100 140,60" fill="#f5f0e6" stroke="var(--line-2)" stroke-width="1"/>
+              <polygon points="140,60 140,100 280,70 280,30" fill="#ede8dc" stroke="var(--line-2)" stroke-width="1"/>
+              <rect x="40" y="35" width="36" height="28" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="90" y="20" width="36" height="28" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="170" y="20" width="36" height="28" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="220" y="35" width="36" height="28" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <circle cx="58" cy="49" r="3" fill="var(--green)" filter="url(#glow)"/>
+              <circle cx="108" cy="34" r="3" fill="var(--cyan)" filter="url(#glow)"/>
+              <circle cx="188" cy="34" r="3" fill="var(--green)" filter="url(#glow)"/>
+              <circle cx="238" cy="49" r="3" fill="var(--amber)" filter="url(#glow)"/>
+            </g>
+          </svg>
+          <div class="office-labels">
+            <span class="office-label">AI 研发中心</span>
+            <span class="office-label">AI 内容中心</span>
+          </div>
+          <div class="office-link"><span class="icon material-symbols-rounded">arrow_forward</span>进入公司运行视图</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row r2">
+      <div class="col-7 card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">rocket_launch</span>核心项目推进</div>
+          <span class="tag">EMPTY</span>
+        </div>
+        <div class="card-bd">
+          <div class="empty-state">
+            <span class="icon material-symbols-rounded">folder_off</span>
+            <p>尚未建立核心项目</p>
+            <span class="hint">建立首个项目后，项目作战室、任务队列与成果中心将在此聚合。</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-3 card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">inbox</span>待处理汇报</div>
+        </div>
+        <div class="card-bd">
+          <div class="empty-state">
+            <span class="icon material-symbols-rounded">mail</span>
+            <p>暂无待处理汇报</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-2 card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">cardiology</span>组织健康</div>
+        </div>
+        <div class="card-bd">
+          <div class="empty-state">
+            <span class="icon material-symbols-rounded">heart_plus</span>
+            <p>暂无已读取事实</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row r3">
+      <div class="col card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">apartment</span>正在工作的部门</div>
+          <span class="tag">2 DEPTS</span>
+        </div>
+        <div class="card-bd">
+          <div class="dept-row">
+            <div class="dept-card">
+              <div class="dept-left">
+                <span class="icon material-symbols-rounded">memory</span>
+                <h4>AI 研发中心</h4>
+              </div>
+              <div class="dept-right">
+                <div class="dept-row-line"><span class="k">当前项目</span><span class="v">暂无已读取事实</span></div>
+                <div class="dept-row-line"><span class="k">工作状态</span><span class="v">暂无已读取事实</span></div>
+                <div class="dept-row-line"><span class="k">依赖关系</span><span class="v">暂无已读取事实</span></div>
+              </div>
+            </div>
+            <div class="dept-card">
+              <div class="dept-left">
+                <span class="icon material-symbols-rounded">auto_stories</span>
+                <h4>AI 内容中心</h4>
+              </div>
+              <div class="dept-right">
+                <div class="dept-row-line"><span class="k">当前项目</span><span class="v">暂无已读取事实</span></div>
+                <div class="dept-row-line"><span class="k">工作状态</span><span class="v">暂无已读取事实</span></div>
+                <div class="dept-row-line"><span class="k">依赖关系</span><span class="v">暂无已读取事实</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row r4">
+      <div class="col card">
+        <div class="card-hd">
+          <div class="card-title"><span class="icon material-symbols-rounded">show_chart</span>经营数据概览</div>
+          <span class="tag">BOUNDARY</span>
+        </div>
+        <div class="card-bd">
+          <div class="data-mini">
+            <div class="chart">
+              <div class="bar" style="height:40%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:35%"></div>
+              <div class="bar" style="height:70%"></div><div class="bar" style="height:50%"></div><div class="bar" style="height:80%"></div>
+              <div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div>
+            </div>
+            <div class="text">当前尚未接入真实经营数据。未来这里展示任务完成率、成本效率、成果转化率等CEO经营指标。</div>
+            <div class="chart">
+              <div class="bar" style="height:55%"></div><div class="bar" style="height:30%"></div><div class="bar" style="height:75%"></div>
+              <div class="bar" style="height:45%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:35%"></div>
+              <div class="bar" style="height:50%"></div><div class="bar" style="height:40%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

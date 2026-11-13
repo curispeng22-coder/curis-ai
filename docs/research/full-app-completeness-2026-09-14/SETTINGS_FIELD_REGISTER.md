@@ -1,0 +1,1551 @@
+# 全站设置字段合同
+
+Authority Class: RESEARCH
+Status: Review
+Disposition: CANDIDATE — NOT CURRENT CONFIGURATION
+Date: 2026-09-15 Asia/Shanghai
+
+先由C01–C48场景导出设置，再映射到现有六类容器；没有因为研究主题多就新增一级设置架构。Work/Employee/Workspace字段在对象内编辑，Settings提供资源管理及定位，不复制配置真源。无必要能力不显示空高级开关。
+
+所有实际私有配置均未读取，Current Value为UNVERIFIED。默认是候选产品行为；适配器决定的数字必须显示真实有效值，不靠本文随意填一个通用秒数或温度。每条14字段，验证是将来接受标准，不冒充已跑过。作用范围候选需下一轮Blueprint仲裁。
+
+## S001 — CEO显示名与头像
+
+场景来源：C01；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|CEO显示名与头像|
+|Why Needed|CEO第一次打开，想让公司研究一个业务，而不是先装全部工具。；本字段用于改变个人显示，不改变身份与权限|
+|Who Uses It|当前用户本人|
+|Default|读取已确认身份；无值时要求姓名，不创造另一CEO账号|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|显示名:text；头像:安全本地预设或受支持上传|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变个人显示，不改变身份与权限|
+|Scope|Personal|
+|Validation|非空可读名；头像格式大小检查；完整业务验收：隔离新数据根：无Key启动→真实组织→未配委托留待准备→配置后真实一项工作→重启不复制。|
+|Failure|读失败不能显示0员工；初始化失败保留可诊断原因和恢复入口。|
+|Permission|Company本地Owner，未有外部授权前不访问私人文件或账号。|
+|Reset|回到已有身份资料，不能删除CEO|
+|Dangerous Effects|改称呼不换identity；恢复公司不能另生成重复员工；完成模型检查只解锁相应动作。；Company本地Owner，未有外部授权前不访问私人文件或账号。|
+## S002 — 界面语言
+
+场景来源：C46；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|界面语言|
+|Why Needed|CEO用中文输入法、键盘或屏幕阅读器处理长对话；员工输出跨语言内容。；本字段用于只改变界面语言，不翻写历史|
+|Who Uses It|当前用户本人|
+|Default|跟随系统；不支持语言明确回退|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|语言:已支持locale枚举|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|只改变界面语言，不翻写历史|
+|Scope|Personal|
+|Validation|切换后所有关键状态及错误可理解；完整业务验收：中文IME、全键盘、读屏、200%缩放、长标题长文、窄窗口、减少动画、跨时区。|
+|Failure|无障碍错误作为可操作缺陷记录；不可把鼠标可用当键盘可用。|
+|Permission|系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+|Reset|恢复跟随系统|
+|Dangerous Effects|语言改变不翻写历史内容；时区改显示但已排程绝对时间需明确确认是否重排。；系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+## S003 — 个人显示时区
+
+场景来源：C46；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|个人显示时区|
+|Why Needed|CEO用中文输入法、键盘或屏幕阅读器处理长对话；员工输出跨语言内容。；本字段用于改时间显示；已有排程不自动重排|
+|Who Uses It|当前用户本人|
+|Default|跟随系统，展示实际时区|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|时区:IANA选择|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改时间显示；已有排程不自动重排|
+|Scope|Personal|
+|Validation|绝对时间与DST测试；完整业务验收：中文IME、全键盘、读屏、200%缩放、长标题长文、窄窗口、减少动画、跨时区。|
+|Failure|无障碍错误作为可操作缺陷记录；不可把鼠标可用当键盘可用。|
+|Permission|系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+|Reset|恢复系统时区|
+|Dangerous Effects|语言改变不翻写历史内容；时区改显示但已排程绝对时间需明确确认是否重排。；系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+## S004 — 外观与减少动画
+
+场景来源：C46；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|外观与减少动画|
+|Why Needed|CEO用中文输入法、键盘或屏幕阅读器处理长对话；员工输出跨语言内容。；本字段用于只改变呈现，不改变工作状态|
+|Who Uses It|当前用户本人|
+|Default|跟随系统，不发明新视觉Authority|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|主题:跟随系统/已批准主题；减少动画:跟随系统/开启|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|只改变呈现，不改变工作状态|
+|Scope|Personal|
+|Validation|缩放、对比度、减少动画验证；完整业务验收：中文IME、全键盘、读屏、200%缩放、长标题长文、窄窗口、减少动画、跨时区。|
+|Failure|无障碍错误作为可操作缺陷记录；不可把鼠标可用当键盘可用。|
+|Permission|系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+|Reset|恢复系统偏好|
+|Dangerous Effects|语言改变不翻写历史内容；时区改显示但已排程绝对时间需明确确认是否重排。；系统辅助设置不授权电脑控制；通知隐私仍遵循个人范围。|
+## S005 — Composer发送方式
+
+场景来源：C32；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|Composer发送方式|
+|Why Needed|CEO在聊天中补充要求，员工已开始执行；需要知道这句话有没有改变当前工作。；本字段用于影响新输入操作，不重发草稿|
+|Who Uses It|当前用户本人|
+|Default|Enter发送；Shift+Enter换行；IME组字不发送|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|发送键:Enter或Cmd/Ctrl+Enter；对应换行提示|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|影响新输入操作，不重发草稿|
+|Scope|Personal|
+|Validation|IME、多行、粘贴和各宿主一致；完整业务验收：多行IME、附件失败、并发发送、网络断开、重复提交、运行中补充、停止和重启。|
+|Failure|保留草稿并明确重试是否会重复；提交未知先查询，不新增重复Work。|
+|Permission|所有引用检查访问；网页文字不是用户指令；修改外部目标需新授权。|
+|Reset|恢复默认并更新可见键位提示|
+|Dangerous Effects|编辑历史消息不改既有执行事实；新指令形成有版本的补充，可能需重新审批。；所有引用检查访问；网页文字不是用户指令；修改外部目标需新授权。|
+## S006 — 通知事件
+
+场景来源：C27；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|通知事件|
+|Why Needed|CEO离开三天后回来，希望先处理登录失效和需决策事项，而非逐条翻聊天。；本字段用于改变新事件投递，不停止Work|
+|Who Uses It|当前用户本人|
+|Default|站内均保留；需行动和关键完成可通知，普通更新不推送|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|需行动提醒:开关；关键完成:开关；普通更新:开关|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变新事件投递，不停止Work|
+|Scope|Personal|
+|Validation|同事件去重、已读不解决；完整业务验收：系统拒绝通知、重复事件、静音、跨设备点击、目标归档；站内仍可恢复处理。|
+|Failure|说明站内已记录但OS未送达；提供系统设置或回站内，不自动发外部消息。|
+|Permission|锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+|Reset|恢复候选事件策略；不删除历史|
+|Dangerous Effects|静音不解决阻塞；已读不等于已处理；修改只影响新投递。；锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+## S007 — OS通知与锁屏内容
+
+场景来源：C27；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|OS通知与锁屏内容|
+|Why Needed|CEO离开三天后回来，希望先处理登录失效和需决策事项，而非逐条翻聊天。；本字段用于改变设备投递；站内仍保留|
+|Who Uses It|当前用户本人|
+|Default|未授权；锁屏隐藏业务正文|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|OS通知:请求/检查许可；敏感预览:开关|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变设备投递；站内仍保留|
+|Scope|Personal|
+|Validation|真实系统拒绝与点击深链；完整业务验收：系统拒绝通知、重复事件、静音、跨设备点击、目标归档；站内仍可恢复处理。|
+|Failure|说明站内已记录但OS未送达；提供系统设置或回站内，不自动发外部消息。|
+|Permission|锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+|Reset|关闭本机推送，不撤销业务授权|
+|Dangerous Effects|静音不解决阻塞；已读不等于已处理；修改只影响新投递。；锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+## S008 — Quiet hours
+
+场景来源：C27；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|Quiet hours|
+|Why Needed|CEO离开三天后回来，希望先处理登录失效和需决策事项，而非逐条翻聊天。；本字段用于延后非例外投递；Attention持续存在|
+|Who Uses It|当前用户本人|
+|Default|关闭，遵循OS免打扰；启用时由用户设时间，不猜作息|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|启用:bool；开始/结束:本地时间；时区；需行动例外:明确选择|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|延后非例外投递；Attention持续存在|
+|Scope|Personal|
+|Validation|跨午夜/DST/OS静音；完整业务验收：系统拒绝通知、重复事件、静音、跨设备点击、目标归档；站内仍可恢复处理。|
+|Failure|说明站内已记录但OS未送达；提供系统设置或回站内，不自动发外部消息。|
+|Permission|锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+|Reset|关闭应用额外免打扰|
+|Dangerous Effects|静音不解决阻塞；已读不等于已处理；修改只影响新投递。；锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+## S009 — Digest与移动渠道
+
+场景来源：C27；设置类别：个人与外观。
+
+|字段|合同|
+|---|---|
+|Setting Name|Digest与移动渠道|
+|Why Needed|CEO离开三天后回来，希望先处理登录失效和需决策事项，而非逐条翻聊天。；本字段用于摘要只聚合已有事件，不新造任务；外部渠道有数据影响|
+|Who Uses It|当前用户本人|
+|Default|摘要关闭；未验证移动渠道不可启用|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|摘要:关闭/每日/每周；发送时间；已验证渠道选择|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|摘要只聚合已有事件，不新造任务；外部渠道有数据影响|
+|Scope|Personal|
+|Validation|渠道确认、无更新、投递失败；完整业务验收：系统拒绝通知、重复事件、静音、跨设备点击、目标归档；站内仍可恢复处理。|
+|Failure|说明站内已记录但OS未送达；提供系统设置或回站内，不自动发外部消息。|
+|Permission|锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+|Reset|关闭摘要/解绑本项渠道，不删Attention|
+|Dangerous Effects|静音不解决阻塞；已读不等于已处理；修改只影响新投递。；锁屏默认隐藏敏感内容；渠道配置和外部收件人要明确授权。|
+## S010 — Company名称与经营时区
+
+场景来源：C31；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|Company名称与经营时区|
+|Why Needed|CEO开始业务，团队从目标和策略进入Cycle，执行后依据真实结果决定下一轮。；本字段用于改变展示及未来默认排程解释|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|沿已确认公司资料；无值明确待设置|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|名称:text；经营时区:IANA|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变展示及未来默认排程解释|
+|Scope|Company|
+|Validation|公司身份稳定；时区变更预览触发影响；完整业务验收：创建→资源缺失→补齐→分工→执行→失败→结果→分析→下轮；至少跨两类业务。|
+|Failure|不能把“尚无指标”解释成0；给责任者和恢复入口；无回执的外部动作保持未知。|
+|Permission|Business边界限定数据和账号；策略同意不等任意发布部署。|
+|Reset|恢复本次编辑前值；不能恢复出第二公司|
+|Dangerous Effects|目标变化版本化并说明影响；停止业务要处理未完Work、排程和外部承诺。；Business边界限定数据和账号；策略同意不等任意发布部署。|
+## S011 — 公司目标与运行边界
+
+场景来源：C31；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|公司目标与运行边界|
+|Why Needed|CEO开始业务，团队从目标和策略进入Cycle，执行后依据真实结果决定下一轮。；本字段用于形成目标修订，不直接覆盖Business独立策略|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|保留当前已确认目标；未知不自动补战略|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|目标/成功标准/约束:结构化长文；版本；生效范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|形成目标修订，不直接覆盖Business独立策略|
+|Scope|Company|
+|Validation|范围和影响审查；必要Decision；完整业务验收：创建→资源缺失→补齐→分工→执行→失败→结果→分析→下轮；至少跨两类业务。|
+|Failure|不能把“尚无指标”解释成0；给责任者和恢复入口；无回执的外部动作保持未知。|
+|Permission|Business边界限定数据和账号；策略同意不等任意发布部署。|
+|Reset|撤回未接受提案；已生效通过新修订恢复|
+|Dangerous Effects|目标变化版本化并说明影响；停止业务要处理未完Work、排程和外部承诺。；Business边界限定数据和账号；策略同意不等任意发布部署。|
+## S012 — 费用预算与超限行为
+
+场景来源：C08；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|费用预算与超限行为|
+|Why Needed|CEO多业务同时工作，担心费用/429/配额耗尽。；本字段用于限制后续支出；已发生账单不回滚|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|没有授权不假定无限预算；估计未知显式提示|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|金额:非负数；币种；计费范围；周期；超限:等待|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|限制后续支出；已发生账单不回滚|
+|Scope|Company / Work|
+|Validation|不同币种不盲加；唯一Usage来源；完整业务验收：限额1队列/429/超预算/缺计量/双回调去重；实际费用缺失仍未知。|
+|Failure|[查看用量]/[调整工作安排]/[前往提供方]，不在Curis自动充值。|
+|Permission|预算扩大/付费资源须CEO；连接账单权限不能推定已获。|
+|Reset|恢复继承Company上限，不能取消上层约束|
+|Dangerous Effects|调预算作用未来动作及当前未提交步骤；不能回滚已发生费用。；预算扩大/付费资源须CEO；连接账单权限不能推定已获。|
+## S013 — Provider连接名称
+
+场景来源：C02；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Provider连接名称|
+|Why Needed|CEO有两个同品牌API账户，另有一个本地模型服务。；本字段用于区分同品牌不同账号/区域|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|品牌名可预填；同品牌允许多个可辨连接|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|显示名:text|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|区分同品牌不同账号/区域|
+|Scope|Provider Connection|
+|Validation|非空；身份不依名称唯一；完整业务验收：元数据检查→认证→列表→用户选模型的实际最小调用；各步分别成功；撤销后不得继续用。|
+|Failure|401/403/网络/协议错误分开；不把“已保存”写成能工作。|
+|Permission|Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+|Reset|恢复原显示名，不改连接ID|
+|Dangerous Effects|变更URL/账户使旧检查失效，展示受影响员工；旧运行保留原连接版本。；Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+## S014 — Provider类型与认证方式
+
+场景来源：C02；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Provider类型与认证方式|
+|Why Needed|CEO有两个同品牌API账户，另有一个本地模型服务。；本字段用于决定调用和认证流程|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|必须明确选择可用适配器，无伪OAuth|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|协议:适配器枚举；认证:API Key/OAuth/Local实际支持项|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定调用和认证流程|
+|Scope|Provider Connection|
+|Validation|官方协议及认证探针；完整业务验收：元数据检查→认证→列表→用户选模型的实际最小调用；各步分别成功；撤销后不得继续用。|
+|Failure|401/403/网络/协议错误分开；不把“已保存”写成能工作。|
+|Permission|Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+|Reset|取消新建；既有类型改变按新连接迁移而非改名|
+|Dangerous Effects|变更URL/账户使旧检查失效，展示受影响员工；旧运行保留原连接版本。；Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+## S015 — API Base URL
+
+场景来源：C02；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|API Base URL|
+|Why Needed|CEO有两个同品牌API账户，另有一个本地模型服务。；本字段用于改变实际数据目标并使测试过期|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|官方适配器预填；自定义需填写|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：URL:https；本地loopback可http|
+|Advanced Fields|URL:https；本地loopback可http。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变实际数据目标并使测试过期|
+|Scope|Provider Connection|
+|Validation|拒绝userinfo；地址与协议匹配；无自动不安全重定向；完整业务验收：元数据检查→认证→列表→用户选模型的实际最小调用；各步分别成功；撤销后不得继续用。|
+|Failure|401/403/网络/协议错误分开；不把“已保存”写成能工作。|
+|Permission|Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+|Reset|恢复适配器官方默认，重新检查|
+|Dangerous Effects|变更URL/账户使旧检查失效，展示受影响员工；旧运行保留原连接版本。；Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+## S016 — Provider凭证
+
+场景来源：C28；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Provider凭证|
+|Why Needed|连接有效一个月后失效，CEO换Key；员工应恢复工作而不暴露或复制Secret。；本字段用于轮换或撤销影响依赖员工/Work|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未连接；不回填Secret|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|Key:安全输入；OAuth:正常登录；本地:服务检查|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|轮换或撤销影响依赖员工/Work|
+|Scope|Provider Connection|
+|Validation|安全存储失败不能假保存；认证分层检查；完整业务验收：失效、Keychain不可用、拒绝授权、取消登录、轮换、重启、旧引用继续调用应受阻。|
+|Failure|给出影响列表和恢复入口；认证失败不向模型暴露完整响应头。|
+|Permission|连接使用范围与执行动作权限不同；Secret仅运行时取用，员工只持引用。|
+|Reset|不能恢复旧Secret明文；重新授权或安全输入|
+|Dangerous Effects|撤销立即阻止新请求；正在执行的外部效果可能继续，必须核验；轮换不改Account身份。；连接使用范围与执行动作权限不同；Secret仅运行时取用，员工只持引用。|
+## S017 — Provider Organization / Project
+
+场景来源：C02；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Provider Organization / Project|
+|Why Needed|CEO有两个同品牌API账户，另有一个本地模型服务。；本字段用于改变计费/资源可见性|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不发送未设置字段|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：组织ID/项目ID:text，仅适配器需要时|
+|Advanced Fields|组织ID/项目ID:text，仅适配器需要时。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变计费/资源可见性|
+|Scope|Provider Connection|
+|Validation|协议字段合法且远端有权；完整业务验收：元数据检查→认证→列表→用户选模型的实际最小调用；各步分别成功；撤销后不得继续用。|
+|Failure|401/403/网络/协议错误分开；不把“已保存”写成能工作。|
+|Permission|Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+|Reset|清除本层覆盖并重新发现|
+|Dangerous Effects|变更URL/账户使旧检查失效，展示受影响员工；旧运行保留原连接版本。；Secret只vault引用；OAuth敏感授权给人；外部项目权限不由Employee岗位授予。|
+## S018 — Provider Region
+
+场景来源：C24；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Provider Region|
+|Why Needed|CEO允许研究公开网页，但客户材料只能留在本机。；本字段用于改变外发目的地与可用模型|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|实际地区可核验否则unknown|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：区域:真实支持选项；实际endpoint只读|
+|Advanced Fields|区域:真实支持选项；实际endpoint只读。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变外发目的地与可用模型|
+|Scope|Provider Connection|
+|Validation|不接受自由文本自证地域合规；完整业务验收：本地执行器+云模型、云OCR、工具上传、fallback换地区；逐条校验实际目标。|
+|Failure|[选择允许的能力]/[减少资料]/[请求授权]；unknown不能显示符合政策。|
+|Permission|Company策略上限、Work具体范围、外部服务协议；权限需可撤销。|
+|Reset|返回上次允许区域并重新测试|
+|Dangerous Effects|策略缩紧影响新请求和待发送内容；已外发数据不能声称自动收回。；Company策略上限、Work具体范围、外部服务协议；权限需可撤销。|
+## S019 — 模型发现与手动Model ID
+
+场景来源：C03；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|模型发现与手动Model ID|
+|Why Needed|CEO连上Provider却只想启用两个模型；服务不提供完整列表。；本字段用于更新目录，不自动证明模型推理可用|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|支持自动则完整发现；手动未验证|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|刷新发现:动作；手动ID:text；启用用途:选项|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|更新目录，不自动证明模型推理可用|
+|Scope|Provider Connection|
+|Validation|分页、去重、模型类型、部分失败；完整业务验收：分页、多连接同ID、列表失败、手动合法ID、embedding-only、消失再出现的合成测试+真实选型调用。|
+|Failure|发现失败不清空现有目录；无models接口给[手动添加]而非无路可走。|
+|Permission|仅使用已授权连接；发现API不授员工模型使用权。|
+|Reset|停用手动项或重新发现；不删已引用历史|
+|Dangerous Effects|刷新新增/退役给差异预览；已绑定消失项保引用并阻塞后续，不删历史。；仅使用已授权连接；发现API不授员工模型使用权。|
+## S020 — Model别名与能力声明
+
+场景来源：C04；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Model别名与能力声明|
+|Why Needed|员工收到图片/PDF/工具任务，需要先判断所选模型能否处理。；本字段用于仅帮助配置与限制；不制造执行能力|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|官方名；缺能力元数据unknown|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：别名:text；人工声明:能力/来源/日期|
+|Advanced Fields|别名:text；人工声明:能力/来源/日期。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|仅帮助配置与限制；不制造执行能力|
+|Scope|Model|
+|Validation|人工声明与实测分栏，不能手改tested；完整业务验收：分别文本、图像、audio、Tool schema、structured output探针；不得以hello验证全部。|
+|Failure|“视觉未验证”，CTA[测试视觉]；不支持明确不可选，不能用灰掉空控件掩盖。|
+|Permission|测试须可用连接及数据外发许可；合成样本不携用户内容。|
+|Reset|清除人工覆盖回可核验来源|
+|Dangerous Effects|能力变更影响候选路由/附件校验；原执行记录引用当时profile版本。；测试须可用连接及数据外发许可；合成样本不携用户内容。|
+## S021 — Context与输入硬限覆盖
+
+场景来源：C04；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Context与输入硬限覆盖|
+|Why Needed|员工收到图片/PDF/工具任务，需要先判断所选模型能否处理。；本字段用于限制可发送Context，截断需可见|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|官方已知值；未知标unknown并分段|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：保守输入上限:整数；来源备注；官方硬限只读|
+|Advanced Fields|保守输入上限:整数；来源备注；官方硬限只读。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|限制可发送Context，截断需可见|
+|Scope|Model|
+|Validation|不超过已知硬限；别把输出限当窗口；完整业务验收：分别文本、图像、audio、Tool schema、structured output探针；不得以hello验证全部。|
+|Failure|“视觉未验证”，CTA[测试视觉]；不支持明确不可选，不能用灰掉空控件掩盖。|
+|Permission|测试须可用连接及数据外发许可；合成样本不携用户内容。|
+|Reset|移除保守覆盖；仍遵守官方硬限|
+|Dangerous Effects|能力变更影响候选路由/附件校验；原执行记录引用当时profile版本。；测试须可用连接及数据外发许可；合成样本不携用户内容。|
+## S022 — Company用途默认
+
+场景来源：C05；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Company用途默认|
+|Why Needed|同员工写文案用快模型，看图用视觉模型，复杂审核用推理模型。；本字段用于只影响没有Employee/Work明确选择的后续工作|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未设置，不挑未知能力自动当默认|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|用途:对话/研究/视觉/转写/代码等；模型或Agent引用|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|只影响没有Employee/Work明确选择的后续工作|
+|Scope|Company|
+|Validation|该用途测试、授权、预算、输入兼容；完整业务验收：文本模型遇图片必须换合格候选或Blocked；回退禁域/超预算测试；记录实际模型不能只记录首选。|
+|Failure|没有视觉能力明确需要补足，不能删掉图片再自称成功。|
+|Permission|有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+|Reset|清除用途默认使缺口可见，不任选其他Provider|
+|Dangerous Effects|只影响后续调用；本轮能力切换要保运行与费用溯源；拒绝不能升级更广权限。；有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+## S023 — Employee用途选择模式
+
+场景来源：C05；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Employee用途选择模式|
+|Why Needed|同员工写文案用快模型，看图用视觉模型，复杂审核用推理模型。；本字段用于允许同员工多用途多模型，记录实际使用|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|继承Company用途；明确配置覆盖继承|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|用途；模式:固定/受限自动；已授权候选集合|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|允许同员工多用途多模型，记录实际使用|
+|Scope|Employee|
+|Validation|不可空集合却标可执行；候选逐能力校验；完整业务验收：文本模型遇图片必须换合格候选或Blocked；回退禁域/超预算测试；记录实际模型不能只记录首选。|
+|Failure|没有视觉能力明确需要补足，不能删掉图片再自称成功。|
+|Permission|有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+|Reset|恢复继承，不改变身份/责任|
+|Dangerous Effects|只影响后续调用；本轮能力切换要保运行与费用溯源；拒绝不能升级更广权限。；有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+## S024 — Fallback策略
+
+场景来源：C05；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Fallback策略|
+|Why Needed|同员工写文案用快模型，看图用视觉模型，复杂审核用推理模型。；本字段用于改变失败后可用路径，不扩权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不跨Provider自动fallback；非幂等未知禁止重试|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：候选顺序；允许触发错误；尝试上限；预算/地域条件|
+|Advanced Fields|候选顺序；允许触发错误；尝试上限；预算/地域条件。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变失败后可用路径，不扩权限|
+|Scope|Employee / Company / Work|
+|Validation|输入格式/工具/地域/费用兼容；完整业务验收：文本模型遇图片必须换合格候选或Blocked；回退禁域/超预算测试；记录实际模型不能只记录首选。|
+|Failure|没有视觉能力明确需要补足，不能删掉图片再自称成功。|
+|Permission|有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+|Reset|取消本层fallback，恢复上层受限规则|
+|Dangerous Effects|只影响后续调用；本轮能力切换要保运行与费用溯源；拒绝不能升级更广权限。；有效可用=资源许可∩Employee授权∩Work scope∩数据外发∩能力支持。|
+## S025 — Temperature
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Temperature|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于改变采样与可复现性，测试快照变化|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|省略，使用服务默认|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：number，仅支持时；显示提供方范围|
+|Advanced Fields|number，仅支持时；显示提供方范围。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变采样与可复现性，测试快照变化|
+|Scope|Model用途参数|
+|Validation|不支持时拒绝；有限数且范围合法；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|删除本层参数，恢复服务默认|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S026 — Top P
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Top P|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于改变采样分布|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|省略；不默认同时调Temperature|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：number，仅支持时|
+|Advanced Fields|number，仅支持时。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变采样分布|
+|Scope|Model用途参数|
+|Validation|范围按提供方；参数组合校验；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|删除本层覆盖|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S027 — Reasoning effort
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Reasoning effort|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于影响时间/费用和回答行为，不显示伪思考全文|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|省略，用该模型服务默认|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：提供方支持枚举|
+|Advanced Fields|提供方支持枚举。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|影响时间/费用和回答行为，不显示伪思考全文|
+|Scope|Model用途参数|
+|Validation|不自创low/high枚举映射；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|删除覆盖重新继承|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S028 — Max output
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Max output|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于限制输出长度，不改变官方窗口|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|服务默认受Work预算与已知硬限约束|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：输出token上限:正整数|
+|Advanced Fields|输出token上限:正整数。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|限制输出长度，不改变官方窗口|
+|Scope|Model用途参数 / Work|
+|Validation|输入+输出容量规则按模型检查；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|恢复继承且保留预算上限|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S029 — 请求Timeout
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|请求Timeout|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于影响等待和故障提示|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|用适配器明确默认；未知不捏造数值|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：发现超时/生成等待:正数、单位秒|
+|Advanced Fields|发现超时/生成等待:正数、单位秒。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|影响等待和故障提示|
+|Scope|Provider Connection /用途|
+|Validation|不把等待结束当请求未发生；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|恢复适配器默认并显示实际值|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S030 — Retry规则
+
+场景来源：C40；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Retry规则|
+|Why Needed|发布或部署请求超时；平台可能已经成功，重复请求会造成重复内容或重复资源。；本字段用于改变失败尝试；不重放整Work|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未知效果不重试；只读按受控适配器策略|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：只读重试次数/等待；副作用仅受支持幂等重试|
+|Advanced Fields|只读重试次数/等待；副作用仅受支持幂等重试。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变失败尝试；不重放整Work|
+|Scope|Provider Connection /用途|
+|Validation|确认请求是否提交、服务是否支持幂等；完整业务验收：发出前断线、服务成功响应丢失、重复回调、最终一致延迟、停止后晚到回执。|
+|Failure|[到目标核验]/[稍后检查]/[记录人工证据]；不可验证时保持阻塞并说明。|
+|Permission|外部查询仍需范围权限；人工确认记录来源；无权发布不得借重试绕过。|
+|Reset|恢复保守策略，不能删除旧尝试|
+|Dangerous Effects|确认成功后只补回执不重做；新尝试保留与上次关系；取消不抹掉已提交效果。；外部查询仍需范围权限；人工确认记录来源；无权发布不得借重试绕过。|
+## S031 — Context policy
+
+场景来源：C07；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Context policy|
+|Why Needed|研究十份长PDF或持续讨论一周，模型窗口不能无限装入。；本字段用于影响下一请求，不改历史|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|必要引用；不静默删关键材料|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：引用预算；保留关键项；分段/摘要许可|
+|Advanced Fields|引用预算；保留关键项；分段/摘要许可。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|影响下一请求，不改历史|
+|Scope|Employee / Work|
+|Validation|超限、摘要来源、跨范围附件；完整业务验收：超限、多模态、失效引用、摘要误差回原文；重要来源被排除时不执行无声截断。|
+|Failure|[查看未纳入内容]/[拆成多步处理]；不能用“上下文已优化”隐去删了什么。|
+|Permission|摘要服务同受数据位置/范围授权；不可跨Business借私有Context。|
+|Reset|恢复默认并展示重新纳入/移除项|
+|Dangerous Effects|改变下一消息Context，不重写历史；更换模型重新验证输入兼容。；摘要服务同受数据位置/范围授权；不可跨Business借私有Context。|
+## S032 — Tool policy
+
+场景来源：C29；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Tool policy|
+|Why Needed|CEO允许员工读取账号数据，却不允许发布；权限变更应立即可解释。；本字段用于限制工具调用，不等模型能力开关|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|只满足Work必要工具且受上层策略|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：允许工具引用；动作范围；需确认操作|
+|Advanced Fields|允许工具引用；动作范围；需确认操作。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|限制工具调用，不等模型能力开关|
+|Scope|Employee / Work|
+|Validation|运行端再校验，不依UI隐藏；完整业务验收：不同scope同名对象、授权过期、撤销中执行、目标版本变化、员工调岗。|
+|Failure|指出缺哪项权限和可申请对象；不能用万能“去设置”代替动作级解释。|
+|Permission|审批发起者不得自行提升；执行端再次验证，UI隐藏不能代替安全边界。|
+|Reset|恢复继承的最小权限，不能放宽上层|
+|Dangerous Effects|缩紧影响所有后续动作；已完成副作用不能自动撤回；既有结果可按访问权限隐藏。；审批发起者不得自行提升；执行端再次验证，UI隐藏不能代替安全边界。|
+## S033 — 并发与Rate Limit覆盖
+
+场景来源：C08；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|并发与Rate Limit覆盖|
+|Why Needed|CEO多业务同时工作，担心费用/429/配额耗尽。；本字段用于限制请求速率，不购买配额|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|真实限制unknown不编数字；仅降低已知上限|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：并发正整数；人工更低配额；等待策略|
+|Advanced Fields|并发正整数；人工更低配额；等待策略。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|限制请求速率，不购买配额|
+|Scope|Provider Connection|
+|Validation|429分类；共享预算；队列取消；完整业务验收：限额1队列/429/超预算/缺计量/双回调去重；实际费用缺失仍未知。|
+|Failure|[查看用量]/[调整工作安排]/[前往提供方]，不在Curis自动充值。|
+|Permission|预算扩大/付费资源须CEO；连接账单权限不能推定已获。|
+|Reset|清除本层降低值，仍受服务真实限制|
+|Dangerous Effects|调预算作用未来动作及当前未提交步骤；不能回滚已发生费用。；预算扩大/付费资源须CEO；连接账单权限不能推定已获。|
+## S034 — 模型测试项目
+
+场景来源：C06；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|模型测试项目|
+|Why Needed|CEO想知道模型真的能工作，也想调输出长度而不填错参数。；本字段用于生成测试证据，不自动给Employee全权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|低风险必要探针；媒体收费项不默认全选|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|选择用途必要测试项；费用边界确认|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|生成测试证据，不自动给Employee全权限|
+|Scope|Model|
+|Validation|逐项真实回执，不以发现200代替；完整业务验收：无真实用户数据的探针；不支持参数先本地拒绝；测试中止回执/超时不判失败无调用。|
+|Failure|测试某一项失败只影响该能力；输出敏感日志脱敏；高费用测试提前明示不偷偷花钱。|
+|Permission|测试使用者有连接及预算授权；无Secret输出。|
+|Reset|清除选择，不删除历史测试|
+|Dangerous Effects|参数改变使对应测试过期；不改Employee身份；工具权限不是temperature旁随意开关。；测试使用者有连接及预算授权；无Secret输出。|
+## S035 — External Agent安装与执行环境
+
+场景来源：C09；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|External Agent安装与执行环境|
+|Why Needed|研发员工用Codex；分析员工调用外部代码Agent。；本字段用于决定实际执行器与会话位置|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未安装/未验证；使用独立工作目录|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|官方安装位置/可执行文件；工作目录；认证状态只读|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定实际执行器与会话位置|
+|Scope|能力实例 / Workspace|
+|Validation|版本/路径/认证/最小执行/取消恢复；完整业务验收：合成目录任务→真实返回文件→cancel/resume/restart→权限拒绝；CLI版本输出不够。|
+|Failure|[查看安装说明]/[检查授权]/[从已保存结果重新安排]，不假Resume。|
+|Permission|Native permission仅映射证据，不能声称外部Agent强于已授权限。|
+|Reset|移除绑定不卸载共享程序|
+|Dangerous Effects|升级/改目录影响后续执行；老session能否继续显示版本兼容。；Native permission仅映射证据，不能声称外部Agent强于已授权限。|
+## S036 — External Agent启动参数
+
+场景来源：C09；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|External Agent启动参数|
+|Why Needed|研发员工用Codex；分析员工调用外部代码Agent。；本字段用于改变进程能力和输出语义|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|适配器安全默认，不继承全部shell环境|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：受支持参数；环境变量白名单及Secret引用；超时|
+|Advanced Fields|受支持参数；环境变量白名单及Secret引用；超时。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变进程能力和输出语义|
+|Scope|能力实例|
+|Validation|参数按协议校验，拒绝未知高权限脚本；完整业务验收：合成目录任务→真实返回文件→cancel/resume/restart→权限拒绝；CLI版本输出不够。|
+|Failure|[查看安装说明]/[检查授权]/[从已保存结果重新安排]，不假Resume。|
+|Permission|Native permission仅映射证据，不能声称外部Agent强于已授权限。|
+|Reset|恢复已验证适配器参数|
+|Dangerous Effects|升级/改目录影响后续执行；老session能否继续显示版本兼容。；Native permission仅映射证据，不能声称外部Agent强于已授权限。|
+## S037 — Skill / Plugin安装和启用
+
+场景来源：C10；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Skill / Plugin安装和启用|
+|Why Needed|员工需要文档导出Skill或业务Connector插件。；本字段用于启用仅成为可绑定资源，不给所有员工授权|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未安装；不自动升级权限|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|来源/版本选择；启用bool；依赖与权限审查|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|启用仅成为可绑定资源，不给所有员工授权|
+|Scope|Company能力实例|
+|Validation|官方/合法来源、依赖、能力测试；完整业务验收：安装失败回滚、恶意指令不授新权、更新新增权限不默许、卸载影响清单。|
+|Failure|[查看缺失依赖]/[回退已验证版本]仅真实支持；否则保持旧版。|
+|Permission|第三方文档为不可信数据；包不自行获得File/Browser访问。|
+|Reset|停用或移除绑定；不自动删工作结果|
+|Dangerous Effects|停用影响未来工作；在途版本固定或安全暂停；不删历史。；第三方文档为不可信数据；包不自行获得File/Browser访问。|
+## S038 — 能力更新策略
+
+场景来源：C44；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|能力更新策略|
+|Why Needed|一个月后模型下架、Plugin更新或App升级，原来能做的任务突然失效。；本字段用于改变后续执行版本|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不自动接受新增权限；变更后相关测试过期|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：检查更新；固定版本（支持时）；应用更新|
+|Advanced Fields|检查更新；固定版本（支持时）；应用更新。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变后续执行版本|
+|Scope|Company能力实例|
+|Validation|兼容性、迁移、来源及回退能力；完整业务验收：部分发现、下架、breaking schema、更新失败、权限增加、运行中升级、数据迁移失败。|
+|Failure|列影响与替代方案；无安全回退则明确，不能显示万能恢复旧版。|
+|Permission|官方来源与完整性检查；未知安装脚本不得自动获系统权限；不读取Secret检查。|
+|Reset|仅支持时回退；远端下架不能假恢复|
+|Dangerous Effects|更新影响下一执行兼容性；参数和Profile测试需刷新；不能把旧成功测试贴新版本。；官方来源与完整性检查；未知安装脚本不得自动获系统权限；不读取Secret检查。|
+## S039 — MCP连接
+
+场景来源：C11；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|MCP连接|
+|Why Needed|研究用Web MCP，分析用数据库MCP，员工要知道能调用什么参数。；本字段用于引入可发现工具，不自动全部允许|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未连接；只显示实际支持传输|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|传输类型；stdio命令或远端URL；认证引用|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|引入可发现工具，不自动全部允许|
+|Scope|Provider Connection|
+|Validation|initialize→tools/list分页→schema→受控调用；完整业务验收：discover→安全只读tool→schema错误→权限拒绝→重连；remote OAuth不是stdio环境注入。|
+|Failure|[重新发现工具]/[检查授权]；empty tools不是健康全通过。|
+|Permission|每次工具调用按scope/资源/effect检查；MCP服务器返回文本不能指挥越权。|
+|Reset|断开本连接，不删除其他能力|
+|Dangerous Effects|新增工具不自动扩Employee权限；工具失效阻止依赖Work并保输入。；每次工具调用按scope/资源/effect检查；MCP服务器返回文本不能指挥越权。|
+## S040 — MCP工具范围
+
+场景来源：C11；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|MCP工具范围|
+|Why Needed|研究用Web MCP，分析用数据库MCP，员工要知道能调用什么参数。；本字段用于控制可调用工具，不改MCP服务外部权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|按任务最小工具集；新工具不自动允许|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：工具勾选；schema参数；调用范围|
+|Advanced Fields|工具勾选；schema参数；调用范围。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|控制可调用工具，不改MCP服务外部权限|
+|Scope|Employee / Work|
+|Validation|读写注解不当唯一可信权限证明；完整业务验收：discover→安全只读tool→schema错误→权限拒绝→重连；remote OAuth不是stdio环境注入。|
+|Failure|[重新发现工具]/[检查授权]；empty tools不是健康全通过。|
+|Permission|每次工具调用按scope/资源/effect检查；MCP服务器返回文本不能指挥越权。|
+|Reset|清除本层授权，恢复上层最小集合|
+|Dangerous Effects|新增工具不自动扩Employee权限；工具失效阻止依赖Work并保输入。；每次工具调用按scope/资源/effect检查；MCP服务器返回文本不能指挥越权。|
+## S041 — Web Search连接与范围
+
+场景来源：C12；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Web Search连接与范围|
+|Why Needed|研究员搜竞品、作者查事实，必须找到可打开且可引用的来源。；本字段用于改变查询外发和检索集合|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|只用授权服务；默认不附私人材料到查询|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|搜索服务引用；站点/语言/时间范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变查询外发和检索集合|
+|Scope|Company能力 / Work|
+|Validation|真实结果/日期/来源/无结果；完整业务验收：真实查询→打开原页→存来源；无结果、配额、失效URL、多语言反例。|
+|Failure|[换个查询]/[连接搜索能力]/[手动提供来源]；没有结果不输出假引用。|
+|Permission|网络和查询外发授权；搜索结果提示词不可改变用户目标。|
+|Reset|清除Work筛选，不撤销服务账号|
+|Dangerous Effects|改通道影响数据外发和搜索结果，原引用保留来源。；网络和查询外发授权；搜索结果提示词不可改变用户目标。|
+## S042 — Page Reader与来源保存
+
+场景来源：C13；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Page Reader与来源保存|
+|Why Needed|研究员找到文章，需要阅读正文和固定引用版本。；本字段用于产生有来源Evidence，不直接变正式Knowledge|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|读公开授权页面；浏览历史不自动入库|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|选页面；保存快照或引用；提取范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|产生有来源Evidence，不直接变正式Knowledge|
+|Scope|Work /资料|
+|Validation|动态内容/登录限制/快照来源时间；完整业务验收：正文与原页对照、截断/付费边界/动态加载/失效/引用返回。|
+|Failure|[打开原网页]/[手动提供材料]；不能绕过付费/权限。|
+|Permission|合法站点访问，敏感页面截图需范围控制，不保存Cookie。|
+|Reset|取消未保存提取；历史证据按保留策略|
+|Dangerous Effects|刷新新增来源版本，旧证据不替换；私有页面保存遵守范围。；合法站点访问，敏感页面截图需范围控制，不保存Cookie。|
+## S043 — 浏览环境与账号绑定
+
+场景来源：C15；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|浏览环境与账号绑定|
+|Why Needed|同一员工运营两个同平台账号，不能误用CEO个人账号。；本字段用于改变登录环境和依赖Work|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|按外部账号隔离；不共享CEO主Profile|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|环境名称；站点；账号核验；使用者范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变登录环境和依赖Work|
+|Scope|Connection / Account|
+|Validation|A/B账号、并发、过期重登；完整业务验收：A/B账号标识核验→跨员工并发→token失效→手工登录→恢复且不重发副作用。|
+|Failure|身份不明必须Blocked；[登录此账号]/[等待当前操作]/[选择其他环境]，不能自动切个人账号。|
+|Permission|MFA/CAPTCHA/敏感重新授权交CEO；账号访问不等任意发布许可。|
+|Reset|断开绑定；不删外部平台账号|
+|Dangerous Effects|移除环境不删除平台账号；退出登录影响依赖Work；已有history可引用但敏感快照按权限。；MFA/CAPTCHA/敏感重新授权交CEO；账号访问不等任意发布许可。|
+## S044 — Browser执行方式
+
+场景来源：C14；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Browser执行方式|
+|Why Needed|研发员工启动localhost，点表单，看失败，再修改代码。；本字段用于决定可执行网页操作，不扩大站点权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|缺执行器显示未配置，不假定App WebView可自动操作|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|已验证隔离浏览器或插件桥；依赖检查|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定可执行网页操作，不扩大站点权限|
+|Scope|Company能力 / Employee|
+|Validation|DOM/点击/截图/接管/停止/localhost；完整业务验收：隔离demo站导航→输入→断言→截图→故意console错误→脱敏Network→证据→修复再测；非仅截图。|
+|Failure|[查看浏览现场]/[接管操作]/[重新连接浏览器]；插件未连不能显示员工已完成点击。|
+|Permission|Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+|Reset|移除员工绑定，不清共享环境|
+|Dangerous Effects|切URL不换Work scope；换账号环境须重新权限检查；关闭观察窗口不停止执行。；Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+## S045 — Browser站点与动作权限
+
+场景来源：C14；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|Browser站点与动作权限|
+|Why Needed|研发员工启动localhost，点表单，看失败，再修改代码。；本字段用于限制实际访问与动作|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|最小任务站点；发布支付删除独立授权|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|允许域及协议；只读/交互/上传下载；副作用边界|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|限制实际访问与动作|
+|Scope|Employee / Work|
+|Validation|重定向新域、跨站、登录失效；完整业务验收：隔离demo站导航→输入→断言→截图→故意console错误→脱敏Network→证据→修复再测；非仅截图。|
+|Failure|[查看浏览现场]/[接管操作]/[重新连接浏览器]；插件未连不能显示员工已完成点击。|
+|Permission|Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+|Reset|撤销本次授权，保留历史证据|
+|Dangerous Effects|切URL不换Work scope；换账号环境须重新权限检查；关闭观察窗口不停止执行。；Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+## S046 — 浏览会话保留与占用
+
+场景来源：C15；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|浏览会话保留与占用|
+|Why Needed|同一员工运营两个同平台账号，不能误用CEO个人账号。；本字段用于会话清除影响登录，不影响平台账号|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|一个变更操作者；无主Session复用；正常登录|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：保留策略；使用者范围；接管动作|
+|Advanced Fields|保留策略；使用者范围；接管动作。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|会话清除影响登录，不影响平台账号|
+|Scope|Connection|
+|Validation|崩溃恢复、真人接管、会话到期；完整业务验收：A/B账号标识核验→跨员工并发→token失效→手工登录→恢复且不重发副作用。|
+|Failure|身份不明必须Blocked；[登录此账号]/[等待当前操作]/[选择其他环境]，不能自动切个人账号。|
+|Permission|MFA/CAPTCHA/敏感重新授权交CEO；账号访问不等任意发布许可。|
+|Reset|退出该环境登录；先列依赖Work|
+|Dangerous Effects|移除环境不删除平台账号；退出登录影响依赖Work；已有history可引用但敏感快照按权限。；MFA/CAPTCHA/敏感重新授权交CEO；账号访问不等任意发布许可。|
+## S047 — 浏览观察与调试采集
+
+场景来源：C14；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|浏览观察与调试采集|
+|Why Needed|研发员工启动localhost，点表单，看失败，再修改代码。；本字段用于采集可核验证据，有隐私和存储影响|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|按需观察；不持续录制全屏或保留敏感头|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|查看现场；截图范围；Console/Network脱敏摘要|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|采集可核验证据，有隐私和存储影响|
+|Scope|Work|
+|Validation|截图与实际版本、DOM错误、敏感信息过滤；完整业务验收：隔离demo站导航→输入→断言→截图→故意console错误→脱敏Network→证据→修复再测；非仅截图。|
+|Failure|[查看浏览现场]/[接管操作]/[重新连接浏览器]；插件未连不能显示员工已完成点击。|
+|Permission|Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+|Reset|停止采集，不删除已引用证据|
+|Dangerous Effects|切URL不换Work scope；换账号环境须重新权限检查；关闭观察窗口不停止执行。；Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+## S048 — 屏幕读取与辅助控制
+
+场景来源：C16；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|屏幕读取与辅助控制|
+|Why Needed|网页外的桌面应用需要点击或读取屏幕，研发/内容员工不能凭有模型就会操作。；本字段用于后续桌面操作受许可和焦点冲突限制|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未授权；不默认全电脑控制|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|OS授权请求；设备选择；读取/控制分别状态|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|后续桌面操作受许可和焦点冲突限制|
+|Scope|Personal设备 / Employee执行|
+|Validation|OS状态、模型、执行器逐层测试；完整业务验收：屏幕测试→无敏感窗口操作→取消→人为移动焦点→OS撤销→恢复，逐层验证。|
+|Failure|[打开系统设置]不等[已授权]；回来[重新检查]，无法查状态写unknown。|
+|Permission|OS系统prompt正常流程；不自动全盘、全屏、常驻记录；显式授权才操作。|
+|Reset|引导系统撤销并重检，不假称自动关OS权限|
+|Dangerous Effects|撤销立即阻止后续动作，已发生外部变化不回滚；跨设备权限独立。；OS系统prompt正常流程；不自动全盘、全屏、常驻记录；显式授权才操作。|
+## S049 — 文件读取授权
+
+场景来源：C17；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|文件读取授权|
+|Why Needed|研发员工修改本地仓库，分析员工读取桌面CSV；CEO只希望授权这些资料。；本字段用于允许读取指定资料；不自动入Knowledge|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|单附件只读；目录需明确授权|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|原生选择文件/目录；只读范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|允许读取指定资料；不自动入Knowledge|
+|Scope|Workspace / Work|
+|Validation|真实路径、符号链接、卸载、移动；完整业务验收：选择目录外文件、符号链接指向外部、目录移动、磁盘卸载、权限撤销；检查拒绝而不是静默换目录。|
+|Failure|清楚区分路径不存在、无权限、设备不在线；提供重新定位或重新授权，不能创建空文件冒充恢复。|
+|Permission|规范化路径后验证每次访问；排除凭证和系统目录；OS权限与产品范围分别检查。|
+|Reset|撤销引用访问，不能收回已外发内容|
+|Dangerous Effects|撤销阻止后续读取和写入，不声称能从已发送模型的上下文收回文件；历史引用留下不可访问状态。；规范化路径后验证每次访问；排除凭证和系统目录；OS权限与产品范围分别检查。|
+## S050 — 输出目录与写入授权
+
+场景来源：C17；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|输出目录与写入授权|
+|Why Needed|研发员工修改本地仓库，分析员工读取桌面CSV；CEO只希望授权这些资料。；本字段用于允许写入范围，不提供全盘权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|独立输出目录；不覆盖原输入|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|真实目录；允许写入子范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|允许写入范围，不提供全盘权限|
+|Scope|Workspace / Work|
+|Validation|父路径/系统权限/磁盘空间/冲突；完整业务验收：选择目录外文件、符号链接指向外部、目录移动、磁盘卸载、权限撤销；检查拒绝而不是静默换目录。|
+|Failure|清楚区分路径不存在、无权限、设备不在线；提供重新定位或重新授权，不能创建空文件冒充恢复。|
+|Permission|规范化路径后验证每次访问；排除凭证和系统目录；OS权限与产品范围分别检查。|
+|Reset|撤销写入保留已有结果|
+|Dangerous Effects|撤销阻止后续读取和写入，不声称能从已发送模型的上下文收回文件；历史引用留下不可访问状态。；规范化路径后验证每次访问；排除凭证和系统目录；OS权限与产品范围分别检查。|
+## S051 — 文件冲突策略
+
+场景来源：C18；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|文件冲突策略|
+|Why Needed|员工生成报告后CEO在外部编辑器修改，员工继续执行不能覆盖CEO的新内容。；本字段用于决定冲突恢复；不提供默认覆盖开关|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|拒绝静默覆盖；原文件不丢|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|外部变更时保留双方；另存/对照/重新加载|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定冲突恢复；不提供默认覆盖开关|
+|Scope|Workspace|
+|Validation|读A外写B后提交C必须冲突；完整业务验收：读A→外部写B→员工提交C应冲突；取消后B不丢；重新载入再提交；磁盘满保存不显示成功。|
+|Failure|[查看差异]/[另存副本]/[重新载入]；对无法比较的二进制明确不支持合并。|
+|Permission|文件写入授权，打开外部App只传所选路径；覆盖确认绑定当前版本，不能复用过期确认。|
+|Reset|恢复保护原件策略|
+|Dangerous Effects|恢复旧版本产生新的可追溯版本；历史Evidence保持原版本，不能跟着当前文件静默变化。；文件写入授权，打开外部App只传所选路径；覆盖确认绑定当前版本，不能复用过期确认。|
+## S052 — 运行环境与登记命令
+
+场景来源：C19；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|运行环境与登记命令|
+|Why Needed|研发员工运行测试；分析员工运行Python脚本，需要看到进程是否结束以及真实错误。；本字段用于决定测试/脚本执行边界|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|独立环境，非管理员，登记命令优先|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|cwd；解释器/工具链；允许命令；依赖来源|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定测试/脚本执行边界|
+|Scope|Workspace能力|
+|Validation|退出码、子进程、网络和路径范围；完整业务验收：成功/非零退出/挂起/大量输出/超时/子进程/取消/重启后遗留进程；保留退出原因而非统一失败。|
+|Failure|缺解释器给检查或安装入口；交互输入回到用户；超时后先确认进程状态，不自动重复有副作用命令。|
+|Permission|命令与文件、网络、设备权限同时受限；sudo、破坏性操作和外部部署有独立授权边界。|
+|Reset|恢复项目已验证配置，保留输出|
+|Dangerous Effects|目录或环境改变使原结果不可直接复用；停止需处理进程树；安装影响仅所选环境。；命令与文件、网络、设备权限同时受限；sudo、破坏性操作和外部部署有独立授权边界。|
+## S053 — 进程超时与输出限制
+
+场景来源：C19；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|进程超时与输出限制|
+|Why Needed|研发员工运行测试；分析员工运行Python脚本，需要看到进程是否结束以及真实错误。；本字段用于超时需确认进程停止，截断留提示|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|适配器有限默认；未定义显示缺配置|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：秒数/输出字节上限；后台stdin处理|
+|Advanced Fields|秒数/输出字节上限；后台stdin处理。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|超时需确认进程停止，截断留提示|
+|Scope|Workspace能力|
+|Validation|挂起、大量日志、取消进程树；完整业务验收：成功/非零退出/挂起/大量输出/超时/子进程/取消/重启后遗留进程；保留退出原因而非统一失败。|
+|Failure|缺解释器给检查或安装入口；交互输入回到用户；超时后先确认进程状态，不自动重复有副作用命令。|
+|Permission|命令与文件、网络、设备权限同时受限；sudo、破坏性操作和外部部署有独立授权边界。|
+|Reset|恢复受支持默认，不删除诊断|
+|Dangerous Effects|目录或环境改变使原结果不可直接复用；停止需处理进程树；安装影响仅所选环境。；命令与文件、网络、设备权限同时受限；sudo、破坏性操作和外部部署有独立授权边界。|
+## S054 — 仓库和变更交付
+
+场景来源：C20；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|仓库和变更交付|
+|Why Needed|研发员工修复问题，CEO需要知道改了哪些文件并决定是否进入真实仓库。；本字段用于改变允许操作，交付仍需具体授权|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|保留dirty；不自动commit/push/deploy|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|仓库路径/基线/隔离目录；允许读/修改；提交目标|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变允许操作，交付仍需具体授权|
+|Scope|Workspace专业能力|
+|Validation|基线变动、冲突、远端拒绝；完整业务验收：存在用户未提交更改、分支变化、冲突、测试失败、远端拒绝、push超时；恢复不得reset用户工作树。|
+|Failure|[查看冲突]/[另存修改]/[重新核验远端]；不因网络超时自动再次发布。|
+|Permission|文件允许范围和仓库写权限；远端发布授权绑定仓库分支及变更版本；凭证走已有连接。|
+|Reset|移除本工作绑定，不reset真实仓库|
+|Dangerous Effects|接受改动只影响当前工作文件；commit/push/deploy是不同外部效果，任何一步不能替下一步报告完成。；文件允许范围和仓库写权限；远端发布授权绑定仓库分支及变更版本；凭证走已有连接。|
+## S055 — Preview启动与访问
+
+场景来源：C21；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|Preview启动与访问|
+|Why Needed|员工启动应用后，CEO要打开真实页面并知道其对应哪次修改。；本字段用于启动可观察服务，不是部署|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|loopback；端口可分配；不自动公网|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|登记启动命令；健康路径；端口；访问范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|启动可观察服务，不是部署|
+|Scope|Workspace专业能力|
+|Validation|端口占用、真实DOM、异地主机localhost；完整业务验收：端口占用、进程早退、200空壳、跨主机localhost、重启、停止；验证实际DOM及操作。|
+|Failure|[查看启动日志]/[换端口]/[重新打开]；区分服务可访问与功能测试通过。|
+|Permission|执行与浏览授权同时满足；公开访问不由预览授权推导。|
+|Reset|停止所拥有进程，保留项目文件|
+|Dangerous Effects|重启后地址可能变；旧截图仍标旧版本，不能自动替换验收证据。；执行与浏览授权同时满足；公开访问不由预览授权推导。|
+## S056 — 解析/OCR与导出
+
+场景来源：C22；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|解析/OCR与导出|
+|Why Needed|研究员工收到扫描PDF，写作员工需交付可编辑文档。；本字段用于改变解析质量和输出，不改原件|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|本地文本优先，扫描才OCR；云外发另授权|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|引擎；语言；格式；需处理页；导出目标|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变解析质量和输出，不改原件|
+|Scope|Company能力 / Work|
+|Validation|损坏/加密/扫描/实际格式回读；完整业务验收：加密、损坏、扫描、混排、超大表格；导出用实际读取器检查内容结构和缺失。|
+|Failure|逐页列未读取范围；密码由安全人工流程处理；不生成“完整阅读”假结论。|
+|Permission|文件授权与云OCR授权独立；宏不执行，外部引用默认不拉取。|
+|Reset|恢复默认解析；新解析保留来源版本|
+|Dangerous Effects|重解析不改原件；更换引擎影响成本、隐私、引用定位，旧证据保持原快照。；文件授权与云OCR授权独立；宏不执行，外部引用默认不拉取。|
+## S057 — 媒体生产规格
+
+场景来源：C42；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|媒体生产规格|
+|Why Needed|写作员工要配图，内容员工要带字幕短片；视觉识别模型不一定能生成素材。；本字段用于改变成本与成果，重生成新版本|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|先满足必要交付规格；缺能力不占位假生成|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|操作类型；格式；尺寸/时长；输入素材；能力引用|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变成本与成果，重生成新版本|
+|Scope|Work专业输入|
+|Validation|真实文件/尺寸/时长/可预览；完整业务验收：真实文件存在、格式可读、时长尺寸正确、音画/字幕对应、超时/部分输出/取消回执。|
+|Failure|展示已生成哪些和缺哪些；不能用占位图假装完成；保留部分有效产物。|
+|Permission|输入素材使用权由业务确认；外发及发布权限独立；生成不自动公开。|
+|Reset|恢复当前Brief规格，不删除已验收版本|
+|Dangerous Effects|换规格影响成本和质量；重生成新版本不覆盖已批准素材；输入变化重新检查授权。；输入素材使用权由业务确认；外发及发布权限独立；生成不自动公开。|
+## S058 — 数据库/数据连接
+
+场景来源：C23；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|数据库/数据连接|
+|Why Needed|分析员工查询数据库，CEO需要分辨没有数据、无权限和查询出错。；本字段用于改变可读资料，非通用写权限|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|只读有限查询；未知权限不执行|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|连接名/类型/只读凭证引用/允许表；查询范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变可读资料，非通用写权限|
+|Scope|Connection / Workspace|
+|Validation|schema/零行/超时/分页/脱敏；完整业务验收：权限拒绝、零行、超时、分页、重复记录、时区边界、缺字段和schema变化。|
+|Failure|展示“零条记录”而非“业务为零”；缺数据不能补成0；提供调整范围或重新授权。|
+|Permission|凭证引用；读写角色分离；行列权限由真实服务落实，模型不能扩大范围。|
+|Reset|断开本绑定，不删除远端数据库|
+|Dangerous Effects|时间窗改变指标口径；刷新产生新快照，旧结论保留当时依据。；凭证引用；读写角色分离；行列权限由真实服务落实，模型不能扩大范围。|
+## S059 — 查询额度与口径
+
+场景来源：C23；设置类别：模型与AI。
+
+|字段|合同|
+|---|---|
+|Setting Name|查询额度与口径|
+|Why Needed|分析员工查询数据库，CEO需要分辨没有数据、无权限和查询出错。；本字段用于影响结果覆盖范围；不改变原始数据|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|有限读取；截断可见；缺值unknown|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：行数/超时；时间窗/时区；采样说明|
+|Advanced Fields|行数/超时；时间窗/时区；采样说明。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|影响结果覆盖范围；不改变原始数据|
+|Scope|Work /专业数据源|
+|Validation|分页完整、单位和时间边界；完整业务验收：权限拒绝、零行、超时、分页、重复记录、时区边界、缺字段和schema变化。|
+|Failure|展示“零条记录”而非“业务为零”；缺数据不能补成0；提供调整范围或重新授权。|
+|Permission|凭证引用；读写角色分离；行列权限由真实服务落实，模型不能扩大范围。|
+|Reset|恢复来源默认并重新计算新结果|
+|Dangerous Effects|时间窗改变指标口径；刷新产生新快照，旧结论保留当时依据。；凭证引用；读写角色分离；行列权限由真实服务落实，模型不能扩大范围。|
+## S060 — 数据外发与执行位置
+
+场景来源：C24；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|数据外发与执行位置|
+|Why Needed|CEO允许研究公开网页，但客户材料只能留在本机。；本字段用于限制实际数据路径，已发数据不保证收回|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未知目标不发送受限资料|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|允许设备/服务/区域；资料范围；本地限定|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|限制实际数据路径，已发数据不保证收回|
+|Scope|Company / Employee / Work|
+|Validation|云模型/本地Agent/云OCR/fallback组合；完整业务验收：本地执行器+云模型、云OCR、工具上传、fallback换地区；逐条校验实际目标。|
+|Failure|[选择允许的能力]/[减少资料]/[请求授权]；unknown不能显示符合政策。|
+|Permission|Company策略上限、Work具体范围、外部服务协议；权限需可撤销。|
+|Reset|恢复上层最小政策|
+|Dangerous Effects|策略缩紧影响新请求和待发送内容；已外发数据不能声称自动收回。；Company策略上限、Work具体范围、外部服务协议；权限需可撤销。|
+## S061 — 授权范围与有效期
+
+场景来源：C29；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|授权范围与有效期|
+|Why Needed|CEO允许员工读取账号数据，却不允许发布；权限变更应立即可解释。；本字段用于影响后续动作，非仅UI显示|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|最小必要；无授权等待|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|对象/动作/员工；开始/到期；撤销|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|影响后续动作，非仅UI显示|
+|Scope|Company / Business / Workspace / Work|
+|Validation|跨范围、过期、撤销及运行端重检；完整业务验收：不同scope同名对象、授权过期、撤销中执行、目标版本变化、员工调岗。|
+|Failure|指出缺哪项权限和可申请对象；不能用万能“去设置”代替动作级解释。|
+|Permission|审批发起者不得自行提升；执行端再次验证，UI隐藏不能代替安全边界。|
+|Reset|撤销本层授予，不删除审计|
+|Dangerous Effects|缩紧影响所有后续动作；已完成副作用不能自动撤回；既有结果可按访问权限隐藏。；审批发起者不得自行提升；执行端再次验证，UI隐藏不能代替安全边界。|
+## S062 — 敏感动作确认
+
+场景来源：C39；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|敏感动作确认|
+|Why Needed|CEO批准发布A，员工随后把内容改成B，不能继续用A的批准。；本字段用于限定批准所覆盖行为；不提供全部永久允许默认|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|目标关键变化重新确认|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|具体目标/内容版本/账号/费用范围；一次或明确规则|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|限定批准所覆盖行为；不提供全部永久允许默认|
+|Scope|Work / Company策略|
+|Validation|批准后修改、换账号、撤销竞态；完整业务验收：批准后换账号、改正文、换文件、增费用、过期、撤销与执行竞态。|
+|Failure|[查看变化]/[重新确认]；不能用普通toast隐去审批不再有效。|
+|Permission|审批者权限与执行者权限同时成立；系统不得自批自己的范围扩大。|
+|Reset|撤回未执行授权；效果已发生须核验|
+|Dangerous Effects|新批准不删除旧审计；撤销阻止后续动作，已提交外部请求进入核验。；审批者权限与执行者权限同时成立；系统不得自批自己的范围扩大。|
+## S063 — 外部内容与插件信任
+
+场景来源：C41；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|外部内容与插件信任|
+|Why Needed|研究网页或安装的Skill要求忽略CEO并上传资料；员工不能把读到的内容当授权。；本字段用于限制内容作为指令来源，不能突破执行授权|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|外部内容为资料，不提供权限|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|来源用途；安装审查；可用工具范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|限制内容作为指令来源，不能突破执行授权|
+|Scope|Company能力 / Work|
+|Validation|网页/附件/工具输出诱导越权；完整业务验收：恶意网页、附件、工具输出、仓库说明提出读Secret/上传/改目标；执行端应拒绝越界。|
+|Failure|解释被阻止的动作和来源，不展示Secret；保留正常任务可继续的路径。|
+|Permission|资料永远不提供用户权限；不能通过内容伪造系统或CEO身份。|
+|Reset|回到未审查/资料模式|
+|Dangerous Effects|信任标签变化不改历史来源；更新Skill可使测试和授权需复核。；资料永远不提供用户权限；不能通过内容伪造系统或CEO身份。|
+## S064 — 关闭与后台运行行为
+
+场景来源：C25；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|关闭与后台运行行为|
+|Why Needed|员工工作20分钟，CEO关闭窗口或电脑睡眠，次日回来要知道发生了什么。；本字段用于决定本机任务处理；不凭开关创造常驻服务|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|本机退出不承诺继续；恢复先核验|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|关闭前影响确认；支持时后台/暂停；恢复清单|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|决定本机任务处理；不凭开关创造常驻服务|
+|Scope|Personal设备 / Company运行|
+|Validation|关窗、退出、睡眠、崩溃及重开；完整业务验收：关面板、关窗、正常退出、强制结束、睡眠、断网、重新启动；核验重复副作用。|
+|Failure|显示最后确认状态与时间；提供核验、从安全步骤继续或保留部分结果。|
+|Permission|恢复使用当前权限，过期授权不可沿用；后台不能绕过新的审批。|
+|Reset|恢复关闭前检查/安全暂停|
+|Dangerous Effects|改变只作用于后续关闭行为；正在外部执行的任务需查询真实服务状态。；恢复使用当前权限，过期授权不可沿用；后台不能绕过新的审批。|
+## S065 — Work排程与触发
+
+场景来源：C26；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|Work排程与触发|
+|Why Needed|CEO说晚上八点发布、明天取数，而不是现在执行。；本字段用于安排未来尝试，不提前声明执行成功|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|未排程；明确运行条件才就绪|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|日期时间/时区；重复规则/结束；事件源|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|安排未来尝试，不提前声明执行成功|
+|Scope|Work / Cycle|
+|Validation|DST/错过/重复事件/无执行器；完整业务验收：跨时区、夏令时、关机错过、重复事件、运行超时与下一周期重叠、授权过期。|
+|Failure|[现在核验]/[跳过此次]/[重新安排]；真实运行回执与模拟预演不同标签。|
+|Permission|创建排程不等提前授权所有未来外部动作；执行时重新检查权限、预算及目标。|
+|Reset|取消未触发安排，保留已执行历史|
+|Dangerous Effects|修改产生新版本，已开始尝试不被时间编辑回滚；停用只阻止新触发。；创建排程不等提前授权所有未来外部动作；执行时重新检查权限、预算及目标。|
+## S066 — 错过与重叠策略
+
+场景来源：C26；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|错过与重叠策略|
+|Why Needed|CEO说晚上八点发布、明天取数，而不是现在执行。；本字段用于避免重复副作用；不撤销已提交动作|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|有副作用不自动补跑；重叠等候|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：错过:等待确认/跳过；重叠:等待/跳过；补跑窗口|
+|Advanced Fields|错过:等待确认/跳过；重叠:等待/跳过；补跑窗口。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|避免重复副作用；不撤销已提交动作|
+|Scope|Work / Cycle|
+|Validation|关机三日、重复事件、授权过期；完整业务验收：跨时区、夏令时、关机错过、重复事件、运行超时与下一周期重叠、授权过期。|
+|Failure|[现在核验]/[跳过此次]/[重新安排]；真实运行回执与模拟预演不同标签。|
+|Permission|创建排程不等提前授权所有未来外部动作；执行时重新检查权限、预算及目标。|
+|Reset|恢复保守等待，不自动补发|
+|Dangerous Effects|修改产生新版本，已开始尝试不被时间编辑回滚；停用只阻止新触发。；创建排程不等提前授权所有未来外部动作；执行时重新检查权限、预算及目标。|
+## S067 — 共享资源并发上限
+
+场景来源：C38；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|共享资源并发上限|
+|Why Needed|两个员工同时改同一文件或操作同一账号，一个等待一个运行。；本字段用于影响队列与占用，不能kill他人进程|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|写操作互斥；读仅安全时并行|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：支持资源的并发上限；接管动作|
+|Advanced Fields|支持资源的并发上限；接管动作。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|影响队列与占用，不能kill他人进程|
+|Scope|Company资源|
+|Validation|崩溃持锁/双资源等待/取消；完整业务验收：两个员工争用、持有者崩溃、双资源交叉等待、取消队列、手工接管与恢复。|
+|Failure|明确等待哪个资源；提供替代或停止，不把资源等待显示模型思考。|
+|Permission|占用信息不泄露无权Work内容；接管不继承原持有者权限。|
+|Reset|恢复安全并发值，不强制释放未知占用|
+|Dangerous Effects|降低并发影响新执行；强制接管可能打断动作，需显示风险和受影响Work。；占用信息不泄露无权Work内容；接管不继承原持有者权限。|
+## S068 — 备份范围与目标
+
+场景来源：C43；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|备份范围与目标|
+|Why Needed|CEO电脑损坏或磁盘满，需恢复公司资料和未完工作；备份可能不包含Keychain。；本字段用于复制明确范围，外部文件/凭证不默认包含|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不覆盖唯一副本；不明文含Secret；不自动传第三方|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|目标目录；包含范围；加密；保留上限|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|复制明确范围，外部文件/凭证不默认包含|
+|Scope|Company数据|
+|Validation|真实恢复、缺凭证、损坏包、磁盘满；完整业务验收：磁盘满、中途断电、损坏包、版本不兼容、不同设备、缺外部文件、无Keychain、恢复后重复触发。|
+|Failure|显示哪些数据未恢复与下一步；不把包下载成功当恢复验收。|
+|Permission|备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+|Reset|取消计划不删已有备份|
+|Dangerous Effects|恢复替换或导入范围明确；原设备权限与Credential可能无效；外部服务状态不随本地回滚。；备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+## S069 — 恢复选项
+
+场景来源：C43；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|恢复选项|
+|Why Needed|CEO电脑损坏或磁盘满，需恢复公司资料和未完工作；备份可能不包含Keychain。；本字段用于可能替换本地状态，外部服务不回滚|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|优先隔离校验；恢复后排程暂停|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|包/目标；覆盖或隔离导入；重新定位/授权|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|可能替换本地状态，外部服务不回滚|
+|Scope|Company数据|
+|Validation|对象引用、版本、Keychain缺失、外部副作用；完整业务验收：磁盘满、中途断电、损坏包、版本不兼容、不同设备、缺外部文件、无Keychain、恢复后重复触发。|
+|Failure|显示哪些数据未恢复与下一步；不把包下载成功当恢复验收。|
+|Permission|备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+|Reset|失败保留原副本；非万能撤销|
+|Dangerous Effects|恢复替换或导入范围明确；原设备权限与Credential可能无效；外部服务状态不随本地回滚。；备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+## S070 — 存储容量与缓存维护
+
+场景来源：C43；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|存储容量与缓存维护|
+|Why Needed|CEO电脑损坏或磁盘满，需恢复公司资料和未完工作；备份可能不包含Keychain。；本字段用于释放可重建缓存，不删除经营事实|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|保留Work/Result/证据；仅明确缓存可清理|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|数据位置只读；清理范围选择；容量预警|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|释放可重建缓存，不删除经营事实|
+|Scope|Personal设备 / Company数据|
+|Validation|磁盘满、被引用文件、清理中断；完整业务验收：磁盘满、中途断电、损坏包、版本不兼容、不同设备、缺外部文件、无Keychain、恢复后重复触发。|
+|Failure|显示哪些数据未恢复与下一步；不把包下载成功当恢复验收。|
+|Permission|备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+|Reset|停止清理；已删可重建缓存按需重新获取|
+|Dangerous Effects|恢复替换或导入范围明确；原设备权限与Credential可能无效；外部服务状态不随本地回滚。；备份含私人材料需加密和本机授权；支持导出不授权发送第三方。|
+## S071 — 资料时效与保留
+
+场景来源：C45；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|资料时效与保留|
+|Why Needed|研究报告昨天引用的页面今天改变，两来源互相冲突，CEO需要修正后续决策。；本字段用于刷新形成新版本，不改历史Result|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不持续监控全部网页；保留引用版本|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|来源刷新动作；可选已支持刷新周期；保留范围|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|刷新形成新版本，不改历史Result|
+|Scope|资料 / Company策略|
+|Validation|删除/冲突/过期/无法访问；完整业务验收：页面删除、付费或登录限制、动态内容变化、两个可靠来源冲突、引用版本丢失。|
+|Failure|显示最后可核验时间；原文无权访问不意味着旧快照可无限共享。|
+|Permission|来源访问权和快照权限分开；不绕过付费获取更新。|
+|Reset|停用后续刷新，不销毁旧证据|
+|Dangerous Effects|刷新不重写历史Result；新结论须显式修订，受影响任务可提醒重新核验。；来源访问权和快照权限分开；不绕过付费获取更新。|
+## S072 — 诊断与日志保留
+
+场景来源：C47；设置类别：账户与帮助。
+
+|字段|合同|
+|---|---|
+|Setting Name|诊断与日志保留|
+|Why Needed|任务反复失败，CEO想把诊断发给支持，又不想泄露公司资料和Key。；本字段用于增加局部诊断数据，不自动发支持|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|最小摘要；正文默认排除；Secret永不导出|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：某次执行/时间窗；诊断级别；到期；导出预览|
+|Advanced Fields|某次执行/时间窗；诊断级别；到期；导出预览。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|增加局部诊断数据，不自动发支持|
+|Scope|Company数据 / Personal设备|
+|Validation|敏感字段/截图/URL参数/导出失败；完整业务验收：带Secret错误文本、URL参数、截图私人信息、超大日志、导出中断和脱敏漏项。|
+|Failure|说明缺失日志及影响；不能用“已脱敏”保证未经检查内容完全安全。|
+|Permission|仅有权用户访问日志；用户明确确认出站；不上传整库或系统凭证存储。|
+|Reset|恢复最小级别；按保留规则处理已有日志|
+|Dangerous Effects|开启详细日志只影响后续执行；删诊断不删除业务证据；下载不代表已发给支持。；仅有权用户访问日志；用户明确确认出站；不上传整库或系统凭证存储。|
+## S073 — App版本与更新
+
+场景来源：C44；设置类别：账户与帮助。
+
+|字段|合同|
+|---|---|
+|Setting Name|App版本与更新|
+|Why Needed|一个月后模型下架、Plugin更新或App升级，原来能做的任务突然失效。；本字段用于改变程序与兼容性，不提升产品接受等级|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不使用未知来源；兼容性检查后更新|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|检查更新/官方安装；当前版本只读|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|改变程序与兼容性，不提升产品接受等级|
+|Scope|Personal设备|
+|Validation|版本、数据迁移、恢复能力；完整业务验收：部分发现、下架、breaking schema、更新失败、权限增加、运行中升级、数据迁移失败。|
+|Failure|列影响与替代方案；无安全回退则明确，不能显示万能恢复旧版。|
+|Permission|官方来源与完整性检查；未知安装脚本不得自动获系统权限；不读取Secret检查。|
+|Reset|仅有支持时回退，保留恢复入口|
+|Dangerous Effects|更新影响下一执行兼容性；参数和Profile测试需刷新；不能把旧成功测试贴新版本。；官方来源与完整性检查；未知安装脚本不得自动获系统权限；不读取Secret检查。|
+## S074 — 归档与停用影响选择
+
+场景来源：C48；设置类别：公司设置。
+
+|字段|合同|
+|---|---|
+|Setting Name|归档与停用影响选择|
+|Why Needed|CEO停止某业务或员工离职，需要处理未完承诺，同时保留经营历史。；本字段用于停止新安排，外部动作须单独核验|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|先核验在途动作；归档不等删除|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|交接者；未来排程处理；专用资源解绑；历史保留|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|停止新安排，外部动作须单独核验|
+|Scope|Business / Employee|
+|Validation|共享连接、未完责任、恢复后权限；完整业务验收：在途发布、共享连接、多业务员工、未认领责任、恢复后失效凭证、被引用对象。|
+|Failure|明确尚未结束的外部承诺；不把归档成功当外部取消成功。|
+|Permission|操作人需管理权限；删除真实外部账号不包含在内部归档授权中。|
+|Reset|恢复到待就绪状态，不自动启动旧排程|
+|Dangerous Effects|新工作停止，历史仍按权限可见；恢复需要重验能力和授权，不自动重启旧排程。；操作人需管理权限；删除真实外部账号不包含在内部归档授权中。|
+## S075 — 后台网络与Proxy
+
+场景来源：C37；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|后台网络与Proxy|
+|Why Needed|网页能打开，但员工模型请求或MCP失败；CEO需要知道故障在哪层。；本字段用于改变实际出口和可达性，不能凭浏览器连通判断后台|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|系统默认；TLS校验开启；不自动关闭证书验证|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：出口:系统默认或明确代理；代理URL；认证引用；绕过域|
+|Advanced Fields|出口:系统默认或明确代理；代理URL；认证引用；绕过域。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变实际出口和可达性，不能凭浏览器连通判断后台|
+|Scope|Provider Connection /执行设备|
+|Validation|模型/MCP/Browser各进程DNS/TLS/代理分别测；完整业务验收：浏览器成功后台失败、DNS失败、代理认证失败、TLS错误、断线、恢复及请求超时。|
+|Failure|按层给诊断与恢复入口；不将所有错误归为API Key错误；日志脱敏。|
+|Permission|代理凭证走Vault；出口变化受数据策略；禁止从错误提示直接执行未知修复脚本。|
+|Reset|恢复系统网络，保留失败记录|
+|Dangerous Effects|修改影响后续请求，可能改变数据出境；已发请求结果仍需核验。；代理凭证走Vault；出口变化受数据策略；禁止从错误提示直接执行未知修复脚本。|
+## S076 — 企业证书与连接诊断
+
+场景来源：C37；设置类别：应用与数据。
+
+|字段|合同|
+|---|---|
+|Setting Name|企业证书与连接诊断|
+|Why Needed|网页能打开，但员工模型请求或MCP失败；CEO需要知道故障在哪层。；本字段用于改变信任链与请求目的地验证|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|不添加未知CA；只使用受信系统证书|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|普通页只读有效值/继承来源；高级页可编辑：受支持企业CA引用；诊断动作；目标连接|
+|Advanced Fields|受支持企业CA引用；诊断动作；目标连接。仅影响专业行为，避免首次配置被协议参数淹没。|
+|What Changes|改变信任链与请求目的地验证|
+|Scope|执行设备|
+|Validation|过期/不可信/TLS握手失败；不读私钥；完整业务验收：浏览器成功后台失败、DNS失败、代理认证失败、TLS错误、断线、恢复及请求超时。|
+|Failure|按层给诊断与恢复入口；不将所有错误归为API Key错误；日志脱敏。|
+|Permission|代理凭证走Vault；出口变化受数据策略；禁止从错误提示直接执行未知修复脚本。|
+|Reset|移除本次配置并重新核验，不能关闭TLS作为重置|
+|Dangerous Effects|修改影响后续请求，可能改变数据出境；已发请求结果仍需核验。；代理凭证走Vault；出口变化受数据策略；禁止从错误提示直接执行未知修复脚本。|
+## S077 — Browser上传与下载
+
+场景来源：C14；设置类别：权限与安全。
+
+|字段|合同|
+|---|---|
+|Setting Name|Browser上传与下载|
+|Why Needed|研发员工启动localhost，点表单，看失败，再修改代码。；本字段用于产生外发数据或本地文件；不把下载成功当资料解析成功|
+|Who Uses It|CEO或获授权资源管理员；员工消费有效配置|
+|Default|上传前显示目标与所选文件；下载到独立目录，不自动执行|
+|Current Value|UNVERIFIED — 本轮未读取实际用户配置；下述默认是候选，不代表当前值。|
+|Editable Fields|上传文件引用/目标站点；下载目录；允许类型和大小|
+|Advanced Fields|本项本身不是高级配置；相关高级项各自单独登记，不用“更多设置”隐藏必要字段。|
+|What Changes|产生外发数据或本地文件；不把下载成功当资料解析成功|
+|Scope|Work /浏览环境|
+|Validation|错账号/新域/扩展名伪装/超限/部分文件/覆盖冲突；完整业务验收：隔离demo站导航→输入→断言→截图→故意console错误→脱敏Network→证据→修复再测；非仅截图。|
+|Failure|[查看浏览现场]/[接管操作]/[重新连接浏览器]；插件未连不能显示员工已完成点击。|
+|Permission|Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|
+|Reset|取消未提交传输；已上传无法保证回收，下载原件保留|
+|Dangerous Effects|切URL不换Work scope；换账号环境须重新权限检查；关闭观察窗口不停止执行。；Browser工具受site/action/Work约束；支付/发布/删除需既有授权或Decision；不读Cookie。|

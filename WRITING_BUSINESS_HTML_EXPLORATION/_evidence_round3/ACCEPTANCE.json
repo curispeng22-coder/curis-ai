@@ -1,0 +1,524 @@
+{
+  "at": "2026-09-21T12:28:14.099Z",
+  "total": 34,
+  "pass": 34,
+  "fail": 0,
+  "consoleErrors": [],
+  "layout": {
+    "1440×1000": {
+      "missing": false,
+      "viewport": 1440,
+      "mainW": 866,
+      "textW": 514,
+      "charsPerLine": 25,
+      "lines": 23,
+      "paras": 14,
+      "longestPara": 104,
+      "firstParaChars": 36,
+      "bodyBoxW": 606,
+      "bodyMaxW": "605.947px",
+      "rightW": 866,
+      "stacked": true,
+      "gridCols": "866px",
+      "bodyShareOfMain": 70,
+      "textShareOfViewport": 36,
+      "overflowX": false,
+      "scrollX": 1440
+    },
+    "1280×900": {
+      "missing": false,
+      "viewport": 1280,
+      "mainW": 706,
+      "textW": 519,
+      "charsPerLine": 26,
+      "lines": 22,
+      "paras": 14,
+      "longestPara": 104,
+      "firstParaChars": 36,
+      "bodyBoxW": 606,
+      "bodyMaxW": "605.947px",
+      "rightW": 706,
+      "stacked": true,
+      "gridCols": "706px",
+      "bodyShareOfMain": 86,
+      "textShareOfViewport": 41,
+      "overflowX": false,
+      "scrollX": 1280
+    }
+  },
+  "shots": [
+    {
+      "n": 1,
+      "tag": "a1-open-book-from-direction",
+      "file": "01-a1-open-book-from-direction.png"
+    },
+    {
+      "n": 2,
+      "tag": "a2-character-voice-downstream",
+      "file": "02-a2-character-voice-downstream.png"
+    },
+    {
+      "n": 3,
+      "tag": "a3-write-chapter-draft",
+      "file": "03-a3-write-chapter-draft.png"
+    },
+    {
+      "n": 4,
+      "tag": "a4-selection-conversation",
+      "file": "04-a4-selection-conversation.png"
+    },
+    {
+      "n": 5,
+      "tag": "a4-two-round-discussion",
+      "file": "05-a4-two-round-discussion.png"
+    },
+    {
+      "n": 6,
+      "tag": "a5-review-location",
+      "file": "06-a5-review-location.png"
+    },
+    {
+      "n": 7,
+      "tag": "a6-confirm-formal-not-publish",
+      "file": "07-a6-confirm-formal-not-publish.png"
+    },
+    {
+      "n": 8,
+      "tag": "a6-version-history-three-state",
+      "file": "08-a6-version-history-three-state.png"
+    },
+    {
+      "n": 9,
+      "tag": "a7-resume-next-day",
+      "file": "09-a7-resume-next-day.png"
+    },
+    {
+      "n": 10,
+      "tag": "l-1440x1000-manuscript",
+      "file": "10-l-1440x1000-manuscript.png"
+    },
+    {
+      "n": 11,
+      "tag": "l-1280x900-manuscript",
+      "file": "11-l-1280x900-manuscript.png"
+    },
+    {
+      "n": 12,
+      "tag": "l-no-empty-candidate-board",
+      "file": "12-l-no-empty-candidate-board.png"
+    },
+    {
+      "n": 13,
+      "tag": "l-candidate-comparison",
+      "file": "13-l-candidate-comparison.png"
+    },
+    {
+      "n": 14,
+      "tag": "l-empty-book-start",
+      "file": "14-l-empty-book-start.png"
+    },
+    {
+      "n": 15,
+      "tag": "r2-no-fake-generate",
+      "file": "15-r2-no-fake-generate.png"
+    },
+    {
+      "n": 16,
+      "tag": "r7-positioning-synced-to-book",
+      "file": "16-r7-positioning-synced-to-book.png"
+    }
+  ],
+  "results": [
+    {
+      "path": "A1",
+      "name": "「有想法」入口可到作品库（创作方向 → 去作品库）",
+      "ok": true,
+      "detail": "方向页入口=true 落点=book/library 可打开作品=B-01/B-02",
+      "before": {
+        "视图": "market/direction"
+      },
+      "after": {
+        "视图": "book/library"
+      },
+      "returnPoint": "返回点：左侧导航「书 · 作品库」常驻"
+    },
+    {
+      "path": "A1",
+      "name": "打开 B-02 后范围切到 B-02，并载入 B-02 自己的创作对象（不串到 B-01）",
+      "ok": true,
+      "detail": "范围=B-02 视图=book/overview B-02 背景2/人物2",
+      "before": {
+        "范围": "B-02"
+      },
+      "after": null,
+      "returnPoint": "返回点：「继续当前章」直达正文"
+    },
+    {
+      "path": "A1",
+      "name": "返回点可用：返回上一位置回到作品库，且保留原范围",
+      "ok": true,
+      "detail": "返回命中=true 落点=book/library 保留范围=B-02",
+      "before": null,
+      "after": {
+        "视图": "book/library",
+        "范围": "B-02"
+      },
+      "returnPoint": "返回点：顶部 ← 返回上一位置（保留原范围与筛选）"
+    },
+    {
+      "path": "A1",
+      "name": "打开作品后范围切换到该书，并载入本书自有创作对象",
+      "ok": true,
+      "detail": "范围=B-01 视图=book/overview 背景3/人物4/大纲4/场景1 在册章节=7",
+      "before": {
+        "范围": "B-02"
+      },
+      "after": {
+        "范围": "B-01"
+      },
+      "returnPoint": "返回点：#btnBack（返回上一位置）+ 作品库入口；「继续当前章」直达正文"
+    },
+    {
+      "path": "A1",
+      "name": "路径有返回点（返回上一位置 可用 / 继续当前章 存在）",
+      "ok": true,
+      "detail": "返回上一位置可用=true 继续当前章=true",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A2",
+      "name": "世界条目可完整维护（不限一个字段），改动写入影响清单",
+      "ok": true,
+      "detail": "影响清单 1 → 2；受影响：背景 WD-01（夜巡人的灯）、引用 C-02 的相关章",
+      "before": {
+        "cond": "灯亮起时，持有者能看见「未了之事」的轮廓。…"
+      },
+      "after": {
+        "cond": "灯亮起时，持有者能看见「未了之事」的轮廓。（本轮…"
+      },
+      "returnPoint": "返回点：创作内核左侧工作面（世界）保持在同一本书范围内"
+    },
+    {
+      "path": "A2",
+      "name": "人物档案改声纹后其余字段保持，且「故事状态」读到同一条数据",
+      "ok": true,
+      "detail": "故事状态读到同一对象=true；goal/arc/motivation/first/status 均保留",
+      "before": {
+        "voice": "短句、少形容词、把判断藏在动作里"
+      },
+      "after": {
+        "voice": "（本轮：短句、少形容词、常停顿）"
+      },
+      "returnPoint": "返回点：故事状态 ← 创作内核·人物（同一对象，非复制）"
+    },
+    {
+      "path": "A2",
+      "name": "弧线（premise）可打磨并真实落库",
+      "ok": true,
+      "detail": "改前 32 字 → 改后 45 字",
+      "before": "一个靠记忆清单才能确认「我是谁」的夜巡人…",
+      "after": "一个靠记忆清单才能确认「我是谁」的夜巡人…",
+      "returnPoint": "返回点：创作内核 · 主支线与结局"
+    },
+    {
+      "path": "A3",
+      "name": "手写一章真实落库为草稿（分段），且不自动成为正式稿 / 线上稿",
+      "ok": true,
+      "detail": "章=ch45 段落=2 状态=draft 草稿版本=草稿 r2",
+      "before": {
+        "state": "outline",
+        "formal": null,
+        "paras": null
+      },
+      "after": {
+        "段落": 2,
+        "正式稿": null
+      },
+      "returnPoint": "返回点：章节列表（同章保留）+「继续当前章」入口"
+    },
+    {
+      "path": "A3",
+      "name": "章节改名按键关联（不靠标题匹配）且改名后大纲/场景/候选关联不断",
+      "ok": true,
+      "detail": "",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A4",
+      "name": "选中段落出现「改写这一段 / 对这一段讨论」入口（靠近对象）",
+      "ok": true,
+      "detail": "",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A4",
+      "name": "对话显示「他负责的范围」与对象/版本，且输入框为空可自由输入",
+      "ok": true,
+      "detail": "版本行示例=第 45 章 · 草稿 r2｜无正式稿｜未发布 · 第 1 段",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A4",
+      "name": "第 1 轮：讨论产生具体可编辑提案（不是「收到」）",
+      "ok": true,
+      "detail": "提案=DP-1 落到=第 45 章第 1 段（草稿）；改前 145 字 → 改后 134 字",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A4",
+      "name": "采纳只写入草稿该段；正式稿未变",
+      "ok": true,
+      "detail": "第 1 段 145 字 → 134 字；正式版本=无",
+      "before": {
+        "第1段": "夜巡的第三个晚上，他把灯按在掌心，指腹贴着铜面，能感到一点微…"
+      },
+      "after": {
+        "第1段": "夜巡的第三个晚上，他把灯按在掌心，指腹贴着铜面，能感到一点微…"
+      },
+      "returnPoint": "返回点：正文工作面（草稿变化；版本历史可回退）"
+    },
+    {
+      "path": "A4",
+      "name": "第 2 轮延续同一对象继续收紧，且已裁定项不被重复改动",
+      "ok": true,
+      "detail": "轮次 1 → 2；段落字数 134 → 127（第 1 轮裁定保持=true）",
+      "before": {
+        "段落字数": 134
+      },
+      "after": {
+        "段落字数": 127
+      },
+      "returnPoint": "返回点：对话抽屉可反复发起，正文同步刷新"
+    },
+    {
+      "path": "A4",
+      "name": "未支持的意图如实说「演示未模拟」，不产生假改动",
+      "ok": true,
+      "detail": "对话内明示未模拟=true；提案总数未增加（2）",
+      "before": null,
+      "after": null,
+      "returnPoint": "返回点：可换说法或直接手改"
+    },
+    {
+      "path": "A5",
+      "name": "审校工作面可从当前章发起检查（位置明确）",
+      "ok": true,
+      "detail": "",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A5",
+      "name": "检查报告记录「检查的是哪个版本」（不用章节 ID 当修订号）",
+      "ok": true,
+      "detail": "报告=RR-1 输入版本=草稿 r5｜无正式稿｜未发布",
+      "before": null,
+      "after": "草稿 r5｜无正式稿｜未发布",
+      "returnPoint": "返回点：报告留在本章历史里；旧报告会标注适用性"
+    },
+    {
+      "path": "A5",
+      "name": "处理检查项只改草稿；正式稿快照不动（不原地覆盖）",
+      "ok": true,
+      "detail": "发现 1 项（含可执行修复 1 项）；正式版本 无 → 无；草稿是否变化=true",
+      "before": {
+        "草稿": "夜巡的第三个晚上，他把灯按在掌心,指腹贴着铜面，能感到一点微…",
+        "正式版本": null
+      },
+      "after": {
+        "草稿": "夜巡的第三个晚上，他把灯按在掌心，指腹贴着铜面，能感到一点微…",
+        "正式版本": null
+      },
+      "returnPoint": "返回点：审校报告与正文双向可回"
+    },
+    {
+      "path": "A5",
+      "name": "不把「检查完成」冒充「问题已修复」",
+      "ok": true,
+      "detail": "",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A6",
+      "name": "纯手写稿也有「确认正式稿」入口（不必先有候选）",
+      "ok": true,
+      "detail": "当前正式版本=无",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "A6",
+      "name": "确认后生成正式稿快照；线上稿不变（确认正式 ≠ 发布）",
+      "ok": true,
+      "detail": "正式 无 → v1；线上=未发布；快照段落=2",
+      "before": {
+        "正式稿": null
+      },
+      "after": {
+        "正式稿": "v1"
+      },
+      "returnPoint": "返回点：版本历史（草稿/正式/线上三态并置 + 取回为草稿）"
+    },
+    {
+      "path": "A6",
+      "name": "加入发布队列记录的是正式版本号；线上稿仍未改变",
+      "ok": true,
+      "detail": "队列项=1 版本=v1 状态=draft 线上=未发布",
+      "before": null,
+      "after": {
+        "队列版本": "v1"
+      },
+      "returnPoint": "返回点：连载发布 · 发布队列"
+    },
+    {
+      "path": "A6",
+      "name": "版本历史三态并置且各自可读（未发布时线上稿位如实显示「未发布」，不编造快照）",
+      "ok": true,
+      "detail": "草稿位=true 正式稿位=true 线上稿快照=false 未发布标注=true 可回退入口=6 可读草稿快照=5",
+      "before": null,
+      "after": {
+        "草稿快照数": 5,
+        "正式稿": "v1",
+        "线上稿": "未发布"
+      },
+      "returnPoint": "返回点：版本历史抽屉（关闭后回到同一章）"
+    },
+    {
+      "path": "A6",
+      "name": "「取回为草稿」真的改草稿内容，且正式稿快照与线上稿不动",
+      "ok": true,
+      "detail": "取回 草稿 r3（命中按钮=true）：草稿第 1 段已改变=true 与快照一致=true；正式稿 v1 → v1；线上=未发布；版本清单 0:draft:none | 1:draft:2 | 2:draft:2 | 3:draft:2 | 4:draft:2 | 5:draft:2 | 6:formal:2",
+      "before": {
+        "草稿第1段": "夜巡的第三个晚上，他把灯按在掌心，指…",
+        "正式稿": "v1"
+      },
+      "after": {
+        "草稿第1段": "夜巡的第三个晚上，他把灯按在掌心，指…",
+        "正式稿": "v1"
+      },
+      "returnPoint": "返回点：版本历史抽屉内可反复取回"
+    },
+    {
+      "path": "A7",
+      "name": "刷新后草稿 / 正式稿 / 线上稿 / 影响清单 / 对话全部保持，并回到同一本书同一章",
+      "ok": true,
+      "detail": "段落一致=true 正式=v1 影响清单=4 对话条=1",
+      "before": {
+        "正式稿": "v1",
+        "影响清单": 4,
+        "对话键": 1
+      },
+      "after": {
+        "正式稿": "v1",
+        "影响清单": 4,
+        "对话键": 1
+      },
+      "returnPoint": "返回点：作品库 → 作品概览 → 正文（章节列表保留原章）"
+    },
+    {
+      "path": "L",
+      "name": "1440×1000：正文单行字数与版面占比可读（不是每行几个字）",
+      "ok": true,
+      "detail": "正文宽=514px · 平均每行≈25字（14 段 / 23 行 · 最长段 104 字）· 正文框=606px（max-width:605.947px）· 正文占主区=70% · 辅助栏=下沉（占满 866px，不压缩正文） · 横向溢出=false · 栅格=866px",
+      "before": null,
+      "after": {
+        "平均每行字数": 25,
+        "正文字宽": 514,
+        "辅助栏": "下沉",
+        "栅格": "866px"
+      },
+      "returnPoint": "窄宽度把辅助信息下沉，不压缩正文"
+    },
+    {
+      "path": "L",
+      "name": "1280×900：正文单行字数与版面占比可读（不是每行几个字）",
+      "ok": true,
+      "detail": "正文宽=519px · 平均每行≈26字（14 段 / 22 行 · 最长段 104 字）· 正文框=606px（max-width:605.947px）· 正文占主区=86% · 辅助栏=下沉（占满 706px，不压缩正文） · 横向溢出=false · 栅格=706px",
+      "before": null,
+      "after": {
+        "平均每行字数": 26,
+        "正文字宽": 519,
+        "辅助栏": "下沉",
+        "栅格": "706px"
+      },
+      "returnPoint": "窄宽度把辅助信息下沉，不压缩正文"
+    },
+    {
+      "path": "L",
+      "name": "无候选时不渲染等宽空卡（收敛为一句状态）",
+      "ok": true,
+      "detail": "候选卡存在=true 高度=100px",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "L",
+      "name": "同一工作面不重复出现同名动作按钮",
+      "ok": true,
+      "detail": "无重复",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "L",
+      "name": "有候选时才出现对比区（改前 / 改后 + 逐项采纳）",
+      "ok": true,
+      "detail": "对比区=true 逐项按钮=2",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "L",
+      "name": "空书起步：真实空状态 + 直接手写第一章入口",
+      "ok": true,
+      "detail": "范围=B-03 空态=true 新建章入口=true",
+      "before": null,
+      "after": null,
+      "returnPoint": null
+    },
+    {
+      "path": "R2",
+      "name": "没有场景计划时「按场景计划生成候选」不生成候选、不建空正文容器、不静默造假，并明确提示",
+      "ok": true,
+      "detail": "该章场景计划=0 项；生成后候选=null；正文容器 false → false；本次提示=\"本章还没有场景计划：请先到「创作内核 · 场景准备」拆场景，或直接手写\"",
+      "before": {
+        "候选": null,
+        "正文容器": false
+      },
+      "after": {
+        "候选": null
+      },
+      "returnPoint": "返回点：留在同一章，可去「场景准备」或直接手写"
+    },
+    {
+      "path": "R7",
+      "name": "打开作品时创作内核「定位」回流到作品对象（作品概览不再显示未设定或旧值）",
+      "ok": true,
+      "detail": "创作内核定位=「灯」不是道具而是代价：每点亮一次要拿走…｜作品定位 （未同步的旧值 · R7 前… → 「灯」不是道具而是代价：每点亮一次要拿走…｜summary 同步=true｜概览显示回流值=true｜概览残留旧值=false",
+      "before": {
+        "作品定位": "（未同步的旧值 · R7 前置条件）"
+      },
+      "after": {
+        "作品定位": "「灯」不是道具而是代价：每点亮一次要拿走持有者一段记忆；主角靠记忆清单维持身份。"
+      },
+      "returnPoint": "返回点：作品概览 · 定位行 / 创作内核 · 定位"
+    }
+  ]
+}

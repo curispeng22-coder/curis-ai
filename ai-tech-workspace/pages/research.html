@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 科技 · 研究与洞察</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/shell.css">
+</head>
+<body data-page="research">
+  <div class="prototype-frame">
+    <div class="prototype-controls">
+      <button data-dom-id="theme-toggle" class="icon-btn" title="切换主题" aria-label="切换主题">🌗</button>
+      <span>页面:</span>
+      <button data-page="overview">Overview</button>
+      <button data-page="research" class="active">Research</button>
+      <button data-page="content">Content</button>
+      <button data-page="calendar">Calendar</button>
+      <button data-page="growth">Growth</button>
+      <button data-page="feedback">Feedback</button>
+      <button data-page="commercial">Commercial</button>
+      <button data-page="team">Team</button>
+      <button data-page="handoff">交接</button>
+      <button data-page="utility">Utility</button>
+      <button data-page="assistant">Assistant</button>
+      <button data-page="collapsed">Collapsed</button>
+      <button data-page="1280">1280</button>
+      <button data-page="rdcheck">RD Check</button>
+    </div>
+    <div class="window-chrome">
+      <div class="ms-shell with-context" style="--win-w:1440px; --win-h:900px;">
+        <aside class="ms-pane ms-pane-nav">
+          <header class="ms-pane-header ms-nav-head">
+            <div class="win-dots"><span></span><span></span><span></span></div>
+            <div class="pane-title">Curis</div>
+            <button class="icon-btn nav-toggle" data-dom-id="nav-toggle" aria-label="切换导航">≡</button>
+            <button class="icon-btn t1-restore" data-dom-id="nav-restore" aria-label="展开导航">»</button>
+          </header>
+          <nav class="nav-scroll">
+            <div class="nav-group">工作区</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⌂</span>CEO 工作台</a>
+            <a href="#" class="nav-item active"><span class="ni-ico">◈</span>业务空间</a>
+            <div class="nav-sub">
+              <a href="#" class="nav-item active">AI 科技</a>
+            </div>
+            <div class="nav-group">组织与运营</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⊞</span>组织中心</a>
+            <a href="#" class="nav-item"><span class="ni-ico">♟</span>人才与能力</a>
+            <a href="#" class="nav-item"><span class="ni-ico">📊</span>经营洞察</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗂</span>资料库</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗒</span>会议</a>
+          </nav>
+          <footer class="nav-foot">
+            <div class="nav-user-ava">林</div>
+            <div>
+              <div class="station-name">林薇</div>
+              <div class="station-work">内容增长部负责人</div>
+            </div>
+          </footer>
+        </aside>
+
+        <aside class="ms-pane ms-pane-ctx resize-h">
+          <header class="ms-pane-header ms-ctx-head">
+            <div class="pane-title">AI 科技</div>
+            <button class="pane-toggle" data-action="toggle-context" aria-label="切换上下文" title="切换上下文">◀</button>
+          </header>
+          <div class="ctx-content">
+            <div class="ctx-section">业务空间</div>
+            <div class="ctx-nav">
+              <a href="overview.html" class="ctx-nav-item">经营总览</a>
+              <a href="research.html" class="ctx-nav-item active">研究与洞察</a>
+              <a href="content.html" class="ctx-nav-item">内容运营</a>
+              <a href="growth.html" class="ctx-nav-item">增长与评估</a>
+              <a href="feedback.html" class="ctx-nav-item">反馈</a>
+              <a href="commercial.html" class="ctx-nav-item">商业化</a>
+            </div>
+            <div class="ctx-section">研究素材</div>
+            <div class="tree-file">竞品选题周报.csv</div>
+            <div class="tree-file active">AI 趋势观察.md</div>
+            <div class="tree-file">用户评论样本.json</div>
+          </div>
+        </aside>
+
+        <main class="ms-pane ms-pane-main">
+          <header class="ms-pane-header ms-main-head">
+            <button class="icon-btn" data-action="toggle-context" aria-label="切换上下文">☰</button>
+            <nav class="crumbs" aria-label="面包屑">
+              <a href="#">业务空间</a><span>/</span><a href="#">内容增长部</a><span>/</span><span class="cur">研究与洞察</span>
+            </nav>
+
+            <div class="main-head-right">
+              <button class="icon-btn" data-action="toggle-assistant" aria-label="CEO 助理" title="CEO 助理">🞋</button>
+              <button class="icon-btn" data-action="toggle-utility" aria-label="切换工具" title="切换工具">◧</button>
+              
+            </div>
+          </header>
+
+          <div class="ms-scroll">
+            <div class="ms-header">
+              <h1 class="ms-title">研究与洞察</h1>
+              <div class="ms-meta">AI 科技 · 趋势、竞品、受众、证据</div>
+            </div>
+
+            <div class="surface-owner" data-emp="wy">
+              <span class="so-ava" style="background:var(--ui-accent);" data-util-action="open-employee" data-id="wy" title="查看王颖速览">王</span>
+              <div class="so-body">
+                <div class="so-line1">
+                  <span class="so-name">王颖</span>
+                  <span class="so-role">研究专家</span>
+                  <span class="so-status"><span class="so-dot working"></span>工作中</span>
+                </div>
+                <div class="so-focus">本轮目标：输出 3 个可执行选题</div>
+                <div class="so-current">正在做：OpenAI 新模型发布后的用户关注点</div>
+              </div>
+              <button class="btn-primary btn-sm so-talk" data-util-action="open-conversation" data-id="wy">直接对话</button>
+            </div>
+
+            <section class="surface-section">
+              <div class="section-head"><span class="section-title">研究判断</span><span class="section-action">3 个洞察 · 2 个进行中</span></div>
+              <div class="surface-grid">
+                <div class="insight-card">
+                  <div class="ic-title">OpenAI 新模型发布后的用户关注点</div>
+                  <div class="ic-claim">王颖的判断：小红书用户对"怎么用"的关注度高于"是什么"；实测型笔记互动率高出资讯型 34%。</div>
+                  <div class="ic-meta">趋势 · 8月18日 · 样本 120 条评论</div>
+                  <div class="ic-foot">
+                    <button class="btn-ghost btn-sm" data-util-action="open-conversation" data-id="wy">问王颖</button>
+                    <span class="tag tag-working">进行中</span>
+                  </div>
+                </div>
+                <div class="insight-card">
+                  <div class="ic-title">同类账号选题结构对比</div>
+                  <div class="ic-claim">陈真的判断：头部账号在"教程 + 工具清单"组合上占据优势；评论区预埋问题可提升互动。</div>
+                  <div class="ic-meta">竞品 · 8月19日 · 5 个对标账号</div>
+                  <div class="ic-foot">
+                    <button class="btn-ghost btn-sm" data-util-action="open-conversation" data-id="cz">问陈真</button>
+                    <span class="tag tag-working">进行中</span>
+                  </div>
+                </div>
+                <div class="insight-card">
+                  <div class="ic-title">AI 科技受众兴趣分层</div>
+                  <div class="ic-claim">李然的判断：入门用户偏好"零基础教程"，进阶用户偏好"工具测评与工作流"。</div>
+                  <div class="ic-meta">受众 · 8月15日 · 问卷 200 份</div>
+                  <div class="ic-foot">
+                    <button class="btn-ghost btn-sm" data-util-action="open-conversation" data-id="lr">问李然</button>
+                    <span class="tag">已归档</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <div class="ms-assistant-drawer collapsed">
+            <header class="assistant-head">
+              <div class="assistant-ava">AI</div>
+              <div><div class="assistant-title">CEO 助理</div><div class="assistant-role">战略决策支持</div></div>
+              <button class="icon-btn" data-action="close-assistant" aria-label="关闭助理">✕</button>
+            </header>
+            <div class="assistant-body">
+              <div class="assistant-context">当前位置：AI 科技 · 研究与洞察</div>
+              <div class="assistant-msg">2 条新洞察待审阅，建议优先确认 OpenAI 新模型选题机会的下一步行动。</div>
+            </div>
+            <footer class="assistant-foot">
+              <input type="text" placeholder="向 CEO 助理提问...">
+              <button class="btn-secondary btn-sm">发送</button>
+            </footer>
+          </div>
+
+        </main>
+        <aside class="ms-pane ms-pane-util resize-h">
+          <header class="ms-pane-header ms-util-head">
+            <div class="pane-title">工具</div>
+            <button class="pane-toggle" data-action="toggle-utility" aria-label="切换工具区" title="切换工具区">▶</button>
+          </header>
+          <div class="util-content">
+            <div class="preview-cover">选择研究对象查看详情</div>
+            <div class="preview-title">未选中对象</div>
+            <div class="preview-body">点击任意洞察卡片或证据，可在此处展开详情、编辑与引用。</div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+  <script>window.__CURIS_PAGE__ = "research";</script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

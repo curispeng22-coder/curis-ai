@@ -1,0 +1,162 @@
+=== P0-3 外部请求 ===
+总计: 0 ✅
+
+=== P0-4 aria-modal / role=dialog ===
+aria-modal 总计: 0 ✅
+
+=== P1-2 字阶 ===
+档位数: 22 ❌
+8px×29  9px×70  9.5px×67  10px×623  11px×576  11.7px×4  12px×633  13px×158  13.3px×8  14px×229  15px×107  16px×7  17px×3  18px×24  19px×25  20px×6  21px×6  22px×41  24px×1  25px×2  28px×7  36px×2
+<12px 节点: 1369 ❌
+   ai-organization.html 108
+   assets.html 10
+   business.html 88
+   calendar.html 73
+   ceo-day-demo.html 1
+   ceo-desk.html 84
+   decision-room.html 7
+   finance.html 77
+   founding-flow.html 21
+   index.html 21
+   knowledge.html 24
+   meeting.html 16
+   operating.html 121
+   workspace-portal.html 25
+   workspace-runtime-department.html 115
+   workspace-runtime-shortvideo.html 170
+   workspace-runtime-software.html 125
+   workspace-runtime-xhs.html 132
+   workspace-shell-reference.html 72
+   workspace-studio.html 79
+
+=== P1-4 违禁术语 ===
+命中词种类: 1 ❌
+  ROI → 5页 | 汇总当前上下文，整理 ROI 模拟、现金流影响与回滚路径。 / 汇总当前上下文，整理 ROI 模拟、现金流影响与回滚路径。 / 汇总当前上下文，整理 ROI 模拟、现金流影响与回滚路径。
+
+=== P2-1 内容区出口 ===
+0 出口页: 14 ❌
+  ai-organization.html                 0
+  assets.html                          0
+  business.html                        0
+  calendar.html                        0
+  ceo-day-demo.html                    0
+  ceo-desk.html                        1
+  decision-room.html                   1
+  finance.html                         0
+  founding-flow.html                   1
+  index.html                           1
+  knowledge.html                       0
+  meeting.html                         0
+  operating.html                       0
+  workspace-portal.html                1
+  workspace-runtime-department.html    1
+  workspace-runtime-shortvideo.html    0
+  workspace-runtime-software.html      0
+  workspace-runtime-xhs.html           0
+  workspace-shell-reference.html       0
+  workspace-studio.html                0
+
+=== P2-2 导航结构 ===
+导航项总数: 11
+分组: [{"label":"","items":5},{"label":"","items":2},{"label":"","items":4}]
+
+=== P2-5 死按钮 ===
+总计: 222 ❌
+  ai-organization.html 深色 | 浅色 | 自动 | +创建公司从第一间办公室开始开始 → | 保存当前资源判断 | 调整能力与成本 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  assets.html 深色 | 浅色 | 自动 | 全部 | 软件开发 | 小红书 | 抖音 / TikTok | 公司知识 | 业务结果 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  business.html 深色 | 浅色 | 自动 | 创建第一间业务软件开发、小红书或抖音 / TikTok开始创 | 开始创建公司 → | 开始创建公司 → | 扩大投入 | 查看 工作空间 | 暂停业务 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  calendar.html 深色 | 浅色 | 自动 | 新建自动任务 | 连接日历 / 平台 | 编辑 | 立即运行 | 连接 | 立即运行 | 待创建公司 | 立即运行 | 待创建公司 | 立即运行 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  ceo-desk.html 深色 | 浅色 | 自动 | 创建公司 | 去内容办公室 → | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  decision-room.html 深色 | 浅色 | 自动 | 批准抖音 / TikTok 运营工作空间搭建方案 v0.3  | 小红书放量投放授权：是否在确认品牌安全阈值后开启来源：小红书 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  finance.html 深色 | 浅色 | 自动 | 补录收入 | 生成 CEO 财务简报 | 打开业务版图 | 补录收入 | 记录成本 | 查看成果库 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  founding-flow.html 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  index.html 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  knowledge.html 深色 | 浅色 | 自动 | 导入资料 | 连接外部知识库 | 搜索 | 全部 | 竞品 | 平台规则 | 内容素材 | 研发 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  meeting.html 深色 | 浅色 | 自动 | 开始创建公司 → | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  operating.html 深色 | 浅色 | 自动 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-portal.html 深色 | 浅色 | 自动 | 创建第一间办公室先说出你想经营什么，再选择业务模板或从零搭建 | 开始创建公司 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-runtime-department.html 深色 | 浅色 | 自动 | 全部 | 待决策 | 关注 | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 查看证据 | 推进到下一阶段 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-runtime-shortvideo.html 深色 | 浅色 | 自动 | 全部 | 待决策 | 关注 | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 通过 | 打回 | 通过 | 打回 | 是否批准日更频率提升至 2 条待 CEO 确认 | 查看证据 | 推进到下一阶段 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-runtime-software.html 深色 | 浅色 | 自动 | 全部 | 待决策 | 关注 | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 通过 | 打回 | v0.2 验收通过待 CEO 确认 | 退回修改 / 请求现场演示待 CEO 确认 | 查看证据 | 推进到下一阶段 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-runtime-xhs.html 深色 | 浅色 | 自动 | 全部 | 待决策 | 关注 | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 移动至下一阶段 → | 通过 | 打回 | 待发布品牌/敏感确认待 CEO 确认 | 授权平台 API 后放量待 CEO 确认 | 查看证据 | 推进到下一阶段 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-shell-reference.html 深色 | 浅色 | 自动 | 移动至下一阶段 → | 待发布笔记品牌/敏感表达确认待 CEO 确认 | 授权后是否放量投放待 CEO 确认 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+  workspace-studio.html 深色 | 浅色 | 自动 | 100% | 布局 | 历史 | 开始创建公司 → | 修复问题 | 运行模拟 | 查看影响 | 运行模拟 | 生成决策包
+              汇总当前上下文，整理 | 标记需关注项
+              识别页面中状态异常 | 解释当前状态
+              用一句话总结当前页
+
+=== P3 首屏密度 ===
+  workspace-runtime-xhs.html           261 ❌
+  workspace-runtime-shortvideo.html    259 ❌
+  workspace-runtime-software.html      249 ❌
+  workspace-runtime-department.html    238 ❌
+  calendar.html                        197 ✅
+  ceo-desk.html                        190 ✅
+  operating.html                       187 ✅
+  workspace-shell-reference.html       182 ✅
+  finance.html                         142 ❌
+  business.html                        137 ❌
+  ai-organization.html                 126 ❌
+  workspace-portal.html                124 ❌
+  knowledge.html                       119 ❌
+  decision-room.html                   110 ❌
+  assets.html                          106 ❌
+  meeting.html                         86 ❌
+  founding-flow.html                   77 ❌
+  index.html                           77 ❌
+  workspace-studio.html                57 ❌
+  ceo-day-demo.html                    7 ❌

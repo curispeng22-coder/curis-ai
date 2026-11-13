@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "prototype": [
+    {"from":"nav.ceo","event":"click","to":"pages/ceo-home.html","note":"一级入口永远回默认首页"},
+    {"from":"nav.group.chevron","event":"click","to":"toggle-subnav","note":"只展开/收起二级，不改变当前页面"},
+    {"from":"nav.project-dept","event":"click","to":"pages/project-dept.html?dept={dept}","note":"项目名称不进入侧栏"},
+    {"from":"project-center.create","event":"click","to":"pages/project-miniapp-detail.html?create=1","note":"原型创建流，未写入后端"},
+    {"from":"project-dept.card","event":"click","to":"project-detail","note":"从部门合集进入三级项目详情"},
+    {"from":"org-center.hr-card","event":"click","to":"pages/org-employees.html","note":"人事部是内置系统部门，不能重复创建"},
+    {"from":"org-employees.create","event":"click","to":"pages/employee-create.html","note":"员工先归属人事部，再分配部门/项目"},
+    {"from":"org-center.create-department","event":"click","to":"pages/department-create.html","note":"仅创建业务部门"},
+    {"from":"capability.module","event":"click","to":"capability-list","note":"Model/Skill/Tool/Workflow 分目录"},
+    {"from":"project-detail.resource-trigger","event":"click","to":"resource-picker.open","note":"当前对话或当前员工范围内覆盖模型、Skill、Tool"},
+    {"from":"resource-picker.option","event":"click","to":"resource-picker.selected","note":"选择后显示 scope，不影响其他员工或项目"},
+    {"from":"form.submit","event":"submit","to":"local-draft.success","note":"本地原型成功态，真实写入待后端接入"}
+  ],
+  "stateRules": {
+    "hover": "仅改变 border/shadow/background，不移动布局",
+    "focus": "保留 2px 主色 focus ring，键盘可达",
+    "drawer-open": "390px 左侧抽屉覆盖内容，点击遮罩或关闭按钮退出",
+    "empty": "保留模块标题和唯一主操作，显示未接入/暂无记录原因",
+    "partial": "成功数据照常展示，失败模块独立显示重试，不阻塞整页",
+    "error": "显示可读错误原因、重试入口，不显示内部堆栈或密钥",
+    "disabled": "禁用态必须同时显示原因，不使用无响应按钮"
+  }
+}

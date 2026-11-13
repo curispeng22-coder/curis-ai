@@ -1,0 +1,47 @@
+# claude-squad git worktree model (source)
+
+package git
+
+import (
+	"claude-squad/config"
+	"claude-squad/log"
+	"fmt"
+	"path/filepath"
+	"time"
+)
+
+func getWorktreeDirectory() (string, error) {
+	configDir, err := config.GetConfigDir()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(configDir, "worktrees"), nil
+}
+
+// GitWorktree manages git worktree operations for a session
+type GitWorktree struct {
+	// Path to the repository
+	repoPath string
+	// Path to the worktree
+	worktreePath string
+	// Name of the session
+	sessionName string
+	// Branch name for the worktree
+	branchName string
+	// Base commit hash for the worktree
+	baseCommitSHA string
+	// isExistingBranch is true if the branch existed before the session was created.
+	// When true, the branch will not be deleted on cleanup.
+	isExistingBranch bool
+}
+
+func NewGitWorktreeFromStorage(repoPath string, worktreePath string, sessionName string, branchName string, baseCommitSHA string, isExistingBranch bool) *GitWorktree {
+	return &GitWorktree{
+		repoPath:         repoPath,
+		worktreePath:     worktreePath,
+		sessionName:      sessionName,
+		branchName:       branchName,
+		baseCommitSHA:    baseCommitSHA,
+		isExistingBranch: isExistingBranch,
+	}

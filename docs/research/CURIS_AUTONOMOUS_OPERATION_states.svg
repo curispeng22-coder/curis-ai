@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="760" height="560">
+  <rect width="760" height="560" fill="#18181b" rx="12"/>
+  <text x="380" y="36" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#f4f4f5">持续经营状态机 · 默认 CONTINUE / ADJUST</text>
+
+  <!-- CONTINUE center -->
+  <circle cx="380" cy="280" r="56" fill="#14532d" stroke="#22c55e" stroke-width="3"/>
+  <text x="380" y="272" text-anchor="middle" font-size="15" fill="#f4f4f5" font-weight="700">CONTINUE</text>
+  <text x="380" y="292" text-anchor="middle" font-size="11" fill="#86efac">默认延续</text>
+
+  <!-- ADJUST top-left -->
+  <rect x="90" y="90" width="120" height="56" rx="8" fill="#7c2d12" stroke="#f97316" stroke-width="2"/>
+  <text x="150" y="114" text-anchor="middle" font-size="14" fill="#f4f4f5" font-weight="600">ADJUST</text>
+  <text x="150" y="132" text-anchor="middle" font-size="11" fill="#fed7aa">复盘偏差/机会</text>
+
+  <!-- WAIT top-right -->
+  <rect x="550" y="90" width="120" height="56" rx="8" fill="#713f12" stroke="#eab308" stroke-width="2"/>
+  <text x="610" y="114" text-anchor="middle" font-size="14" fill="#f4f4f5" font-weight="600">WAIT</text>
+  <text x="610" y="132" text-anchor="middle" font-size="11" fill="#fde047">等待外部依赖</text>
+
+  <!-- ESCALATE left -->
+  <rect x="50" y="252" width="120" height="56" rx="8" fill="#374151" stroke="#f87171" stroke-width="2"/>
+  <text x="110" y="276" text-anchor="middle" font-size="14" fill="#f4f4f5" font-weight="600">ESCALATE</text>
+  <text x="110" y="294" text-anchor="middle" font-size="11" fill="#fca5a5">触 CEO 边界</text>
+
+  <!-- PAUSE right -->
+  <rect x="590" y="252" width="120" height="56" rx="8" fill="#374151" stroke="#facc15" stroke-width="2"/>
+  <text x="650" y="276" text-anchor="middle" font-size="14" fill="#f4f4f5" font-weight="600">PAUSE</text>
+  <text x="650" y="294" text-anchor="middle" font-size="11" fill="#fde047">风险/CEO 叫停</text>
+
+  <!-- STOP bottom -->
+  <rect x="320" y="450" width="120" height="56" rx="8" fill="#450a0a" stroke="#ef4444" stroke-width="2"/>
+  <text x="380" y="474" text-anchor="middle" font-size="14" fill="#f4f4f5" font-weight="600">STOP</text>
+  <text x="380" y="492" text-anchor="middle" font-size="11" fill="#fca5a5">目标达成/授权撤回</text>
+
+  <!-- Arrows CONTINUE -> ADJUST -->
+  <path d="M 335 238 L 210 146" fill="none" stroke="#f97316" stroke-width="2"/>
+  <polygon points="210,146 218,150 214,142" fill="#f97316"/>
+
+  <!-- ADJUST -> CONTINUE -->
+  <path d="M 210 146 L 335 238" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="3"/>
+  <polygon points="335,238 327,234 331,242" fill="#22c55e"/>
+  <text x="230" y="200" font-size="10" fill="#86efac">调整后重跑</text>
+
+  <!-- CONTINUE -> WAIT -->
+  <path d="M 425 238 L 550 146" fill="none" stroke="#eab308" stroke-width="2"/>
+  <polygon points="550,146 542,150 546,142" fill="#eab308"/>
+
+  <!-- WAIT -> CONTINUE -->
+  <path d="M 550 146 L 425 238" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="3"/>
+  <polygon points="425,238 433,234 429,242" fill="#22c55e"/>
+  <text x="520" y="200" font-size="10" fill="#86efac">条件满足</text>
+
+  <!-- CONTINUE -> ESCALATE -->
+  <line x1="324" y1="280" x2="170" y2="280" stroke="#f87171" stroke-width="2"/>
+  <polygon points="170,280 178,276 178,284" fill="#f87171"/>
+
+  <!-- ESCALATE -> CONTINUE -->
+  <path d="M 170 290 L 324 290" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="3"/>
+  <polygon points="324,290 316,286 316,294" fill="#22c55e"/>
+  <text x="240" y="282" font-size="10" fill="#fca5a5">CEO 决策回流</text>
+
+  <!-- CONTINUE -> PAUSE -->
+  <line x1="436" y1="280" x2="590" y2="280" stroke="#facc15" stroke-width="2"/>
+  <polygon points="590,280 582,276 582,284" fill="#facc15"/>
+
+  <!-- PAUSE -> CONTINUE -->
+  <path d="M 590 290 L 436 290" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="3"/>
+  <polygon points="436,290 444,286 444,294" fill="#22c55e"/>
+  <text x="500" y="282" font-size="10" fill="#fde047">风险解除</text>
+
+  <!-- CONTINUE -> STOP -->
+  <path d="M 380 336 L 380 450" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <polygon points="380,450 376,442 384,442" fill="#ef4444"/>
+
+  <!-- STOP terminal -->
+  <circle cx="380" cy="530" r="8" fill="#450a0a" stroke="#ef4444" stroke-width="2"/>
+  <text x="380" y="534" text-anchor="middle" font-size="10" fill="#fca5a5">结束</text>
+  <line x1="380" y1="506" x2="380" y2="522" stroke="#ef4444" stroke-width="2"/>
+
+  <!-- Note -->
+  <text x="380" y="410" text-anchor="middle" font-size="12" fill="#d1d5db">停止（STOP）必须显式论证；经营默认延续。</text>
+</svg>

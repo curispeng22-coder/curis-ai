@@ -1,0 +1,516 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · H. RD Workspace（研发办公室）
+  覆盖：H1 办公室入口 (Workspace Identity / Leader / Goal / Rules) · Decision Slot (Conditional, 在 Workspace Definition 与 Current Operating 之间) · H2 Domain Primary Work Surface · H3 多 Employee Workstation(Conversation) · H4 Context 文件树 · H5 Utility Code/Diff/Preview
+  注：代码高亮 --ui-syntax-* 未冻结（DESIGN GAP #2），此处用临时色值。
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis 研发 · Workspace · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 880px) { .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); } .tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; font-family: var(--ui-mono); }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); } .ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.emp-list { display: flex; flex-direction: column; }
+.emp-row { border-bottom: 1px solid var(--ui-line); } .emp-row:last-child { border-bottom: 0; }
+.emp-row-head { display: grid; grid-template-columns: 36px 1fr auto auto; grid-template-rows: auto auto; align-items: center; gap: 0 var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-2); cursor: pointer; }
+.emp-row-head:hover { background: var(--ui-surface); }
+.emp-avatar { grid-row: 1 / 3; width: 36px; height: 36px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: var(--ui-fs-2); cursor: pointer; }
+.emp-id { grid-column: 2; grid-row: 1; display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.emp-name { font-weight: 600; cursor: pointer; } .emp-role { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.emp-duty { grid-column: 2; grid-row: 2; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.emp-status { grid-column: 3; grid-row: 1 / 3; } .emp-chevron { grid-column: 4; grid-row: 1 / 3; color: var(--ui-text-2); transition: transform 150ms ease; }
+.emp-row.is-open .emp-chevron { transform: rotate(90deg); }
+.emp-body { display: none; padding: 0 var(--ui-sp-2) var(--ui-sp-4) calc(36px + var(--ui-sp-3) + var(--ui-sp-2)); }
+.emp-row.is-open .emp-body { display: block; }
+.av-1 { background: #4a6fa5; } .av-2 { background: #5b8c6e; } .av-3 { background: #9a7b4e; } .av-4 { background: #7a5b8c; } .av-5 { background: #a05b6b; } .av-6 { background: #4e8c8c; }
+.conversation { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; }
+.msg { display: flex; gap: var(--ui-sp-2); } .msg.user { flex-direction: row-reverse; }
+.msg .bubble { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3); max-width: 80%; font-size: var(--ui-fs-3); }
+.msg.user .bubble { background: var(--ui-surface-2); }
+.msg .who { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); }
+.bounded-block { border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-bg); max-height: 200px; overflow: auto; padding: var(--ui-sp-3); font-family: var(--ui-mono); font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top: var(--ui-sp-2); white-space: pre; }
+.composer { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.composer-input { width: 100%; min-height: 44px; resize: vertical; background: transparent; border: 0; color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-3); line-height: 1.5; } .composer-input:focus { outline: none; }
+.composer-bar { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; } .composer-bar.right { margin-left: auto; }
+.chip { display: inline-flex; align-items: center; gap: var(--ui-sp-1); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; }
+.result-ref { display: inline-flex; align-items: center; gap: var(--ui-sp-1); color: var(--ui-accent); font-size: var(--ui-fs-2); cursor: pointer; text-decoration: none; border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-sm); }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+.dl { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row .k { color: var(--ui-text-2); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.decision-banner { border: 1px solid var(--ui-warning); border-left-width: 3px; background: var(--ui-surface); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-6); }
+.decision-banner .db-title { display: flex; align-items: center; gap: var(--ui-sp-2); font-weight: 600; color: var(--ui-warning); }
+.decision-actions { display: flex; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.kpi { display: flex; flex-direction: column; gap: 2px; } .kpi .n { font-size: var(--ui-fs-7); font-weight: 650; line-height: 1.1; } .kpi .l { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+/* RD Utility 临时语法色（DESIGN GAP #2：--ui-syntax-* 未冻结） */
+.syn-kw { color: #c98a5e; } .syn-str { color: #7fae6b; } .syn-com { color: var(--ui-text-3); } .syn-fn { color: #6f9fd8; }
+
+/* Frame C · Shared Workspace Shell + Team Operating + Leader marking */
+.ws-shell { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-6); }
+.ws-shell-leader { display: flex; align-items: center; gap: var(--ui-sp-3); }
+.ws-shell-info { display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.ws-shell-name { font-weight: 600; }
+.ws-shell-role { color: var(--ui-accent); font-size: var(--ui-fs-2); }
+.ws-shell-status { margin-left: auto; }
+.ws-shell-field { display: flex; gap: var(--ui-sp-3); font-size: var(--ui-fs-2); }
+.ws-shell-field .k { color: var(--ui-text-2); min-width: 80px; }
+.ws-shell-field .v.is-actionable { cursor: pointer; color: var(--ui-text); }
+.ws-shell-field .v.is-actionable:hover { color: var(--ui-accent); }
+.ws-shell-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); margin-bottom: var(--ui-sp-6); }
+.ws-shell-op .op-title { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+.op-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ui-sp-2) var(--ui-sp-4); font-size: var(--ui-fs-2); }
+.op-grid > div { display: flex; gap: var(--ui-sp-2); }
+.op-grid .l { color: var(--ui-text-2); }
+.team-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); }
+.team-op-row { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; font-size: var(--ui-fs-2); }
+.team-op-default { color: var(--ui-text-2); margin-right: var(--ui-sp-2); }
+.to-pill { display: inline-block; padding: 2px var(--ui-sp-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-pill); background: var(--ui-surface-2); font-size: var(--ui-fs-1); }
+.to-arrow { color: var(--ui-text-2); }
+.team-op-edit { margin-left: auto; }
+.team-op-pane { margin-top: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.team-op-track { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.team-op-foot { display: flex; gap: var(--ui-sp-2); justify-content: flex-end; }
+.emp-row.is-leader { background: linear-gradient(90deg, var(--ui-surface-2) 0%, transparent 40%); }
+.emp-row.is-leader .emp-avatar { box-shadow: 0 0 0 2px var(--ui-accent); }
+.emp-row.is-leader .emp-role { color: var(--ui-accent); }
+.leader-scope-line { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+
+/* Round 11 · RD Domain Primary Surface (Development Primary) */
+.primary-surface { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-5); margin-bottom: var(--ui-sp-5); }
+.ps-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ui-sp-4); padding-bottom: var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); }
+.ps-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.ps-version { color: var(--ui-text-2); font-size: var(--ui-fs-2); font-family: var(--ui-mono); }
+.dev-status-list { display: flex; flex-direction: column; gap: 0; margin-bottom: var(--ui-sp-4); }
+.dev-row { display: flex; justify-content: space-between; align-items: center; padding: var(--ui-sp-3) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-3); }
+.dev-row:last-child { border-bottom: 0; }
+.dev-row .k { color: var(--ui-text-2); }
+.dev-row .v { color: var(--ui-text); display: inline-flex; align-items: center; gap: var(--ui-sp-2); }
+.dev-section { padding: var(--ui-sp-3) 0; border-top: 1px dashed var(--ui-line); }
+.dev-label { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); }
+.dev-content { font-size: var(--ui-fs-3); color: var(--ui-text); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="搜索" data-open-utility aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item active" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>Curis 研发</span></a>
+          <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>AI 科技</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- H3 Context 文件树 -->
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">文件树 · 登录模块</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">当前 Project / Workspace</div>
+      <div class="ctx-list">
+        <div class="ctx-item">product-platform</div>
+        <div class="ctx-item" style="padding-left:var(--ui-sp-4)">├ src/</div>
+        <div class="ctx-item" style="padding-left:var(--ui-sp-6)">├ auth/</div>
+        <div class="ctx-item active" style="padding-left:calc(var(--ui-sp-6) + var(--ui-sp-4))">├ login.ts</div>
+        <div class="ctx-item" style="padding-left:calc(var(--ui-sp-6) + var(--ui-sp-4))">├ session.ts</div>
+        <div class="ctx-item" style="padding-left:var(--ui-sp-6)">├ api/</div>
+        <div class="ctx-item" style="padding-left:var(--ui-sp-6)">└ tests/</div>
+      </div>
+      <div class="ctx-head">Responsibility</div>
+      <div class="ctx-list">
+        <div class="ctx-item">登录模块重构 · 接口联调</div>
+      </div>
+      <div class="ctx-head">Recent Work / Object</div>
+      <div class="ctx-list">
+        <div class="ctx-item">login.ts · 34-93</div>
+        <div class="ctx-item">联调结果 v1.3</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="../department-business-work-surface-2026-08-18/CURIS_DEPARTMENT_BUSINESS_WORK_SURFACE_UX_EXPLORATION.html#state-3">研发部</a><span class="sep">/</span><a href="../department-business-work-surface-2026-08-18/CURIS_DEPARTMENT_BUSINESS_WORK_SURFACE_UX_EXPLORATION.html#state-5">Curis 产品研发</a></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <h1>Curis 研发</h1>
+        <div class="sub">R&D Operating Surface · 当前工作 · 团队运转 · 工作区</div>
+      </div>
+
+      <!-- Frame C · Shared Workspace Shell · Curis 研发 instance -->
+      <div class="ws-shell">
+        <div class="ws-shell-field"><span class="k">负责人</span><span class="v is-actionable" data-leader-jump>孙浩 · 工作空间负责人 ›</span></div>
+        <div class="ws-shell-field"><span class="k">目标</span><span class="v is-actionable">本周期目标已设置 ›</span></div>
+        <div class="ws-shell-field"><span class="k">规则与配置</span><span class="v is-actionable">已配置 4 项 ›</span></div>
+      </div>
+
+            <!-- CEO Decision Slot · Conditional Exception Surface(顺序: Workspace Identity / 负责人 / 目标 / 规则与配置 → 此处 → 当前经营 → Domain Primary → Team Operating → Employee Work Area) -->
+      <div class="conditional-slot is-conditional-decision" data-decision-slot>
+            <!-- H5 Needs CEO / Decision Banner（发布上线 = 不可逆） -->
+      <div class="decision-banner">
+        <div class="db-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          需要 CEO 决策 · 登录模块 v1.3 灰度发布上线
+        </div>
+        <div class="helper" style="color:var(--ui-text)">
+          <strong>①发生了什么：</strong>联调通过率 96%，开发工程师申请灰度发布至生产环境。<br>
+          <strong>②为何 AI 不能自决：</strong>生产环境发布属不可逆对外变更（FACT）。<br>
+          <strong>⑤员工推荐：</strong>灰度发布（EST：回滚窗口 30 分钟）。<br>
+          <strong>⑦你只需做：</strong>批准灰度 / 暂缓。高风险，禁止仅凭 Layer 0 直接批准。
+        </div>
+        <div class="decision-actions">
+          <button class="btn btn-primary">查看方案</button>
+          <button class="btn btn-ghost">暂缓</button>
+        </div>
+      </div>
+      </div>
+
+      <!-- Frame C · Current Operating Summary -->
+      <div class="ws-shell-op">
+        <div class="op-title">当前经营</div>
+        <div class="op-grid">
+          <div><span class="l">经营状态</span><span class="v">产品验证中</span></div>
+          <div><span class="l">本轮重点</span><span class="v">完成 Canonical Business Spine 真实产品闭环</span></div>
+          <div><span class="l">最新判断</span><span class="v">后端主干已成立，Frontend baseline 仍待验收</span></div>
+          <div><span class="l">下一步</span><span class="v">完成 Frontend provenance 与真实 E2E</span></div>
+          <div><span class="l">需要关注</span><span class="v">灰度发布待批准</span></div>
+        </div>
+      </div>
+
+      <!-- Domain Primary Work Surface · Development Primary (研发工作面) -->
+      <div class="primary-surface">
+        <div class="ps-head">
+          <h2 class="ps-title">当前研发</h2>
+          <span class="ps-version">Team Operating Engine · v0.6-rc3</span>
+        </div>
+
+        <div class="dev-status-list">
+          <div class="dev-row"><span class="k">产品 / 需求</span><span class="v"><span class="status success">已确认</span></span></div>
+          <div class="dev-row"><span class="k">架构</span><span class="v"><span class="status success">已完成</span></span></div>
+          <div class="dev-row"><span class="k">Runtime</span><span class="v"><span class="status success">已完成</span></span></div>
+          <div class="dev-row"><span class="k">Frontend Adapter</span><span class="v"><span class="status warning">进行中 · 80%</span></span></div>
+          <div class="dev-row"><span class="k">Test</span><span class="v"><span class="status neutral">22 passed · 0 failed</span></span></div>
+          <div class="dev-row"><span class="k">Review</span><span class="v"><span class="status warning">待验收</span></span></div>
+        </div>
+
+        <div class="dev-section">
+          <div class="dev-label">当前 Blocker</div>
+          <div class="dev-content">Provider Execution · 等待接口对齐</div>
+        </div>
+
+        <div class="dev-section">
+          <div class="dev-label">最近 Result</div>
+          <div class="dev-content">Responsibility Routing Runtime accepted · v0.6-rc3 联调回归 96%</div>
+        </div>
+
+        <div class="dev-section">
+          <div class="dev-label">需要你</div>
+          <div class="dev-content"><span class="status warning">灰度发布待批准</span></div>
+        </div>
+      </div>
+
+
+      <!-- Frame C · Team Operating（fixture：轻量默认流程 + 单个 编辑） -->
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">团队运转</h2><span class="section-sub">默认流程 · 点击编辑原位展开</span></div>
+        <div class="team-op">
+          <div class="team-op-row">
+            <span class="team-op-default">默认流程</span>
+            <span class="to-pill">产品</span><span class="to-arrow">→</span><span class="to-pill">架构</span><span class="to-arrow">→</span><span class="to-pill">开发</span><span class="to-arrow">→</span><span class="to-pill">测试</span>
+            <button class="chip team-op-edit" data-team-op-edit>+ 编辑</button>
+          </div>
+          <div class="team-op-pane" data-team-op-pane hidden>
+            <div class="team-op-track">
+              <span class="to-pill">产品</span><span class="to-arrow">→</span><span class="to-pill">架构</span><span class="to-arrow">→</span><span class="to-pill">开发</span><span class="to-arrow">→</span><span class="to-pill">测试</span>
+            </div>
+            <div class="team-op-foot">
+              <button class="chip" data-team-op-add>+ 添加岗位</button>
+              <button class="btn btn-primary" data-team-op-done>完成</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- H2 Shared Work Area / 多 Employee Workstation -->
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">工作区 · 员工</h2><span class="section-sub">点击头像/姓名 → Utility 详情 · 点击行 → 展开 Workstation</span></div>
+        <div class="emp-list">
+          <div class="emp-row is-leader" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-6" data-open-util>孙</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>孙浩</span><span class="emp-role">工作空间负责人</span></div>
+              <div class="emp-duty">当前职责：统筹 Curis 研发工作空间版本节奏、联调收口与发布质量</div>
+              <span class="emp-status"><span class="status success">工作中 · 经营</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body">
+              <div class="leader-scope-line">Assignment · Employee = <b>孙浩</b> · Role = <b>工作空间负责人</b> · Scope = <b>Curis 研发工作空间</b></div>
+              <div class="conversation" style="padding:0">
+                <div class="msg user"><div><div class="who">你（CEO）</div><div class="bubble">后端主干说已经成立了，为什么还没到能发布的状态？这一轮卡在哪？</div></div></div>
+                <div class="msg"><div><div class="who">孙浩</div><div class="bubble">主干（Canonical Business Spine）确实通了，但 Frontend baseline 还没通过验收，真实 E2E 也没跑完。按门禁我不能拿未验收的 Frontend 去申请灰度。</div></div></div>
+                <div class="msg user"><div><div class="who">你（CEO）</div><div class="bubble">那下一步就这一件事？</div></div></div>
+                <div class="msg"><div><div class="who">孙浩</div><div class="bubble">对，下一步就是完成 Frontend provenance 与真实 E2E。跑通后我再交灰度发布建议，证据够了你拍板。</div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="emp-row">
+            <div class="emp-row-head">
+              <div class="emp-avatar av-4" data-open-util>王</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>王琳</span><span class="emp-role">产品经理 · 研发办公室</span></div>
+              <div class="emp-duty">当前责任：需求澄清与验收标准</div>
+              <span class="emp-status"><span class="status neutral">空闲</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+          </div>
+
+          <div class="emp-row">
+            <div class="emp-row-head">
+              <div class="emp-avatar av-2" data-open-util>林</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>林涛</span><span class="emp-role">架构师 · 研发办公室</span></div>
+              <div class="emp-duty">当前责任：登录模块重构 · 接口联调协调</div>
+              <span class="emp-status"><span class="status success">工作中 · 联调</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body"><div class="helper">Workstation 占位（展开后呈现 Conversation + Composer）。</div></div>
+          </div>
+
+          <div class="emp-row">
+            <div class="emp-row-head">
+              <div class="emp-avatar av-5" data-open-util>周</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>周岚</span><span class="emp-role">开发工程师 · 研发办公室</span></div>
+              <div class="emp-duty">当前责任：登录接口联调与异常分支修复</div>
+              <span class="emp-status"><span class="status success">工作中 · 联调</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation" style="padding:0">
+                <div class="msg"><div><div class="who">周岚</div><div class="bubble">已修复 login.ts 异常分支，补充用例覆盖。联调通过率从 91% 提升到 96%。</div></div></div>
+                <div class="msg"><div><div class="who">周岚</div><div class="bubble">变更摘要：<a class="result-ref" data-open-utility>查看差异 (+34 / -93) ▸</a></div>
+                  <div class="bounded-block"><span class="syn-com">// login.ts · 34-93</span>
+<span class="syn-kw">export async function</span> <span class="syn-fn">login</span>(req, res) {
+  <span class="syn-kw">const</span> user = <span class="syn-kw">await</span> verify(req.token);
+  <span class="syn-kw">if</span> (!user) <span class="syn-kw">return</span> res.<span class="syn-fn">status</span>(<span class="syn-str">401</span>);
+  <span class="syn-kw">return</span> res.<span class="syn-fn">json</span>({ ok: <span class="syn-kw">true</span>, user });
+}</div>
+                </div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">通过，申请灰度发布吧。</div></div></div>
+                <div class="msg"><div><div class="who">周岚</div><div class="bubble">已提交发布申请，等待你决策。<a class="result-ref" data-open-utility>查看预览 ▸</a></div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对周岚下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 · Codex ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="emp-row">
+            <div class="emp-row-head">
+              <div class="emp-avatar av-1" data-open-util>赵</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>赵敏</span><span class="emp-role">QA · 研发办公室</span></div>
+              <div class="emp-duty">当前责任：等待联调完成后回归测试</div>
+              <span class="emp-status"><span class="status neutral">等待</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- H4 Utility Surface：Code / Source · Diff / Changes · Preview / Result -->
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">Utility · 研发</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="tabs" data-tab-group="util" style="border-bottom:1px solid var(--ui-line);margin-bottom:var(--ui-sp-3)">
+        <button class="tab active" data-tab="diff">Diff</button>
+        <button class="tab" data-tab="source">Source</button>
+        <button class="tab" data-tab="preview">Preview</button>
+      </div>
+      <div class="tab-panel active" data-tab-panel="util" data-tab-id="diff">
+        <div class="detail-field"><div class="k">变更归属责任</div><div class="v">周岚 · 登录接口联调</div></div>
+        <div class="bounded-block" style="max-height:260px">login.ts · 34-93
+<span class="syn-com">- const user = await oldVerify(req);</span>
+<span class="syn-com">+ const user = await verify(req.token);</span>
+<span class="syn-kw">export async function</span> <span class="syn-fn">login</span>(req, res) {
+  <span class="syn-kw">if</span> (!user) <span class="syn-kw">return</span> res.<span class="syn-fn">status</span>(<span class="syn-str">401</span>);
+  <span class="syn-kw">return</span> res.<span class="syn-fn">json</span>({ ok: <span class="syn-kw">true</span>, user });
+}</div>
+        <div style="margin-top:var(--ui-sp-3)"><button class="btn btn-secondary" style="width:100%">提交变更 / 请求协审</button></div>
+      </div>
+      <div class="tab-panel" data-tab-panel="util" data-tab-id="source">
+        <div class="bounded-block" style="max-height:260px"><span class="syn-kw">import</span> { verify } <span class="syn-kw">from</span> <span class="syn-str">'./session'</span>;
+<span class="syn-kw">export async function</span> <span class="syn-fn">login</span>(req, res) {
+  <span class="syn-kw">const</span> user = <span class="syn-kw">await</span> verify(req.token);
+  <span class="syn-kw">if</span> (!user) <span class="syn-kw">return</span> res.<span class="syn-fn">status</span>(<span class="syn-str">401</span>);
+  <span class="syn-kw">return</span> res.<span class="syn-fn">json</span>({ ok: <span class="syn-kw">true</span>, user });
+}</div>
+      </div>
+      <div class="tab-panel" data-tab-panel="util" data-tab-id="preview">
+        <div class="detail-field"><div class="k">预览类型</div><div class="v">登录页（本地渲染）</div></div>
+        <div class="card" style="background:var(--ui-surface)"><div class="helper" style="text-align:center;padding:var(--ui-sp-6)">登录界面预览占位<br><span class="mock-badge">示例数据</span></div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+<p class="muted" style="position:fixed;bottom:4px;right:8px;font-size:10px;opacity:.4">RD Utility 代码高亮为临时色值（DESIGN GAP #2）</p>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('.emp-row', function () {
+    var row = this;
+    row.querySelector('.emp-row-head').addEventListener('click', function (e) {
+      if (e.target.closest('[data-open-util]')) return;
+      row.classList.toggle('is-open');
+    });
+    row.querySelectorAll('[data-open-util]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.stopPropagation(); shell.classList.add('with-utility'); });
+    });
+  });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+
+  on('[data-team-op-edit]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (!target) return;
+    target.hidden = !target.hidden;
+    this.textContent = target.hidden ? '+ 编辑' : '收起';
+  });
+  on('[data-team-op-done]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (target) target.hidden = true;
+    var edit = wrap.querySelector('[data-team-op-edit]');
+    if (edit) edit.textContent = '+ 编辑';
+  });
+
+  on('[data-leader-jump]', function () {
+    var leader = document.querySelector('.emp-row.is-leader');
+    if (!leader) return;
+    leader.classList.add('is-open');
+    leader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+})();
+</script>
+</body>
+</html>

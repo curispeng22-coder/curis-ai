@@ -1,0 +1,15 @@
+{
+  "document": "CURIS_FULL_PRODUCT_EXPRESSION_V1.md",
+  "sha256": "f6dc23abe4877c4a6ca77dfb686a10fba287fd08d98b35e03c6530d83c1e67ad",
+  "main_sections": 42,
+  "main_surfaces": 25,
+  "contract_items_per_surface": 17,
+  "field_contracts": 18,
+  "interactions": 36,
+  "walkthroughs": 12,
+  "walkthrough_steps": 108,
+  "source_hashes_unchanged": 14,
+  "local_source_links": 14,
+  "markdown_tables": 53,
+  "verdict": "STRUCTURAL CHECK PASS; NOT UI OR RUNTIME ACCEPTANCE"
+}

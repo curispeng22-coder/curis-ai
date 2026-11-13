@@ -1,0 +1,228 @@
+/* ============================================================
+   FROZEN TOKENS — Curis Professional Workspace
+   All colors/spacing/typography use --ui-* tokens.
+   Authority: curis-ui-prototype/_system/tokens.css
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ui-bg: #1a1c1f;
+  --ui-surface: #222529;
+  --ui-surface-2: #2b2f34;
+  --ui-line: #343940;
+  --ui-text: #f3f4f6;
+  --ui-text-2: #a7adb6;
+  --ui-text-3: #a3aab4;
+  --ui-action-primary-bg: #32f08c;
+  --ui-action-primary-hover: #0fdc78;
+  --ui-action-primary-fg: #0c0c0d;
+  --ui-accent: #32f08c;
+  --ui-success: #3fcf86;
+  --ui-warning: #d89a3a;
+  --ui-danger: #e57373;
+  --ui-sidebar-w: 220px;
+  --ui-topbar-h: 52px;
+  --ui-radius: 12px;
+  --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+  --ui-fs-1: 12px;
+  --ui-fs-2: 13px;
+  --ui-fs-3: 14px;
+  --ui-fs-4: 16px;
+  --ui-fs-5: 20px;
+  --ui-fs-6: 24px;
+  --ui-fs-7: 28px;
+}
+
+html { font-size: 16px; }
+body { font-size: var(--ui-fs-3); }
+h1 { font-size: var(--ui-fs-6); }
+h2 { font-size: var(--ui-fs-5); }
+h3 { font-size: var(--ui-fs-4); }
+h4, h5, h6 { font-size: var(--ui-fs-3); }
+small, sub, sup, figcaption { font-size: var(--ui-fs-1); }
+sub, sup { line-height: 0; }
+button, input, select, textarea, optgroup { font-size: var(--ui-fs-2); font-family: inherit; }
+
+[data-theme="light"] {
+  color-scheme: light;
+  --ui-bg: #f5f5f7;
+  --ui-surface: #ffffff;
+  --ui-surface-2: #f7f8fa;
+  --ui-line: #e5e7eb;
+  --ui-text: #1a1c1f;
+  --ui-text-2: #4b5563;
+  --ui-text-3: #626b76;
+  --ui-action-primary-bg: #30333a;
+  --ui-action-primary-hover: #17181a;
+  --ui-action-primary-fg: #ffffff;
+  --ui-accent: #1a1c1f;
+  --ui-success: #21895d;
+  --ui-warning: #b87922;
+  --ui-danger: #c43f3f;
+  --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+  --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+  --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="system"] {
+    color-scheme: light;
+    --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+    --ui-line: #e5e7eb;
+    --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+    --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+    --ui-accent: #1a1c1f;
+    --ui-success: #21895d; --ui-warning: #b87922; --ui-danger: #c43f3f;
+    --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+    --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+    --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="system"] {
+    color-scheme: dark;
+    --ui-bg: #1a1c1f;
+    --ui-surface: #222529;
+    --ui-surface-2: #2b2f34;
+    --ui-line: #343940;
+    --ui-text: #f3f4f6;
+    --ui-text-2: #a7adb6;
+    --ui-text-3: #a3aab4;
+    --ui-action-primary-bg: #32f08c;
+    --ui-action-primary-hover: #0fdc78;
+    --ui-action-primary-fg: #0c0c0d;
+    --ui-accent: #32f08c;
+    --ui-success: #3fcf86;
+    --ui-warning: #d89a3a;
+    --ui-danger: #e57373;
+    --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+    --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+  }
+}
+
+:root {
+  --ui-sp-1: 4px;
+  --ui-sp-2: 8px;
+  --ui-sp-3: 12px;
+  --ui-sp-4: 16px;
+  --ui-sp-5: 20px;
+  --ui-sp-6: 24px;
+  --ui-sp-7: 32px;
+  --ui-sp-8: 48px;
+  --ui-r-xs: 4px;
+  --ui-r-sm: 8px;
+  --ui-r-md: 12px;
+  --ui-r-lg: 16px;
+  --ui-r-pill: 999px;
+  --ui-z-base: 0;
+  --ui-z-sticky: 100;
+  --ui-z-dropdown: 200;
+  --ui-z-drawer: 300;
+  --ui-z-modal: 400;
+  --ui-z-toast: 500;
+  --ui-z-devmode: 9000;
+  --ui-dur-1: 120ms;
+  --ui-dur-2: 200ms;
+  --ui-dur-3: 320ms;
+  --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ui-ease-decel: cubic-bezier(0, 0, 0, 1);
+  --ui-ease-accel: cubic-bezier(0.3, 0, 1, 1);
+  --ui-focus-w: 2px;
+  --ui-focus-offset: 2px;
+  --ui-focus-color: var(--ui-accent);
+  --ui-ctl-h-sm: 32px;
+  --ui-ctl-h: 36px;
+  --ui-ctl-h-lg: 40px;
+  --ui-tap-min: 32px;
+  --ui-lh-tight: 1.25;
+  --ui-lh: 1.5;
+  --ui-lh-loose: 1.7;
+}
+
+button, select, summary, [role="button"],
+input[type="button"], input[type="submit"], input[type="reset"] {
+  min-height: var(--ui-tap-min);
+  min-width: var(--ui-tap-min);
+}
+a[data-cta], .crumbs a, .sidebar-nav a, .nav a {
+  min-height: var(--ui-tap-min);
+  display: inline-flex;
+  align-items: center;
+}
+[data-tap="none"] { min-height: 0; min-width: 0; display: revert; }
+:where(a, button, select, input, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--ui-focus-w) solid var(--ui-focus-color);
+  outline-offset: var(--ui-focus-offset);
+  border-radius: var(--ui-r-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --ui-dur-1: 0ms; --ui-dur-2: 0ms; --ui-dur-3: 0ms; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   SEMANTIC ALIASES
+   ============================================================ */
+:root {
+  --curis-background: var(--ui-bg);
+  --curis-foreground: var(--ui-text);
+  --curis-card: var(--ui-surface);
+  --curis-card-foreground: var(--ui-text);
+  --curis-popover: var(--ui-surface);
+  --curis-popover-foreground: var(--ui-text);
+  --curis-primary: var(--ui-action-primary-bg);
+  --curis-primary-foreground: var(--ui-action-primary-fg);
+  --curis-secondary: var(--ui-surface-2);
+  --curis-secondary-foreground: var(--ui-text);
+  --curis-muted: var(--ui-surface-2);
+  --curis-muted-foreground: var(--ui-text-3);
+  --curis-accent: var(--ui-accent);
+  --curis-accent-foreground: var(--ui-action-primary-fg);
+  --curis-destructive: var(--ui-danger);
+  --curis-destructive-foreground: var(--ui-text);
+  --curis-border: var(--ui-line);
+  --curis-input: var(--ui-line);
+  --curis-ring: var(--ui-accent);
+  --curis-radius-small: var(--ui-r-xs);
+  --curis-radius-medium: var(--ui-r-sm);
+  --curis-radius-large: var(--ui-r-md);
+
+  --color-background: var(--ui-bg);
+  --color-foreground: var(--ui-text);
+  --color-card: var(--ui-surface);
+  --color-card-foreground: var(--ui-text);
+  --color-popover: var(--ui-surface);
+  --color-popover-foreground: var(--ui-text);
+  --color-primary: var(--ui-action-primary-bg);
+  --color-primary-foreground: var(--ui-action-primary-fg);
+  --color-secondary: var(--ui-surface-2);
+  --color-secondary-foreground: var(--ui-text);
+  --color-muted: var(--ui-surface-2);
+  --color-muted-foreground: var(--ui-text-3);
+  --color-accent: var(--ui-accent);
+  --color-accent-foreground: var(--ui-action-primary-fg);
+  --color-destructive: var(--ui-danger);
+  --color-destructive-foreground: var(--ui-text);
+  --color-border: var(--ui-line);
+  --color-input: var(--ui-line);
+  --color-ring: var(--ui-accent);
+  --radius-sm: var(--ui-r-xs);
+  --radius-md: var(--ui-r-sm);
+  --radius-lg: var(--ui-r-md);
+
+  --state-success: var(--ui-success);
+  --state-warning: var(--ui-warning);
+  --state-error: var(--ui-danger);
+  --state-info: var(--ui-text-2);
+}

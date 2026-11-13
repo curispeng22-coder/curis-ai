@@ -1,0 +1,58 @@
+{
+  "S01": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/PRODUCT_DOCUMENT_POINTER.md",
+    "sha256": "8c20737de7d89d94c51aca4de52a524f0e44bd02b63bba4001986bb80c9ed761"
+  },
+  "S02": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Blueprint.html",
+    "sha256": "b46aa46e4b50fa14c1b489d0b8d76532171d59a2e087d0fa8380f659cec1d77d"
+  },
+  "S03": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Master_Map.md",
+    "sha256": "23fab713e92d29ec7b58bfcd99b3e8078424d1ee93cb5570052c100c52e6f97d"
+  },
+  "S04": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_UI_Blueprint.html",
+    "sha256": "c185f0a0e20f3dad94da7889d595029441c334b89641bf5317285895d13d2a83"
+  },
+  "S05": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md",
+    "sha256": "674fde2b66817f16b3e048af5d5c2cc3a650b061bf0c56d90efa898d7eccb059"
+  },
+  "S06": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Company_OS_Shared_Authority.md",
+    "sha256": "2c40d35a26dba033948ef0aeb0f74bd7b01bd30ce9b861c9d5c030c10a9d59ec"
+  },
+  "S07": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md",
+    "sha256": "b8bec77dcbc939882b6f6534d56efbe54fdde5f18f22278ecb58e577b21e5a11"
+  },
+  "S08": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_CORE_PRODUCT_AUTHORITY_REPAIR.md",
+    "sha256": "75827d741b9105f2df39cad6ef0d0902ad5d3315980be8e4de7263842c3e1ac4"
+  },
+  "S09": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Content_Growth_Domain_Authority.md",
+    "sha256": "fde22d15496e1dd365fb772ea25e676b79983adc20d0a495074fbcc3d364a3db"
+  },
+  "S10": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_PRODUCT_DEFINITION_REBUILD.md",
+    "sha256": "1c34fde95d888ae1d69db850d0191103476821187fcd37dc094072696a940302"
+  },
+  "S11": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/full-product-rethink-2026-09-14/CURIS_2026_09_14_FULL_PRODUCT_RETHINK_REVIEW.md",
+    "sha256": "4bb3de24dea0deaa40f2a2ffdab67528dbc79e9c6e528517955871a9a78be7f2"
+  },
+  "S12": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/content-growth-product-language-2026-09-14/CURIS_CONTENT_GROWTH_PRODUCT_LANGUAGE_V2.md",
+    "sha256": "8fb9c7d53adcce8518d1cbbe882a717ea47c78f6aa63dce0bb8133d32ac24636"
+  },
+  "S13": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/CURIS_AITO_EARN_SOCIAL_PLATFORM_EXECUTION_PROVIDER_REVIEW.md",
+    "sha256": "0d1551fd5a89f1ae3bbb9f34cb21175a15abbbf4aa23c3a704cd5003f53a030f"
+  },
+  "S14": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Context.md",
+    "sha256": "2fb596c498f72e21d3db0692f25f808d9652347e2721cd809437b4842c40cbb9"
+  }
+}

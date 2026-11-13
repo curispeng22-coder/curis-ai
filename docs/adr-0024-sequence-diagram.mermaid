@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant App as main.create_app / Database.initialize
+    participant Obs as DepartmentObservability
+    participant Cat as DepartmentCatalog
+    participant Log as EvolutionEventLog
+    participant Dept as 职能型部门（未来调用方）
+
+    App->>App: Database.initialize()（D1/D2 已就绪，本 slice 无改动）
+    Note over App: evolution_events + department_types 均已存在
+
+    Note over Dept,Obs: 纯只读 —— 无写、无副作用、不落库、不计算
+    Dept->>Obs: get_department_metrics("function.admin")
+    Obs->>Cat: get_manifest("function.admin")（索引校验）
+    Cat->>Cat: 读 department_types（系统级目录）
+    Cat-->>Obs: DepartmentManifest（存在）/ None（抛出 KeyError）
+
+    Obs->>Log: get_all()（原生事件流只读投影）
+    Log->>Log: 读 evolution_events（追加写不变式保持）
+    Log-->>Obs: [event...]（原生投影，含 payload）
+
+    Obs->>Obs: 截断至 limit，包裹为 DepartmentMetrics（无统计计算）
+    Obs-->>Dept: DepartmentMetrics（event_stream + available_fields 声明，无数值回填）
+
+    Note over Dept,Obs: ── meta-loop future hook（本 slice 仅签名占位）──
+    Note over Dept,Obs: Dept->>Obs: suggest_self_improvement(type_key, observation)
+    Note over Dept,Obs: Obs-->>Dept: （D3.impl 才实现；反哺 Evolution Governor）

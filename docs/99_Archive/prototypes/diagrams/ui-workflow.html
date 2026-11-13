@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Curis Workspace — 工作流</title>
+<style>
+:root{--t50:#F0FDFA;--t100:#CCFBF1;--t300:#5EEAD4;--t400:#2DD4BF;--t500:#14B8A6;--t600:#0D9488;--t700:#0F766E;--t800:#115E59;--bg:#F7FCFA;--card:#FFF;--sub:#EDF7F5;--sb-bg:#FAFEFD;--tx:#0F2922;--tx2:#4A635C;--tx3:#7B9590;--ok:#10B981;--ok-bg:#ECFDF5;--warn:#F59E0B;--warn-bg:#FFFBEB;--err:#EF4444;--err-bg:#FEF2F2;--info:#06B6D4;--info-bg:#ECFEFF;--pur:#8B5CF6;--pur-bg:#F5F3FF;--blu:#3B82F6;--bd:#DEF2EC;--bd2:#C5E5DB;--sh-sm:0 1px 2px rgba(15,41,34,.04);--sh-md:0 4px 12px rgba(15,41,34,.07);--rs:8px;--rm:12px;--rl:16px;--rxl:20px;--rp:999px;--font:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+.sb{width:232px;min-width:232px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 16px}
+.bi{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 4px 12px rgba(20,184,166,.3)}
+.bt h1{font-size:15px;font-weight:700}.bt p{font-size:11px;color:var(--tx3);margin-top:1px}
+.nl{display:flex;flex-direction:column;gap:2px;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rm);font-size:13.5px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.ni svg{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.ni:hover{background:var(--sub);color:var(--tx)}.ni:hover svg{opacity:1}
+.ni.on{background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(20,184,166,.28)}.ni.on svg{opacity:1;color:#fff}
+.sbb{padding-top:10px;border-top:1px solid var(--bd);margin-top:auto}
+.uc{display:flex;align-items:center;gap:10px;padding:6px}.ua{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pur),#A78BFA);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}.uh4{font-size:13px;font-weight:700}.usp{font-size:11px;color:var(--tx3)}.sd{width:8px;height:8px;border-radius:50%;background:var(--ok);margin-left:auto;box-shadow:0 0 6px rgba(16,185,129,.5)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 28px;background:var(--card);border-bottom:1px solid var(--bd)}
+.tg h2{font-size:18px;font-weight:700}.tg p{font-size:12.5px;color:var(--tx3);margin-top:2px}
+.tr{display:flex;align-items:center;gap:12px}
+.se{display:flex;align-items:center;gap:8px;background:var(--sub);border:1px solid var(--bd);border-radius:var(--rp);padding:7px 14px;width:220px;color:var(--tx3);font-size:13px}.se svg{width:16px;height:16px;opacity:.55}
+.ta{width:36px;height:36px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2)}.ta:hover{border-color:var(--t300)}.ta svg{width:18px;height:18px}
+.am{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.ct{padding:22px 28px;display:flex;flex-direction:column;gap:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kc{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:15px 17px;box-shadow:var(--sh-sm)}
+.kc-t{font-size:12px;color:var(--tx3);margin-bottom:7px}.kc-v{font-size:25px;font-weight:800}.kc-v em{font-size:13px;color:var(--tx3);font-style:normal;font-weight:600}
+.kc-d{font-size:11.5px;font-weight:600;margin-top:4px}.kc-d.up{color:var(--ok)}.kc-d.dn{color:var(--err)}
+.sec-h{display:flex;align-items:center;gap:10px;margin-top:2px}
+.sec-h h3{font-size:15.5px;font-weight:700}
+.sec-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:var(--rp);background:var(--t50);color:var(--t700)}
+.sec-tag.fn{background:var(--pur-bg);color:var(--pur)}
+.sec-tag.biz{background:var(--info-bg);color:#0891B2}
+.line{flex:1;height:1px;background:var(--bd)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;box-shadow:var(--sh-sm)}
+.cd h3{font-size:14.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.cd h3 .mr{font-size:12px;color:var(--t600);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:42px;padding:0 18px;border:none;border-radius:var(--rm);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn svg{width:17px;height:17px}
+.btn-primary{background:linear-gradient(135deg,var(--t500),var(--t600));color:#fff;box-shadow:0 6px 16px rgba(13,148,136,.26)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(13,148,136,.32)}
+.btn-ghost{background:var(--card);border:1.5px solid var(--bd);color:var(--tx2)}.btn-ghost:hover{border-color:var(--t300);color:var(--t700)}
+.sp{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--rp)}
+.sp.on{background:var(--ok-bg);color:var(--ok)}.sp.run{background:var(--t50);color:var(--t700)}.sp.off{background:var(--sub);color:var(--tx3)}
+.wfcard{display:flex;flex-direction:column;gap:12px}
+.wfh{display:flex;align-items:center;gap:11px}
+.wfi{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}.wfi svg{width:19px;height:19px}
+.wfn{font-size:14.5px;font-weight:700;flex:1}
+.wfsteps{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ws{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:var(--rm);background:var(--sub);color:var(--tx2);border:1px solid var(--bd)}
+.ws.act{background:var(--t50);color:var(--t700);border-color:var(--t300)}
+.warr{color:var(--tx3);font-weight:700;font-size:12px;padding:0 1px}
+.wtrig{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);background:var(--sub);border-radius:var(--rm);padding:8px 11px}
+.wtrig b{color:var(--t700);font-weight:700}
+.wfstat{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--tx3)}
+.wfstat b{color:var(--tx);font-weight:700}
+.wfbtn{display:flex;gap:8px}
+.dbtn{flex:1;height:36px;border-radius:var(--rm);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--bd);background:var(--card);color:var(--tx2);transition:all .15s}
+.dbtn:hover{border-color:var(--t300);color:var(--t700)}
+.dbtn.pri{background:var(--t50);border-color:var(--t400);color:var(--t700)}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fnode{display:flex;flex-direction:column;gap:3px;background:var(--card);border:1px solid var(--bd);border-radius:var(--rm);padding:10px 13px;min-width:120px}
+.fnk{font-size:10.5px;font-weight:700;color:var(--t600);text-transform:uppercase;letter-spacing:.4px}
+.fnt{font-size:13px;font-weight:600}
+.far{display:flex;flex-direction:column;align-items:center;color:var(--tx3)}.far svg{width:20px;height:20px}
+.fend{display:flex;align-items:center;gap:8px;background:var(--ok-bg);border:1px solid #BBF7E4;color:var(--ok);border-radius:var(--rm);padding:10px 15px;font-weight:700;font-size:13px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sb{display:none}.kpis{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="sb">
+<div class="brand"><div class="bi">C</div><div class="bt"><h1>Curis Workspace</h1><p>一人公司的操作系统</p></div></div>
+<nav class="nl">
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>公司总览</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>员工系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>部门管理</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg>任务系统</button>
+<button class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>工作流</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg>知识库</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>能力中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>经营范围</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>AI 成本</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 14 11 10 15 16 19 6"/></svg>财务中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>报告中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>系统设置</button>
+</nav>
+<div class="sbb"><div class="uc"><div class="ua">C</div><div><div class="uh4">Curis</div><div class="usp">v0.3</div></div><span class="sd"></span></div></div>
+</aside>
+<div class="main">
+<header class="tb">
+<div class="tg"><h2>工作流</h2><p>编排你的自动化生产线 · 触发 → 编排 → 执行</p></div>
+<div class="tr">
+<div class="se"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>搜索工作流…</div>
+<button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工作流</button>
+<button class="ta" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13 21a2 2 0 01-2 0"/></svg></button>
+<div class="am">C</div>
+</div>
+</header>
+<div class="ct">
+<div class="kpis">
+<div class="kc"><div class="kc-t">活跃工作流</div><div class="kc-v">8</div><div class="kc-d up">↑ 2 本月新增</div></div>
+<div class="kc"><div class="kc-t">本月触发</div><div class="kc-v">326</div><div class="kc-d up">↑ 24% 环比</div></div>
+<div class="kc"><div class="kc-t">自动完成率</div><div class="kc-v">94<em>%</em></div><div class="kc-d up">↑ 3.1% 环比</div></div>
+<div class="kc"><div class="kc-t">节省工时</div><div class="kc-v">62<em>h</em></div><div class="kc-d up">↑ 11h 环比</div></div>
+</div>
+
+<div class="sec-h"><h3>生产流水线</h3><span class="sec-tag biz">对外承接</span><span class="line"></span></div>
+<div class="grid">
+<div class="cd wfcard">
+<div class="wfh"><div class="wfi" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><span class="wfn">短视频生产流水线</span><span class="sp run">运行中</span></div>
+<div class="wfsteps"><span class="ws act">选题</span><span class="warr">→</span><span class="ws act">脚本</span><span class="warr">→</span><span class="ws act">生成视频</span><span class="warr">→</span><span class="ws">发布</span></div>
+<div class="wtrig">⚡ 触发器：<b>每日 09:00</b> · 承接 抖音 / 小红书</div>
+<div class="wfstat"><span>最近运行 <b>12 分钟前</b></span><span>成功 38 / 40</span></div>
+<div class="wfbtn"><button class="dbtn pri">编辑</button><button class="dbtn">运行日志</button></div>
+</div>
+
+<div class="cd wfcard">
+<div class="wfh"><div class="wfi" style="background:linear-gradient(135deg,var(--ok),#34D399)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="20" y2="5"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="19" x2="14" y2="19"/></svg></div><span class="wfn">小红书图文自动发布</span><span class="sp run">运行中</span></div>
+<div class="wfsteps"><span class="ws act">选题</span><span class="warr">→</span><span class="ws act">图文生成</span><span class="warr">→</span><span class="ws act">配图</span><span class="warr">→</span><span class="ws act">发布</span></div>
+<div class="wtrig">⚡ 触发器：<b>选题入库即触发</b> · 承接 小红书</div>
+<div class="wfstat"><span>最近运行 <b>1 小时前</b></span><span>成功 52 / 53</span></div>
+<div class="wfbtn"><button class="dbtn pri">编辑</button><button class="dbtn">运行日志</button></div>
+</div>
+
+<div class="cd wfcard">
+<div class="wfh"><div class="wfi" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div><span class="wfn">小说章节续写与发布</span><span class="sp run">运行中</span></div>
+<div class="wfsteps"><span class="ws act">大纲</span><span class="warr">→</span><span class="ws act">续写</span><span class="warr">→</span><span class="ws act">校对</span><span class="warr">→</span><span class="ws">投稿</span></div>
+<div class="wtrig">⚡ 触发器：<b>每周一 / 周四</b> · 承接 番茄小说 / 起点</div>
+<div class="wfstat"><span>最近运行 <b>昨天</b></span><span>成功 9 / 9</span></div>
+<div class="wfbtn"><button class="dbtn pri">编辑</button><button class="dbtn">运行日志</button></div>
+</div>
+
+<div class="cd wfcard">
+<div class="wfh"><div class="wfi" style="background:linear-gradient(135deg,var(--pur),#A78BFA)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-9-9v9z"/><path d="M21 12A9 9 0 0012 3v9z"/></svg></div><span class="wfn">竞品日报生成</span><span class="sp off">已停用</span></div>
+<div class="wfsteps"><span class="ws">抓取</span><span class="warr">→</span><span class="ws">分析</span><span class="warr">→</span><span class="ws">成文</span><span class="warr">→</span><span class="ws">推送</span></div>
+<div class="wtrig">⚡ 触发器：<b>每日 08:00</b> · 输出至 知识库 / 微信</div>
+<div class="wfstat"><span>最近运行 <b>3 天前</b></span><span>成功 21 / 21</span></div>
+<div class="wfbtn"><button class="dbtn pri">编辑</button><button class="dbtn">启用</button></div>
+</div>
+</div>
+
+<div class="sec-h"><h3>流程可视化</h3><span class="sec-tag">短视频生产流水线</span><span class="line"></span></div>
+<div class="cd">
+<div class="flow">
+<div class="fnode"><span class="fnk">Trigger</span><span class="fnt">每日 09:00</span></div>
+<div class="far"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+<div class="fnode"><span class="fnk">Step 1</span><span class="fnt">热榜选题</span></div>
+<div class="far"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+<div class="fnode"><span class="fnk">Step 2</span><span class="fnt">脚本生成</span></div>
+<div class="far"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+<div class="fnode"><span class="fnk">Step 3</span><span class="fnt">视频合成</span></div>
+<div class="far"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+<div class="fend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>发布成功</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "status": "DOCUMENT CHECK PASS",
+  "sections": 16,
+  "candidates": 11,
+  "candidate_questions_each": 16,
+  "prior_source_hashes_unchanged": 26,
+  "runtime_tests": "NOT RUN - RESEARCH ONLY",
+  "authority_updated": false,
+  "v2_updated": false,
+  "current_pointer_updated": false,
+  "files": {
+    "CURIS_G1_G6_CAPABILITY_CONTRACT_CLOSURE.md": "c4be5234b346fe7c8250276adce8664f0837d36ed58f1ae62172cf6e08704406",
+    "README.md": "739f28400ba898b5c1969520fb2879e2ac74e59bf0a74c9dfaf9a1cf8a2023cc",
+    "RESEARCH_JOURNAL.md": "d870aa350100105a087b3361fd90c22b34528f9c8691245793c67a98c0c42072",
+    "REQUIRED_CAPABILITIES_AND_SEARCH_LOG.md": "536799da88419c2196467ba8e8e53280a159915178184989ce3e2ed3d9d0aed1"
+  }
+}

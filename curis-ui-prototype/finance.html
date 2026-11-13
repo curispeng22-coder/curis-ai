@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <script src="_system/theme.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>财务与经营 · Curis</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;--bg:var(--ui-bg);--panel:var(--ui-surface);--panel2:var(--ui-surface-2);--text:var(--ui-text);--muted:var(--ui-text-2);--faint:var(--ui-text-3);--line:var(--ui-line);--accent:var(--ui-action-primary-bg);--accentText:var(--ui-action-primary-fg)}*{box-sizing:border-box}body{margin:0;background:var(--ui-bg);color:var(--ui-text)}.shell{display:flex;min-height:100vh}.sidebar{width:220px;flex:0 0 220px;padding:var(--ui-sp-5) var(--ui-sp-3);background:#1c1d20;border-right:1px solid var(--ui-line)}.brand{display:flex;align-items:center;gap:var(--ui-sp-2);padding:0 var(--ui-sp-2) var(--ui-sp-6);font-weight:650}.brand-mark{display:grid;place-items:center;width:22px;height:22px;border-radius:var(--ui-r-xs);background:var(--ui-accent);color:var(--ui-action-primary-fg);font-size: var(--ui-fs-1);font-weight:800}.nav-label{margin:0 var(--ui-sp-2) var(--ui-sp-2);color:var(--ui-text-3);font-size: var(--ui-fs-1)}.nav{display:grid;gap:3px}.nav-item{display:flex;gap:var(--ui-sp-2);align-items:center;padding:var(--ui-sp-2) var(--ui-sp-2);border-radius:var(--ui-r-sm);color:var(--ui-text-2);font-size: var(--ui-fs-1);text-decoration:none}.nav-item:hover,.nav-item.active{background:rgba(224,226,242,.06);color:var(--ui-text)}.nav-icon{width:14px;color:var(--ui-text-3);text-align:center}.main{flex:1;min-width:0}.topbar{height:var(--ui-topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 var(--ui-sp-7);border-bottom:1px solid var(--ui-line);font-size: var(--ui-fs-1);color:var(--ui-text-2)}.content{max-width:1220px;margin:0 auto;padding:var(--ui-sp-7)}.eyebrow{margin:0 0 var(--ui-sp-2);color:var(--ui-text-2);font-size: var(--ui-fs-1);letter-spacing:.1em}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--ui-sp-5);margin-bottom:var(--ui-sp-6)}h1{margin:0;font-size: var(--ui-fs-7);letter-spacing:-.03em}.subtitle{margin:var(--ui-sp-2) 0 0;color:var(--ui-text-2);font-size: var(--ui-fs-1);line-height:1.6}.actions{display:flex;gap:var(--ui-sp-2);flex-wrap:wrap}.actions button{padding:var(--ui-sp-2) var(--ui-sp-3);color:var(--ui-text);background:transparent;border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);font:inherit;font-size: var(--ui-fs-1);cursor:pointer}.actions button.btn-primary{font-weight:600}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--ui-sp-2);margin-bottom:var(--ui-sp-5)}.metric,.card{background:var(--ui-surface);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm)}.metric{padding:var(--ui-sp-4)}.metric span{display:block;color:var(--ui-text-3);font-size: var(--ui-fs-1)}.metric strong{display:block;margin-top:var(--ui-sp-2);font-size: var(--ui-fs-5);font-weight:600}.metric small{display:block;margin-top:var(--ui-sp-1);color:var(--ui-text-2);font-size: var(--ui-fs-1)}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--ui-sp-4)}.card{padding:var(--ui-sp-4)}.card h2{margin:0;font-size: var(--ui-fs-3)}.card-note{margin:var(--ui-sp-2) 0 var(--ui-sp-4);color:var(--ui-text-3);font-size: var(--ui-fs-1)}.table{display:grid}.row{display:grid;grid-template-columns:1.25fr .8fr .8fr .8fr .7fr;gap:var(--ui-sp-3);align-items:center;padding:var(--ui-sp-3) 0;border-top:1px solid var(--ui-line);font-size: var(--ui-fs-1)}.row.head{color:var(--ui-text-3);font-size: var(--ui-fs-1);border-top:0;padding-top:0}.row span:nth-child(n+2){text-align:right}.source{display:inline-flex;padding:3px var(--ui-sp-1);border:1px solid var(--ui-line);border-radius:var(--ui-r-pill);color:var(--ui-text-2);font-size: var(--ui-fs-1)}.kpi{display:grid;gap:var(--ui-sp-2)}.kpi-row{display:flex;justify-content:space-between;gap:var(--ui-sp-3);padding:var(--ui-sp-3);background:var(--ui-bg);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm)}.kpi-row span{color:var(--ui-text-2);font-size: var(--ui-fs-1)}.kpi-row strong{font-size: var(--ui-fs-1)}.note{margin-top:var(--ui-sp-4);padding:var(--ui-sp-3);background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);color:var(--ui-text-2);font-size: var(--ui-fs-1);line-height:1.6}.note strong{color:var(--ui-text)}@media(max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.row{grid-template-columns:1.25fr .8fr .8fr}.row span:nth-child(n+4){display:none}}@media(max-width:800px){.sidebar{width:64px;flex-basis:64px;padding:var(--ui-sp-4) var(--ui-sp-2)}.brand span,.nav-label,.nav-item span:not(.nav-icon){display:none}.nav-item{justify-content:center}.content{padding:var(--ui-sp-5) var(--ui-sp-4)}.header{flex-direction:column}}
+</style></head>
+<body><div class="shell">  <aside class="sidebar" role="navigation" aria-label="主导航">
+    <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+    <nav class="nav">
+      <p class="nav-label">公司</p>
+      <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+      <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+      <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+      <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+      <p class="nav-label">工作空间</p>
+      <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+      <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+      <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+      <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+      <p class="nav-label">经营工具</p>
+      <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+      <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+      <p class="nav-label">公司资源</p>
+      <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+      <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+      <a class="nav-item active" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+      <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+    </nav>
+    <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+  </aside><div class="main"><header class="topbar"><span>Curis / 财务与经营</span><span>口径：本周期 · 数据来源已标注</span></header><main class="content" data-finance-page><header class="header"><div><p class="eyebrow">CEO 经营视角</p><h1>财务与经营</h1><p class="subtitle">财报不是后台报表，而是 CEO 判断继续投入、暂停或扩大业务的依据。每个数字都标明来源：API、手动确认或估算。</p></div><div class="actions"><button type="button" data-finance-action="record">补录收入</button><button type="button" class="btn btn-primary" data-finance-action="brief">生成 CEO 财务简报</button></div></header><section class="summary"><div class="metric"><span>可确认收入</span><strong>¥28,600</strong><small>本周期 · API + 手动</small></div><div class="metric"><span>AI 运行成本</span><strong>¥3,840</strong><small>模型调用与连接器</small></div><div class="metric"><span>外部结果价值</span><strong>¥46,200</strong><small>成交额与节省成本</small></div><div class="metric"><span>经营毛利</span><strong>86.6%</strong><small>按可确认收入</small></div><div class="metric"><span>待确认事项</span><strong>3</strong><small>需要 CEO 判断</small></div></section><div class="grid"><section class="card"><h2>业务经营账</h2><p class="card-note">收入、AI 成本、外部结果与 投入产出 放在同一个业务周期里看。</p><div class="table"><div class="row head"><span>业务</span><span>收入</span><span>AI 成本</span><span>结果价值</span><span>投入产出</span></div><div class="row"><span>Curis 自研</span><span>—</span><span>¥1,920</span><span>节省研发 120h</span><span>3.4x</span></div><div class="row"><span>小红书运营</span><span>¥8,600</span><span>¥720</span><span>¥12,400</span><span>2.1x</span></div><div class="row"><span>抖音 / TikTok</span><span>¥20,000</span><span>¥1,200</span><span>¥33,800</span><span>4.4x</span></div><div class="row"><span>合计</span><span>¥28,600</span><span>¥3,840</span><span>¥46,200</span><span>3.8x</span></div></div><div class="note" id="finance-manual-note"><strong>口径提醒：</strong>外部平台未授权时，收入与结果必须由 CEO 补录；手动数据会标记为“待验证”，不会伪装成 API 事实。</div></section><section class="card"><h2>AI 员工产出与成本</h2><p class="card-note">关键指标（工作指标） 不是活跃度，而是已验证结果、返工和每份成果成本。</p><div class="kpi"><div class="kpi-row"><span>业务分析 AI · 已验证成果</span><strong>12 / ¥42</strong></div><div class="kpi-row"><span>内容制作 AI · 通过率</span><strong>83% · ¥18/条</strong></div><div class="kpi-row"><span>工程实现 AI · 首次通过</span><strong>78% · 24/24</strong></div><div class="kpi-row"><span>CEO 助理 · 经营提醒命中</span><strong>91% · 3 次升级</strong></div><div class="kpi-row"><span>容量风险</span><strong>内容制作 AI 78%</strong></div></div></section></div><div class="note"><strong>下一步建议：</strong>抖音 / TikTok 当前 投入产出 最高，但平台结果有 1 个手动窗口；小红书内容成本低但转化证据不足。CEO 可以进入业务办公室补证据，或进入成果库复用已验证工作流。 <button type="button" data-finance-action="assets" style="margin-left:var(--ui-sp-2);padding:var(--ui-sp-1) var(--ui-sp-2);color:var(--ui-text);background:transparent;border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);font:inherit;font-size: var(--ui-fs-1);cursor:pointer">查看成果库</button><span id="finance-entry"></span></div></main></div></div><script src="_system/canonical-nav.js"></script><script src="curis-prototype.js"></script>  <style id="curis-frozen-patch">
+  /* Frozen alignment patch (Palette-B) — single source = _system/tokens.css (--ui-*) */
+  /* root vars merged into head single source (--ui-*) */
+  .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+  .theme-btn {
+    border: 1px solid var(--ui-line); background: var(--ui-surface-2);
+    color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2);
+    font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease;
+  }
+  .theme-btn:hover { color: var(--ui-text); }
+  .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+  .sidebar, .topbar { background: var(--ui-surface); }
+  .sidebar { border-right-color: var(--ui-line); }
+  .topbar { border-bottom-color: var(--ui-line); }
+  </style>
+  <script>
+  (function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'theme-btn';
+      b.setAttribute('data-curis-theme', t);
+      b.textContent = labels[t];
+      sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar') || document.querySelector('.sidebar');
+    if (host) host.appendChild(sw);
+  })();
+  </script>
+</body></html>

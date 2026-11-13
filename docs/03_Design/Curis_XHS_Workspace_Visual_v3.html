@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<!--
+  Curis XHS Workspace — Visual Exploration v3 (Round 3 + final states)
+  Status: XHS VISUAL FINAL REVIEW REQUIRED
+  设计产物（design artifact），非 Curis 正式前端代码。
+  继承：Frozen Design System (_system/tokens.css) + Figma Visual Baseline (Topbar 52 / Nav 220)。
+  精修：Note 作为业务对象存在感；Split 改为专业创作工作面（非 CMS 表单）；
+        操作降噪（自动保存/返回控件/Result Reference）；AI 员工持续可感知、Workstation 按需展开。
+  五个高保真状态（均继承 Calendar / Split Working 视觉）：
+    A. Default Calendar
+    B. Note Selected → Split Working
+    C. Review Gate / Needs CEO
+    D. Utility → Note Preview
+    E. Published → Analytics
+  新增 Shared Pattern Candidate「Employee Presence」（见 Shell Contract §7 Delta-X6，未回写 Frozen）。
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis XHS Workspace · Visual v3 (refined)</title>
+<style>
+/* ===== Frozen Design System tokens（唯一真源，照搬 _system/tokens.css） ===== */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --ui-bg: #1a1c1f; --ui-surface: #222529; --ui-surface-2: #2b2f34;
+  --ui-line: #343940; --ui-text: #f3f4f6; --ui-text-2: #a7adb6; --ui-text-3: #a3aab4;
+  --ui-action-primary-bg: #32f08c; --ui-action-primary-hover: #0fdc78; --ui-action-primary-fg: #0c0c0d;
+  --ui-accent: #32f08c; --ui-success: #3fcf86; --ui-warning: #d89a3a; --ui-danger: #e57373;
+  --ui-sidebar-w: 220px; --ui-topbar-h: 52px;
+  --ui-radius: 12px; --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0,0,0,0.25); --ui-shadow-2: 0 4px 12px rgba(0,0,0,0.32); --ui-shadow-3: 0 12px 32px rgba(0,0,0,0.44);
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-fs-1: 12px; --ui-fs-2: 13px; --ui-fs-3: 14px; --ui-fs-4: 16px; --ui-fs-5: 20px; --ui-fs-6: 24px; --ui-fs-7: 28px;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+  --ui-line: #e5e7eb; --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+  --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+  --ui-accent: #1a1c1f; --ui-success: #21895d; --ui-warning: #b87922; --ui-danger: #c43f3f;
+  --ui-shadow: 0 1px 2px rgba(15,18,35,0.05); --ui-shadow-2: 0 4px 12px rgba(15,18,35,0.08); --ui-shadow-3: 0 12px 32px rgba(15,18,35,0.12);
+}
+:root {
+  --ui-sp-1: 4px; --ui-sp-2: 8px; --ui-sp-3: 12px; --ui-sp-4: 16px; --ui-sp-5: 20px; --ui-sp-6: 24px; --ui-sp-7: 32px; --ui-sp-8: 48px;
+  --ui-r-xs: 4px; --ui-r-sm: 8px; --ui-r-md: 12px; --ui-r-lg: 16px; --ui-r-pill: 999px;
+  --ui-z-base: 0; --ui-z-sticky: 100; --ui-z-dropdown: 200; --ui-z-drawer: 300; --ui-z-modal: 400; --ui-z-toast: 500;
+  --ui-dur-1: 120ms; --ui-dur-2: 200ms; --ui-dur-3: 320ms; --ui-ease-standard: cubic-bezier(0.2,0,0,1);
+  --ui-focus-w: 2px; --ui-focus-offset: 2px; --ui-focus-color: var(--ui-accent);
+  --ui-ctl-h-sm: 32px; --ui-ctl-h: 36px; --ui-ctl-h-lg: 40px; --ui-tap-min: 32px;
+  --ui-lh-tight: 1.25; --ui-lh: 1.5; --ui-lh-loose: 1.7;
+}
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body { margin:0; background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+:where(a,button,input,textarea,select):focus-visible { outline: var(--ui-focus-w) solid var(--ui-focus-color); outline-offset: var(--ui-focus-offset); border-radius: var(--ui-r-xs); }
+
+/* ===== doc header ===== */
+.doc-head { padding: var(--ui-sp-6) var(--ui-sp-6) var(--ui-sp-4); border-bottom: 1px solid var(--ui-line); }
+.doc-head h1 { font-size: var(--ui-fs-6); margin: 0 0 var(--ui-sp-2); letter-spacing: -0.01em; }
+.doc-head p { color: var(--ui-text-2); margin: 0; font-size: var(--ui-fs-2); max-width: 900px; line-height: var(--ui-lh-loose); }
+.chip { display:inline-block; font-size: var(--ui-fs-1); font-weight:600; padding: 3px 10px; border-radius: var(--ui-r-pill); border:1px solid var(--ui-warning); color: var(--ui-warning); margin-left: var(--ui-sp-2); vertical-align: middle; }
+
+/* ===== app frame (Figma Visual Baseline: Topbar 52 / Nav 220) ===== */
+.app { border:1px solid var(--ui-line); border-radius: var(--ui-r-lg); overflow:hidden; margin: var(--ui-sp-6); background: var(--ui-bg); box-shadow: var(--ui-shadow-2); }
+.topbar { height: var(--ui-topbar-h); display:flex; align-items:center; gap: var(--ui-sp-3); padding: 0 var(--ui-sp-4); border-bottom:1px solid var(--ui-line); background: var(--ui-surface); }
+.crumbs { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs b { color: var(--ui-text); font-weight:600; }
+.spacer { flex:1; }
+.status-pill { font-size: var(--ui-fs-1); padding: 4px 10px; border-radius: var(--ui-r-pill); border:1px solid var(--ui-line); color: var(--ui-text-2); }
+.theme-btn { height: var(--ui-ctl-h-sm); min-width: var(--ui-ctl-h-sm); padding: 0 var(--ui-sp-3); border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text); font-size: var(--ui-fs-1); cursor:pointer; }
+.avatar { width: 32px; height:32px; border-radius: var(--ui-r-pill); background: var(--ui-surface-2); border:1px solid var(--ui-line); display:inline-flex; align-items:center; justify-content:center; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+/* nav */
+.nav { width: var(--ui-sidebar-w); flex:none; background: var(--ui-surface-2); border-right:1px solid var(--ui-line); padding: var(--ui-sp-3); display:flex; flex-direction:column; gap:2px; }
+.brand { font-size: var(--ui-fs-4); font-weight:600; padding: var(--ui-sp-2) var(--ui-sp-3) var(--ui-sp-4); display:flex; align-items:center; gap: var(--ui-sp-2); }
+.brand .logo { width:22px; height:22px; border-radius: var(--ui-r-sm); background: var(--ui-accent); display:inline-flex; align-items:center; justify-content:center; color: var(--ui-action-primary-fg); font-weight:700; font-size: var(--ui-fs-1); }
+.nav-zone { display:flex; align-items:center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-radius: var(--ui-r-sm); color: var(--ui-text-2); min-height: var(--ui-tap-min); font-size: var(--ui-fs-3); }
+.nav-zone .ic { width:18px; text-align:center; opacity:.8; }
+.nav-zone.active { background: var(--ui-surface); color: var(--ui-text); }
+.nav-zone.child { margin-left: var(--ui-sp-4); font-size: var(--ui-fs-2); }
+.nav-zone.child.active { color: var(--ui-accent); }
+.nav-foot { margin-top:auto; display:flex; align-items:center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-3); border-top:1px solid var(--ui-line); }
+
+/* body layout */
+.shell { display:flex; align-items:stretch; }
+.main { flex:1; padding: var(--ui-sp-5); overflow:auto; }
+
+/* ===== State A: Default Calendar（Note 作为业务对象，非普通 Scheduler） ===== */
+.cal-head { display:flex; align-items:center; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-4); flex-wrap:wrap; }
+.cal-head h2 { font-size: var(--ui-fs-5); margin:0; }
+.seg { display:inline-flex; border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); overflow:hidden; }
+.seg button { border:0; background:transparent; color: var(--ui-text-2); padding:0 var(--ui-sp-3); height: var(--ui-ctl-h-sm); font-size: var(--ui-fs-2); cursor:pointer; }
+.seg button.on { background: var(--ui-surface-2); color: var(--ui-text); }
+.btn-primary { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border:0; height: var(--ui-ctl-h); padding:0 var(--ui-sp-4); border-radius: var(--ui-r-sm); font-weight:600; font-size: var(--ui-fs-2); cursor:pointer; }
+.legend { display:flex; gap: var(--ui-sp-3); font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-left:auto; align-items:center; flex-wrap:wrap; }
+.dot { width:8px; height:8px; border-radius:50%; display:inline-block; vertical-align:middle; margin-right:4px; }
+.cal-grid { display:grid; grid-template-columns: repeat(7,1fr); gap: var(--ui-sp-2); }
+.cal-dow { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-align:center; padding: var(--ui-sp-2) 0; }
+.cal-cell { background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-2); min-height: 168px; display:flex; flex-direction:column; gap: var(--ui-sp-2); }
+.cal-cell.today { border-color: var(--ui-accent); }
+.dnum { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+/* Note 卡片 = 业务对象（封面 + 作者 + 状态），区别于普通日历事件条 */
+.note-card { position:relative; background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-sm); overflow:hidden; cursor:pointer; transition: border-color var(--ui-dur-1) var(--ui-ease-standard); }
+.note-card:hover { border-color: var(--ui-accent); }
+.note-card .cover { position:relative; aspect-ratio: 3/4; background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); }
+.note-card .av-over { position:absolute; left:6px; bottom:6px; width:22px; height:22px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size:10px; color: var(--ui-text); box-shadow: var(--ui-shadow); }
+.note-card .meta { padding: var(--ui-sp-2); }
+.note-card .ttl { font-size: var(--ui-fs-1); color: var(--ui-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.note-card .st { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:3px; display:flex; align-items:center; }
+
+/* ===== State B: Split Working（专业创作工作面 + 员工持续可感知） ===== */
+.split { display:flex; gap: var(--ui-sp-4); min-height: 600px; }
+.time-ctx { width: 220px; flex:none; background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3); overflow:auto; }
+.tc-h { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-transform:uppercase; letter-spacing:.06em; margin-bottom: var(--ui-sp-2); }
+.tc-day { padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); color: var(--ui-text-2); margin-bottom:2px; }
+.tc-day.cur { background: var(--ui-surface); color: var(--ui-text); }
+.tc-day .mini { display:flex; gap:4px; margin-top:6px; }
+
+.note-work { position:relative; flex:1; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-5); overflow:auto; }
+.nw-close { position:absolute; top: var(--ui-sp-4); right: var(--ui-sp-4); width:32px; height:32px; border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); cursor:pointer; font-size: var(--ui-fs-2); }
+
+/* Employee Presence（持续可感知，非常驻列表） */
+.presence { display:flex; align-items:center; gap: var(--ui-sp-3); padding: var(--ui-sp-3); background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); margin-bottom: var(--ui-sp-3); }
+.presence .av { width:36px; height:36px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size: var(--ui-fs-2); color: var(--ui-text); flex:none; }
+.presence .who { font-size: var(--ui-fs-3); }
+.presence .who b { font-weight:600; }
+.presence .doing { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:2px; }
+.presence .state { font-size: var(--ui-fs-1); border:1px solid var(--ui-line); padding:3px 10px; border-radius: var(--ui-r-pill); color: var(--ui-text-2); }
+.presence .expand { margin-left:auto; font-size: var(--ui-fs-1); color: var(--ui-accent); background:transparent; border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:4px 10px; cursor:pointer; }
+.handoff-light { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-4); display:flex; align-items:center; gap:6px; }
+
+/* 创作工作面（直接编辑内容本身，无表单边框） */
+.nw-body { display:flex; gap: var(--ui-sp-5); align-items:flex-start; }
+.nw-cover { width:240px; flex:none; }
+.nw-cover .cover { position:relative; aspect-ratio:3/4; border-radius: var(--ui-r-md); background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); border:1px solid var(--ui-line); }
+.nw-cover .badge { position:absolute; top:8px; left:8px; font-size:10px; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:2px 8px; color: var(--ui-text-2); }
+.nw-cover .hint { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top: var(--ui-sp-2); }
+.nw-fields { flex:1; min-width:0; display:flex; flex-direction:column; gap: var(--ui-sp-4); }
+.ed-title { width:100%; border:0; background:transparent; color: var(--ui-text); font-family:inherit; font-size: var(--ui-fs-6); font-weight:600; line-height: var(--ui-lh-tight); padding:0; }
+.ed-title:focus { outline:none; }
+.ed-body { width:100%; border:0; background:transparent; color: var(--ui-text); font-family:inherit; font-size: var(--ui-fs-3); line-height: var(--ui-lh-loose); resize:vertical; min-height:170px; padding:0; }
+.ed-body:focus { outline:none; }
+.tags { display:flex; gap: var(--ui-sp-2); flex-wrap:wrap; align-items:center; }
+.tag { font-size: var(--ui-fs-1); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:4px 10px; color: var(--ui-text-2); }
+.tag.add { border-style:dashed; cursor:pointer; }
+.nw-actions { display:flex; align-items:center; gap: var(--ui-sp-3); margin-top: var(--ui-sp-2); }
+.result-ref { font-size: var(--ui-fs-2); color: var(--ui-accent); background:transparent; border:0; cursor:pointer; padding:0; }
+.autosave { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-left:auto; }
+
+/* ===== State C: Review Gate / Needs CEO（审核闸 + Workspace 级决策横幅） ===== */
+.decision-banner { display:flex; align-items:flex-start; gap: var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-4); background: var(--ui-surface-2); border:1px solid var(--ui-warning); border-left-width:3px; border-radius: var(--ui-r-md); margin-bottom: var(--ui-sp-4); }
+.db-ic { color: var(--ui-warning); font-size: var(--ui-fs-4); line-height:1.1; flex:none; }
+.db-main { flex:1; min-width:0; }
+.db-title { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); }
+.db-desc { font-size: var(--ui-fs-2); color: var(--ui-text-2); margin-top:3px; line-height:1.5; }
+.db-actions { display:flex; gap: var(--ui-sp-2); flex:none; align-items:center; flex-wrap:wrap; }
+.db-btn { height: var(--ui-ctl-h-sm); padding:0 var(--ui-sp-3); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); cursor:pointer; border:1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text); }
+.db-btn.exec { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border-color: transparent; font-weight:600; }
+.db-btn.warn { border-color: var(--ui-warning); color: var(--ui-warning); }
+.review-gate { background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); margin-bottom: var(--ui-sp-3); }
+.rg-title { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); margin-bottom: var(--ui-sp-3); }
+.rg-check { display:flex; flex-direction:column; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-3); }
+.rg-item { display:flex; align-items:center; gap: var(--ui-sp-2); font-size: var(--ui-fs-2); color: var(--ui-text); }
+.rg-item .mk { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex:none; border:1px solid var(--ui-line); color: var(--ui-text-2); }
+.rg-item .mk.ok { color: var(--ui-success); border-color: var(--ui-success); }
+.rg-item .mk.warn { color: var(--ui-warning); border-color: var(--ui-warning); }
+.rg-actions { display:flex; gap: var(--ui-sp-2); }
+
+/* ===== State D: Utility Surface（右 · Resizable，Delta-X5）· 图文预览 ===== */
+.util { width: 360px; flex:none; background: var(--ui-surface-2); border-left:1px solid var(--ui-line); display:flex; flex-direction:column; }
+.util-head { display:flex; align-items:center; gap: var(--ui-sp-2); padding: var(--ui-sp-3); border-bottom:1px solid var(--ui-line); font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); }
+.util-head .ut-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); font-weight:400; }
+.util-head .ut-close { margin-left:auto; width:28px; height:28px; border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text-2); cursor:pointer; font-size: var(--ui-fs-1); }
+.util-head .ut-resize { width:24px; height:28px; border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text-3); cursor:ew-resize; font-size: var(--ui-fs-1); }
+.util-body { padding: var(--ui-sp-4); overflow:auto; }
+.phone { width: 240px; margin: 0 auto; background: var(--ui-bg); border:1px solid var(--ui-line); border-radius: 20px; padding: 10px; box-shadow: var(--ui-shadow-2); }
+.ph-bar { display:flex; justify-content:space-between; font-size:10px; color: var(--ui-text-2); margin-bottom:8px; }
+.xhs-screen { background: var(--ui-surface); border-radius: 12px; overflow:hidden; border:1px solid var(--ui-line); }
+.xhs-cover { aspect-ratio:3/4; background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); position:relative; }
+.xhs-cover .badge { position:absolute; top:8px; left:8px; font-size:10px; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:2px 8px; color: var(--ui-text-2); }
+.xhs-body { padding: var(--ui-sp-3); }
+.xhs-ttl { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); line-height:1.3; }
+.xhs-txt { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:6px; line-height:1.5; }
+.xhs-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:8px; }
+.xhs-foot { display:flex; gap: var(--ui-sp-3); padding: var(--ui-sp-3); border-top:1px solid var(--ui-line); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.xhs-foot .ic { color: var(--ui-accent); margin-right:3px; }
+.util-note { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-top: var(--ui-sp-3); line-height:1.5; }
+
+/* ===== State E: Published → Analytics（轻量数据看板，Result Reference 展开） ===== */
+.analytics { background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); margin-top: var(--ui-sp-2); }
+.an-h { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); margin-bottom: var(--ui-sp-3); display:flex; align-items:baseline; gap: var(--ui-sp-2); flex-wrap:wrap; }
+.an-grid { display:grid; grid-template-columns: repeat(2,1fr); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.metric .m-k { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.metric .m-v { font-size: var(--ui-fs-5); font-weight:600; color: var(--ui-text); margin-top:2px; }
+.bars { display:flex; flex-direction:column; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-3); }
+.bar-row { display:flex; align-items:center; gap: var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.bar-row .bl { width:40px; flex:none; }
+.bar-track { flex:1; height:6px; background: var(--ui-surface); border-radius: var(--ui-r-pill); overflow:hidden; }
+.bar-fill { height:100%; background: var(--ui-accent); border-radius: var(--ui-r-pill); display:block; }
+.bar-row .bv { width:44px; text-align:right; color: var(--ui-text); flex:none; }
+.ces { font-size: var(--ui-fs-1); color: var(--ui-text-2); border-top:1px solid var(--ui-line); padding-top: var(--ui-sp-3); line-height:1.6; }
+.ces b { color: var(--ui-accent); }
+
+/* caption */
+.cap { margin: var(--ui-sp-2) var(--ui-sp-6) var(--ui-sp-6); font-size: var(--ui-fs-2); color: var(--ui-text-2); line-height: var(--ui-lh-loose); max-width: 1000px; }
+.cap b { color: var(--ui-text); font-weight:600; }
+.cap .k { color: var(--ui-accent); }
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <h1>Curis XHS Workspace · Visual Exploration v3 <span class="chip">XHS VISUAL FINAL REVIEW REQUIRED</span></h1>
+  <p>Round 3 精修 + 终态补全（A–E 五状态）。继承 Frozen Design System + Figma Visual Baseline（Topbar 52 / Nav 220）。
+  本轮：Note 作为业务对象强化存在感（非普通 Scheduler）；Split 改为专业创作工作面（非 CMS 表单）；操作降噪；<b>AI 员工持续可感知（Employee Presence）、Workstation 按需展开</b>。保留 Calendar→Split / Content Object×Time / Context·Utility Adaptive（Delta-X5 Resizable）。</p>
+</header>
+
+<!-- ============ 状态 A：Default Calendar ============ -->
+<section class="app" aria-label="状态 A Default Calendar">
+  <div class="topbar">
+    <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+    <div class="spacer"></div>
+    <div class="status-pill">数据可信</div>
+    <button class="theme-btn" onclick="document.documentElement.dataset.theme = (document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓 主题</button>
+    <div class="avatar">CE</div>
+  </div>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand"><span class="logo">C</span> Curis</div>
+      <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+      <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+      <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+      <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+      <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+      <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+      <div class="nav-foot"><div class="avatar">CE</div><span style="font-size:var(--ui-fs-1);color:var(--ui-text-2)">设置 / 帮助</span></div>
+    </nav>
+    <main class="main">
+      <div class="cal-head">
+        <h2>八月 2026</h2>
+        <div class="seg"><button class="on">月</button><button>周</button></div>
+        <button class="btn-primary">+ 新建笔记</button>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--ui-warning)"></i>制作中</span>
+          <span><i class="dot" style="background:var(--ui-text-2)"></i>待审核</span>
+          <span><i class="dot" style="background:var(--ui-success)"></i>已发布</span>
+          <span><i class="dot" style="background:var(--ui-accent)"></i>已排期</span>
+        </div>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dow">一</div><div class="cal-dow">二</div><div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div><div class="cal-dow">日</div>
+
+        <div class="cal-cell"><div class="dnum">1</div></div>
+        <div class="cal-cell today"><div class="dnum">2</div>
+          <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">夏日通勤穿搭合集</div><div class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">3</div>
+          <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">平价好物开箱</div><div class="st"><i class="dot" style="background:var(--ui-accent)"></i>已排期</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">4</div></div>
+        <div class="cal-cell"><div class="dnum">5</div>
+          <div class="note-card"><div class="cover"><span class="av-over">林</span></div><div class="meta"><div class="ttl">油皮护肤流程</div><div class="st"><i class="dot" style="background:var(--ui-success)"></i>已发布</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">6</div></div>
+        <div class="cal-cell"><div class="dnum">7</div></div>
+
+        <div class="cal-cell"><div class="dnum">8</div></div>
+        <div class="cal-cell"><div class="dnum">9</div>
+          <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">周末露营清单</div><div class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">10</div></div>
+        <div class="cal-cell"><div class="dnum">11</div>
+          <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">职场新人妆容</div><div class="st"><i class="dot" style="background:var(--ui-text-2)"></i>待审核</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">12</div></div>
+        <div class="cal-cell"><div class="dnum">13</div></div>
+        <div class="cal-cell"><div class="dnum">14</div></div>
+
+        <div class="cal-cell"><div class="dnum">15</div></div>
+        <div class="cal-cell"><div class="dnum">16</div></div>
+        <div class="cal-cell"><div class="dnum">17</div>
+          <div class="note-card"><div class="cover"><span class="av-over">林</span></div><div class="meta"><div class="ttl">家居收纳神器</div><div class="st"><i class="dot" style="background:var(--ui-success)"></i>已发布</div></div></div>
+        </div>
+        <div class="cal-cell"><div class="dnum">18</div></div>
+        <div class="cal-cell"><div class="dnum">19</div></div>
+        <div class="cal-cell"><div class="dnum">20</div></div>
+        <div class="cal-cell"><div class="dnum">21</div></div>
+
+        <div class="cal-cell"><div class="dnum">22</div></div>
+        <div class="cal-cell"><div class="dnum">23</div></div>
+        <div class="cal-cell"><div class="dnum">24</div></div>
+        <div class="cal-cell"><div class="dnum">25</div></div>
+        <div class="cal-cell"><div class="dnum">26</div></div>
+        <div class="cal-cell"><div class="dnum">27</div></div>
+        <div class="cal-cell"><div class="dnum">28</div></div>
+      </div>
+    </main>
+  </div>
+</section>
+<p class="cap"><b>状态 A · Default Calendar（Note 作为业务对象）。</b> 日历格内是带<b>封面 + 作者头像 + 状态</b>的 Note 卡片，而非 Google Calendar 式的纯事件条；第一眼仍只有节奏与状态（Low Surface Complexity），但内容对象存在感更强。
+<span class="k">员工持续可感知：</span>每张卡片左下角作者头像轻量表达责任归属，无需展开员工面板即可感知「谁在负责」。
+<span class="k">验证：</span>避免普通 Scheduler / Calendar Dark Mode 观感，同时不牺牲第一眼简单。</p>
+
+<!-- ============ 状态 B：Note Selected → Split Working ============ -->
+<section class="app" aria-label="状态 B Note Selected Split Working">
+  <div class="topbar">
+    <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+    <div class="spacer"></div>
+    <div class="status-pill">数据可信</div>
+    <button class="theme-btn" onclick="document.documentElement.dataset.theme = (document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓 主题</button>
+    <div class="avatar">CE</div>
+  </div>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand"><span class="logo">C</span> Curis</div>
+      <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+      <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+      <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+      <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+      <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+      <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+      <div class="nav-foot"><div class="avatar">CE</div><span style="font-size:var(--ui-fs-1);color:var(--ui-text-2)">设置 / 帮助</span></div>
+    </nav>
+    <main class="main">
+      <div class="split">
+        <!-- 时间上下文（Calendar 压缩） -->
+        <aside class="time-ctx">
+          <div class="tc-h">时间上下文 · 八月</div>
+          <div class="tc-day">1 周三</div>
+          <div></div>
+          <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-accent)"></i></div></div>
+          <div class="tc-day">3 周五</div>
+          <div class="tc-day">4 周六</div>
+          <div class="tc-day">5 周日 <div class="mini"><i class="dot" style="background:var(--ui-success)"></i></div></div>
+          <div class="tc-day">9 周四</div>
+          <div class="tc-day">11 周六</div>
+          <div class="tc-day">17 周五</div>
+        </aside>
+        <!-- Content Object 主工作面（专业创作 + 员工持续可感知） -->
+        <section class="note-work">
+          <button class="nw-close" title="返回日历">✕</button>
+
+          <!-- Employee Presence：持续可感知，不是常驻列表 -->
+          <div class="presence">
+            <div class="av">陈</div>
+            <div>
+              <div class="who"><b>陈真</b> · 内容创作</div>
+              <div class="doing">正在为你制作：封面生成中…</div>
+            </div>
+            <span class="state">制作中</span>
+            <button class="expand">▸ 工作过程</button>
+          </div>
+          <div class="handoff-light">⇄ 从 策划·李翔 交接至 内容创作·陈真</div>
+
+          <div class="nw-body">
+            <div class="nw-cover">
+              <div class="cover"><span class="badge">AI 封面</span></div>
+              <div class="hint">点击替换封面</div>
+            </div>
+            <div class="nw-fields">
+              <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" />
+              <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（直接编辑正文，AI 与你共同打磨，无表单边框）</textarea>
+              <div class="tags">
+                <span class="tag">#通勤穿搭</span>
+                <span class="tag">#平价好物</span>
+                <span class="tag add">+ 添加标签</span>
+              </div>
+              <div class="nw-actions">
+                <button class="btn-primary">提交审核</button>
+                <button class="result-ref">📊 数据看板 ▸</button>
+                <span class="autosave">已自动保存 · 刚刚</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</section>
+<p class="cap"><b>状态 B · Note Selected → Split Working（专业创作工作面）。</b> 选 Note 仍是 Main re-partition（左时间上下文 + 右 Content Object）。右侧<b>不再是 CMS 表单</b>：封面即封面、标题/正文直接编辑、标签自然附着，去除了 label/边框/容器感。
+<span class="k">AI 员工持续可感知：</span>顶部 Presence 条明确「陈真 · 内容创作 正在为你制作这篇内容 · 制作中」，并轻量显示 Handoff；完整 Workstation / Conversation 仅当用户点「▸ 工作过程」<b>按需展开</b>（查看过程 / 指导 / 阻塞），不做成常驻员工列表。
+<span class="k">操作降噪：</span>默认自动保存（无显式保存）；关闭改自然返回控件（✕）；数据改为轻量 Result Reference（📊 数据看板 ▸ → Utility）；仅「提交审核」保持明显业务动作。
+<span class="k">验证：</span>用户第一眼感受到「AI 员工在替我制作内容」，而非「自己在填表单」；Content Object 仍是主角，员工不被隐藏也不常驻。</p>
+
+<!-- ============ 状态 C：Review Gate / Needs CEO ============ -->
+<section class="app" aria-label="状态 C Review Gate Needs CEO">
+  <div class="topbar">
+    <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+    <div class="spacer"></div>
+    <div class="status-pill">数据可信</div>
+    <button class="theme-btn" onclick="document.documentElement.dataset.theme = (document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓 主题</button>
+    <div class="avatar">CE</div>
+  </div>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand"><span class="logo">C</span> Curis</div>
+      <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+      <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+      <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+      <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+      <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+      <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+      <div class="nav-foot"><div class="avatar">CE</div><span style="font-size:var(--ui-fs-1);color:var(--ui-text-2)">设置 / 帮助</span></div>
+    </nav>
+    <main class="main">
+      <!-- Workspace 级 Needs CEO / Decision（§3.3，橙色横幅，顶部） -->
+      <div class="decision-banner">
+        <div class="db-ic">⚠</div>
+        <div class="db-main">
+          <div class="db-title">需要 CEO 决策：文案含绝对化用语「最便宜」</div>
+          <div class="db-desc">审核员 王芳 标记：品牌合规要求避免绝对化表述，是否允许带此措辞发布？影响 1 篇笔记的发布闸。</div>
+        </div>
+        <div class="db-actions">
+          <button class="db-btn exec">✓ 允许发布</button>
+          <button class="db-btn warn">⛔ 驳回</button>
+          <button class="db-btn">暂缓</button>
+        </div>
+      </div>
+
+      <div class="split">
+        <aside class="time-ctx">
+          <div class="tc-h">时间上下文 · 八月</div>
+          <div class="tc-day">1 周三</div>
+          <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-text-2)"></i></div></div>
+          <div class="tc-day">3 周五</div>
+          <div class="tc-day">4 周六</div>
+          <div class="tc-day">5 周日</div>
+          <div class="tc-day">9 周四</div>
+          <div class="tc-day">11 周六</div>
+          <div class="tc-day">17 周五</div>
+        </aside>
+        <section class="note-work">
+          <button class="nw-close" title="返回日历">✕</button>
+
+          <!-- Employee Presence：审核员（持续可感知） -->
+          <div class="presence">
+            <div class="av">王</div>
+            <div>
+              <div class="who"><b>王芳</b> · 内容审核</div>
+              <div class="doing">正在审核：品牌合规 / 事实核查 / 敏感词</div>
+            </div>
+            <span class="state">审核中</span>
+            <button class="expand">▸ 工作过程</button>
+          </div>
+          <div class="handoff-light">⇄ 从 内容创作·陈真 交接至 内容审核·王芳</div>
+
+          <!-- Review Gate（审核闸，业务对象上的轻量责任面） -->
+          <div class="review-gate">
+            <div class="rg-title">审核闸 · 品牌合规</div>
+            <div class="rg-check">
+              <div class="rg-item"><span class="mk ok">✓</span> 品牌调性合规</div>
+              <div class="rg-item"><span class="mk ok">✓</span> 事实核查通过</div>
+              <div class="rg-item"><span class="mk warn">!</span> 敏感词命中：绝对化用语「最便宜」需确认</div>
+            </div>
+            <div class="rg-actions">
+              <button class="btn-primary">通过并送审 CEO</button>
+              <button class="db-btn warn">退回修改</button>
+            </div>
+          </div>
+
+          <div class="nw-body">
+            <div class="nw-cover">
+              <div class="cover"><span class="badge">AI 封面</span></div>
+              <div class="hint">封面 · 待发布</div>
+            </div>
+            <div class="nw-fields">
+              <input class="ed-title" value="夏日通勤穿搭合集｜全网最便宜的 5 套" aria-label="标题" />
+              <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（审核中，标题命中绝对化用语）</textarea>
+              <div class="tags">
+                <span class="tag">#通勤穿搭</span>
+                <span class="tag">#平价好物</span>
+                <span class="tag add">+ 添加标签</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</section>
+<p class="cap"><b>状态 C · Review Gate / Needs CEO（审核闸 + Workspace 级决策）。</b> 笔记提交审核后，审核员 <b>Employee Presence（王芳·内容审核 审核中）</b> 持续可感知；审核闸以业务对象上的轻量责任面呈现（品牌合规清单 + 通过/退回）。当命中绝对化用语时，升级为顶部 <b>Decision Banner（§3.3 Needs CEO / Decision，橙色）</b>——这是 Workspace 级阻断决策，与单个员工的 needs_ceo 责任状态分离。
+<span class="k">验证：</span>审核不是藏在另一个列表里，而是贴在内容对象上；CEO 决策出现在顶部横幅，员工责任状态保留在 Presence 条，二者不混淆。操作降噪延续：仅「通过并送审 CEO」/「退回修改」两个明确业务动作。</p>
+
+<!-- ============ 状态 D：Utility → Note Preview ============ -->
+<section class="app" aria-label="状态 D Utility Note Preview">
+  <div class="topbar">
+    <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+    <div class="spacer"></div>
+    <div class="status-pill">数据可信</div>
+    <button class="theme-btn" onclick="document.documentElement.dataset.theme = (document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓 主题</button>
+    <div class="avatar">CE</div>
+  </div>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand"><span class="logo">C</span> Curis</div>
+      <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+      <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+      <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+      <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+      <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+      <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+      <div class="nav-foot"><div class="avatar">CE</div><span style="font-size:var(--ui-fs-1);color:var(--ui-text-2)">设置 / 帮助</span></div>
+    </nav>
+    <main class="main">
+      <!-- 继承 Split Working 视觉：左时间上下文 + 右内容对象（不变） -->
+      <div class="split">
+        <aside class="time-ctx">
+          <div class="tc-h">时间上下文 · 八月</div>
+          <div class="tc-day">1 周三</div>
+          <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-accent)"></i></div></div>
+          <div class="tc-day">3 周五</div>
+          <div class="tc-day">4 周六</div>
+          <div class="tc-day">5 周日</div>
+          <div class="tc-day">9 周四</div>
+          <div class="tc-day">11 周六</div>
+          <div class="tc-day">17 周五</div>
+        </aside>
+        <section class="note-work">
+          <button class="nw-close" title="返回日历">✕</button>
+          <div class="presence">
+            <div class="av">陈</div>
+            <div>
+              <div class="who"><b>陈真</b> · 内容创作</div>
+              <div class="doing">正在为你制作：封面生成中…</div>
+            </div>
+            <span class="state">制作中</span>
+            <button class="expand">▸ 工作过程</button>
+          </div>
+          <div class="handoff-light">⇄ 从 策划·李翔 交接至 内容创作·陈真</div>
+          <div class="nw-body">
+            <div class="nw-cover">
+              <div class="cover"><span class="badge">AI 封面</span></div>
+              <div class="hint">点击替换封面</div>
+            </div>
+            <div class="nw-fields">
+              <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" />
+              <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（直接编辑正文，AI 与你共同打磨，无表单边框）</textarea>
+              <div class="tags">
+                <span class="tag">#通勤穿搭</span>
+                <span class="tag">#平价好物</span>
+                <span class="tag add">+ 添加标签</span>
+              </div>
+              <div class="nw-actions">
+                <button class="btn-primary">提交审核</button>
+                <button class="result-ref">📊 数据看板 ▸</button>
+                <span class="autosave">已自动保存 · 刚刚</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <!-- Utility Surface（右 · Resizable，Delta-X5）· 图文预览 -->
+    <aside class="util">
+      <div class="util-head">📱 图文预览 <span class="ut-sub">小红书 App</span><button class="ut-close" title="关闭">✕</button><span class="ut-resize" title="拖拽调宽">⠿</span></div>
+      <div class="util-body">
+        <div class="phone">
+          <div class="ph-bar"><span>9:41</span><span>小红书</span></div>
+          <div class="xhs-screen">
+            <div class="xhs-cover"><span class="badge">AI 封面</span></div>
+            <div class="xhs-body">
+              <div class="xhs-ttl">夏日通勤穿搭合集｜5 套不踩雷</div>
+              <div class="xhs-txt">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」。第 1 套：白衬衫 + 西装阔腿裤……</div>
+              <div class="xhs-tags"><span class="tag">#通勤穿搭</span><span class="tag">#平价好物</span></div>
+            </div>
+            <div class="xhs-foot"><span><span class="ic">♥</span> 1.2k</span><span><span class="ic">☆</span> 860</span><span><span class="ic">💬</span> 73</span></div>
+          </div>
+        </div>
+        <p class="util-note">预览为发布后在小红书信息流的真实呈现；数据均为示例。</p>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 D · Utility → Note Preview（图文预览，右 · Resizable）。</b> 选择「📱 图文预览」打开 <b>Utility Surface（§3.7 / Delta-X5 Resizable）</b>——右侧 360px 默认宽度、可拖拽调宽（顶部 ⠿ 手柄示意）、可关闭。预览以手机框呈现笔记发布后在小红书信息流的真实样貌，<b>数据不内嵌于主工作区</b>（仅 Result Reference 引用，见 §3.4）。
+<span class="k">验证：</span>继承 Split Working 视觉（左时间上下文 + 右内容对象不变），Utility 作为按需 Adaptive Surface 叠加，不挤压主工作面；与 Calendar / Split 视觉语言完全一致，未重新设计。</p>
+
+<!-- ============ 状态 E：Published → Analytics ============ -->
+<section class="app" aria-label="状态 E Published Analytics">
+  <div class="topbar">
+    <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+    <div class="spacer"></div>
+    <div class="status-pill">数据可信</div>
+    <button class="theme-btn" onclick="document.documentElement.dataset.theme = (document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓 主题</button>
+    <div class="avatar">CE</div>
+  </div>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand"><span class="logo">C</span> Curis</div>
+      <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+      <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+      <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+      <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+      <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+      <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+      <div class="nav-foot"><div class="avatar">CE</div><span style="font-size:var(--ui-fs-1);color:var(--ui-text-2)">设置 / 帮助</span></div>
+    </nav>
+    <main class="main">
+      <div class="split">
+        <aside class="time-ctx">
+          <div class="tc-h">时间上下文 · 八月</div>
+          <div class="tc-day">1 周三</div>
+          <div class="tc-day">2 周四</div>
+          <div class="tc-day">3 周五</div>
+          <div class="tc-day">4 周六</div>
+          <div class="tc-day cur">5 周日 <div class="mini"><i class="dot" style="background:var(--ui-success)"></i></div></div>
+          <div class="tc-day">9 周四</div>
+          <div class="tc-day">11 周六</div>
+          <div class="tc-day">17 周五</div>
+        </aside>
+        <section class="note-work">
+          <button class="nw-close" title="返回日历">✕</button>
+          <div class="presence">
+            <div class="av">陈</div>
+            <div>
+              <div class="who"><b>陈真</b> · 内容创作</div>
+              <div class="doing">已发布 · 数据表现良好</div>
+            </div>
+            <span class="state" style="border-color:var(--ui-success);color:var(--ui-success)">已发布</span>
+            <button class="expand">▸ 工作过程</button>
+          </div>
+          <div class="handoff-light">✅ 发布完成 · 已进入数据复盘阶段</div>
+          <div class="nw-body">
+            <div class="nw-cover">
+              <div class="cover"><span class="badge">已发布</span></div>
+              <div class="hint">8/5 发布</div>
+            </div>
+            <div class="nw-fields">
+              <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" readonly />
+              <textarea class="ed-body" aria-label="正文" readonly>通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」。第 1 套：白衬衫 + 西装阔腿裤……</textarea>
+              <div class="tags">
+                <span class="tag">#通勤穿搭</span>
+                <span class="tag">#平价好物</span>
+              </div>
+              <!-- 轻量 Analytics（Result Reference 展开，非内嵌大看板） -->
+              <div class="analytics">
+                <div class="an-h">📊 数据看板 <span style="font-size:var(--ui-fs-1);color:var(--ui-text-2);font-weight:400">默认 Analytics Template（CES 可配置）</span></div>
+                <div class="an-grid">
+                  <div class="metric"><div class="m-k">曝光</div><div class="m-v">12.4k</div></div>
+                  <div class="metric"><div class="m-k">阅读</div><div class="m-v">3.1k</div></div>
+                  <div class="metric"><div class="m-k">互动</div><div class="m-v">486</div></div>
+                  <div class="metric"><div class="m-k">收藏</div><div class="m-v">862</div></div>
+                </div>
+                <div class="bars">
+                  <div class="bar-row"><span class="bl" style="width:40px">曝光</span><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span><span class="bv">12.4k</span></div>
+                  <div class="bar-row"><span class="bl">阅读</span><span class="bar-track"><span class="bar-fill" style="width:42%"></span></span><span class="bv">3.1k</span></div>
+                  <div class="bar-row"><span class="bl">收藏</span><span class="bar-track"><span class="bar-fill" style="width:30%"></span></span><span class="bv">862</span></div>
+                  <div class="bar-row"><span class="bl">涨粉</span><span class="bar-track"><span class="bar-fill" style="width:18%"></span></span><span class="bv">214</span></div>
+                </div>
+                <div class="ces">CES 综合评分 <b>8.2 / 10</b>（默认模板，指标与阈值可配置，非不可变 Curis 体系）。收藏率 6.9% 高于基线 5%，建议复盘反哺选题库。</div>
+              </div>
+              <div class="nw-actions">
+                <button class="result-ref">🔁 复盘反哺选题 ▸</button>
+                <span class="autosave">已发布 · 8/5</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</section>
+<p class="cap"><b>状态 E · Published → Analytics（已发布 + 轻量数据看板）。</b> 笔记发布后，<b>Employee Presence</b> 转为「陈真·内容创作 已发布」并自然过渡到数据阶段；数据以 <b>轻量 Analytics（Result Reference 展开，非内嵌大看板）</b> 呈现在内容流内，遵循 Low Surface Complexity。
+<span class="k">验证：</span>CES 降级为<b>默认 Analytics Template</b>（指标/阈值可配置，非不可变 Curis 体系）；收藏率 6.9% 高于基线 5% 仅作示例观察，不锁定为硬性 UI 规则。继承 Split Working 视觉，正文只读、强调「已完成 → 可复盘」的闭环。</p>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+%% 主链路一：Admin 配置网关（写 /api/platform/*）
+sequenceDiagram
+    participant A as Admin UI (GatewayPanel)
+    participant API as /api/platform/gateways
+    participant S as ModelCatalogService
+    participant DB as Database
+    participant EL as EvolutionEventLog
+    A->>API: POST {gateway_id,name,type,base_url,credential_ref?,default_model?}
+    API->>API: _require_platform_admin(token)
+    API->>S: manage_model_gateway('create', gateway_id, ...)
+    S->>DB: save_model_gateway(...)  %% 仅存引用串, 零密钥值
+    S->>EL: record(capability.gateway_created, payload)
+    S-->>API: gateway 行 dict
+    API-->>A: 201 gateway
+    Note over S,EL: 启用/停用: PUT action=enable|disable
+    S->>DB: set_model_gateway_status(id, status)
+    S->>EL: record(capability.gateway_status_changed)
+
+%% 主链路二：Admin 维护官方模型（写 + gateway_ref 校验 + 状态机）
+sequenceDiagram
+    participant A as Admin UI (ModelCatalogPanel)
+    participant API as /api/platform/models
+    participant S as ModelCatalogService
+    participant DB as Database
+    participant EL as EvolutionEventLog
+    A->>API: POST {model_key,provider_id,display_name,supported_models,auth_type,gateway_ref,...}
+    API->>API: _require_platform_admin(token)
+    API->>S: manage_official_model('create', model_key, ...)
+    S->>DB: get_model_gateway(gateway_ref)  %% 存在性校验
+    alt gateway_ref 不存在
+        S-->>API: raise KeyError(422)
+    else 存在
+        S->>DB: save_official_model(...)  %% source='official', 零凭证列
+        S->>EL: record(capability.model_created)
+    end
+    Note over S,EL: 启用/停用: PUT {model_key} action=enable|disable
+    S->>DB: set_official_model_status(model_key, status)
+    S->>EL: record(capability.model_status_changed)
+
+%% 主链路三：Workspace 只读 catalog（不含凭证）
+sequenceDiagram
+    participant W as Workspace (X-Tenant-Id)
+    participant CAT as /api/catalog/*
+    participant DB as Database
+    W->>CAT: GET /api/catalog/gateways
+    CAT->>DB: list_catalog_gateways()  %% 仅 gateway_id/name/type/base_url/status
+    DB-->>CAT: rows (NO credential_ref)
+    CAT-->>W: gateways 投影
+    W->>CAT: GET /api/catalog/models  %% 已存在
+    CAT->>DB: list_official_models()  %% source='official' AND status='active'
+    DB-->>CAT: official models (无凭证列)
+    CAT-->>W: models 只读供给
+
+%% 主链路四：Admin 查看 usage（R-04 直接复用，零新增）
+sequenceDiagram
+    participant A as Admin UI (UsageProjectionPanel)
+    participant API as /api/platform/usage?tenant_id=
+    participant EL as EvolutionEventLog.list_usage_events
+    A->>API: GET ?tenant_id= (Bearer admin token)
+    API->>API: _require_platform_admin(token)
+    alt tenant_id 缺失
+        API-->>A: 400/422 fail-closed
+    else 存在
+        API->>EL: list_usage_events(tenant_id)  %% filter event_type like 'usage.%'
+        EL-->>API: 纯计量投影(scope_type/quantity/unit/capability_ref/raw_meter_value)
+        API-->>A: usage_events (无 amount/currency/ROI)
+    end

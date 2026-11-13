@@ -1,0 +1,78 @@
+- complementary:
+  - generic: Curis · 一人公司
+  - generic: Content Growth
+  - generic: Professional Workspace
+  - navigation:
+    - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）":
+      - generic: 经营
+      - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）": "2"
+    - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量":
+      - generic: 研究与选题
+      - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量": "3"
+    - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）":
+      - generic: 内容制作
+      - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）": "7"
+    - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）":
+      - generic: 发布
+      - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）": "4"
+    - generic "连接异常账号：绑定状态不是 ok 的账号数量":
+      - generic: 账号
+      - generic "连接异常账号：绑定状态不是 ok 的账号数量": "2"
+    - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）":
+      - generic: 复盘
+      - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）": "3"
+    - generic "待准备资产：尚未就绪的素材 / 授权请求数量":
+      - generic: 素材
+      - generic "待准备资产：尚未就绪的素材 / 授权请求数量": "2"
+  - generic: 经营进行中
+  - generic: 下一检查 09-18 10:00
+  - generic: 你
+  - generic: CEO 视角
+- banner:
+  - button "←"
+  - generic: Content Growth
+  - generic: /
+  - generic: 研究与选题
+  - generic: 经营边界
+  - generic: 团队持续经营中
+- generic: 研究与选题
+- generic "找 沈述 交流":
+  - generic: 沈
+  - generic: 沈述
+  - emphasis: 研究 负责人
+- generic: "3"
+- generic: 相关工作
+- generic: 2 进行中
+- button "责任与团队"
+- textbox "贴一个链接 / 视频 / 截图，或直接说一个想法 —— 例如：我突然想到一个方向…"
+- button "交给团队"
+- generic: 想指定某个人：点左侧员工名
+- generic: 灵感
+- generic: 参考
+- generic: 选题池
+- generic: 内容提案
+- generic: 持续关注
+- generic: 研究工作
+- img "一人公司第 180 天：我删掉了 7 个工具":
+  - generic: 图文
+  - generic: 一人公司第 180 天：
+  - generic: 我删掉了 7 个工具
+- generic: 一人公司第 180 天：我删掉了 7 个工具
+- generic: 目标 品牌号 / 创始人IP / 创始人号 · 按账号分化（图文 / 数字人口播 / 长文章）
+- generic: 待开工
+- generic: 方法教学 / 收藏沉淀 / 判断输出
+- generic: 3 个 目标交付
+- button "确认开工交付"
+- img "AI 写得更像你（组合提案）":
+  - generic: 视频
+  - generic: 提案 · 组合生成
+  - generic: AI 写得更像你（组合提
+  - generic: 案）
+  - generic: 抖音｜品牌号
+- generic: AI 写得更像你：可收藏的检查表
+- generic: 目标 品牌号 / 品牌号 · 按账号分化（清单图文 / 25s 短视频）
+- generic: 待开工
+- generic: 方法教学
+- generic: 2 个 目标交付
+- button "确认开工交付"
+- generic: 选题池里的是「值得做但还没确定形态」的机会；一旦确定目标账号与判据，就变成 内容 Proposal —— 而开工不直接跳一个 工作，而是先确认 Target Deliverables（账号 / 目的 / 内容形式 / 制作方法 / Spec / 人工 审核）。

@@ -1,0 +1,83 @@
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+.pytest_cache/
+.venv/
+backend/tests/data/*.sqlite
+frontend/.next/
+frontend/node_modules/
+frontend-admin/.next/
+frontend-admin/node_modules/
+frontend-workspace/.next/
+frontend-workspace/node_modules/
+frontend/.env.local
+.pnpm-store/
+.worktrees/
+deploy/new-api/.env
+deploy/freellmapi/.env
+deploy/new-api/data/
+# 测试残留的临时数据库文件（create_app 误把对象名当路径生成）
+# Ardot 设计缓存 / 本地构建工具产物（可重建，不入库）
+.design/
+.workbuddy/build/
+
+# WorkBuddy 运行产物（可重建，不入库）
+.workbuddy/artifacts/
+.workbuddy/tmp/
+
+# Desktop packaging output (recreated by desktop/scripts/build-runtime.sh)
+desktop/.runtime/
+
+# Local build and cache output (keep Desktop source and evidence visible)
+.next/
+.cache/
+frontend/.cache/
+desktop/target/
+desktop/node_modules/
+desktop/runtime/__pycache__/
+
+# SQLite journal files only; primary databases and backups remain visible for
+# retention / evidence review and are intentionally not ignored here.
+*.sqlite-wal
+*.sqlite-shm
+*.db-wal
+*.db-shm
+
+# Curis baseline: local data, credentials, builds and evidence stay on device.
+*.db
+*.db-*
+*.sqlite*
+*.sqlite3*
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.p7b
+*.p7c
+*.cer
+*.crt
+*.der
+*.mobileprovision
+**/node_modules/
+**/.next*/
+**/target/
+desktop/.runtime/
+/data/
+*.log
+*.log.*
+*.qcow2
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.iso
+*.sparseimage
+*.sparsebundle/
+*.img
+*.dmg
+*.ova
+*.ovf
+/artifacts/

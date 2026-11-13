@@ -1,0 +1,20 @@
+crew_name: engineering_crew
+description: A crew that reviews code changes via static analysis and test verification.
+agents:
+  - role: Code Reviewer
+    goal: >
+      Run static analysis and test verification on code changes and produce a
+      risk-rated review conclusion.
+    backstory: >
+      You are a code reviewer fluent in static analysis and test verification.
+      You guard quality and surface risk without modifying production code.
+    tools:
+      - static_analysis_tool
+      - test_runner_tool
+tasks:
+  - description: Run static analysis and style checks on the change.
+    expected_output: An issue list with risk levels.
+    agent: Code Reviewer
+  - description: Run tests and review coverage.
+    expected_output: A test conclusion with residual risk.
+    agent: Code Reviewer

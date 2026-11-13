@@ -1,0 +1,18 @@
+{
+  "server": "serena",
+  "name": "Serena",
+  "description": "符号级语义代码检索与编辑（LSP 驱动，40+ 语言）：查找符号、查找引用、重命名、替换符号体、安全删除；项目记忆跨会话持久化为可审阅 Markdown；可选 JetBrains 后端增强重构。",
+  "license": "MIT",
+  "_source_url": "https://github.com/oraios/serena",
+  "_original_name": "serena",
+  "_scan_batch": "2026-08-31 持续扫描第三批",
+  "_security_review": "本地文件写 + shell 执行，默认无 OS 级沙箱与密钥检测，等同授予终端权限；进入产线前须沙箱 + 审计 + 不可逆操作人工确认。",
+  "_note": "工具列表为按官方仓库描述的代表性摘录，以仓库实际暴露为准。",
+  "tools": [
+    {"name": "find_symbol", "description": "按名称或类型查找代码符号。"},
+    {"name": "find_referencing_symbols", "description": "查找引用某符号的其他符号。"},
+    {"name": "rename", "description": "重命名符号并同步引用。"},
+    {"name": "replace_symbol_body", "description": "替换符号的函数体。"},
+    {"name": "safe_delete", "description": "安全删除符号。"}
+  ]
+}

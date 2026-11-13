@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "0.2.0",
+  "title": "音乐经营依据",
+  "type": "object",
+  "initialState": "CREATED",
+  "required": [
+    "title"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "标题",
+      "maxLength": 240
+    },
+    "body": {
+      "type": "string",
+      "title": "说明",
+      "maxLength": 20000,
+      "multiline": true
+    },
+    "status": {
+      "type": "string",
+      "title": "状态",
+      "enum": [
+        "CREATED"
+      ],
+      "default": "CREATED"
+    }
+  }
+}

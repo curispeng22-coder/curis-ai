@@ -1,0 +1,429 @@
+[
+  {
+    "file": "01-ceo-desk.jpg",
+    "width": 586,
+    "height": 936,
+    "sha256": "b94e85808d6137a246e71105b7253b2d06e07e0c4bda849b14796c6c4ec4c3b8",
+    "state": "REJECT desktop measurement: narrow panel capture"
+  },
+  {
+    "file": "02-ceo-desktop-1440.jpg",
+    "width": 563,
+    "height": 900,
+    "sha256": "4cdd8b4d1b182b50ed1dbcd3284c48b984c92fc68ab83c3cd46a8684dce1c035",
+    "state": "REJECT desktop measurement: cropped panel, not 1440 viewport"
+  },
+  {
+    "file": "03-ceo-desktop-full.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "ed0e6878cb80a26fd1416e8c59bbfcd178e5c745f5f2742c17e76e00f4328b41",
+    "state": "03 ceo desktop full"
+  },
+  {
+    "file": "04-business.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "5ff3f0d088f7e2791e4820b8ee959e1fd31051020c1f2dc72b6a56bcaf326c3c",
+    "state": "04 business"
+  },
+  {
+    "file": "05-content-growth.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "dfc1bb73bcbab1146854dc1a5fe710bd09cf2699cd4f48cf7ae853a9f3d8c5be",
+    "state": "05 content growth"
+  },
+  {
+    "file": "06-content-operations.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "94f7287b678f09ecd13594c0b1f66ef243d3d2db199b5f246d88939c78b93b03",
+    "state": "06 content operations"
+  },
+  {
+    "file": "07-calendar-click-no-change.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "d0687fec22742026e20da683a2c5e022a0477a2658d0bc39f3c2edf5599dc055",
+    "state": "Calendar click retained content view; no successful calendar evidence"
+  },
+  {
+    "file": "08-rd.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "3257ffc39aa0e7f6562aeba89cc08dcbe6a2dce7308a19c3664d290d75cefbe1",
+    "state": "08 rd"
+  },
+  {
+    "file": "09-rd-utility.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "6cd6a1cc931cd1fd617caa612538b0e779262e3ea57cd414f42a3b1155f763ba",
+    "state": "09 rd utility"
+  },
+  {
+    "file": "10-preview-click-no-change.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "f27b7ae68a588e46ec911d948453338527e3183a1ccae3986861db765d6f7bf4",
+    "state": "Utility Preview click no content change; not successful tab evidence"
+  },
+  {
+    "file": "11-organization.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "e693117960a84ab9fc426f1fb3a25b58fc03e451077f9750ac2dbc577c04a130",
+    "state": "11 organization"
+  },
+  {
+    "file": "12-employee-detail.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "31b6c5457eae6af5689fffd7d181c921704bdb46f88de0056a3617e0d399067a",
+    "state": "12 employee detail"
+  },
+  {
+    "file": "13-conversation.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "8f0a6f5a5749878a4732fd754708257d5a75ff1429cdf51390d3831d4229df52",
+    "state": "Employee header Conversation action no change; NOT actual conversation view"
+  },
+  {
+    "file": "14-employee-conversation.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "203cd7b16b6f0e1bc583340a3240705e699983cc08e48b767aa7887613401d1f",
+    "state": "14 employee conversation"
+  },
+  {
+    "file": "15-composer-running.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "3cf8d5a812baf6eea221eb3722f454fb275daad2749460a98dbb32c4270fd681",
+    "state": "15 composer running"
+  },
+  {
+    "file": "16-model-selector.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "308ff3ea2e69d5c5d309933fbdcc00edfe6ff584dae0381c90fe94caa58d4a96",
+    "state": "16 model selector"
+  },
+  {
+    "file": "17-talent-home.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "bd0d3361c5dcadf0ff331beee0e98948ea9bd483968eec77f036e1ef7e547d79",
+    "state": "17 talent home"
+  },
+  {
+    "file": "18-skill-market.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "654eee872b78ab02255b17f4f34ba91181013c6aaac496bce54b48e4ce9027e5",
+    "state": "18 skill market"
+  },
+  {
+    "file": "19-search.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "aeb915d273be02c9d237458717c9399542b4dbb9705c5fac2773d086f545600b",
+    "state": "19 search"
+  },
+  {
+    "file": "20-agent-work.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "a85786bbfefd8db34eddc4190790bbfd6a710cd3f5a5f5a92cbd40eb8e7904a0",
+    "state": "Search Enter no change; NOT Agent Work view"
+  },
+  {
+    "file": "21-work-progress.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "0fc286e48ee861efc62b2615d570fb76150e884e2c3be134b91542b3d6d43b84",
+    "state": "21 work progress"
+  },
+  {
+    "file": "22-settings.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "4417452c7de8313841d96d347a73f38965950043ac13cf6ae197f6876758ede8",
+    "state": "22 settings"
+  },
+  {
+    "file": "23-ceo-assistant.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "a9c78b33e8dc19f279585c7cb668879abcfdb514b709ae31180a33c24f5067d6",
+    "state": "Expanded blank Assistant; actual ico ReferenceError"
+  },
+  {
+    "file": "24-generic-workspace.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "44801ae3f66062990cae3d2c7b6a5195919f561a52aa3641253a41e7c15ebbb5",
+    "state": "Generic workspace with broken Assistant overlap"
+  },
+  {
+    "file": "25-generic-workspace-restored.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "4d27e48fdc3271436c3540e70198f8b824c95ce4c6f7272e6417ed422a05a45b",
+    "state": "25 generic workspace restored"
+  },
+  {
+    "file": "26-result.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "2566c5d7e4aa3a4ca018b47d202fb07e875471159da87b8b29a471fc561d8c18",
+    "state": "26 result"
+  },
+  {
+    "file": "27-result-utility.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "4ce3c7c23c5c9db11344b2d1689789127ae9866bb5e91489419d0120064faa20",
+    "state": "27 result utility"
+  },
+  {
+    "file": "28-result-error.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "605da5622585dfc17baa6431b442af39cbdcc7dbe8cc4f5a440720609857a98d",
+    "state": "Error selected but normal Result remains; not functioning error state"
+  },
+  {
+    "file": "29-ceo-empty.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "5bddb01acb35660913c3960505f6112a1228b89b00595f29476202acbc0f2235",
+    "state": "29 ceo empty"
+  },
+  {
+    "file": "30-ceo-error.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "c6a16a89bb04d87d95996fac86c9c556c8ceb404b96f819f3918b8e1b8d51280",
+    "state": "30 ceo error"
+  },
+  {
+    "file": "31-rd-1024.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "8ee17e7fe3511f79b8cf8d55e1650b2724c00a493cbcfa493dcaebd279dc8c19",
+    "state": "REJECT 1024 claim: actual screenshot/DOM 1440x900"
+  },
+  {
+    "file": "32-rd-1024-verified.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "b32aec630b35496728a4068faf8f4b8c31aee943d7756b7ad1349d65a18df778",
+    "state": "REJECT 1024 claim: actual screenshot/DOM 1440x900"
+  },
+  {
+    "file": "33-knowledge-files.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "0ef815c2facb5cf02e26a5af527e50e4b7fe3e2cece070ba6465d996286ece2c",
+    "state": "33 knowledge files"
+  },
+  {
+    "file": "34-employee-directory.jpg",
+    "width": 1440,
+    "height": 900,
+    "sha256": "6da80566778a7466a4943882d464d91574cfb62a1b3ba9777f33cf019235ba5d",
+    "state": "34 employee directory"
+  },
+  {
+    "file": "R01-workbuddy-skills.jpg",
+    "width": 1396,
+    "height": 768,
+    "sha256": "37b855704bd6c3961126f0e8fcbc875a02b30cda8fc957027465af9f8dccd5f4",
+    "state": "R01 workbuddy skills"
+  },
+  {
+    "file": "R02-workbuddy-experts.jpg",
+    "width": 1396,
+    "height": 768,
+    "sha256": "a594e260ddbdfffdc37fb9e8e3550819442d29c8e659f90d053e27feba9d8c44",
+    "state": "R02 workbuddy experts"
+  },
+  {
+    "file": "R04-workbuddy-text-result.jpg",
+    "width": 1396,
+    "height": 768,
+    "sha256": "72db94f7a09c2470677b276c2fd4e25541f3b9924702a5195d407d1b98d93293",
+    "state": "R04 workbuddy text result"
+  },
+  {
+    "file": "R05-workbuddy-message-menu.jpg",
+    "width": 1396,
+    "height": 768,
+    "sha256": "21a39ab54fc8fb98bc241443436c9af7c67615e97f6668346c7a5c8a7b2f7565",
+    "state": "R05 workbuddy message menu"
+  },
+  {
+    "file": "R06-claude-cowork-error-empty.jpg",
+    "width": 1152,
+    "height": 768,
+    "sha256": "7db5d46102c97ed89cc997bc2f8a86793e640416af0c05067fb73aec99c836fc",
+    "state": "R06 claude cowork error empty"
+  },
+  {
+    "file": "R07-claude-model-menu.jpg",
+    "width": 1152,
+    "height": 768,
+    "sha256": "89e8608a11dd0e58977f4ef4595f3d0d98c83e74a3b0e48ef0e3fe5eec06c960",
+    "state": "R07 claude model menu"
+  },
+  {
+    "file": "R08-evoflow-workflow-inspector.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "f93730ab016b0592ac4dbc46bdbd7359942ab21f299bfa80e52123d0c373ccc7",
+    "state": "R08 evoflow workflow inspector"
+  },
+  {
+    "file": "R09-evoflow-task-center.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "f7356e7c293575f009213ba147c78e95e08e95c1c856ce945e873594e86d32f8",
+    "state": "R09 evoflow task center"
+  },
+  {
+    "file": "R11-evoflow-approval-empty.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "51c1960c46c8ee04457be048299556d87e15d0d608ea8ed8672ace9c355d5aa9",
+    "state": "R11 evoflow approval empty"
+  },
+  {
+    "file": "R12-evoflow-security-settings.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "355f3ec98e460decbb977a435fcba952aefd9f9aa77306838462b059fbd073d7",
+    "state": "R12 evoflow security settings"
+  },
+  {
+    "file": "R13-evoflow-conversation-tools.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "3d5b72681070dd8523bfb874f4eca4e5b92e95debad7c32f3cf448de1c9e37a8",
+    "state": "R13 evoflow conversation tools"
+  },
+  {
+    "file": "R14-evoflow-artifact.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "0acc81b846a00de1a44b59b3da3d72ca4025a9c44a840bc78e8fca0308e2d9e0",
+    "state": "R14 evoflow artifact"
+  },
+  {
+    "file": "R15-evoflow-automation.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "6db34f35010499f2a7ed971ee4d6fce33906fd68eb0d6e7a10393d2a109cd929",
+    "state": "R15 evoflow automation"
+  },
+  {
+    "file": "R16-linear-search.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "294d77722937ddb1b8a79fb89c82f1245a6fbda2bc98275572625bd3aa7c7f0e",
+    "state": "R16 linear search"
+  },
+  {
+    "file": "R17-linear-search-preview.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "4a82a06584fdb02d14430032234246ae74a8a6b4542cfa9a94d263f150632109",
+    "state": "R17 linear search preview"
+  },
+  {
+    "file": "R18-linear-command.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "19176f2e8b6edd0678fcaaa522e2e4382e0ced05bd46f8642f6a07b081c41d2d",
+    "state": "R18 linear command"
+  },
+  {
+    "file": "R19-cursor-result-preview.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "4aa557d23120dadc45ae73dd3d909a56b82cbd67eb81c32db3985277abb7f12f",
+    "state": "R19 cursor result preview"
+  },
+  {
+    "file": "R20-cursor-result-source.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "28c997b799be882c581c90e25d13577db3118f132a9e21e1fac0623f397a32a8",
+    "state": "R20 cursor result source"
+  },
+  {
+    "file": "R21-cursor-result-maximized.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "86473260a17c86fb4ec062ee44ed10e5949e1647983c8084baf02cf76bc5c17e",
+    "state": "R21 cursor result maximized"
+  },
+  {
+    "file": "R22-coze-demo-editor.jpg",
+    "width": 1074,
+    "height": 768,
+    "sha256": "8a6e5de70d09566b0e97da70ee6f69eabcf0f8547c6c1cf0b97ec65a28895730",
+    "state": "DEMO video project; not live generation or resumable task"
+  },
+  {
+    "file": "R23-coze-new-editor.jpg",
+    "width": 1074,
+    "height": 768,
+    "sha256": "36e85786c359ef280bcadfebfdd7341081b9a1bd71695089b8d5600cb198f9b9",
+    "state": "New Project modal; not yet editor"
+  },
+  {
+    "file": "R24-coze-isolated-editor.jpg",
+    "width": 1074,
+    "height": 768,
+    "sha256": "4db851ed72b42ae2f11f67f5044920a2b3e5ae77a7ca0e19c7c7473d224124e5",
+    "state": "Real CURIS-RESEARCH-TEST empty editor, saved; no video generation"
+  },
+  {
+    "file": "R25-chatgpt-web-test.jpg",
+    "width": 1280,
+    "height": 720,
+    "sha256": "e6c3c37c76f1c2b2d4ad58102bc4011434cedb48a9245402c3776fb10e0c3b8d",
+    "state": "Real no-auth web text conversation; not Desktop/Agent/persistence"
+  },
+  {
+    "file": "R26-evoflow-running.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "68b60ecde2db0f844565ff10d88539b4618c2b20f4721a25ac2c29df148644d7",
+    "state": "R26 evoflow running"
+  },
+  {
+    "file": "R27-evoflow-stopped.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "3e9916237fb704024786d27b5880cb4776ea7ada0749b4391b64cca3f435d675",
+    "state": "Stop removed incomplete AI output; recovery counterexample"
+  },
+  {
+    "file": "R28-evoflow-resumed.jpg",
+    "width": 1366,
+    "height": 768,
+    "sha256": "b31854800b8d9ebad2154478f1e76405c7f6fa40b0a49b12bfeed754d364319b",
+    "state": "New follow-up replied; NOT restored partial output"
+  },
+  {
+    "file": "R29-cursor-settings.jpg",
+    "width": 1229,
+    "height": 768,
+    "sha256": "8285b51e3dc06e50063dfd2c1d85e9367d4b2b766969b13db579822098f368e4",
+    "state": "R29 cursor settings"
+  }
+]

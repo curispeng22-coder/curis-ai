@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800" height="420">
+  <rect width="800" height="420" fill="#18181b" rx="12"/>
+  <text x="400" y="36" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#f4f4f5">经营生命周期 · 最小充分 7 节点模型</text>
+
+  <!-- Intent -->
+  <rect x="60" y="80" width="100" height="48" rx="8" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+  <text x="110" y="100" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Intent</text>
+  <text x="110" y="116" text-anchor="middle" font-size="11" fill="#93c5fd">意图 · CEO</text>
+
+  <!-- Strategy Gate -->
+  <line x1="160" y1="104" x2="210" y2="104" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="210,104 204,100 204,108" fill="#6b7280"/>
+  <text x="185" y="96" text-anchor="middle" font-size="10" fill="#9ca3af">Strategy Gate</text>
+
+  <!-- Strategy -->
+  <rect x="220" y="80" width="120" height="56" rx="8" fill="#581c87" stroke="#a855f7" stroke-width="2"/>
+  <text x="280" y="102" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Strategy</text>
+  <text x="280" y="118" text-anchor="middle" font-size="11" fill="#d8b4fe">策略 · Leader+CEO</text>
+  <text x="280" y="132" text-anchor="middle" font-size="10" fill="#c084fc">慢循环</text>
+
+  <!-- Plan -->
+  <rect x="380" y="80" width="100" height="48" rx="8" fill="#7c3aed" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="430" y="100" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Plan</text>
+  <text x="430" y="116" text-anchor="middle" font-size="11" fill="#ddd6fe">经营计划</text>
+
+  <!-- Operate -->
+  <rect x="520" y="80" width="110" height="56" rx="8" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+  <text x="575" y="102" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Operate</text>
+  <text x="575" y="118" text-anchor="middle" font-size="11" fill="#86efac">执行+观察 · 团队</text>
+  <text x="575" y="132" text-anchor="middle" font-size="10" fill="#4ade80">快循环</text>
+
+  <!-- Review -->
+  <rect x="640" y="80" width="100" height="48" rx="8" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+  <text x="690" y="100" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Review</text>
+  <text x="690" y="116" text-anchor="middle" font-size="11" fill="#86efac">复盘</text>
+
+  <!-- Learn -->
+  <rect x="640" y="200" width="100" height="48" rx="8" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+  <text x="690" y="220" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Learn</text>
+  <text x="690" y="236" text-anchor="middle" font-size="11" fill="#86efac">学习</text>
+
+  <!-- Adjust diamond -->
+  <polygon points="575,224 625,264 575,304 525,264" fill="#7c2d12" stroke="#f97316" stroke-width="2"/>
+  <text x="575" y="260" text-anchor="middle" font-size="13" fill="#f4f4f5" font-weight="600">Adjust?</text>
+  <text x="575" y="276" text-anchor="middle" font-size="11" fill="#fed7aa">调整决策</text>
+
+  <!-- Main forward arrows -->
+  <line x1="340" y1="104" x2="380" y2="104" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="380,104 374,100 374,108" fill="#6b7280"/>
+
+  <line x1="480" y1="104" x2="520" y2="104" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="520,104 514,100 514,108" fill="#6b7280"/>
+
+  <line x1="630" y1="104" x2="640" y2="104" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="640,104 634,100 634,108" fill="#6b7280"/>
+
+  <line x1="690" y1="128" x2="690" y2="200" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="690,200 686,194 694,194" fill="#6b7280"/>
+
+  <line x1="640" y1="224" x2="625" y2="224" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="625,224 631,220 631,228" fill="#6b7280"/>
+
+  <!-- Adjust → Strategy (dashed orange) -->
+  <path d="M 525 264 L 280 264 L 280 136" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="4"/>
+  <polygon points="280,136 276,142 284,142" fill="#f97316"/>
+  <text x="400" y="256" text-anchor="middle" font-size="10" fill="#fdba74">策略调整 → 回 Strategy</text>
+
+  <!-- Adjust → Plan (dashed orange) -->
+  <path d="M 575 304 L 575 340 L 430 340 L 430 128" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="4"/>
+  <polygon points="430,128 426,134 434,134" fill="#f97316"/>
+  <text x="500" y="330" text-anchor="middle" font-size="10" fill="#fdba74">计划调整 → 回 Plan</text>
+
+  <!-- Adjust → Continue Operate (green loop) -->
+  <path d="M 625 264 L 700 264 L 700 136 L 575 136" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <polygon points="575,136 581,132 581,140" fill="#22c55e"/>
+  <text x="650" y="300" text-anchor="middle" font-size="10" fill="#86efac">无调整 → 继续 Operate</text>
+
+  <!-- Legend -->
+  <rect x="60" y="370" width="12" height="12" rx="2" fill="#1e3a8a" stroke="#3b82f6"/>
+  <text x="78" y="381" font-size="11" fill="#d1d5db">CEO 层</text>
+
+  <rect x="160" y="370" width="12" height="12" rx="2" fill="#581c87" stroke="#a855f7"/>
+  <text x="178" y="381" font-size="11" fill="#d1d5db">Strategy 层（慢循环）</text>
+
+  <rect x="330" y="370" width="12" height="12" rx="2" fill="#14532d" stroke="#22c55e"/>
+  <text x="348" y="381" font-size="11" fill="#d1d5db">Operating 层（快循环）</text>
+
+  <polygon points="490,372 500,378 490,384" fill="#f97316"/>
+  <text x="510" y="381" font-size="11" fill="#d1d5db">决策/调整</text>
+</svg>

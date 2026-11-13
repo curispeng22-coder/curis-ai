@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "curis.workspace-package/v1",
+  "packageId": "com.curis.local.music",
+  "version": "0.2.0",
+  "coreCompatibility": ">=0.1.0 <0.2.0",
+  "workspace": {
+    "name": "音乐工作空间",
+    "navigation": {
+      "label": "音乐经营与创作",
+      "icon": "i-file"
+    }
+  },
+  "surfaces": "surfaces.json",
+  "domainSchemas": {
+    "MusicSong": "schemas/song.json",
+    "MusicOperatingScope": "schemas/operating.json"
+  },
+  "actions": [
+    "core.domain-object.create"
+  ],
+  "capabilityRequirements": [],
+  "retention": "retain-business-data-read-only",
+  "canonicalEntityBindings": {
+    "MusicSong": "PACKAGE_DOMAIN_OBJECT",
+    "MusicOperatingScope": "PACKAGE_DOMAIN_OBJECT"
+  }
+}

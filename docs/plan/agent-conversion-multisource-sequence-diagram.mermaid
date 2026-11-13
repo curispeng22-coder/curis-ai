@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    actor Engineer
+    participant Src as sources/ (离线副本)
+    participant Ada as CrewYamlAdapter / SkillRepoAdapter / MCPManifestAdapter
+    participant San as Sanitizer
+    participant Sec as SecurityScanner
+    participant Spec as CanonicalAgentSpec[]
+    participant Man as seed_multisource.py (Manifests)
+    participant Map as SeedMapper (复用 map_*)
+    participant DB as database.py seed_crewai/skill_repo/mcp
+    participant ET as employee_templates
+    participant PT as persona_templates
+    participant SK as skill_templates
+    participant TL as tool_templates
+    participant WT as workflow_templates
+
+    Engineer->>Src: clone/WebFetch 三源离线副本
+    Engineer->>Ada: discover(sources/<src>/)
+    Ada->>Src: 枚举 agent/skill/server 条目
+    Ada-->>Spec: SourceEntry[] (按源展开)
+    loop 每个条目
+        Engineer->>Ada: fetch(entry)
+        Ada->>Src: 读 .yaml/.md/.json 原始文本
+        Ada->>Ada: parse(raw, entry)
+        Ada->>San: clean_emoji / clean_color / strip_invisible
+        San-->>Ada: 清洗后 identity.emoji/color
+        Ada->>Sec: scan_credential / scan_prompt_injection / scan_overclaim
+        Sec-->>Ada: security_scan 三段结果
+        Ada->>Ada: extract_capabilities(spec)  (结构化源≈空操作)
+        Ada-->>Spec: CanonicalAgentSpec (capability_candidates 具名)
+    end
+    Engineer->>Man: 由 Spec + 源快照构建 CREWAI/SKILL/MCP_MANIFEST
+    Man->>Spec: 读 specs 校验 / 标记 disposition
+    Man->>Map: build_multisource_rows() → map_persona/employee/skill/tool/workflow
+    Map-->>Map: pt_*/et_*(crew) / skl_*(skill) / tl_*(crew+skill+mcp) / wt_*(crew) 行
+    Engineer->>DB: seed_crewai() / seed_skill_repo() / seed_mcp() [各自 opt-in]
+    DB->>ET: INSERT OR IGNORE crew et_* (department_type=business.general, status=draft)
+    DB->>PT: INSERT OR IGNORE crew pt_* (image_ref_json 真实三键+theme_color)
+    DB->>SK: INSERT OR IGNORE skl_skill_* (disposition=create)
+    DB->>TL: INSERT OR IGNORE tl_crew_*/tl_skill_*/tl_mcp_* (create)
+    DB->>TL: UPDATE tl_* WHERE disposition=enhance_existing (Pack F-J 28 / Pack A-C MCP, 富字段)
+    DB->>WT: INSERT OR IGNORE wt_crew_* (business.general, steps_json)
+    DB-->>Engineer: 回滚清单 (DELETE by crew_/skill_/mcp_ 前缀)
+    Engineer->>DB: rollback_crewai/skill_repo/mcp() [如需撤销]
+    DB->>ET: DELETE official.employee.crew_%  (保留基线 6 + pilot_b_)
+    DB->>PT: DELETE pt_crew_%
+    DB->>SK: DELETE skl_skill_%
+    DB->>TL: DELETE tl_crew_%/tl_skill_%/tl_mcp_%
+    DB->>WT: DELETE wt_crew_%

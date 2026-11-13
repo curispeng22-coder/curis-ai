@@ -1,0 +1,20 @@
+{
+  "server": "fetch",
+  "name": "Fetch",
+  "description": "Fetch a web page by URL and return clean readable text.",
+  "license": "MIT",
+  "tools": [
+    {
+      "name": "fetch_webpage",
+      "description": "Retrieve the contents of a URL and convert to readable text.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": {"type": "string", "description": "The URL to fetch."},
+          "max_chars": {"type": "integer", "description": "Optional truncation limit."}
+        },
+        "required": ["url"]
+      }
+    }
+  ]
+}

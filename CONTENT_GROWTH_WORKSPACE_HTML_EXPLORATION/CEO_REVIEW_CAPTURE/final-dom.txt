@@ -1,0 +1,77 @@
+- banner:
+  - generic: 内容制作 / W-202
+  - heading "AI 会不会取代你的岗位" [level=1]
+  - paragraph: 抖音｜创始人IP · 数字人口播 · 9:16 · 60s
+  - button "找高戈协调这项工作"
+- navigation "制作阶段":
+  - button "内容确认 ✓ 已完成":
+    - generic: 内容确认
+    - generic: ✓ 已完成
+  - button "脚本 ● 进行中":
+    - generic: 脚本
+    - generic: ● 进行中
+  - button "数字人口播 待接续" [pressed]:
+    - generic: 数字人口播
+    - generic: 待接续
+  - button "后期 待接续":
+    - generic: 后期
+    - generic: 待接续
+  - button "质量检查 待接续":
+    - generic: 质量检查
+    - generic: 待接续
+- generic: 高
+- heading "高戈正在接续数字人口播" [level=2]
+- paragraph: 合成队列中 · 使用言舟 v2 与脚本 v3
+- paragraph:
+  - text: 等待约 6 分钟
+  - generic: 预置队列估计，非实时倒计时
+- generic: 下一步
+- generic: 口播生成 → 试听 → 后期制作
+- button "找高戈交流"
+- button "查看当前工作"
+- generic: 需要你确认
+- heading "脚本里的事实表述" [level=3]
+- paragraph: “过去半年面试了 11 个人”仍待创始人确认。脚本 v4 不视为审核通过。
+- button "查看脚本并讨论"
+- heading "已有产物" [level=2]
+- button "为这条内容选资源"
+- text: 脚本 v4
+- generic: 待创始人确认事实表述（“面试 11 人”）
+- generic: 徐
+- generic: 徐白
+- generic: 脚本
+- button "查看"
+- button "交流"
+- text: 出镜数字人 v2
+- generic: 授权已核对，供高戈使用
+- generic: 江
+- generic: 江雪
+- generic: 数字人 / 资产
+- button "查看"
+- button "交流"
+- text: 数字人口播 v1
+- generic: 等待队列；不阻塞其它 工作
+- generic: 高
+- generic: 高戈
+- generic: 合成
+- button "查看"
+- button "交流"
+- heading "数字人口播 · v1" [level=2]
+- generic: 高
+- generic: 高戈
+- generic: 合成
+- button "找高戈交流"
+- button "出镜数字人"
+- button "数字人口播"
+- generic: 口播视频
+- generic: 还没有生成结果
+- generic: 结果就绪后，在这里试听与预览。
+- heading "高戈正在等待合成队列" [level=3]
+- paragraph: 当前输入：脚本 v3 · 言舟 v2
+- paragraph: 此时可以找徐白讨论脚本，也可以找高戈说明生成要求。改脚本不会静默替换本次输入。
+- button "找徐白讨论脚本"
+- generic "输入、责任、历史与影响范围"
+- generic "交付要求与流程设置"
+- contentinfo:
+  - generic: 独立交互探索 · 无模型与真实合成 · 刷新重置
+  - button "交给制作团队一个新任务"

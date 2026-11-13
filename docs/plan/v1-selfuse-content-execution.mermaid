@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor Founder as 创始人/CEO
+    participant WF as Curis Workflow (wt_ai_content_*)
+    participant CON as Curis Connector
+    participant VAULT as 单用户 Vault
+    participant AIT as AiToEarn(自托管)
+    participant SAU as social-auto-upload(自托管)
+    participant PLAT as 平台
+
+    Founder->>WF: 触发内容生产工作流
+    WF->>CON: 调用 connector.aitoearn（生成请求）
+    CON->>VAULT: 解析自有 AI key
+    VAULT-->>CON: api_key
+    CON->>AIT: POST /api/create（带自有 key）
+    AIT-->>CON: 结构化内容（文案/脚本/分镜）
+    CON->>CON: 套用发布包 Schema → ContentPublishPackage
+    WF->>CON: 调用 connector.social_auto_upload（发布请求）
+    CON->>VAULT: 解析创始人平台 cookie
+    VAULT-->>CON: cookie（按平台）
+    CON->>SAU: sau <platform> login --account founder（cookie）
+    CON->>SAU: sau <platform> publish <发布包>
+    SAU->>PLAT: patchright 真实发布
+    PLAT-->>SAU: 发布回执
+    SAU-->>CON: 发布结果（成功/封号预警）
+    CON-->>WF: 回写执行结果 + 用量事件
+    WF-->>Founder: 业务成果 + CEO 查看

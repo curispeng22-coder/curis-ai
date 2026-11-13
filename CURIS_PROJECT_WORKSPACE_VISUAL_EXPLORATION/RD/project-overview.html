@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RD Project Overview · Curis Desktop</title>
+<style>
+  :root {
+    --canvas: #F7F8FA;
+    --base: #FFFFFF;
+    --surface1: #F1F3F5;
+    --surface2: #E9EDF1;
+    --border: #DDE2E7;
+    --textPrimary: #1D232A;
+    --textSecondary: #4D5661;
+    --textTertiary: #7C8794;
+    --primary: #806BE5;
+    --primaryLight: #F0EDFC;
+    --working: #806BE5;
+    --waiting: #7C8794;
+    --review: #D97706;
+    --blocked: #DC2626;
+    --ready: #0E8F7E;
+    --completed: #0E8F7E;
+    --shadow: 0 1px 2px rgba(29,35,42,0.04), 0 2px 8px rgba(29,35,42,0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--canvas);
+    color: var(--textPrimary);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+  /* Nav Rail */
+  .nav {
+    background: var(--base);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--textPrimary);
+  }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--primary);
+    display: grid; place-items: center;
+    color: #fff; font-size: 13px; font-weight: 800;
+  }
+  .nav-section { display: flex; flex-direction: column; gap: 4px; }
+  .nav-label {
+    font-size: 11px; font-weight: 600; color: var(--textTertiary);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0 10px; margin-bottom: 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    color: var(--textSecondary); font-size: 13px;
+    cursor: pointer; transition: background .15s, color .15s;
+  }
+  .nav-item:hover { background: var(--surface1); color: var(--textPrimary); }
+  .nav-item.active { background: var(--primaryLight); color: var(--primary); font-weight: 600; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .85; }
+  .nav-spacer { flex: 1; }
+  .nav-footer {
+    font-size: 12px; color: var(--textTertiary);
+    padding: 12px; border-top: 1px solid var(--border);
+  }
+
+  /* Main */
+  .main { padding: 32px 40px 48px; min-width: 0; }
+  .header {
+    margin-bottom: 28px;
+  }
+  .breadcrumbs {
+    font-size: 12px; color: var(--textTertiary); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .breadcrumbs span:not(:last-child)::after {
+    content: "›"; margin-left: 8px; color: var(--border);
+  }
+  .project-title-row {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .project-title {
+    font-size: 28px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .meta-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 26px; padding: 0 10px; border-radius: 13px;
+    background: var(--surface1); color: var(--textSecondary);
+    font-size: 12px; font-weight: 500;
+  }
+  .stage-pill {
+    background: var(--primaryLight); color: var(--primary);
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 22px; padding: 0 8px; border-radius: 11px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-pass { background: #E6F7F4; color: var(--completed); }
+  .badge-tests { background: var(--surface1); color: var(--textSecondary); }
+  .badge-coverage { background: var(--surface1); color: var(--textSecondary); }
+  .attention-strip {
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 10px;
+    background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;
+    font-size: 13px;
+  }
+  .attention-strip strong { color: #78350F; }
+  .attention-cta {
+    margin-left: auto;
+    height: 28px; padding: 0 12px; border-radius: 6px;
+    background: #F59E0B; color: #fff; font-weight: 600; font-size: 12px;
+    border: none; cursor: pointer;
+  }
+
+  .goal {
+    font-size: 16px; color: var(--textSecondary); line-height: 1.6;
+    max-width: 860px; margin-bottom: 24px;
+  }
+
+  .state-strip {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    padding: 14px 16px; border-radius: 10px;
+    background: var(--base); border: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .state-item { display: flex; flex-direction: column; gap: 2px; min-width: 140px; }
+  .state-label { font-size: 11px; color: var(--textTertiary); font-weight: 600; }
+  .state-value { font-size: 13px; color: var(--textPrimary); font-weight: 500; }
+  .state-value code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Monaco, "Courier New", monospace;
+    background: var(--surface1); padding: 1px 5px; border-radius: 4px; font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--textPrimary);
+    margin: 32px 0 14px; letter-spacing: 0.02em;
+  }
+
+  /* Works list */
+  .works {
+    background: var(--base);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .works-header, .work-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 160px 90px 130px 120px 1fr;
+    align-items: center;
+    padding: 12px 18px;
+    gap: 16px;
+  }
+  .works-header {
+    background: var(--surface1);
+    font-size: 11px; font-weight: 700; color: var(--textTertiary);
+    text-transform: uppercase; letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+  }
+  .work-row {
+    border-bottom: 1px solid var(--border);
+    transition: background .12s;
+  }
+  .work-row:last-child { border-bottom: none; }
+  .work-row:hover { background: #FAFBFC; }
+  .work-id {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px; color: var(--textTertiary); font-weight: 600;
+  }
+  .work-title {
+    font-weight: 600; color: var(--textPrimary); font-size: 13.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .work-owner {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--textSecondary);
+  }
+  .avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: grid; place-items: center;
+    color: #fff; font-size: 10px; font-weight: 700;
+  }
+  .status-pill {
+    justify-self: start;
+    height: 22px; padding: 0 9px; border-radius: 11px;
+    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .status-pill::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+  }
+  .status-working { background: #F0EDFC; color: var(--working); }
+  .status-working::before { background: var(--working); }
+  .status-waiting { background: var(--surface1); color: var(--waiting); }
+  .status-waiting::before { background: var(--waiting); }
+  .status-review { background: #FEF3C7; color: var(--review); }
+  .status-review::before { background: var(--review); }
+  .status-blocked { background: #FEE2E2; color: var(--blocked); }
+  .status-blocked::before { background: var(--blocked); }
+  .status-completed { background: #E6F7F4; color: var(--completed); }
+  .status-completed::before { background: var(--completed); }
+  .work-stage {
+    font-size: 12px; color: var(--textSecondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .work-provider {
+    font-size: 12px; color: var(--textTertiary);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .provider-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .35; }
+  }
+  .work-next {
+    font-size: 12px; color: var(--textTertiary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Active employees inline */
+  .employees-inline {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .employee-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    background: var(--base); border: 1px solid var(--border);
+    min-width: 240px; flex: 1;
+  }
+  .employee-meta { display: flex; flex-direction: column; gap: 1px; }
+  .employee-name { font-weight: 600; font-size: 13px; color: var(--textPrimary); }
+  .employee-work { font-size: 12px; color: var(--textSecondary); }
+  .employee-status {
+    margin-left: auto;
+    font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px;
+  }
+
+  /* Judgment summary */
+  .judgment {
+    margin-top: 32px;
+    padding: 18px 20px; border-radius: 12px;
+    background: var(--base); border: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .judgment-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--primaryLight); color: var(--primary);
+    display: grid; place-items: center; flex-shrink: 0;
+    font-size: 18px;
+  }
+  .judgment-title { font-size: 13px; font-weight: 700; color: var(--textPrimary); margin-bottom: 4px; }
+  .judgment-body { font-size: 14px; color: var(--textSecondary); line-height: 1.6; }
+  .judgment-body strong { color: var(--primary); }
+
+  .footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--textTertiary);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav">
+    <div class="logo"><div class="logo-mark">C</div><span>Curis</span></div>
+    <div class="nav-section">
+      <div class="nav-label">业务空间</div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        研发 · 默认办公室
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M12 20V4M3 20h9M3 20v-7M3 7h9M12 7V4"/></svg>
+        写作 · 长夜
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">视角</div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/></svg>
+        CEO perspective
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        成员
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">资料</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        资料库
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Canonical Root
+      </div>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-footer">RD Project Workspace · Visual exploration only</div>
+  </nav>
+
+  <main class="main">
+    <header class="header">
+      <div class="breadcrumbs">
+        <span>Curis</span>
+        <span>研发办公室</span>
+        <span>Project Overview</span>
+      </div>
+      <div class="project-title-row">
+        <h1 class="project-title">Curis Desktop</h1>
+        <span class="meta-pill">Software Project</span>
+        <span class="meta-pill">v0.3.8</span>
+        <span class="meta-pill"><code>main@a4f7c2d</code></span>
+        <span class="meta-pill stage-pill">Stage v0.4 迭代期</span>
+        <span class="badge badge-pass">● build passing</span>
+        <span class="badge badge-tests">tests 412/412</span>
+        <span class="badge badge-coverage">coverage 68%</span>
+      </div>
+      <div class="attention-strip">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <strong>Needs CEO：</strong>W-231 缓存策略决策 — 今天 18:00
+        <button class="attention-cta">前往 W-231</button>
+      </div>
+    </header>
+
+    <p class="goal">
+      <strong>项目目标：</strong>让 Curis 桌面端能够稳定承载本地 AI Employee 与 Workspace Runtime。
+    </p>
+
+    <div class="state-strip">
+      <div class="state-item">
+        <span class="state-label">Last Accepted Change</span>
+        <span class="state-value">W-228 修复启动时 Workspace 加载顺序</span>
+      </div>
+      <div class="state-item">
+        <span class="state-label">Current Branch / Revision</span>
+        <span class="state-value"><code>main</code> @ <code>a4f7c2d</code></span>
+      </div>
+      <div class="state-item">
+        <span class="state-label">Build / Tests</span>
+        <span class="state-value">passing · 412/412 · 68% coverage</span>
+      </div>
+    </div>
+
+    <section>
+      <h2 class="section-title">AI 团队正在如何改变这个 Project</h2>
+      <div class="works">
+        <div class="works-header">
+          <div>Work</div>
+          <div>Title</div>
+          <div>Owner</div>
+          <div>Status</div>
+          <div>Stage</div>
+          <div>Provider</div>
+          <div>Next Step</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-229</div>
+          <div class="work-title" title="统一 Runtime 错误码与恢复语义">统一 Runtime 错误码与恢复语义</div>
+          <div class="work-owner"><span class="avatar" style="background:#806BE5;">陈</span>陈真</div>
+          <div><span class="status-pill status-working">执行中</span></div>
+          <div class="work-stage">Codex 实现第 2 轮</div>
+          <div class="work-provider"><span class="provider-dot"></span>Codex · 14m</div>
+          <div class="work-next">完成后交给 Verification 跑集成测试</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-230</div>
+          <div class="work-title" title="Workspace 隔离模型与 Git Worktree 约定">Workspace 隔离模型与 Git Worktree 约定</div>
+          <div class="work-owner"><span class="avatar" style="background:#0e8f7e;">李</span>李翔</div>
+          <div><span class="status-pill status-review">Review</span></div>
+          <div class="work-stage">待 CEO 确认</div>
+          <div class="work-provider">Claude Code</div>
+          <div class="work-next">CEO 确认 worktree 外置目录后成为 Canonical</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-231</div>
+          <div class="work-title" title="优化 getUserData API 性能">优化 getUserData API 性能</div>
+          <div class="work-owner"><span class="avatar" style="background:#1f7ae0;">陈</span>陈昊</div>
+          <div><span class="status-pill status-working">执行中</span></div>
+          <div class="work-stage">Codex 执行中</div>
+          <div class="work-provider"><span class="provider-dot"></span>Codex · 6m</div>
+          <div class="work-next">CEO 需判断缓存策略方向</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-232</div>
+          <div class="work-title" title="Employee Workstation 异常状态 UI">Employee Workstation 异常状态 UI</div>
+          <div class="work-owner"><span class="avatar" style="background:#d97706;">苏</span>苏铭</div>
+          <div><span class="status-pill status-waiting">等待依赖</span></div>
+          <div class="work-stage">等待 W-229</div>
+          <div class="work-provider">—</div>
+          <div class="work-next">陈真完成错误码后启动</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-233</div>
+          <div class="work-title" title="跨 Work 并发执行冲突检测">跨 Work 并发执行冲突检测</div>
+          <div class="work-owner"><span class="avatar" style="background:#be185d;">王</span>王磊</div>
+          <div><span class="status-pill status-blocked">Blocked</span></div>
+          <div class="work-stage">需架构输入</div>
+          <div class="work-provider">—</div>
+          <div class="work-next">等待李翔确认文件集重叠规则</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-234</div>
+          <div class="work-title" title="桌面端启动崩溃上报">桌面端启动崩溃上报</div>
+          <div class="work-owner"><span class="avatar" style="background:#806BE5;">陈</span>陈真</div>
+          <div><span class="status-pill status-completed">已完成</span></div>
+          <div class="work-stage">已收口</div>
+          <div class="work-provider">Codex</div>
+          <div class="work-next">已进入 main</div>
+        </div>
+        <div class="work-row">
+          <div class="work-id">W-235</div>
+          <div class="work-title" title="本地模型网关容错">本地模型网关容错</div>
+          <div class="work-owner"><span class="avatar" style="background:#1f7ae0;">陈</span>陈昊</div>
+          <div><span class="status-pill status-waiting">等待中</span></div>
+          <div class="work-stage">队列中</div>
+          <div class="work-provider">—</div>
+          <div class="work-next">W-231 后启动</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Active Employees</h2>
+      <div class="employees-inline">
+        <div class="employee-chip">
+          <span class="avatar" style="background:#806BE5;">陈</span>
+          <div class="employee-meta">
+            <span class="employee-name">陈真 · Leader · 研发负责人</span>
+            <span class="employee-work">W-229 统一 Runtime 错误码与恢复语义</span>
+          </div>
+          <span class="employee-status status-working" style="background:#F0EDFC;color:#806BE5;">执行中</span>
+        </div>
+        <div class="employee-chip">
+          <span class="avatar" style="background:#0e8f7e;">李</span>
+          <div class="employee-meta">
+            <span class="employee-name">李翔 · Architecture · 架构</span>
+            <span class="employee-work">W-230 Workspace 隔离模型与 Git Worktree 约定</span>
+          </div>
+          <span class="employee-status status-review" style="background:#FEF3C7;color:#D97706;">Review</span>
+        </div>
+        <div class="employee-chip">
+          <span class="avatar" style="background:#1f7ae0;">陈</span>
+          <div class="employee-meta">
+            <span class="employee-name">陈昊 · Development · 后端</span>
+            <span class="employee-work">W-231 优化 getUserData API 性能</span>
+          </div>
+          <span class="employee-status status-working" style="background:#F0EDFC;color:#806BE5;">执行中</span>
+        </div>
+        <div class="employee-chip">
+          <span class="avatar" style="background:#d97706;">苏</span>
+          <div class="employee-meta">
+            <span class="employee-name">苏铭 · Development · 前端</span>
+            <span class="employee-work">W-232 Employee Workstation 异常状态 UI</span>
+          </div>
+          <span class="employee-status status-waiting" style="background:#F1F3F5;color:#7C8794;">等待依赖</span>
+        </div>
+        <div class="employee-chip">
+          <span class="avatar" style="background:#be185d;">王</span>
+          <div class="employee-meta">
+            <span class="employee-name">王磊 · Verification · 验证</span>
+            <span class="employee-work">W-233 跨 Work 并发执行冲突检测</span>
+          </div>
+          <span class="employee-status status-blocked" style="background:#FEE2E2;color:#DC2626;">Blocked</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="judgment">
+      <div class="judgment-icon">?</div>
+      <div>
+        <div class="judgment-title">下一项需要 CEO 判断</div>
+        <div class="judgment-body">
+          <strong>W-231 缓存策略选择</strong>：陈昊在 getUserData 批量加载实现中遇到两种缓存方向，均不破坏现有契约但会影响后续扩展。建议方案 A（服务端内存缓存），因 Curis Desktop 当前为单机本地自用，内存缓存足够且实现简单。请在 <strong>今天 18:00</strong> 前确认，以便 Codex 继续完成候选并进入 Review。
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">RD Project Workspace · Visual exploration only</footer>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+classDiagram
+    class TemplateBase {
+        +string version
+        +enum status
+        +enum source
+        +string description
+    }
+    class PersonaTemplate {
+        +string persona_id
+        +string archetype
+        +object communication_style
+        +object reporting_style
+    }
+    class DashboardTemplate {
+        +string dashboard_template_id
+        +enum company_type
+        +string[] role_visibility
+        +WidgetRef[] widgets
+        +string[] data_source_refs
+    }
+    class CompanyPackage {
+        +string company_package_id
+        +enum pack
+        +string[] persona_refs
+        +string[] skill_refs
+        +string[] tool_refs
+        +string[] workflow_refs
+    }
+    class EmployeeTemplate {
+        +string id
+        +string persona_ref
+        +string default_skill
+        +string default_tool
+    }
+    class WorkflowContent {
+        +string workflow_content_id
+        +string[] step_templates
+    }
+    class DashboardWidgetCatalog {
+        +string widget_id
+        +string domain
+        +string data_class
+    }
+    class TemplateVersionSnapshot {
+        +string instance_id
+        +enum template_type
+        +string template_id
+        +string snapshot_version
+        +bool follow_latest
+    }
+    class CatalogAuthoringService {
+        +create_persona()
+        +create_dashboard()
+        +create_company_package()
+        +create_workflow_content()
+        +upsert_employee_template()
+    }
+    class CatalogFoldService {
+        +fold() TemplateCatalogEntry
+        +list_catalog()
+    }
+    class CompanyInstantiationService {
+        +instantiate(ccp_id, tenant_id)
+    }
+    class Database {
+        +connect()
+        +list_employee_templates()
+    }
+    class EmployeeTemplateContract {
+        +create_employee_instance()
+        +create_department_instance()
+    }
+
+    TemplateBase <|-- PersonaTemplate
+    TemplateBase <|-- DashboardTemplate
+    TemplateBase <|-- EmployeeTemplate
+    TemplateBase <|-- WorkflowContent
+    CompanyPackage "1" o-- "0..*" PersonaTemplate : persona_refs
+    CompanyPackage "1" o-- "0..*" WorkflowContent : workflow_refs
+    DashboardTemplate "1" o-- "1..*" DashboardWidgetCatalog : widgets 引用（单一真相源）
+    EmployeeTemplate "1" o-- "0..1" PersonaTemplate : persona_ref
+    CatalogAuthoringService ..> Database : 写
+    CatalogFoldService ..> Database : 只读投影
+    CompanyInstantiationService ..> EmployeeTemplateContract : 复用实例化原语
+    CompanyInstantiationService ..> Database : 写 snapshot
+    EmployeeTemplateContract ..> Database : 读模板 / 写实例
+    CompanyInstantiationService ..> TemplateVersionSnapshot : 每实例写快照

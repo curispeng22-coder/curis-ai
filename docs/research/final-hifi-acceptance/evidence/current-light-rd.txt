@@ -1,0 +1,151 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "内容增长"
+  - button "Curis 产品研发"
+  - button "宠物寄养（激活中）"
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- generic: Curis 研发
+- button "收起 Context":
+- generic: Surface（Domain Navigation）
+- button "交付总览"
+- button "开发"
+- button "评审"
+- button "测试验证"
+- button "发布"
+- generic: 共享工作区
+- generic: 代码与责任
+- generic: ▸ product-platform/src
+- generic: ▸ auth/
+- generic: login.ts
+- generic: session.ts
+- generic: 责任：登录模块重构 · 接口联调
+- text: Recent：login.ts · 34-93
+- text: 联调结果 v1.3
+- main:
+  - link "业务空间":
+    - /url: "#/business"
+  - generic: /
+  - link "Curis 产品研发":
+    - /url: "#/business/biz-rd"
+  - generic: /
+  - link "Curis 研发":
+    - /url: "#"
+  - generic: /
+  - generic: 交付总览
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - heading "Curis 研发" [level=1]
+  - generic: 专业工作空间 · 产品研发 · 负责人 孙浩 · 目标：本周：登录模块 v1.4 联调中；回归测试被联调阻塞。
+  - button "负责人"
+  - generic: CEO Decision · Layer 0 · 灰度发布：登录模块 v1.4 首批 5% 用户
+  - generic: 发生了什么：v1.4 联调进行中（Adapter 80%）、回归被联调阻塞。为何升级：生产发布不可逆（高风险），前置条件（回归全绿）未满足。员工推荐：孙浩的灰度方案（5% · 观察 24 小时错误率）已就绪。本层只能：查看方案 / 暂缓。批准入口在回归全绿后的 Decision Layer 1。
+  - button "查看发布方案"
+  - button "暂缓"
+  - generic: Approve / Reject / Choice → Layer 1（P7 决策分层）
+  - heading "当前研发" [level=2]
+  - generic: 产品 / 需求
+  - generic: 已确认（王琳）
+  - generic: 已完成
+  - generic: 架构
+  - generic: 已确认（林涛）
+  - generic: 已完成
+  - generic: Runtime
+  - generic: 已完成
+  - generic: 已完成
+  - generic: Frontend Adapter
+  - generic: 80% · 联调中（周岚）
+  - generic: 工作中
+  - generic: Test
+  - generic: 回归等待联调（赵敏 · waiting）
+  - generic: 阻塞
+  - generic: Review / 发布门禁
+  - generic: 待回归（孙浩）
+  - generic: 空闲
+  - heading "当前 Blocker 与需要你" [level=2]
+  - generic: 回归测试被联调阻塞（waiting ≠ idle）
+  - generic: 赵敏 · Curis 研发
+  - generic: 阻塞
+  - heading "团队运转" [level=2]
+  - generic: 默认流程 · A→B 只表示默认下一责任，不是强制 DAG
+  - generic: 产品
+  - generic: →
+  - generic: 架构
+  - generic: →
+  - generic: 开发
+  - generic: →
+  - generic: 测试
+  - heading "工作区" [level=2]
+  - generic: 点击员工展开对话 · 点击姓名进员工详情
+  - generic: 孙
+  - generic: 孙浩
+  - generic: Workspace 负责人 · Leader
+  - generic: 工作中 · 联调收口与发布门禁
+  - generic: 统筹版本节奏、联调收口与发布质量
+  - generic: 林
+  - generic: 林涛
+  - generic: 研发部部长 / Tech Lead · Leader
+  - generic: 工作中 · 登录模块 v1.4 发布检查
+  - generic: 对研发 Business 的交付质量与版本节奏负责
+  - generic: 王
+  - generic: 王琳
+  - generic: 产品经理
+  - generic: 空闲
+  - generic: 需求澄清与验收标准
+  - generic: 周
+  - generic: 周岚
+  - generic: 开发工程师
+  - generic: 工作中 · 登录接口联调
+  - generic: 登录接口联调与异常分支修复
+  - generic: 赵
+  - generic: 赵敏
+  - generic: QA
+  - generic: 阻塞 · 等待联调完成后回归
+  - generic: 测试验证与质量证据
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你
+- generic "设计测试工具 — 非产品 UI":
+  - generic: STATE · DESIGN TOOL
+  - combobox:
+    - option "normal" [selected]
+    - option "emptyFirst"
+    - option "working"
+    - option "error"

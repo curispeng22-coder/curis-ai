@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "Default hides entire conversation",
+    "Employee Bar present",
+    "No idle jargon",
+    "Selection opens discussion",
+    "Selection chip retained",
+    "Book and chapter",
+    "Draft version",
+    "Assistant visually subdued",
+    "Discussion below Employee Bar",
+    "Collapse hides all discussion",
+    "Reopen preserves input",
+    "Returned result with collapsed conversation",
+    "Candidate in Main",
+    "Employee meaningful result status",
+    "Reviewer in review result",
+    "Holder unchanged",
+    "Author choice remains functional",
+    "Same discussion retained",
+    "Historical selection not silently rewritten",
+    "Separate Company assistant identity",
+    "Console and page errors zero"
+  ],
+  "errors": [],
+  "kind": "local HTML interaction only"
+}

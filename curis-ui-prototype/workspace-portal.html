@@ -1,0 +1,1349 @@
+<!doctype html>
+<html lang="zh-CN" class="dark" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <script src="_system/theme.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作空间 · Curis</title>
+    <style id="theme-vars">
+:root {
+  /* Single source of truth = _system/tokens.css (--ui-*).
+     All legacy / shadcn / brand / status tokens below are ALIASES to --ui-*. */
+
+  /* Semantic (canvas head contract) */
+  --background: var(--ui-bg);
+  --foreground: var(--ui-text);
+  --card: var(--ui-surface);
+  --card-foreground: var(--ui-text);
+  --popover: var(--ui-surface-2);
+  --popover-foreground: var(--ui-text);
+  --primary: var(--ui-action-primary-bg);
+  --primary-foreground: var(--ui-action-primary-fg);
+  --secondary: var(--ui-surface-2);
+  --secondary-foreground: var(--ui-text);
+  --muted: var(--ui-text-2);
+  --muted-foreground: var(--ui-text-3);
+  --accent: var(--ui-accent);
+  --accent-foreground: var(--ui-action-primary-fg);
+  --destructive: var(--ui-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--ui-line);
+  --input: var(--ui-line);
+  --ring: var(--ui-accent);
+
+  /* Legacy base surfaces */
+  --bg-base-default: var(--ui-bg);
+  --bg-base-secondary: var(--ui-surface);
+  --bg-base-tertiary: var(--ui-surface-2);
+  --bg-tooltip: var(--ui-surface-2);
+  --bg-menu: var(--ui-surface-2);
+  --bg-invert: var(--ui-surface-2);
+  --bg-invert-hover: var(--ui-surface-2);
+  --bg-overlay-l1: var(--ui-surface-2);
+  --bg-overlay-l2: var(--ui-surface-2);
+  --bg-overlay-l3: var(--ui-surface-2);
+  --bg-overlay-l4: var(--ui-surface-2);
+
+  /* Brand ramp -> accent (frozen system has no brand ramp) */
+  --brand-100: var(--ui-accent);
+  --brand-200: var(--ui-accent);
+  --brand-300: var(--ui-accent);
+  --brand-400: var(--ui-accent);
+  --brand-500: var(--ui-accent);
+  --brand-600: var(--ui-action-primary-hover);
+  --brand-700: var(--ui-accent);
+  --brand-800: var(--ui-accent);
+  --brand-900: var(--ui-action-primary-hover);
+
+  /* Text */
+  --text-default: var(--ui-text);
+  --text-default-hover: var(--ui-text);
+  --text-secondary: var(--ui-text-2);
+  --text-secondary-hover: var(--ui-text);
+  --text-tertiary: var(--ui-text-3);
+  --text-disabled: var(--ui-text-3);
+  --text-onbrand: var(--ui-action-primary-fg);
+  --text-brand: var(--ui-accent);
+  --text-brand-hover: var(--ui-accent);
+  --icon-default: var(--ui-text);
+  --icon-secondary: var(--ui-text-2);
+  --icon-tertiary: var(--ui-text-3);
+  --icon-brand: var(--ui-accent);
+
+  /* Borders */
+  --border-neutral-l1: var(--ui-line);
+  --border-neutral-l2: var(--ui-line);
+  --border-neutral-l3: var(--ui-line);
+  --border-contrast: var(--ui-text);
+  --border-brand: var(--ui-accent);
+
+  /* Status semantics -> frozen --ui-* */
+  --status-error: var(--ui-danger);
+  --status-error-surface: rgba(229, 115, 115, 0.18);
+  --status-warning: var(--ui-warning);
+  --status-warning-surface: rgba(216, 154, 58, 0.18);
+  --status-alert: var(--ui-warning);
+  --status-alert-surface: rgba(216, 154, 58, 0.18);
+  --status-success: var(--ui-success);
+  --status-success-surface: rgba(63, 207, 134, 0.18);
+  --status-primary: var(--ui-accent);
+  /* was blue rgba(53,121,255,.18); conform to frozen green accent */
+  --status-primary-surface: rgba(50, 240, 140, 0.18);
+
+  /* Type scale (discrete Curis scale; kept as literals) */
+  /* Line heights (kept as literals) */
+  --leading-xs: 14px;
+  --leading-sm: 16px;
+  --leading-md: 18px;
+  --leading-base: 20px;
+  --leading-lg: 24px;
+  --leading-xl: 28px;
+  --leading-2xl: 32px;
+  --leading-3xl: 36px;
+  --leading-4xl: 44px;
+
+  /* Spacing (kept as literals) */
+  --space-0: 0;
+  --space-2: 2px;
+  --space-4: var(--ui-sp-1);
+  --space-6: var(--ui-sp-2);
+  --space-8: var(--ui-sp-2);
+  --space-10: var(--ui-sp-2);
+  --space-12: var(--ui-sp-3);
+  --space-14: var(--ui-sp-3);
+  --space-16: var(--ui-sp-4);
+  --space-20: var(--ui-sp-5);
+  --space-24: var(--ui-sp-6);
+  --space-32: var(--ui-sp-7);
+  --space-40: var(--ui-sp-8);
+  --space-64: calc(var(--ui-sp-8) + var(--ui-sp-4));
+
+  /* Radius / elevation / layout (aliases + literals) */
+  --radius-xs: var(--ui-r-xs);
+  --radius-sm: var(--ui-r-sm);
+  --radius-md: var(--ui-r-sm);
+  --radius-lg: var(--ui-r-md);
+  --radius-xl: var(--ui-r-md);
+  --radius-full: var(--ui-r-pill);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+  --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+  --sidebar-width: var(--ui-sidebar-w);
+  --drawer-width: 390px;
+  --topbar-height: var(--ui-topbar-h);
+  --palette-width: 160px;
+  --config-width: 280px;
+
+  --font-body: var(--ui-font);
+  --font-heading: var(--ui-font);
+  --font-mono: var(--ui-mono);
+}
+
+
+
+
+
+/* Curis Visual Design System v1.0 — Tailwind v4 theme bridge
+   Semantic tokens + legacy page tokens for high-fidelity pages. */
+
+
+
+  /* @theme bridge removed: Tailwind CDN dropped in P0-3; --color-* unused */
+
+    </style>        <style id="legacy-base">
+      body { background: var(--background); color: var(--foreground); }
+      td, th { overflow-wrap: break-word; word-break: break-all; word-break: auto-phrase; }
+      th { white-space: nowrap; }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body data-assistant-context="工作空间门户">
+
+<div class="app" role="application" aria-label="Curis 工作空间入口">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      Curis
+    </div>
+    <nav class="nav-list" aria-label="主导航">
+      <div class="nav-item" tabindex="0">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">◈</span>
+          CEO 工作台
+        </span>
+      </div>
+      <div class="nav-item" tabindex="0">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">◉</span>
+          经营
+        </span>
+      </div>
+      <div class="nav-item" tabindex="0">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">◎</span>
+          业务
+        </span>
+      </div>
+      <div class="nav-item" tabindex="0">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">◐</span>
+          公司
+        </span>
+      </div>
+      <div class="nav-item active" tabindex="0" aria-current="page">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">◑</span>
+          工作空间
+        </span>
+        <span class="nav-badge">1</span>
+      </div>
+      <div style="flex:1"></div>
+      <div class="nav-item" tabindex="0">
+        <span class="nav-left">
+          <span class="nav-icon" aria-hidden="true">⦿</span>
+          设置
+        </span>
+      </div>
+    </nav>
+
+      <div class="status">在线 · 已同步 1 分钟前</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span>Curis</span>
+        <span class="sep" aria-hidden="true">/</span>
+        <span class="current">工作空间</span>
+      </div>
+      <div class="topbar-right">
+        <span><span class="sync-dot" aria-hidden="true"></span>同步中</span>
+        <span>Assistant 在线</span>
+        <span data-curis-theme-label>主题：跟随系统</span>
+      </div>
+    </header>
+
+    <!-- Scrollable content -->
+    <div class="content-scroll">
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-title-wrap">
+          <h1>工作空间</h1>
+          <p>业务交付的真实空间。查看运行状态、进入 运行现场 或调整 装修台 搭建方案。</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-16)">
+          <div class="summary-tabs" role="tablist" aria-label="工作空间 分类">
+            <button class="tab-btn active" role="tab" aria-selected="true" data-tab="running" tabindex="0" data-dom-id=".tab-btn">
+              运行中
+              <span class="count">3</span>
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="building" tabindex="0" data-dom-id=".tab-btn">
+              装修中
+              <span class="count">0</span>
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="archived" tabindex="0" data-dom-id=".tab-btn">
+              已归档
+              <span class="count">0</span>
+            </button>
+          </div>
+          <a class="btn btn-primary" id="btn-new-workspace" href="workspace-studio.html" data-dom-id="#btn-new-workspace">
+            <span aria-hidden="true">+</span>
+            新建工作空间
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="quick-stats" aria-label="关键指标">
+        <article class="stat-card">
+          <div class="label">活跃周期</div>
+          <div class="value">3</div>
+          <div class="meta ok">本周 3 个 Cycle 在运行</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">待 CEO 验收</div>
+          <div class="value">1</div>
+          <div class="meta warn">软件开发 v0.2-sprint-3</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">阻塞 工作空间</div>
+          <div class="value">1</div>
+          <div class="meta block">小红书运营 · 平台授权</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">最近证据</div>
+          <div class="value">2</div>
+          <div class="meta">CI pass · 2 分钟前</div>
+        </article>
+      </div>
+
+      <!-- Tab panels -->
+      <section id="panel-running" class="tab-panel active" role="tabpanel" aria-labelledby="tab-running">
+        <h2 class="section-title">
+          运行中
+          <span class="hint">3 个 工作空间 正在交付业务结果</span>
+        </h2>
+        <div class="workspace-grid">
+          <!-- Card 1: Software Development -->
+          <article class="workspace-card attention">
+            <div class="card-top">
+              <div>
+                <div class="card-title">软件开发 工作空间</div>
+                <div class="card-type">业务：Curis 自研</div>
+              </div>
+              <span class="pill pill-attention">Attention</span>
+            </div>
+            <div class="card-fields">
+              <div class="field">
+                <span class="field-label">当前周期</span>
+                <span class="field-value mono">v0.2-sprint-3</span>
+              </div>
+              <div class="field">
+                <span class="field-label">下一检查点</span>
+                <span class="field-value">2026-08-03 18:00</span>
+              </div>
+              <div class="block-line warn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                阻塞：测试环境授权待配置
+              </div>
+              <div class="field">
+                <span class="field-label">外部结果</span>
+                <div class="evidence-line">
+                  <span class="ok">✓ CI pass</span>
+                  <span>/</span>
+                  <span>CEO 验收待确认</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-runtime" type="button" data-runtime-page="workspace-runtime-software.html" data-dom-id=".btn-runtime">进入 运行现场</button>
+              <a class="btn btn-secondary btn-studio" href="workspace-studio.html" data-dom-id=".btn-studio">查看搭建方案</a>
+            </div>
+          </article>
+
+          <!-- Card 2: Content Growth -->
+          <article class="workspace-card blocked">
+            <div class="card-top">
+              <div>
+                <div class="card-title">小红书运营 工作空间</div>
+                <div class="card-type">业务：小红书运营</div>
+              </div>
+              <span class="pill pill-blocked">Blocked</span>
+            </div>
+            <div class="card-fields">
+              <div class="field">
+                <span class="field-label">当前周期</span>
+                <span class="field-value mono">week-32</span>
+              </div>
+              <div class="field">
+                <span class="field-label">下一检查点</span>
+                <span class="field-value muted">等待平台授权后启动</span>
+              </div>
+              <div class="block-line">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                阻塞：平台授权未配置
+              </div>
+              <div class="field">
+                <span class="field-label">外部结果</span>
+                <div class="evidence-line">
+                  <span class="pending">− 等待授权与首篇发布</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-runtime" type="button" data-runtime-page="workspace-runtime-xhs.html" data-dom-id=".btn-runtime">进入 运行现场</button>
+              <a class="btn btn-secondary btn-studio" href="workspace-studio.html" data-dom-id=".btn-studio">查看搭建方案</a>
+            </div>
+          </article>
+
+          <!-- Card 3: Short Video -->
+          <article class="workspace-card ontrack">
+            <div class="card-top">
+              <div>
+                <div class="card-title">抖音 / TikTok 运营 工作空间</div>
+                <div class="card-type">业务：抖音 / TikTok 运营</div>
+              </div>
+              <span class="pill pill-ontrack">On Track</span>
+            </div>
+            <div class="card-fields">
+              <div class="field">
+                <span class="field-label">当前周期</span>
+                <span class="field-value">创作中</span>
+              </div>
+              <div class="field">
+                <span class="field-label">下一检查点</span>
+                <span class="field-value">2026-08-02 14:00</span>
+              </div>
+              <div class="field">
+                <span class="field-label">AI 岗位</span>
+                <span class="field-value muted">内容策略 · 脚本 · 剪辑 · 数据复盘</span>
+              </div>
+              <div class="field">
+                <span class="field-label">外部结果</span>
+                <div class="evidence-line">
+                  <span class="pending">− 待首条内容发布与数据回传</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-runtime" type="button" data-runtime-page="workspace-runtime-shortvideo.html" data-dom-id=".btn-runtime">进入 运行现场</button>
+              <a class="btn btn-secondary btn-studio" href="workspace-studio.html" data-dom-id=".btn-studio">查看搭建方案</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="panel-building" class="tab-panel" role="tabpanel" aria-labelledby="tab-building" hidden>
+        <h2 class="section-title">
+          装修中
+          <span class="hint">0 个 工作空间 正在 搭建方案 设计或等待审批</span>
+        </h2>
+        <div class="empty-state">
+          <div class="icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
+          </div>
+          <h3>没有装修中的工作空间</h3>
+          <p>新业务可以从装修台开始设计搭建方案、绑定能力、安排 AI 岗位并运行模拟。</p>
+          <a class="btn btn-secondary" href="workspace-studio.html">
+            <span aria-hidden="true">+</span>
+            打开装修台
+          </a>
+        </div>
+      </section>
+
+      <section id="panel-archived" class="tab-panel" role="tabpanel" aria-labelledby="tab-archived" hidden>
+        <h2 class="section-title">
+          已归档
+          <span class="hint">历史 工作空间 与已关闭业务周期</span>
+        </h2>
+        <div class="empty-state">
+          <div class="icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+          </div>
+          <h3>暂无归档 工作空间</h3>
+          <p>已关闭或暂停的工作空间会出现在这里，保留运行历史与学习记录。</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  (function () {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    const toast = document.getElementById('toast');
+    let toastTimer = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function switchTab(tabId) {
+      tabs.forEach(btn => {
+        const active = btn.dataset.tab === tabId;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', String(active));
+        btn.setAttribute('tabindex', active ? '0' : '-1');
+      });
+      panels.forEach(panel => {
+        const active = panel.id === 'panel-' + tabId;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+      });
+    }
+
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    /* P0-4：原「装修台」模态是 workspace-studio.html 的重复副本，且带
+       role=dialog + aria-modal=true 却无焦点陷阱，会锁死屏幕阅读器。
+       按 P0-5 路线 B 的一致做法改为真实页面跳转，模态整段移除。 */
+
+    // Card action buttons — navigate to demo runtime / studio pages
+    document.querySelectorAll('.btn-runtime').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = btn.dataset.runtimePage || 'workspace-runtime-shortvideo.html';
+      });
+    });
+  })();
+</script>
+
+
+    <style>
+    /* ────────────────────────────────────────────────
+       Curis 工作空间 Portal / 工作空间入口
+       Tokens: Curis Visual Design System v1.0 (TRAE dark)
+       ──────────────────────────────────────────────── */
+
+    
+
+    * { box-sizing: border-box; }
+    html { margin: 0; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--ui-bg);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-neutral-l3); }
+
+    /* App shell */
+    .app {
+      width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      background: var(--bg-base-default);
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-base-secondary);
+      border-right: 1px solid var(--border-neutral-l1);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-16) var(--space-12);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-8) var(--space-10);
+      margin-bottom: var(--space-24);
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      letter-spacing: -0.01em;
+    }
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      box-shadow: none;
+    }
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      flex: 1;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-8);
+      padding: var(--space-8) var(--space-10);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .nav-item:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+    .nav-item.active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+    .nav-item .nav-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      color: currentColor;
+    }
+    .nav-badge {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 var(--ui-sp-1);
+      border-radius: var(--radius-full);
+      background: var(--status-error-surface);
+      color: var(--status-error);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+    }
+    .nav-badge.muted {
+      background: var(--bg-overlay-l3);
+      color: var(--text-tertiary);
+    }
+    /* Main area */
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background:
+        
+        
+        var(--bg-base-default);
+    }
+
+    /* Topbar */
+    .topbar {
+      height: var(--ui-topbar-h);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-24);
+      background: rgba(26, 27, 29, 0.72);
+      backdrop-filter: blur(10px);
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+    .topbar-left .sep {
+      color: var(--ui-text-3);
+    }
+    .topbar-left .current {
+      color: var(--text-default-hover);
+      font-weight: 500;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+    }
+    .sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      display: inline-block;
+      margin-right: var(--space-4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Content scroll */
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-32) var(--space-32) var(--space-40);
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-24);
+      margin-bottom: var(--space-24);
+    }
+    .page-title-wrap h1 {
+      margin: 0 0 var(--space-8);
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      line-height: var(--leading-3xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-default-hover);
+    }
+    .page-title-wrap p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+    }
+
+    /* Summary tabs */
+    .summary-tabs {
+      display: inline-flex;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-md);
+    }
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-6) var(--space-12);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+    .tab-btn.active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+    .tab-btn .count {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 var(--ui-sp-1);
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+    .tab-btn.active .count {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      height: 32px;
+      padding: 0 var(--space-12);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+    .btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+    .btn-secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l3); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover { color: var(--text-default-hover); background: var(--bg-overlay-l2); }
+
+    /* Quick stats */
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-16);
+      margin-bottom: var(--space-32);
+    }
+    .stat-card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-neutral-l2);
+    }
+    .stat-card .label {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+    }
+    .stat-card .value {
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    .stat-card .meta {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-top: var(--space-4);
+    }
+    .stat-card .meta.warn { color: var(--status-warning); }
+    .stat-card .meta.block { color: var(--status-error); }
+    .stat-card .meta.ok { color: var(--status-success); }
+
+    /* Section title */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      margin: 0 0 var(--space-16);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    .section-title .hint {
+      color: var(--text-tertiary);
+      font-weight: 400;
+      font-size: var(--text-sm);
+    }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* 工作空间 grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-16);
+    }
+
+    /* 工作空间 card */
+    .workspace-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-left: 3px solid transparent;
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      background: var(--bg-base-secondary);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .workspace-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-neutral-l2);
+      background: var(--bg-base-tertiary);
+    }
+    .workspace-card.ontrack { border-left-color: var(--status-success); }
+    .workspace-card.attention { border-left-color: var(--status-warning); }
+    .workspace-card.blocked { border-left-color: var(--status-error); }
+    .workspace-card.unknown { border-left-color: var(--text-tertiary); }
+
+    .workspace-card .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+    .workspace-card .card-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      line-height: var(--leading-lg);
+    }
+    .workspace-card .card-type {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-top: var(--space-4);
+    }
+
+    /* Status pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 20px;
+      padding: 0 var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    .pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+    }
+    .pill-ontrack { background: var(--status-success-surface); color: var(--status-success); }
+    .pill-ontrack::before { background: var(--status-success); }
+    .pill-attention { background: var(--status-warning-surface); color: var(--status-warning); }
+    .pill-attention::before { background: var(--status-warning); }
+    .pill-blocked { background: rgba(246, 90, 90, 0.18); color: #ff8080; }
+    .pill-blocked::before { background: #ff8080; }
+    .pill-unknown { background: var(--bg-overlay-l3); color: var(--text-tertiary); }
+    .pill-unknown::before { background: var(--text-tertiary); }
+    .pill-decision { background: var(--status-primary-surface); color: var(--status-primary); }
+    .pill-decision::before { background: var(--status-primary); }
+
+    /* Card body */
+    .card-fields {
+      display: grid;
+      gap: var(--space-8);
+      margin-bottom: var(--space-16);
+      flex: 1;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .field-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+    }
+    .field-value {
+      color: var(--text-default);
+      font-size: var(--text-md);
+      line-height: var(--leading-md);
+    }
+    .field-value.muted { color: var(--text-secondary); }
+    .field-value.mono { font-family: var(--font-mono); }
+
+    .block-line {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-10);
+      border-radius: var(--radius-md);
+      background: var(--status-error-surface);
+      color: #ff9f9f;
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+    }
+    .block-line.warn {
+      background: var(--status-warning-surface);
+      color: #e6a85c;
+    }
+    .block-line.neutral {
+      background: var(--bg-overlay-l1);
+      color: var(--text-secondary);
+    }
+    .block-line svg {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .evidence-line {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+    .evidence-line .ok { color: var(--status-success); }
+    .evidence-line .pending { color: var(--text-tertiary); }
+
+    /* Card actions */
+    .card-actions {
+      display: flex;
+      gap: var(--space-8);
+      margin-top: auto;
+      padding-top: var(--space-14);
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+    .card-actions .btn { flex: 1; }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-12);
+      padding: var(--space-64) var(--space-32);
+      border: 1px dashed var(--border-neutral-l2);
+      border-radius: var(--radius-lg);
+      background: var(--bg-overlay-l1);
+      text-align: center;
+    }
+    .empty-state .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background: var(--bg-base-tertiary);
+      display: grid;
+      place-items: center;
+      color: var(--text-tertiary);
+    }
+    .empty-state h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    .empty-state p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      max-width: 420px;
+    }
+
+    /* 装修台 modal */
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 300;
+      padding: var(--space-10) var(--space-14);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l2);
+      color: var(--text-default);
+      font-size: var(--text-md);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Focus */
+    *:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+<script>
+/**
+ * Curis Hi-Fi Prototype — shared interaction layer
+ * Handles cross-page navigation, active nav state, toast feedback,
+ * and common button affordances for the click-through demo.
+ */
+(function () {
+  'use strict';
+
+  // ── Navigation map (label text → page file)
+  const NAV_MAP = {
+    'CEO 工作台': 'ceo-desk.html',
+    'CEO 办公桌': 'ceo-desk.html',
+    '经营': 'operating.html',
+    '经营概览': 'operating.html',
+    '业务': 'business.html',
+    '工作空间': 'business.html',
+    '公司': 'ai-organization.html',
+    'AI 团队': 'ai-organization.html',
+    '工作空间': 'workspace-portal.html',
+    '决策': 'decision-room.html',
+    '决策室': 'decision-room.html',
+    '设置': '#',
+    '帮助': '#',
+    '帮助与反馈': '#',
+    '员工目录': '#',
+    '能力中心': '#'
+  };
+
+  // ── Wire sidebar nav items
+  function initNavigation() {
+    const currentPage = (window.location.pathname.split('/').pop() || 'ceo-desk.html');
+
+    document.querySelectorAll('.sidebar .nav-item, aside.sidebar .nav-item, .nav-list .nav-item').forEach(item => {
+      // Skip if already a link
+      if (item.tagName === 'A') return;
+
+      // Determine target from data-href or text content
+      let target = item.dataset.href;
+      if (!target) {
+        const text = item.textContent.trim().split(/\s+/).join(' ');
+        for (const [label, href] of Object.entries(NAV_MAP)) {
+          if (text.includes(label)) {
+            target = href;
+            break;
+          }
+        }
+      }
+
+      if (target) {
+        item.style.cursor = 'pointer';
+        item.setAttribute('role', 'link');
+        item.setAttribute('tabindex', '0');
+        item.dataset.href = target;
+
+        const navigate = () => {
+          if (target === '#') {
+            showToast('该入口将在设置中心接入；当前工作上下文已保留');
+            return;
+          }
+          window.location.href = target;
+        };
+
+        item.addEventListener('click', navigate);
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate();
+          }
+        });
+      }
+
+      // Active state
+      const href = item.dataset.href;
+      if (href && href !== '#') {
+        const active = currentPage === href || currentPage.endsWith('/' + href);
+        item.classList.toggle('active', active);
+      }
+    });
+  }
+
+  // ── Toast
+  function showToast(message, duration = 2200) {
+    let toast = document.getElementById('proto-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'proto-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = `
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-base-secondary, #222427);
+        color: var(--text-default-hover, #f5f9fe);
+        border: 1px solid var(--border-neutral-l2, rgba(224,226,242,.16));
+        padding: var(--ui-sp-2) var(--ui-sp-4);
+        border-radius: var(--ui-r-sm);
+        font-size: var(--ui-fs-2);
+        box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+        z-index: 9999;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration);
+  }
+
+  // ── Button click feedback (where no specific handler exists)
+  function initButtonFeedback() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button, .btn');
+      if (!btn) return;
+
+      // Specific Curis handlers own marked actions; only fallback for unbound controls.
+      if (btn.dataset.curisHandled === 'true') return;
+      // If button already has onclick or bound listener, skip generic feedback
+      if (btn.onclick) return;
+      if (btn.closest('a')) return;
+
+      const label = btn.textContent.trim();
+      if (!label) return;
+
+      // Capture a few generic actions across pages
+      if (/^(决策|查看|调查|委派|暂缓|修复问题|运行模拟|提交审批|批准|拒绝|延后|要求修改|预览|编辑|发送|保存|查看影响)$/.test(label)) {
+        e.preventDefault();
+        showToast(`${label}已记录，CEO 助理会继续跟进`);
+      }
+    });
+  }
+
+  // ── Expose globals for inline onclick handlers that may be missing
+  window.showToast = showToast;
+
+  // ── Auto-init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initButtonFeedback();
+    });
+  } else {
+    initNavigation();
+    initButtonFeedback();
+  }
+})();
+
+</script>
+  <script src="_system/canonical-nav.js"></script><script src="curis-prototype.js"></script>
+  <style id="curis-frozen-patch">
+  /* Frozen alignment patch — single source = _system/tokens.css (--ui-*) */
+  
+
+  .nav-group-label {
+    font-size: var(--ui-fs-1); line-height: 1.45; font-weight: 400;
+    color: var(--text-tertiary); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); letter-spacing: 0.02em;
+  }
+  .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+  .theme-btn {
+    border: 1px solid var(--ui-line); background: var(--ui-surface-2);
+    color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2);
+    font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease;
+  }
+  .theme-btn:hover { color: var(--ui-text); }
+  .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+
+  .topbar { background: var(--ui-surface); }
+  .sidebar { background: var(--ui-surface); }
+  </style>
+  <script>
+  (function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'theme-btn';
+      b.setAttribute('data-curis-theme', t);
+      b.textContent = labels[t];
+      sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar') || document.querySelector('.sidebar');
+    if (host) host.appendChild(sw);
+  })();
+  </script>
+</body>
+</html>

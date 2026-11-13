@@ -1,0 +1,137 @@
+[
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/AiToEarn-head.json",
+    "bytes": 118,
+    "sha256": "595d3e0d95112e4540ee02690833ef3212f03bdd75cf4e20d5d6d36bf3cd58e5"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/CURIS_AITO_EARN_SOCIAL_PLATFORM_EXECUTION_PROVIDER_REVIEW.md",
+    "bytes": 97044,
+    "sha256": "0d1551fd5a89f1ae3bbb9f34cb21175a15abbbf4aa23c3a704cd5003f53a030f"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/aitoearn-openclaw-plugin-head.json",
+    "bytes": 134,
+    "sha256": "a91ac64cbde030e0f61a27aab1d46f1971745dd2d6bd28edc3161eb8fca901af"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_get-api-v2-channels-accounts-account-id-auth-status.md",
+    "bytes": 3542,
+    "sha256": "384623442c2e430782b8c7f831291ecb50f5976441fb64f86f4f3dbad4ef2db6"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_get-api-v2-channels-accounts.md",
+    "bytes": 7700,
+    "sha256": "98bc45f71266b8d96d3cb90cd4086a6040f6e4487ebb3e31f5a7d54806f35dbb"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_get-api-v2-channels-platforms.md",
+    "bytes": 12466,
+    "sha256": "468e156f51c94935108f14618f803bbc926a197b0b72024cabf230fb41d959b8"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_get-api-v2-channels-publish-records-record-id-user-action.md",
+    "bytes": 6827,
+    "sha256": "b168fba439fed0c5b14f9107bea26ad469684bc8664b1b24b6e82b77c1c47755"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_get-api-v2-channels-works-platform-platform-work-id-analytics.md",
+    "bytes": 5257,
+    "sha256": "2a64e5ed243e7d58015c70da243a26d1721c745a20876296a3ca6c1fa648956b"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_post-api-v2-channels-publish-flows.md",
+    "bytes": 95497,
+    "sha256": "5e8a60fc1fb1a347314d48afb1b3885b247adc9a5d9b5f8b5b57c0fb9c29b252"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/api-reference_post-api-v2-channels-publish-tasks-task-id-retry.md",
+    "bytes": 3672,
+    "sha256": "fb4982160c8717dd7838322e54a1f06258dc521bd2c9b797218b01d0f32a160f"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/docs-manifest.json",
+    "bytes": 1861,
+    "sha256": "85332a375439d3ab300fe84504d86389bd90b9396c34c763a7cd7ecc0b7dec7b"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/01-account-platform-state.png",
+    "bytes": 68058,
+    "sha256": "500eaad09e648558eba6009a1f74796c9bbe59915dcc0a17fb5bc0c6f9266334"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/01-account-platform-state.txt",
+    "bytes": 18779,
+    "sha256": "aa1e662e0e1916b62e68e3e24dba24e4c38135438b43593c926b0419fd368435"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/02-publish-history.txt",
+    "bytes": 5514,
+    "sha256": "eedc218e5a1ec9770be4ce31078cda2d5b46f94521e04b53a322db200c8e1b34"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/03-publish-editor.txt",
+    "bytes": 5541,
+    "sha256": "276550ce17b248c4763997171daac068f527d386b72696d4733e91be8ac19e98"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/04-analytics-state.png",
+    "bytes": 50592,
+    "sha256": "bd4726628f4b2d4bfe5abab6beca78c681288a7596c0d71254882ec9cfbc038a"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/04-analytics-state.txt",
+    "bytes": 2331,
+    "sha256": "25b6188d4c8c1e9f1bedccce78ef7aeda96827adca65857044a5d0525ee7b15a"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/evidence/05-engagement-entry.txt",
+    "bytes": 3943,
+    "sha256": "5397e9d39a88434b9f4cc4bb2d56e1ce223acdeb7b2d3e8492e79ae67100ccac"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/input-hashes.json",
+    "bytes": 662,
+    "sha256": "edfa0221548a70301aa388452350c7f052d8be6c18c38955e576ea2efb96e0fa"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/issue-search.json",
+    "bytes": 88662,
+    "sha256": "2f6ea3200e82d6f6e56036b59b30b36b9582c80276d1d2bff292589d07092aef"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/official-docs-index.txt",
+    "bytes": 28269,
+    "sha256": "5304e220f7bb8659b2770a2e644ef09fed8ea1d857dfddb7f59484b8cb9c3e8f"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/pr-587-status.json",
+    "bytes": 248,
+    "sha256": "d2d1b48fc9e3f077b7ce63040c608ae9a2970a58f4bf4ed7dcc74fedc3cb491e"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/selected-issue-evidence.json",
+    "bytes": 8722,
+    "sha256": "74034150a95a28e342bf8afade3c785044f1147dc2c7921ac97da537e8c6c587"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/source-mcp-tool-catalog.json",
+    "bytes": 16909,
+    "sha256": "58ed7902f16dd32ae763f7817dcc270efb847cd4818551347fbf50b54e3cefa2"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/zh_use_asset-upload_index.md",
+    "bytes": 4922,
+    "sha256": "14b81dc8683ef3983d58d4b8038e4ed6c692395950feb1cc309148eb543015ac"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/zh_use_plugin-publish_index.md",
+    "bytes": 20413,
+    "sha256": "045b3a5ebae822ee0a9acab6dc7fe7b23d7616facba917c450f93df84f9dc1d6"
+  },
+  {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/zh_use_publish-flow_index.md",
+    "bytes": 8562,
+    "sha256": "131555c80c472635ca37b4ed5b620b1c1105584466862fe024149e4a78897242"
+  }
+]

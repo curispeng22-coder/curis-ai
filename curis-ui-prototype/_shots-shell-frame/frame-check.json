@@ -1,0 +1,824 @@
+{
+  "url": "file:///Users/yy/Documents/Curis AI Workspace/curis-ui-prototype/shell-frame-1440x900.html",
+  "checks": [
+    {
+      "name": "台面为 1440 × 900",
+      "ok": true,
+      "detail": "1440×900"
+    },
+    {
+      "name": "默认只有 Navigation + Main",
+      "ok": true,
+      "detail": "ctx.hidden=true util.hidden=true"
+    },
+    {
+      "name": "Main 吃满其余宽度 (1440-220=1220)",
+      "ok": true,
+      "detail": "main=1220"
+    },
+    {
+      "name": "一级导航 7 个区域",
+      "ok": true,
+      "detail": "CEO 工作台 / 业务空间 / 组织中心 / 人才与能力 / 经营洞察 / 资料库 / 会议"
+    },
+    {
+      "name": "导航含最近对话入口",
+      "ok": true,
+      "detail": "还没有最近对话"
+    },
+    {
+      "name": "导航底部为用户中心",
+      "ok": true,
+      "detail": "C CEO（你） 公司负责人"
+    },
+    {
+      "name": "Main 区不含业务内容（仅空态）",
+      "ok": true,
+      "detail": "还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+    },
+    {
+      "name": "开关均可达：T1 在导航内，T2/T3 在 Main Header",
+      "ok": true,
+      "detail": "{\"t1\":true,\"t1b\":false,\"t2\":true,\"t3\":true,\"t3b\":false,\"t2Pressed\":\"false\",\"t3Pressed\":\"false\"}"
+    },
+    {
+      "name": "T2 后 Context 可见且 Utility 仍关闭",
+      "ok": true,
+      "detail": "ctx=256 util.hidden=true"
+    },
+    {
+      "name": "Context 宽 256",
+      "ok": true,
+      "detail": "256"
+    },
+    {
+      "name": "Main 仍为最宽并 ≥560",
+      "ok": true,
+      "detail": "main=964"
+    },
+    {
+      "name": "三栏合计 1440",
+      "ok": true,
+      "detail": "220+256+964"
+    },
+    {
+      "name": "Context 有自己的标题与内容",
+      "ok": true,
+      "detail": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+    },
+    {
+      "name": "四栏同时可见",
+      "ok": true,
+      "detail": "nav/ctx/main/util"
+    },
+    {
+      "name": "四栏合计 1440",
+      "ok": true,
+      "detail": "220+256+604+360"
+    },
+    {
+      "name": "Main 仍 ≥560 且为最宽栏",
+      "ok": true,
+      "detail": "main=604"
+    },
+    {
+      "name": "Utility 展开后 T3 转移到 Utility Header",
+      "ok": true,
+      "detail": "{\"t1\":true,\"t1b\":false,\"t2\":true,\"t3\":false,\"t3b\":true,\"t2Pressed\":\"true\",\"t3Pressed\":\"true\"}"
+    },
+    {
+      "name": "Utility 有自己的标题与内容",
+      "ok": true,
+      "detail": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+    },
+    {
+      "name": "打开 Utility 未改变 Context 宽度",
+      "ok": true,
+      "detail": "256"
+    },
+    {
+      "name": "Shell 仍只有四栏（无第五栏）",
+      "ok": true,
+      "detail": "4"
+    },
+    {
+      "name": "Assistant 为悬浮覆盖，不在四栏内",
+      "ok": true,
+      "detail": "{\"x\":1307,\"y\":887,\"w\":147,\"insideShell\":false,\"parent\":\"stage\",\"position\":\"absolute\",\"z\":\"40\"}"
+    },
+    {
+      "name": "收起 Context 不影响 Utility",
+      "ok": true,
+      "detail": "ctx.hidden=true util=360"
+    },
+    {
+      "name": "收起后 Main 变宽且仍 ≥560",
+      "ok": true,
+      "detail": "main=860"
+    },
+    {
+      "name": "合计仍为 1440",
+      "ok": true,
+      "detail": "220+860+360"
+    },
+    {
+      "name": "Utility 最小 320",
+      "ok": true,
+      "detail": "320"
+    },
+    {
+      "name": "Utility 宽度受 320–440 与 Main ≥560 双重约束 (在此布局上限 404)",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "name": "拖拽过程中 Main 不低于 560",
+      "ok": true,
+      "detail": "main=560"
+    },
+    {
+      "name": "导航完全隐藏",
+      "ok": true,
+      "detail": "true"
+    },
+    {
+      "name": "T1 转移到 Main Header 最左",
+      "ok": true,
+      "detail": "{\"t1\":false,\"t1b\":true,\"t2\":true,\"t3\":false,\"t3b\":true,\"t2Pressed\":\"true\",\"t3Pressed\":\"true\"}"
+    },
+    {
+      "name": "Main 吃掉导航宽度并 ≥560",
+      "ok": true,
+      "detail": "main=780"
+    },
+    {
+      "name": "收起导航不改变其他栏",
+      "ok": true,
+      "detail": "ctx.hidden=false util.hidden=false"
+    },
+    {
+      "name": "T1 可恢复导航",
+      "ok": true,
+      "detail": "220"
+    }
+  ],
+  "failed": 0,
+  "steps": [
+    {
+      "id": "01-default",
+      "label": "默认",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 250,
+          "y": 45,
+          "w": 1220,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": true,
+          "t3b": false,
+          "t2Pressed": "false",
+          "t3Pressed": "false"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context — · Main 1220 · Utility —"
+      }
+    },
+    {
+      "id": "02-context",
+      "label": "Nav + Context + Main",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 250,
+          "y": 45,
+          "w": 256,
+          "h": 900,
+          "right": 506,
+          "hidden": false,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 506,
+          "y": 45,
+          "w": 964,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": true,
+          "t3b": false,
+          "t2Pressed": "true",
+          "t3Pressed": "false"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context 256 · Main 964 · Utility —"
+      }
+    },
+    {
+      "id": "03-four",
+      "label": "四栏同开",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 250,
+          "y": 45,
+          "w": 256,
+          "h": 900,
+          "right": 506,
+          "hidden": false,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 506,
+          "y": 45,
+          "w": 604,
+          "h": 900,
+          "right": 1110,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1110,
+          "y": 45,
+          "w": 360,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "true",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context 256 · Main 604 · Utility 360"
+      }
+    },
+    {
+      "id": "04-close-t2",
+      "label": "Nav + Main + Utility",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 250,
+          "y": 45,
+          "w": 860,
+          "h": 900,
+          "right": 1110,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1110,
+          "y": 45,
+          "w": 360,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "false",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context — · Main 860 · Utility 360"
+      }
+    },
+    {
+      "id": "05-resize",
+      "label": "Utility 拖到最窄",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 250,
+          "y": 45,
+          "w": 900,
+          "h": 900,
+          "right": 1150,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1150,
+          "y": 45,
+          "w": 320,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "false",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context — · Main 900 · Utility 320"
+      }
+    },
+    {
+      "id": "05-resize-b",
+      "label": "Utility 拖到最宽",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 250,
+          "y": 45,
+          "w": 256,
+          "h": 900,
+          "right": 506,
+          "hidden": false,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 506,
+          "y": 45,
+          "w": 560,
+          "h": 900,
+          "right": 1066,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1066,
+          "y": 45,
+          "w": 404,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "true",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context 256 · Main 560 · Utility 404"
+      }
+    },
+    {
+      "id": "06-nav-collapsed",
+      "label": "导航收起",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "right": 0,
+          "hidden": true,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 30,
+          "y": 45,
+          "w": 256,
+          "h": 900,
+          "right": 286,
+          "hidden": false,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 286,
+          "y": 45,
+          "w": 780,
+          "h": 900,
+          "right": 1066,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1066,
+          "y": 45,
+          "w": 404,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": " C CEO（你） 公司负责人 ",
+        "toggles": {
+          "t1": false,
+          "t1b": true,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "true",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 0 · Context 256 · Main 780 · Utility 404"
+      }
+    },
+    {
+      "id": "06b-nav-restored",
+      "label": "导航恢复",
+      "probe": {
+        "stage": {
+          "w": 1440,
+          "h": 900
+        },
+        "nav": {
+          "x": 30,
+          "y": 45,
+          "w": 220,
+          "h": 900,
+          "right": 250,
+          "hidden": false,
+          "text": "CURIS CEO 工作台 业务空间 组织中心 人才与能力 经营洞察 资料库 会议 最近对话 还没有最近对话 C CEO（你） 公司负责人"
+        },
+        "ctx": {
+          "x": 250,
+          "y": 45,
+          "w": 256,
+          "h": 900,
+          "right": 506,
+          "hidden": false,
+          "text": "对象上下文 当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。"
+        },
+        "main": {
+          "x": 506,
+          "y": 45,
+          "w": 560,
+          "h": 900,
+          "right": 1066,
+          "hidden": false,
+          "text": "CEO 工作台 · 主工作区 还没有打开任何对象 从左侧导航进入一个区域开始工作。"
+        },
+        "util": {
+          "x": 1066,
+          "y": 45,
+          "w": 404,
+          "h": 900,
+          "right": 1470,
+          "hidden": false,
+          "text": "辅助查看 当前没有可参考的内容 结果、证据与工具在需要时出现在这里。"
+        },
+        "shellChildren": 4,
+        "navItems": 7,
+        "navLabels": [
+          "CEO 工作台",
+          "业务空间",
+          "组织中心",
+          "人才与能力",
+          "经营洞察",
+          "资料库",
+          "会议"
+        ],
+        "recentEmpty": "还没有最近对话",
+        "userCenter": "C CEO（你） 公司负责人",
+        "toggles": {
+          "t1": true,
+          "t1b": false,
+          "t2": true,
+          "t3": false,
+          "t3b": true,
+          "t2Pressed": "true",
+          "t3Pressed": "true"
+        },
+        "crumb": "CEO 工作台",
+        "mainText": "还没有打开任何对象 从左侧导航进入一个区域开始工作。",
+        "ctxText": "当前没有选中对象 选中对象后，这里显示它的身份、规则与可进入的下级。",
+        "utilText": "当前没有可参考的内容 结果、证据与工具在需要时出现在这里。",
+        "assistant": {
+          "x": 1307,
+          "y": 887,
+          "w": 147,
+          "insideShell": false,
+          "parent": "stage",
+          "position": "absolute",
+          "z": "40"
+        },
+        "readout": "Nav 220 · Context 256 · Main 560 · Utility 404"
+      }
+    }
+  ]
+}

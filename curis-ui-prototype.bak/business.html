@@ -1,0 +1,2071 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业务 · Curis</title>
+    <style id="theme-vars">
+/* Curis Visual Design System v1.0 — Tailwind v4 theme bridge
+   Semantic tokens + legacy page tokens for high-fidelity pages. */
+
+:root {
+  /* ── Semantic tokens required by canvas head contract ── */
+  --background: #1a1b1d;
+  --foreground: #d1d3db;
+  --card: #222427;
+  --card-foreground: #d1d3db;
+  --popover: #2a2d31;
+  --popover-foreground: #f5f9fe;
+  --primary: #32f08c;
+  --primary-foreground: #0c0c0d;
+  --secondary: #2a2d31;
+  --secondary-foreground: #f5f9fe;
+  --muted: #9599a6;
+  --muted-foreground: #9599a6;
+  --accent: #387bff;
+  --accent-foreground: #f5f9fe;
+  --destructive: #f65a5a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(224, 226, 242, 0.10);
+  --input: rgba(224, 226, 242, 0.16);
+  --ring: #32f08c;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ── Legacy tokens used by existing high-fidelity pages ── */
+  --bg-base-default: #1a1b1d;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2a2d31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+  --brand-500: #32f08c;
+  --brand-600: #0fdc78;
+  --brand-900: #02743b;
+
+  --text-default: #d1d3db;
+  --text-default-hover: #f5f9fe;
+  --text-secondary: #9599a6;
+  --text-tertiary: #666b75;
+  --text-onbrand: #0c0c0d;
+  --text-brand: #32f08c;
+  --icon-brand: #32f08c;
+
+  --border-neutral-l1: rgba(224, 226, 242, 0.10);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.20);
+  --border-brand: #32f08c;
+
+  --status-error: #f65a5a;
+  --status-error-surface: rgba(246, 70, 70, 0.18);
+  --status-warning: #d27e24;
+  --status-warning-surface: rgba(210, 126, 36, 0.16);
+  --status-success: #33c192;
+  --status-success-surface: rgba(0, 165, 110, 0.18);
+  --status-primary: #387bff;
+  --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+  --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+    </style>
+    <style>
+      /* 当前本机验证范围：软件开发、小红书、抖音 / TikTok。历史实验不进入当前业务版图。 */
+      .recommendation-chips .pause, .recommendation-chips .close { display:none !important; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">C</div>
+      <div class="brand-name">Curis</div>
+    </div>
+    <nav class="nav-list" aria-label="主导航">
+      <div class="nav-item">
+        <span class="nav-icon">◈</span>
+        CEO 工作台
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">◉</span>
+        经营
+      </div>
+      <div class="nav-item active">
+        <span class="nav-icon">◆</span>
+        业务
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">◇</span>
+        公司
+      </div>
+      <div class="nav-item" data-dom-id=".nav-item[data-href='workspace-portal.html']">
+        <span class="nav-icon">□</span>
+        工作空间
+      </div>
+    </nav>
+    <div class="nav-footer">
+      <div class="nav-item">
+        <span class="nav-icon">⚙</span>
+        设置
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">?</span>
+        帮助
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="context-group">
+        <div class="context-item"><strong>Curis</strong></div>
+        <div class="context-sep"></div>
+        <div class="context-item">业务版图</div>
+        <div class="context-sep"></div>
+        <div class="context-item">2026 财年 Q3</div>
+      </div>
+      <div class="status-group">
+        <div class="sync-status">
+          <span class="sync-dot"></span>
+          同步中
+        </div>
+        <div class="lifecycle-badge">Operating</div>
+        <button class="btn btn-secondary btn-sm">问 Assistant</button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">业务</h1>
+          <p class="page-subtitle">CEO 正在经营哪些业务，以及每项业务的真实结果和下一步安排。</p>
+        </div>
+        <div class="portfolio-summary">
+          <div class="summary-item">
+            <div class="summary-value">2</div>
+            <div class="summary-label">运行中</div>
+          </div>
+          <div class="summary-sep"></div>
+          <div class="summary-item">
+            <div class="summary-value">1</div>
+            <div class="summary-label">实验中</div>
+          </div>
+          <div class="summary-sep"></div>
+          <div class="summary-item">
+            <div class="summary-value">0</div>
+            <div class="summary-label">暂停</div>
+          </div>
+          <div class="summary-sep"></div>
+          <div class="summary-item">
+            <div class="summary-value">3</div>
+            <div class="summary-label">总业务数</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar" role="tablist" aria-label="业务过滤">
+        <button class="filter-btn active" data-dom-id=".filter-tab" data-filter="all" role="tab" aria-selected="true">全部</button>
+        <button class="filter-btn" data-dom-id=".filter-tab" data-filter="operating" role="tab" aria-selected="false">运行中</button>
+        <button class="filter-btn" data-dom-id=".filter-tab" data-filter="experiment" role="tab" aria-selected="false">实验中</button>
+        <button class="filter-btn" data-dom-id=".filter-tab" data-filter="paused" role="tab" aria-selected="false">暂停</button>
+      </div>
+
+      <!-- Portfolio Cards -->
+      <div class="cards-grid" id="portfolioGrid">
+        <!-- Software Development -->
+        <article class="biz-card" data-stage="operating" data-id="software-dev" tabindex="0" role="button" aria-label="查看 软件开发 详情">
+          <div class="biz-card-header">
+            <div class="biz-card-top">
+              <div>
+                <h2 class="biz-name">软件开发</h2>
+                <p class="biz-target">为 Curis 自身</p>
+              </div>
+              <span class="stage-pill stage-operating">运行中</span>
+            </div>
+            <div class="health-row">
+              <div class="health-item health-ontrack">
+                <div class="health-label">价值健康</div>
+                <div class="health-value"><span class="health-dot"></span>正常</div>
+              </div>
+              <div class="health-item health-attention">
+                <div class="health-label">执行健康</div>
+                <div class="health-value"><span class="health-dot"></span>需要留意</div>
+              </div>
+            </div>
+          </div>
+          <div class="biz-card-body">
+            <div class="biz-section">
+              <div class="biz-section-title">目标结果</div>
+              <p class="biz-outcome">每两周交付可验收的软件增量，支撑 CEO 经营闭环。</p>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">外部结果</div>
+              <div class="evidence-list">
+                <div class="evidence-item"><span class="evidence-name">本周 commit</span><span class="evidence-value">47</span></div>
+                <div class="evidence-item"><span class="evidence-name">CI 通过率</span><span class="evidence-value">94%</span></div>
+                <div class="evidence-item"><span class="evidence-name">CEO 验收</span><span class="evidence-value">2 / 3</span></div>
+              </div>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">下一检查点</div>
+              <div class="checkpoint"><span>发布 v0.2</span><span class="checkpoint-time">2026-08-03</span></div>
+            </div>
+          </div>
+          <div class="biz-card-footer">
+            <button class="btn btn-primary btn-sm">扩大</button>
+            <button class="btn btn-secondary btn-sm">查看详情</button>
+            <button class="btn btn-ghost btn-sm">暂停</button>
+          </div>
+        </article>
+
+        <!-- Content Growth -->
+        <article class="biz-card" data-stage="operating" data-id="content-growth" tabindex="0" role="button" aria-label="查看 小红书运营 详情">
+          <div class="biz-card-header">
+            <div class="biz-card-top">
+              <div>
+                <h2 class="biz-name">小红书运营</h2>
+                <p class="biz-target">Curis 品牌增长</p>
+              </div>
+              <span class="stage-pill stage-scaling">扩大中</span>
+            </div>
+            <div class="health-row">
+              <div class="health-item health-ontrack">
+                <div class="health-label">价值健康</div>
+                <div class="health-value"><span class="health-dot"></span>正常</div>
+              </div>
+              <div class="health-item health-ontrack">
+                <div class="health-label">执行健康</div>
+                <div class="health-value"><span class="health-dot"></span>正常</div>
+              </div>
+            </div>
+          </div>
+          <div class="biz-card-body">
+            <div class="biz-section">
+              <div class="biz-section-title">目标结果</div>
+              <p class="biz-outcome">通过高质量内容获取精准受众，建立 CEO 决策品牌心智。</p>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">外部结果</div>
+              <div class="evidence-list">
+                <div class="evidence-item"><span class="evidence-name">周阅读</span><span class="evidence-value">+2,400</span></div>
+                <div class="evidence-item"><span class="evidence-name">收藏率</span><span class="evidence-value">8.7%</span></div>
+                <div class="evidence-item"><span class="evidence-name">线索转化</span><span class="evidence-value">12</span></div>
+              </div>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">下一检查点</div>
+              <div class="checkpoint"><span>内容矩阵评审</span><span class="checkpoint-time">2026-08-05</span></div>
+            </div>
+          </div>
+          <div class="biz-card-footer">
+            <button class="btn btn-primary btn-sm">扩大</button>
+            <button class="btn btn-secondary btn-sm">查看详情</button>
+            <button class="btn btn-ghost btn-sm">暂停</button>
+          </div>
+        </article>
+
+        <!-- Short Video Production -->
+        <article class="biz-card" data-stage="experiment" data-id="short-video" tabindex="0" role="button" aria-label="查看 抖音 / TikTok 运营 详情">
+          <div class="biz-card-header">
+            <div class="biz-card-top">
+              <div>
+                <h2 class="biz-name">抖音 / TikTok 运营</h2>
+                <p class="biz-target">短视频增长实验</p>
+              </div>
+              <span class="stage-pill stage-experiment">Experiment</span>
+            </div>
+            <div class="health-row">
+              <div class="health-item health-attention">
+                <div class="health-label">价值健康</div>
+                <div class="health-value"><span class="health-dot"></span>需要留意</div>
+              </div>
+              <div class="health-item health-ontrack">
+                <div class="health-label">执行健康</div>
+                <div class="health-value"><span class="health-dot"></span>正常</div>
+              </div>
+            </div>
+          </div>
+          <div class="biz-card-body">
+            <div class="biz-section">
+              <div class="biz-section-title">目标结果</div>
+              <p class="biz-outcome">验证短视频能否以更低成本放大内容触达与品牌认知。</p>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">外部结果</div>
+              <div class="evidence-list">
+                <div class="evidence-item"><span class="evidence-name">测试发布</span><span class="evidence-value">6 条</span></div>
+                <div class="evidence-item"><span class="evidence-name">平均播放</span><span class="evidence-value">3.2K</span></div>
+                <div class="evidence-item"><span class="evidence-name">互动率</span><span class="evidence-value">4.1%</span></div>
+              </div>
+            </div>
+            <div class="biz-section">
+              <div class="biz-section-title">下一检查点</div>
+              <div class="checkpoint"><span>实验结论</span><span class="checkpoint-time">2026-08-10</span></div>
+            </div>
+          </div>
+          <div class="biz-card-footer">
+            <button class="btn btn-secondary btn-sm">查看详情</button>
+            <button class="btn btn-ghost btn-sm">关闭</button>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        该过滤条件下暂无业务。
+      </div>
+
+      <!-- Outcome Timeline -->
+      <section class="section-card">
+        <div class="section-card-header">
+          <h3 class="section-card-title">业务推进过程</h3>
+          <span class="stage-pill stage-operating">当前周期</span>
+        </div>
+        <div class="section-card-body">
+          <div class="outcome-timeline">
+            <div class="timeline-step">
+              <div class="timeline-step-number">1</div>
+              <h4 class="timeline-step-title">确定方向</h4>
+              <p class="timeline-step-desc">说清业务想法、目标结果和验收标准，安排 AI 员工与预算。</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step-number">2</div>
+              <h4 class="timeline-step-title">开始执行</h4>
+              <p class="timeline-step-desc">Workspace 运行产出交付物：代码、内容、信号、客户互动。</p>
+            </div>
+            <div class="timeline-step active">
+              <div class="timeline-step-number">3</div>
+              <h4 class="timeline-step-title">真实反馈</h4>
+              <p class="timeline-step-desc">真实世界返回证据：用户行为、平台数据、CEO 验收、市场信号。</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step-number">4</div>
+              <h4 class="timeline-step-title">决定下一步</h4>
+              <p class="timeline-step-desc">CEO 判断继续、扩大、暂停或关闭，并记录决策依据。</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step-number">5</div>
+              <h4 class="timeline-step-title">下一 bet</h4>
+              <p class="timeline-step-desc">根据结果调整想法，进入下一周期或把资源收回来。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Investment / ROI -->
+      <section class="section-card">
+        <div class="section-card-header">
+          <h3 class="section-card-title">投入与结果</h3>
+          <span class="stage-pill stage-operating">本周期</span>
+        </div>
+        <div class="section-card-body">
+          <div class="roi-grid">
+            <div class="roi-card">
+              <div class="roi-label">AI 成本</div>
+              <div class="roi-value">¥ 4,280</div>
+              <div class="roi-delta">较上月 +12%</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">CEO 注意力</div>
+              <div class="roi-value">28%</div>
+              <div class="roi-delta">目标 &lt; 30%</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">外部结果总值</div>
+              <div class="roi-value">¥ 18,600</div>
+              <div class="roi-delta positive">↑ 23% 较上月</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">投入产出</div>
+              <div class="roi-value">4.3x</div>
+              <div class="roi-delta positive">↑ 0.8x</div>
+            </div>
+          </div>
+          <div class="recommendation-bar">
+            <span class="recommendation-label">下一步建议</span>
+            <div class="recommendation-chips">
+              <span class="rec-chip active">继续运营</span>
+              <span class="rec-chip">扩大投入</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
+
+    <!-- Business Detail Drawer -->
+    <aside class="drawer" id="businessDrawer" aria-hidden="true" aria-label="业务详情">
+      <div class="drawer-header">
+        <h2 class="drawer-title" id="drawerTitle">业务详情</h2>
+        <button class="drawer-close" id="drawerClose" aria-label="关闭抽屉">✕</button>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section">
+            <span class="stage-pill stage-operating drawer-stage" id="drawerStage">运行中</span>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">当前承诺</div>
+          <div class="commitment-list" id="drawerCommitments">
+            <div class="commitment-item">
+              <div class="commitment-title">每两周交付可验收增量</div>
+              <div class="commitment-meta">Owner：Engineering AI · 验收：CEO</div>
+            </div>
+            <div class="commitment-item">
+              <div class="commitment-title">CI 稳定率保持 90% 以上</div>
+              <div class="commitment-meta">Owner：Engineering AI · 来源：GitHub API</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">外部结果</div>
+          <div class="evidence-list" id="drawerEvidence">
+            <div class="evidence-item"><span class="evidence-name">本周 commit</span><span class="evidence-value">47</span></div>
+            <div class="evidence-item"><span class="evidence-name">CI 通过率</span><span class="evidence-value">94%</span></div>
+            <div class="evidence-item"><span class="evidence-name">CEO 验收</span><span class="evidence-value">2 / 3</span></div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">当前周期</div>
+          <div class="cycle-bar">
+            <div class="cycle-info">
+              <div class="cycle-name">周期 2026-W31</div>
+              <div class="cycle-range">2026-07-27 → 2026-08-09</div>
+            </div>
+            <span class="stage-pill stage-operating">进行中</span>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">业务影响</div>
+          <div class="impact-grid">
+            <div class="impact-item">
+              <div class="impact-label">AI 员工</div>
+              <div class="impact-value">2 人</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-label">Workspace</div>
+              <div class="impact-value">1 个</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-label">月成本</div>
+              <div class="impact-value">¥ 1,200</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-label">预期收入</div>
+              <div class="impact-value">¥ 12,000</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">高影响动作</div>
+          <div class="commitment-list">
+            <div class="commitment-item">
+              <div class="commitment-title">扩大投入</div>
+              <div class="commitment-meta">增加 Engineering AI 容量，预期缩短 30% 交付周期。</div>
+            </div>
+            <div class="commitment-item">
+              <div class="commitment-title">暂停业务</div>
+              <div class="commitment-meta">保留数据与承诺，停止新 Cycle 启动。</div>
+            </div>
+            <div class="commitment-item">
+              <div class="commitment-title">关闭业务</div>
+              <div class="commitment-meta">归档所有证据与决策记录，释放资源。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-actions">
+        <button class="btn btn-primary">扩大投入</button>
+        <button class="btn btn-secondary">查看 Workspace</button>
+        <button class="btn btn-ghost">暂停业务</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.biz-card');
+    const emptyState = document.getElementById('emptyState');
+    const drawer = document.getElementById('businessDrawer');
+    const overlay = document.getElementById('drawerOverlay');
+    const drawerClose = document.getElementById('drawerClose');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const drawerStage = document.getElementById('drawerStage');
+    const drawerCommitments = document.getElementById('drawerCommitments');
+    const drawerEvidence = document.getElementById('drawerEvidence');
+
+    const businessData = {
+      'software-dev': {
+        title: '软件开发',
+        stage: 'Operating',
+        stageClass: 'stage-operating',
+        commitments: [
+          { title: '每两周交付可验收增量', meta: 'Owner：Engineering AI · 验收：CEO' },
+          { title: 'CI 稳定率保持 90% 以上', meta: 'Owner：Engineering AI · 来源：GitHub API' }
+        ],
+        evidence: [
+          { name: '本周 commit', value: '47' },
+          { name: 'CI 通过率', value: '94%' },
+          { name: 'CEO 验收', value: '2 / 3' }
+        ]
+      },
+      'content-growth': {
+        title: '小红书运营',
+        stage: 'Scaling',
+        stageClass: 'stage-scaling',
+        commitments: [
+          { title: '每周发布 3 篇深度内容', meta: 'Owner：Content AI · 验收：Growth Lead' },
+          { title: '线索转化率保持 5% 以上', meta: 'Owner：Growth AI · 来源：CMS + 表单' }
+        ],
+        evidence: [
+          { name: '周阅读', value: '+2,400' },
+          { name: '收藏率', value: '8.7%' },
+          { name: '线索转化', value: '12' }
+        ]
+      },
+      'short-video': {
+        title: '抖音 / TikTok 运营',
+        stage: 'Experiment',
+        stageClass: 'stage-experiment',
+        commitments: [
+          { title: '完成 6 条短视频测试发布', meta: 'Owner：Video AI · 验收：Content Lead' },
+          { title: '验证单条制作成本 &lt; ¥200', meta: 'Owner：Video AI · 来源：平台数据' }
+        ],
+        evidence: [
+          { name: '测试发布', value: '6 条' },
+          { name: '平均播放', value: '3.2K' },
+          { name: '互动率', value: '4.1%' }
+        ]
+      },
+    };
+
+    function updateFilters(activeBtn) {
+      filterBtns.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      activeBtn.classList.add('active');
+      activeBtn.setAttribute('aria-selected', 'true');
+    }
+
+    function filterCards(filter) {
+      let visible = 0;
+      cards.forEach(card => {
+        const stage = card.dataset.stage;
+        const show = filter === 'all' || stage === filter;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      emptyState.classList.toggle('visible', visible === 0);
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        updateFilters(btn);
+        filterCards(btn.dataset.filter);
+      });
+    });
+
+    function openDrawer(id) {
+      const data = businessData[id];
+      if (!data) return;
+
+      drawer.dataset.businessId = id;
+      drawerTitle.textContent = data.title;
+      drawerStage.textContent = data.stage;
+      drawerStage.className = 'stage-pill drawer-stage ' + data.stageClass;
+
+      drawerCommitments.innerHTML = data.commitments.map(c =>
+        '<div class="commitment-item">' +
+          '<div class="commitment-title">' + c.title + '</div>' +
+          '<div class="commitment-meta">' + c.meta + '</div>' +
+        '</div>'
+      ).join('');
+
+      drawerEvidence.innerHTML = data.evidence.map(e =>
+        '<div class="evidence-item">' +
+          '<span class="evidence-name">' + e.name + '</span>' +
+          '<span class="evidence-value">' + e.value + '</span>' +
+        '</div>'
+      ).join('');
+
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      drawerClose.focus();
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => openDrawer(card.dataset.id));
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openDrawer(card.dataset.id);
+        }
+      });
+    });
+
+    drawerClose.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+  })();
+</script>
+
+
+    <style>
+    /* ────────────────────────────────────────────────
+       Curis 业务页面 / Business Portfolio
+       Tokens: Curis Visual Design System v1.0 (TRAE dark)
+       ──────────────────────────────────────────────── */
+
+    :root {
+      /* TRAE base surfaces */
+      --bg-base-default: #1a1b1d;
+      --bg-base-secondary: #222427;
+      --bg-base-tertiary: #2a2d31;
+      --bg-tooltip: #1a1b1d;
+      --bg-menu: #202123;
+      --bg-invert: #dadde5;
+      --bg-invert-hover: #edeff2;
+
+      /* Overlays */
+      --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+      --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+      --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+      --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+      /* Brand green */
+      --brand-100: #e5fff2;
+      --brand-200: #b4fdd9;
+      --brand-300: #85fabf;
+      --brand-400: #5cf5a8;
+      --brand-500: #32f08c;
+      --brand-600: #0fdc78;
+      --brand-700: #0ab861;
+      --brand-800: #05994f;
+      --brand-900: #02743b;
+
+      /* Text */
+      --text-default: #d1d3db;
+      --text-default-hover: #f5f9fe;
+      --text-secondary: #9599a6;
+      --text-secondary-hover: #d1d3db;
+      --text-tertiary: #666b75;
+      --text-disabled: #666b75;
+      --text-onbrand: #0c0c0d;
+      --text-brand: #32f08c;
+      --text-brand-hover: #0fdc78;
+
+      /* Icon */
+      --icon-default: #d1d3db;
+      --icon-secondary: #9599a6;
+      --icon-tertiary: #666b75;
+      --icon-brand: #32f08c;
+
+      /* Border */
+      --border-neutral-l1: rgba(224, 226, 242, 0.10);
+      --border-neutral-l2: rgba(224, 226, 242, 0.16);
+      --border-neutral-l3: rgba(224, 226, 242, 0.20);
+      --border-contrast: #ffffff;
+      --border-brand: #32f08c;
+
+      /* Status */
+      --status-error: #f65a5a;
+      --status-error-surface: rgba(246, 70, 70, 0.18);
+      --status-warning: #d27e24;
+      --status-warning-surface: rgba(210, 126, 36, 0.16);
+      --status-alert: #d29d00;
+      --status-alert-surface: rgba(210, 157, 0, 0.16);
+      --status-success: #33c192;
+      --status-success-surface: rgba(0, 165, 110, 0.18);
+      --status-primary: #387bff;
+      --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+      /* Typography */
+      --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      /* Font sizes */
+      --text-xs: 10px;
+      --text-sm: 11px;
+      --text-md: 12px;
+      --text-base: 13px;
+      --text-lg: 15px;
+      --text-xl: 18px;
+      --text-2xl: 22px;
+      --text-3xl: 28px;
+      --text-4xl: 36px;
+
+      /* Line heights */
+      --leading-xs: 14px;
+      --leading-sm: 16px;
+      --leading-md: 18px;
+      --leading-base: 20px;
+      --leading-lg: 24px;
+      --leading-xl: 28px;
+      --leading-2xl: 32px;
+      --leading-3xl: 36px;
+      --leading-4xl: 44px;
+
+      /* Spacing */
+      --space-0: 0px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --space-40: 40px;
+      --space-64: 64px;
+
+      /* Radius */
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 10px;
+      --radius-full: 9999px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+      --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+      --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+
+      /* Layout */
+      --sidebar-width: 220px;
+      --drawer-width: 390px;
+      --topbar-height: 52px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    a { color: var(--text-brand); text-decoration: none; }
+    a:hover { color: var(--text-brand-hover); }
+    code, .mono { font-family: var(--font-mono); font-size: var(--text-md); }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-neutral-l3); }
+
+    /* ── App Shell ── */
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-base-secondary);
+      border-right: 1px solid var(--border-neutral-l1);
+      padding: var(--space-16) 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      padding: 0 var(--space-20) var(--space-24);
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-md);
+      background: var(--brand-500);
+      display: grid;
+      place-items: center;
+      color: var(--text-onbrand);
+      font-family: var(--font-heading);
+      font-size: var(--text-md);
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0 var(--space-12);
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-10);
+      padding: var(--space-10) var(--space-12);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+
+    .nav-item.active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 18px;
+      border-radius: 0 var(--radius-full) var(--radius-full) 0;
+      background: var(--brand-500);
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      color: var(--icon-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .nav-item:hover .nav-icon,
+    .nav-item.active .nav-icon { color: var(--icon-default); }
+
+    .nav-footer {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0 var(--space-12);
+      margin-top: auto;
+      border-top: 1px solid var(--border-neutral-l1);
+      padding-top: var(--space-12);
+    }
+
+    /* ── Main Area ── */
+    .main-area {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 85% 10%, rgba(50, 240, 140, 0.05) 0%, transparent 40%),
+        radial-gradient(ellipse at 10% 90%, rgba(56, 123, 255, 0.04) 0%, transparent 40%),
+        var(--bg-base-default);
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: var(--topbar-height);
+      min-height: var(--topbar-height);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-24);
+      background: rgba(26, 27, 29, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .context-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+
+    .context-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .context-item:hover { color: var(--text-default-hover); }
+
+    .context-item strong {
+      color: var(--text-default-hover);
+      font-weight: 500;
+    }
+
+    .context-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border-neutral-l2);
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+
+    .sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      box-shadow: none;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+
+    .lifecycle-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      height: 24px;
+      padding: 0 var(--space-10);
+      border-radius: var(--radius-full);
+      background: var(--status-success-surface);
+      color: var(--status-success);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .lifecycle-badge:hover { background: rgba(0, 165, 110, 0.26); }
+
+    .lifecycle-badge::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: var(--status-success);
+    }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-24) var(--space-32) var(--space-40);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: var(--space-24);
+    }
+
+    .page-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      line-height: var(--leading-3xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-8);
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin: 0;
+    }
+
+    .portfolio-summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-24);
+      padding: var(--space-14) var(--space-20);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .summary-value {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+
+    .summary-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+    }
+
+    .summary-sep {
+      width: 1px;
+      height: 32px;
+      background: var(--border-neutral-l1);
+    }
+
+    /* ── Filters ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      margin-bottom: var(--space-24);
+    }
+
+    .filter-btn {
+      height: 32px;
+      padding: 0 var(--space-14);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-neutral-l2);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+      border-color: var(--border-neutral-l3);
+    }
+
+    .filter-btn.active {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+
+    /* ── Cards ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+
+    .biz-card {
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .biz-card:hover {
+      border-color: var(--border-neutral-l3);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .biz-card.hidden { display: none; }
+
+    .biz-card-header {
+      padding: var(--space-16);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .biz-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: var(--space-12);
+    }
+
+    .biz-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0;
+    }
+
+    .biz-target {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin: var(--space-4) 0 0;
+    }
+
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 22px;
+      padding: 0 var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .stage-pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+    }
+
+    .stage-opportunity { background: rgba(56, 123, 255, 0.10); color: var(--status-primary); border-color: rgba(56, 123, 255, 0.25); }
+    .stage-opportunity::before { background: var(--status-primary); }
+    .stage-experiment { background: rgba(50, 240, 140, 0.10); color: var(--text-brand); border-color: rgba(50, 240, 140, 0.25); }
+    .stage-experiment::before { background: var(--brand-500); }
+    .stage-operating { background: rgba(0, 165, 110, 0.12); color: var(--status-success); border-color: rgba(0, 165, 110, 0.25); }
+    .stage-operating::before { background: var(--status-success); }
+    .stage-scaling { background: rgba(210, 126, 36, 0.12); color: var(--status-warning); border-color: rgba(210, 126, 36, 0.25); }
+    .stage-scaling::before { background: var(--status-warning); }
+    .stage-exit { background: rgba(246, 90, 90, 0.12); color: var(--status-error); border-color: rgba(246, 90, 90, 0.25); }
+    .stage-exit::before { background: var(--status-error); }
+
+    .health-row {
+      display: flex;
+      gap: var(--space-12);
+    }
+
+    .health-item {
+      flex: 1;
+      padding: var(--space-10);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .health-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-6);
+    }
+
+    .health-value {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: var(--text-md);
+      font-weight: 600;
+    }
+
+    .health-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+    }
+
+    .health-ontrack { color: var(--status-success); }
+    .health-ontrack .health-dot { background: var(--status-success); box-shadow: 0 0 6px var(--status-success); }
+    .health-attention { color: var(--status-warning); }
+    .health-attention .health-dot { background: var(--status-warning); }
+    .health-risk { color: var(--status-error); }
+    .health-risk .health-dot { background: var(--status-error); box-shadow: 0 0 6px var(--status-error); }
+    .health-blocked { color: #ff8080; }
+    .health-blocked .health-dot { background: #ff8080; }
+
+    .biz-card-body {
+      padding: var(--space-16);
+    }
+
+    .biz-section {
+      margin-bottom: var(--space-16);
+    }
+
+    .biz-section:last-child { margin-bottom: 0; }
+
+    .biz-section-title {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 var(--space-8);
+    }
+
+    .biz-outcome {
+      color: var(--text-default);
+      font-size: var(--text-md);
+      line-height: var(--leading-lg);
+      margin: 0;
+    }
+
+    .evidence-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    .evidence-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-8) var(--space-10);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .evidence-name {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .evidence-value {
+      color: var(--text-default-hover);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+
+    .checkpoint {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .checkpoint-time {
+      color: var(--text-default-hover);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+
+    .biz-card-footer {
+      display: flex;
+      gap: var(--space-8);
+      padding: var(--space-12) var(--space-16);
+      border-top: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      height: 32px;
+      padding: 0 var(--space-12);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+
+    .btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
+
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+
+    .btn-secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l3); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+
+    .btn-ghost:hover { color: var(--text-default-hover); background: var(--bg-overlay-l2); }
+
+    .btn-danger {
+      background: var(--status-error-surface);
+      color: var(--status-error);
+      border-color: rgba(246, 90, 90, 0.35);
+    }
+
+    .btn-danger:hover { background: rgba(246, 90, 90, 0.28); }
+
+    .btn-sm { height: 28px; padding: 0 var(--space-10); font-size: var(--text-sm); }
+
+    /* ── Timeline Section ── */
+    .section-card {
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+      margin-bottom: var(--space-16);
+      overflow: hidden;
+    }
+
+    .section-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-16);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .section-card-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0;
+    }
+
+    .section-card-body { padding: var(--space-24); }
+
+    .outcome-timeline {
+      display: flex;
+      align-items: stretch;
+      gap: var(--space-8);
+    }
+
+    .timeline-step {
+      flex: 1;
+      min-width: 0;
+      padding: var(--space-16);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+      position: relative;
+    }
+
+    .timeline-step::after {
+      content: "→";
+      position: absolute;
+      right: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      font-size: var(--text-base);
+      z-index: 1;
+    }
+
+    .timeline-step:last-child::after { display: none; }
+
+    .timeline-step-number {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      margin-bottom: var(--space-12);
+    }
+
+    .timeline-step.active .timeline-step-number {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+    }
+
+    .timeline-step-title {
+      color: var(--text-default-hover);
+      font-weight: 600;
+      margin: 0 0 var(--space-6);
+    }
+
+    .timeline-step-desc {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+      margin: 0;
+    }
+
+    /* ── Investment / ROI Section ── */
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+
+    .roi-card {
+      padding: var(--space-16);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .roi-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-8);
+    }
+
+    .roi-value {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin-bottom: var(--space-6);
+    }
+
+    .roi-delta {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+    }
+
+    .roi-delta.positive { color: var(--status-success); }
+    .roi-delta.negative { color: var(--status-error); }
+
+    .recommendation-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      padding: var(--space-16);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .recommendation-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .recommendation-chips {
+      display: flex;
+      gap: var(--space-8);
+      flex: 1;
+    }
+
+    .rec-chip {
+      height: 28px;
+      padding: 0 var(--space-12);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-neutral-l2);
+      background: var(--bg-base-tertiary);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .rec-chip:hover {
+      border-color: var(--border-neutral-l3);
+      color: var(--text-default-hover);
+    }
+
+    .rec-chip.active {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+
+    .rec-chip.pause { background: var(--status-warning-surface); color: var(--status-warning); border-color: rgba(210, 126, 36, 0.35); }
+    .rec-chip.close { background: var(--status-error-surface); color: var(--status-error); border-color: rgba(246, 90, 90, 0.35); }
+
+    /* ── Drawer ── */
+    .drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.48);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      z-index: 200;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: var(--drawer-width);
+      height: 100%;
+      background: var(--bg-base-secondary);
+      border-left: 1px solid var(--border-neutral-l1);
+      box-shadow: var(--shadow-xl);
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 210;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-16);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .drawer-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0;
+    }
+
+    .drawer-close {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-neutral-l2);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .drawer-close:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+      border-color: var(--border-neutral-l3);
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-24);
+    }
+
+    .drawer-section {
+      margin-bottom: var(--space-24);
+    }
+
+    .drawer-section:last-child { margin-bottom: 0; }
+
+    .drawer-section-title {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 var(--space-12);
+    }
+
+    .drawer-stage {
+      display: inline-flex;
+      margin-bottom: var(--space-16);
+    }
+
+    .commitment-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-10);
+    }
+
+    .commitment-item {
+      padding: var(--space-12);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .commitment-title {
+      color: var(--text-default-hover);
+      font-weight: 500;
+      margin: 0 0 var(--space-6);
+    }
+
+    .commitment-meta {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin: 0;
+    }
+
+    .cycle-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      padding: var(--space-14);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .cycle-info {
+      flex: 1;
+    }
+
+    .cycle-name {
+      color: var(--text-default-hover);
+      font-weight: 500;
+      margin: 0 0 var(--space-4);
+    }
+
+    .cycle-range {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin: 0;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-10);
+    }
+
+    .impact-item {
+      padding: var(--space-12);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .impact-label {
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-6);
+    }
+
+    .impact-value {
+      color: var(--text-default-hover);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .drawer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-10);
+      padding: var(--space-16);
+      border-top: 1px solid var(--border-neutral-l1);
+      background: var(--bg-overlay-l1);
+    }
+
+    .drawer-actions .btn { width: 100%; }
+
+    /* ── Empty / Hidden Helpers ── */
+    .empty-state {
+      display: none;
+      padding: var(--space-40);
+      text-align: center;
+      color: var(--text-tertiary);
+      border: 1px dashed var(--border-neutral-l2);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state.visible { display: block; }
+
+    /* ── Focus visible ── */
+    *:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+  </style>
+<script>
+/**
+ * Curis Hi-Fi Prototype — shared interaction layer
+ * Handles cross-page navigation, active nav state, toast feedback,
+ * and common button affordances for the click-through demo.
+ */
+(function () {
+  'use strict';
+
+  // ── Navigation map (label text → page file)
+  const NAV_MAP = {
+    'CEO 工作台': 'ceo-desk.html',
+    'CEO 办公桌': 'ceo-desk.html',
+    '经营': 'operating.html',
+    '经营概览': 'operating.html',
+    '业务': 'business.html',
+    '业务空间': 'business.html',
+    '公司': 'ai-organization.html',
+    'AI 团队': 'ai-organization.html',
+    '工作空间': 'workspace-portal.html',
+    '决策': 'decision-room.html',
+    '决策室': 'decision-room.html',
+    '设置': '#',
+    '帮助': '#',
+    '帮助与反馈': '#',
+    '员工目录': '#',
+    '能力中心': '#'
+  };
+
+  // ── Wire sidebar nav items
+  function initNavigation() {
+    const currentPage = (window.location.pathname.split('/').pop() || 'ceo-desk.html');
+
+    document.querySelectorAll('.sidebar .nav-item, aside.sidebar .nav-item, .nav-list .nav-item').forEach(item => {
+      // Skip if already a link
+      if (item.tagName === 'A') return;
+
+      // Determine target from data-href or text content
+      let target = item.dataset.href;
+      if (!target) {
+        const text = item.textContent.trim().split(/\s+/).join(' ');
+        for (const [label, href] of Object.entries(NAV_MAP)) {
+          if (text.includes(label)) {
+            target = href;
+            break;
+          }
+        }
+      }
+
+      if (target) {
+        item.style.cursor = 'pointer';
+        item.setAttribute('role', 'link');
+        item.setAttribute('tabindex', '0');
+        item.dataset.href = target;
+
+        const navigate = () => {
+          if (target === '#') {
+            showToast('该入口将在设置中心接入；当前工作上下文已保留');
+            return;
+          }
+          window.location.href = target;
+        };
+
+        item.addEventListener('click', navigate);
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate();
+          }
+        });
+      }
+
+      // Active state
+      const href = item.dataset.href;
+      if (href && href !== '#') {
+        const active = currentPage === href || currentPage.endsWith('/' + href);
+        item.classList.toggle('active', active);
+      }
+    });
+  }
+
+  // ── Toast
+  function showToast(message, duration = 2200) {
+    let toast = document.getElementById('proto-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'proto-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = `
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-base-secondary, #222427);
+        color: var(--text-default-hover, #f5f9fe);
+        border: 1px solid var(--border-neutral-l2, rgba(224,226,242,.16));
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+        z-index: 9999;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration);
+  }
+
+  // ── Button click feedback (where no specific handler exists)
+  function initButtonFeedback() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button, .btn');
+      if (!btn) return;
+
+      // Specific Curis handlers own marked actions; only fallback for unbound controls.
+      if (btn.dataset.curisHandled === 'true') return;
+      // If button already has onclick or bound listener, skip generic feedback
+      if (btn.onclick) return;
+      if (btn.closest('a')) return;
+
+      const label = btn.textContent.trim();
+      if (!label) return;
+
+      // Capture a few generic actions across pages
+      if (/^(决策|查看|调查|委派|暂缓|修复问题|运行模拟|提交审批|批准|拒绝|延后|要求修改|预览|编辑|发送|保存|查看影响)$/.test(label)) {
+        e.preventDefault();
+        showToast(`${label}已记录，CEO 助理会继续跟进`);
+      }
+    });
+  }
+
+  // ── Expose globals for inline onclick handlers that may be missing
+  window.showToast = showToast;
+
+  // ── Auto-init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initButtonFeedback();
+    });
+  } else {
+    initNavigation();
+    initButtonFeedback();
+  }
+})();
+
+</script>
+  <script src="curis-prototype.js"></script>
+</body>
+</html>

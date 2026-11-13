@@ -1,0 +1,16 @@
+{
+  "server": "mindsdb",
+  "name": "MindsDB MCP",
+  "description": "联合查询引擎自带 MCP：200+ 数据源（Postgres/MySQL/Mongo/Snowflake/BigQuery/Salesforce/Slack/S3 等）统一 SQL 与自然语言查询；Knowledge Bases 混合向量+关键词 RAG；Jobs/Triggers 定时同步；支持 Docker 一键自托管。",
+  "license": "MIT",
+  "_source_url": "https://github.com/mindsdb/mindsdb",
+  "_original_name": "mindsdb",
+  "_scan_batch": "2026-08-31 持续扫描第四批（License 核验订正：聚合站标 MIT、GitHub 标 NOASSERTION，抓取 LICENSE 原文确认为 MIT）",
+  "_security_review": "200+ 数据源凭据集中、数据出域；进入产线前须凭据最小化与数据边界扫描。部分集成 handler / 企业组件可能另有条款，导入前逐 handler 复核。",
+  "_note": "工具列表为按官方能力描述的代表性摘录，以仓库实际暴露为准。",
+  "tools": [
+    {"name": "query_datasources", "description": "对连接的数据源执行统一 SQL 查询。"},
+    {"name": "knowledge_base_search", "description": "在混合向量+关键词知识库中检索。"},
+    {"name": "create_job", "description": "创建定时同步任务。"}
+  ]
+}

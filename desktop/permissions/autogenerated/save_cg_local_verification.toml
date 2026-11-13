@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-cg-local-verification"
+description = "Enables the save_cg_local_verification command without any pre-configured scope."
+commands.allow = ["save_cg_local_verification"]
+
+[[permission]]
+identifier = "deny-save-cg-local-verification"
+description = "Denies the save_cg_local_verification command without any pre-configured scope."
+commands.deny = ["save_cg_local_verification"]

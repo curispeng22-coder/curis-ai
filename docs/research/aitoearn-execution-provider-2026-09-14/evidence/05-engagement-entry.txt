@@ -1,0 +1,136 @@
+- region "Notifications alt+T"
+- link "公告 AitoEarn将于9月份开始使用云账户发放提现奖励":
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button "关闭":
+- complementary:
+  - link "AiToEarn":
+    - /url: /
+    - img "AiToEarn"
+  - navigation:
+    - link "淘金广场":
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link "我的团队":
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link "AI Agent":
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link "内容管理":
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link "AI发布":
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link "热门内容":
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link "数据统计":
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link "AI打卡":
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link "AI互动" [active]:
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link "产品定价":
+      - /url: /pricing
+      - generic: 产品定价
+  - button "我的频道":
+    - generic: 我的频道
+  - button "浏览器插件 未安装":
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button "搜索菜单":
+  - link "开放平台":
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link "API Keys":
+    - /url: /developer/api-keys
+  - button "U user_FBVvPDQC":
+    - generic: U
+    - generic "user_FBVvPDQC"
+- main:
+  - generic: AI互动
+  - navigation "评论搜索 / AI互动":
+    - link "评论搜索":
+      - /url: /xhs-data/note-comment-search
+      - text: 评论搜索
+    - link "AI互动":
+      - /url: /xhs-data/ai-interaction
+      - text: AI互动
+  - main:
+    - textbox "请输入关键词，例如品牌词、评论高频词、产品名": 蒙牛
+    - button "重置":
+    - text: 搜索消耗 10 积分
+    - button "搜索笔记":
+      - text: 搜索笔记
+    - heading "内容形式" [level=3]
+    - button "全部"
+    - button "图文笔记"
+    - button "视频笔记"
+    - heading "作者类型" [level=3]
+    - button "官方号"
+    - button "企业账号"
+    - button "明星"
+    - button "知名KOL"
+    - button "头部达人"
+    - button "腰部达人"
+    - button "初级达人"
+    - button "素人"
+    - heading "笔记分类" [level=3]
+    - button "全部"
+    - button "彩妆"
+    - button "护肤"
+    - button "个护清洁"
+    - button "母婴育儿"
+    - button "美食饮品"
+    - button "服饰穿搭"
+    - button "鞋靴箱包"
+    - button "珠宝配饰"
+    - button "时尚潮流"
+    - button "教育"
+    - button "家居家装"
+    - button "健身减肥"
+    - button "科技数码"
+    - button "动漫"
+    - button "萌宠动物"
+    - button "影音娱乐"
+    - button "情感两性"
+    - button "星座情感"
+    - button "出行工具"
+    - button "婚嫁"
+    - button "美甲"
+    - button "旅行住宿"
+    - button "摄影"
+    - button "医疗养生"
+    - button "民生资讯"
+    - button "游戏应用"
+    - button "赛事"
+    - button "生活经验"
+    - button "其他"
+    - generic: 时间范围
+    - button "7天"
+    - button "15天"
+    - button "30天"
+    - button "2026-08-16 — 2026-09-14":
+      - generic: 2026-08-16 — 2026-09-14
+    - generic: 排序方式
+    - combobox "排序方式":
+      - generic: 互动量最高
+    - button "导出 Excel" [disabled]:
+      - text: 导出 Excel
+    - generic: 笔记内容
+    - generic: 发布者
+    - generic: 发布时间
+    - generic: 互动量
+    - generic: 点赞
+    - generic: 收藏
+    - generic: 评论
+    - generic: 分享
+    - generic: 操作
+
+[Existing results omitted; no search submitted.]

@@ -1,0 +1,62 @@
+{
+  "Status": "Review",
+  "Authority Class": "EVIDENCE",
+  "date": "2026-09-13",
+  "measurements": {
+    "skill_featured_first": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "width": 274.5,
+      "height": 115.796875,
+      "unit": "CSS px EXACT",
+      "selector": ".sk-card"
+    },
+    "model_menu": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 230,
+      "height": 10,
+      "padding": "4px",
+      "radius": "12px",
+      "position": "fixed",
+      "unit": "CSS px EXACT",
+      "selector": ".menu-pop"
+    },
+    "panes1280": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "nav": 220,
+      "context": 256,
+      "main": 488,
+      "utility": 300
+    },
+    "panes1024_utility_open": {
+      "viewport": [
+        1024,
+        900
+      ],
+      "nav": 220,
+      "context": 0,
+      "main": 220,
+      "utility": 401
+    },
+    "max1280": {
+      "x": 220,
+      "width": 1060,
+      "height": 900
+    },
+    "utility_restart": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "width": 300
+    }
+  }
+}

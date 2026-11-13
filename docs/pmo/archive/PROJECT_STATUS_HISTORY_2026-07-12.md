@@ -1,0 +1,477 @@
+# Project Status
+
+Status: Deprecated
+
+## Current Sprint
+
+Phase-1C CEO Office UI First Slice.
+
+## Current Progress
+
+- Phase-1C CEO Office V3.1 is product-approved as the current design source of truth in `docs/design/phase1c-ceo-office-ui-v3.md`. The product is positioned as an AI company headquarters rather than a task list, SaaS backend, or BI dashboard. The direction centers Company, Project, Organization Health and AI Employee identity, with CEO decisions, reports, meetings and brainstorming remaining runtime-gated.
+- The first executable UI slice is approved in `issues/phase1c_ceo_office_ui_first_slice.md`. Scope is frontend-only CEO Office Shell, CEO Briefing, Core Project Command, Organization Health, AI Employee Owner identity, and preservation of the existing execution workspace as a secondary entry. Expected evidence path is `reviews/phase1c_ceo_office_ui_first_slice_review.md`.
+- Phase-1 AI Company Runtime Foundation remains the verified runtime baseline. Commit `a39becb3` implements Company, Department, Project, Employee, Skill, Tool, Task, and Workflow lineage. Recorded verification on 2026-07-10: 23 focused tests and 452 full backend regression tests passed; `git diff --check`, scoped secret scan, and Workspace runtime `/api/platform/*` scan passed. Evidence: `docs/release/phase1-company-runtime-foundation-report.md`.
+- Model Gateway runtime secret guardrails are implemented, quality-verified, and accepted in `issues/070_model_gateway_runtime_secret_guardrails.md` with evidence in `reviews/067_model_gateway_runtime_secret_guardrails_review.md`: partial gateway env config fails closed, gateway errors are redacted, UsageEvent payloads remain allowlisted/redacted, and gateway/model metadata rejects secret-like values. Quality verification on commit `b01edfd4`: 16 focused guardrail tests and 203 backend regression tests passed; secret/scope/frontend guards passed; no blockers found.
+- Workspace Tenant Model Preference Foundation gate is opened in `issues/071_workspace_tenant_model_preference_gate.md` and routed to 总控决策席. The proposed next slice lets each tenant select a default model from approved official model catalog metadata while preserving ADR-0029, runtime secret guardrails, and `ModelGatewayAdapter` execution.
+- Workspace Tenant Model Preference Foundation gate was approved by 总控决策席 on 2026-07-08. Next work is architecture boundary definition only: metadata-only tenant default model preference over active `source=official` catalog entries, runtime resolution when available, and model execution constrained to `ModelGatewayAdapter`.
+- Workspace Tenant Model Preference Foundation architecture boundaries are defined, quality-verified, and accepted in `docs/decisions/ADR-0030-workspace-tenant-model-preference-boundaries.md` with evidence in `reviews/068_workspace_tenant_model_preference_boundaries_review.md`. Commit `9dd75340` is boundary-only with no backend/frontend implementation files; ADR-0029, runtime secret guardrails, active `source=official` catalog source, metadata-only tenant preference state, and `ModelGatewayAdapter` execution path are preserved. First implementation slice is opened in `issues/072_workspace_tenant_model_preference_first_slice.md` and remains backend-only metadata preference/resolution; UI, billing, ROI, tenant packages, marketplace, provider SDKs, direct provider calls, New API source/internal DB dependency, credential persistence/exposure, automatic model optimization, per-department/per-employee policy, and execution path drift remain blocked.
+- Workspace Tenant Model Preference first slice is implemented, quality-verified, and accepted in `issues/072_workspace_tenant_model_preference_first_slice.md` with evidence in `reviews/069_workspace_tenant_model_preference_first_slice_review.md`. Workspace now has backend-only tenant-scoped default model preference APIs, metadata-only persistence, active official catalog validation, and runtime preference resolution through `ModelGatewayAdapter`. Product acceptance completed by 产品规划席 on 2026-07-08. Quality verification on commit `a0d3a54b`: 4 focused tenant preference tests and 207 backend regression tests passed; secret/scope/frontend guards passed; no blockers found.
+- Workspace Model Preference UI gate is opened in `issues/073_workspace_model_preference_ui_gate.md` and routed to 总控决策席. Proposed scope: a minimal frontend-only selector inside the existing Workspace operation console to read/save/reset tenant default model preference from approved official catalog metadata. Admin UI, complex dashboard, billing/ROI/packages, secret handling, provider integration, model optimization, backend semantic changes, and execution behavior changes remain blocked.
+- Workspace Model Preference UI gate was approved by 总控决策席 on 2026-07-08. Next work is frontend-only implementation inside the existing Workspace operation console using only existing preference APIs; ADR-0030, ADR-0029, runtime secret guardrails, official model catalog metadata boundary, Task API payloads, and `ModelGatewayAdapter`-only execution remain binding.
+- Workspace Model Preference UI first slice is implemented, quality-verified, and accepted in `issues/073_workspace_model_preference_ui_gate.md` with evidence in `reviews/070_workspace_model_preference_ui_review.md`. Workspace now has a frontend-only selector in the existing operation console for viewing, saving, and resetting tenant default model preference from active official model options. Product acceptance completed by 产品规划席 on 2026-07-08. Quality verification on commit `5727410f`: 14 frontend view-model tests passed, frontend lint passed, frontend build passed outside the sandbox after sandbox port binding was blocked, backend/Admin/shared/runtime guard passed, existing preference APIs only are used, and Task API payload shape `{ content }` is preserved.
+- Workspace Model Preference local E2E evidence is verified and accepted in `issues/074_workspace_model_preference_local_e2e_evidence.md` with evidence in `reviews/071_workspace_model_preference_local_e2e_review.md`. Real local backend/frontend runtime passed preference read/save/reset and operation-console task creation; Task API remains content-only. Known local environment note: when frontend uses a non-default port such as `3010`, backend `CURIS_ALLOWED_ORIGINS` must include that origin.
+- Model Gateway Local Demo Release Candidate gate is opened in `issues/075_model_gateway_local_demo_release_candidate_gate.md` and routed to 总控决策席. Proposed next step is documentation/evidence only: prepare a local/demo release-candidate package for the model-gateway-enabled AI Task Executor MVP after New API, official catalogs, usage events, runtime guardrails, tenant model preference, model preference UI, and local E2E evidence. No new implementation is approved at this gate.
+- Model Gateway Local Demo Release Candidate gate was approved by 总控决策席 on 2026-07-08. Next work is documentation/evidence-only release-candidate preparation covering New API model gateway, official model/tool catalogs, UsageEvent model-call fields, runtime secret guardrails, tenant model preference backend/UI, and local E2E evidence.
+- Model Gateway Local Demo Release Candidate package is prepared, quality-verified, and accepted in `docs/release/model-gateway-local-demo-rc.md` with evidence in `reviews/072_model_gateway_local_demo_release_candidate_review.md`. Package coverage includes New API local gateway, official model/tool catalogs, UsageEvent model-call fields, ADR-0029 runtime secret guardrails, tenant model preference backend/UI, local E2E evidence, verification checklist, startup/runbook commands, and known-gap classification. 质量运行席 verification passed against commit `9bfc7d8b`: evidence map, runbook/checklist, known-gap classification, source-of-truth status, secret scan, and behavior-file scope guard passed; no backend/frontend behavior files changed for this issue. 产品规划席 accepted the local/demo RC package on 2026-07-08; hosted production remains blocked.
+- Model Gateway Post-RC Next Phase gate is opened in `issues/076_model_gateway_post_rc_next_phase_gate.md` and routed to 总控决策席. Product recommendation: Option A, a documentation/evidence-only local/demo first-version release closeout, with no implementation or behavior change.
+- Model Gateway Post-RC Next Phase gate was approved by 总控决策席 on 2026-07-08 with Option A. Next work is documentation/evidence-only local/demo first-version release closeout for the model-gateway-enabled AI Task Executor MVP.
+- Model Gateway Local Demo first-version release closeout package is prepared, quality-verified, and accepted in `docs/release/model-gateway-local-demo-first-version-release-record.md` with evidence in `reviews/073_model_gateway_local_demo_release_closeout_review.md`. The closeout package records release decision evidence, operator handoff summary, final local/demo checklist, known-gap confirmation, source-of-truth status updates, and next backlog boundary. 质量运行席 verification passed against commit `0801231d`: release decision record, operator handoff, checklist, known-gap classification, source-of-truth status, secret scan, and behavior-file scope guard passed; no backend/frontend behavior files changed for this issue. 产品规划席 accepted the local/demo first-version release closeout on 2026-07-08; hosted production remains blocked.
+- Post-first-version Workspace Company Foundation gate is opened in `issues/077_post_first_version_workspace_company_foundation_gate.md` and routed to 总控决策席. Product recommendation: Option A, architecture/product boundary definition only for the first minimal CEO-facing Workspace company foundation, preserving local/demo, model-gateway security, Admin/Workspace separation, and future-layer locks. No implementation or behavior change is approved at this gate.
+- Post-first-version Workspace Company Foundation gate was approved by 总控决策席 on 2026-07-08 with Option A. Next work is architecture/product boundary definition only for the first minimal CEO-facing Workspace company foundation: existing tenant id, company identity, department catalog/instances, model preference, task console, and Project Memory as one bounded Workspace frame. No implementation or behavior change is approved yet.
+- Workspace Company Foundation architecture/product boundaries are defined, quality-verified, and accepted in `docs/decisions/ADR-0031-workspace-company-foundation-boundaries.md` with evidence in `reviews/074_workspace_company_foundation_boundaries_review.md`. The boundary defines a minimal local/demo CEO-facing company shell over existing tenant/workspace context, company identity concept, department catalog/instances, model preference, task console, Project Memory, and release status. 质量运行席 verification passed against commit `651bdb99`; 产品规划席 accepted ADR-0031 on 2026-07-08. First implementation remains separately gated.
+- Workspace Company Foundation first-slice gate is opened in `issues/078_workspace_company_foundation_first_slice_gate.md` and routed to 总控决策席. Product recommendation: Option A, a frontend-only local/demo company frame inside the existing operation console using existing non-secret state and existing preference/catalog APIs only. No backend/API/schema/persistence, execution-loop, Task API, runtime, Admin Platform, billing/ROI, Employee CRUD, complex organization, business module, or secret behavior is approved at this gate.
+- Workspace Company Foundation first-slice gate was approved by 总控决策席 on 2026-07-08 with Option A. Next work is frontend-only implementation inside the existing operation console, using only existing non-secret state and existing preference/catalog APIs. Backend/API/schema/persistence, Task API, execution-loop, tool routing, workflow, model-selection behavior, Project Memory writes, runtime behavior, Admin Platform implementation, billing/ROI/packages/marketplace, Employee CRUD/expansion, complex organization, business modules, secrets, provider SDK/direct calls, New API source/internal DB dependency, and department CRUD/workflow routing remain blocked.
+- Workspace Company Foundation first slice is implemented, quality-verified, and accepted with evidence in `reviews/075_workspace_company_foundation_first_slice_review.md`. Workspace now shows a frontend-only local/demo company frame inside the existing operation console using existing task list state and existing model preference state only. 质量运行席 verification passed against commit `dfd60689`: 16 frontend tests passed, lint passed, build passed, API/payload scan passed, forbidden-scope scan passed, secret scan passed, and commit behavior-file guard showed no backend/API/schema/persistence/Admin/shared/deploy/tools/data files changed for this issue. 产品规划席 accepted the slice on 2026-07-08.
+- Workspace Company Foundation local/demo evidence gate is opened in `issues/079_workspace_company_foundation_local_demo_evidence_gate.md` and routed to 总控决策席. Product recommendation: Option A, verification-only local/demo evidence for the accepted company frame, including browser-visible/screenshot evidence, visible company-frame content, no secret-like metadata, and Task API payload `{ content }`. No new feature, backend/API/schema/persistence change, runtime behavior change, Admin Platform, hosted production, billing/ROI/packages/marketplace, Employee CRUD, complex organization, business module, secret handling, or department workflow routing is approved at this gate.
+- Workspace Company Foundation local/demo evidence gate was approved by 总控决策席 on 2026-07-08 with Option A. Next work is verification-only local/demo evidence for the accepted company frame: browser-visible/screenshot evidence, visible company-frame content, no secret-like metadata, and Task API payload `{ content }`. No new feature, backend/API/schema/persistence change, runtime behavior change, Admin Platform, hosted production, billing/ROI/packages/marketplace, Employee CRUD, complex organization, business module, secret handling, or department workflow routing is approved.
+- Workspace Company Foundation local/demo evidence is verified and accepted in `reviews/076_workspace_company_foundation_local_demo_evidence_review.md`. Browser-visible evidence and screenshot artifact `reviews/076_workspace_company_foundation_local_demo_evidence.png` confirm the company frame renders in local/demo runtime with company identity, local/demo status, model preference summary, task summary, and source links visible. Backend health, frontend runtime smoke, 16 frontend tests, lint, build, Task API payload boundary, and secret-like metadata scan passed. No implementation or behavior change was made for this evidence issue.
+- Workspace Company Department Catalog Summary gate is opened in `issues/080_workspace_company_department_catalog_summary_gate.md` and routed to 总控决策席. Product recommendation: Option A, a frontend-only summary inside the existing company frame using existing `GET /api/catalog/department-types` only. Backend/API/schema/persistence changes, new department APIs, department CRUD/instances/routing, Employee CRUD, Admin Platform implementation, billing/ROI/packages/marketplace, complex organization, business modules, secrets, Task API changes, and runtime behavior changes remain blocked.
+- Workspace Company Department Catalog Summary gate was approved by 总控决策席 on 2026-07-08 with Option A. Next work is frontend-only implementation inside the existing company frame using existing `GET /api/catalog/department-types` only. Backend/API/schema/persistence changes, new department APIs, department CRUD/instances/routing, Employee CRUD, Admin Platform implementation, billing/ROI/packages/marketplace, complex organization, business modules, secrets, Task API changes, and runtime behavior changes remain blocked.
+- Workspace Company Department Catalog Summary is implemented, quality-verified, and accepted in `reviews/077_workspace_company_department_catalog_summary_review.md`. Workspace now shows a frontend-only read-only `部门目录` summary inside the existing company frame using existing `GET /api/catalog/department-types` only. Verification passed with 18 frontend tests, lint, build, API usage scan, Task API payload guard, and forbidden-scope scan. No backend/API/schema/persistence, Admin Platform, department CRUD/instances/routing, Employee CRUD, billing/ROI/packages/marketplace, business-module, secret, Task API, or runtime behavior change was introduced for this slice.
+- Workspace Department Catalog local/demo evidence gate is opened and approved in `issues/081_workspace_department_catalog_local_demo_evidence_gate.md` with Option A. Next work is verification-only browser-visible evidence for the accepted `部门目录` summary in the existing company frame. No implementation, backend/API/schema/persistence, new department API, department CRUD/instances/routing, Employee CRUD, Admin Platform, billing/ROI/packages/marketplace, business-module, secret, Task API, or runtime behavior change is approved.
+- Workspace Department Catalog local/demo evidence is verified and accepted in `reviews/078_workspace_department_catalog_local_demo_evidence_review.md`. Browser-visible evidence and screenshot artifact `reviews/078_workspace_department_catalog_local_demo_evidence.png` confirm the accepted `部门目录` summary renders in local/demo runtime with active official count, category summary, and non-secret department labels visible. Backend health, frontend runtime smoke, department catalog API read, 18 frontend tests, lint, build, Task API payload boundary, and secret-like metadata scan passed. No implementation or behavior change was made for this evidence issue.
+- Workspace Department Activation boundary gate is opened and approved in `issues/082_workspace_department_activation_boundary_gate.md` with Option A. Next work is architecture/product boundary definition only for future tenant-local department activation over existing active official department type metadata. No implementation, backend/API/schema/persistence change, new department API, department instance, workflow routing, Employee CRUD, Admin Platform, billing/ROI/packages/marketplace, business-module, secret, Task API, or runtime behavior change is approved.
+- Workspace Department Activation boundaries are defined, quality-verified, and accepted in `docs/decisions/ADR-0032-workspace-department-activation-boundaries.md` with evidence in `reviews/079_workspace_department_activation_boundaries_review.md`. The boundary defines future tenant-local department activation as metadata-only selection over active official department type metadata. Official department type supply remains outside Workspace. Implementation, backend/API/schema/persistence, new department APIs, department instances, workflow routing, Employee CRUD, Admin Platform, billing/ROI/packages/marketplace, business modules, secrets, Task API changes, and runtime behavior changes remain blocked until a separate implementation issue is approved.
+- Workspace Department Activation first-slice gate is opened and approved in `issues/083_workspace_department_activation_first_slice.md`. Next work is backend-only tenant-local department activation metadata over active official department type metadata. Frontend UI selector, Admin Platform implementation, new official department type supply, department instances, workflow routing, Employee CRUD, billing/ROI/packages/marketplace, business modules, secrets, Task API changes, Project Memory runtime writes, and runtime behavior changes remain blocked.
+- Workspace Department Activation first slice is implemented, quality-verified, and accepted in `reviews/080_workspace_department_activation_first_slice_review.md`. Workspace now has backend-only tenant-local department activation metadata with `GET /api/workspace/departments/activation` and `PUT /api/workspace/departments/activation`. Writes validate active official department type metadata, reads/writes are tenant-scoped, persistence is metadata-only, and API responses expose only non-secret department metadata plus enabled state. Focused backend tests passed and full backend regression passed with 255 tests. Frontend selector, Admin Platform implementation, department instances, workflow routing, Employee CRUD, billing/ROI/packages/marketplace, business modules, secrets, Task API changes, Project Memory runtime writes, and runtime behavior changes remain blocked.
+- Workspace Department Activation UI gate is opened and approved in `issues/084_workspace_department_activation_ui_gate.md`. Next work is frontend-only display/selector inside the existing company frame using only existing `GET /api/workspace/departments/activation` and `PUT /api/workspace/departments/activation`. Backend/API/schema/persistence changes, new department APIs, department instances, workflow routing, Employee CRUD, Admin Platform, billing/ROI/packages/marketplace, business modules, secrets, Task API changes, Project Memory runtime writes, and runtime behavior changes remain blocked.
+- Workspace Department Activation UI is implemented, quality-verified, and accepted in `reviews/081_workspace_department_activation_ui_review.md`. Workspace now shows and saves tenant-local enabled department type selections inside the existing company frame using only existing activation APIs. Frontend verification passed with 21 tests, lint, build, API usage scan, and scope scan. No backend/API/schema/persistence change, new department API, department instance, workflow routing, Employee CRUD, Admin Platform, billing/ROI/packages/marketplace, business-module, secret, Task API, Project Memory runtime write, or runtime behavior change was introduced for this issue.
+- Workspace Department Activation UI current-state correction is recorded in `reviews/081_workspace_department_activation_ui_review.md`. A current audit found the page-level activation selector wiring was missing from `frontend/app/page.js`; the correction added the selector inside the existing `公司工作区` frame using only existing activation APIs, added regression coverage, and passed 22 frontend tests, lint, build, and focused backend activation tests.
+- Workspace Admin shared-contract integration补齐 is implemented, quality-verified, and accepted in `issues/085_workspace_admin_contract_integration_completion.md` with evidence in `reviews/082_workspace_admin_contract_integration_completion_review.md`. Workspace task execution now writes Admin-compatible `usage.model_call`, `usage.tool_call`, and `usage.task_execution` records with tenant/task/capability/model/token/cost/status fields; Admin usage projection can query by `tenant_id`; tenant-private capability metadata is isolated under `/api/workspace/capabilities/private` and does not pollute official `/api/catalog/*`; Workspace runtime execution files do not call `/api/platform/*`. Verification passed with 7 focused ADR-0028 tests, 50 gateway/catalog/preference tests, 38 execution-engine tests, 279 full backend tests, whitespace check, endpoint scope scan, usage/namespace scan, and secret scan.
+- Workspace Self-Extension MVP is implemented, quality-verified, and accepted in `issues/086_workspace_self_extension_mvp.md` with evidence in `reviews/083_workspace_self_extension_mvp_review.md`. Workspace now supports tenant-private model/tool/connector metadata through typed backend endpoints, a unified official + tenant-private capability selector, and optional task capability selection. Tenant-private execution preserves the existing model gateway path and writes usage events with `capability_source=tenant_private`. Verification passed with TDD red evidence, 10 ADR-0028 focused tests, 42 Phase-3 focused tests, 38 execution-engine tests, 298 full backend tests, whitespace check, runtime `/api/platform/*` scope scan, tenant-private scan, and secret scan.
+- Issue-080 department catalog scope split is resolved in `reviews/077_workspace_company_department_catalog_summary_review.md`. Department catalog summary evidence remains bounded to read-only `GET /api/catalog/department-types` and `reviews/078` browser evidence; department activation behavior belongs to accepted issues 083/084.
+- New API local deployment is verified: Docker CLI, Docker Compose, and Colima are installed; New API container `curis-new-api` is running at `http://127.0.0.1:3000`; DeepSeek is configured as the first upstream channel; Curis local New API token exists in ignored `deploy/new-api/.env`; `/v1/models` includes `deepseek-v4-flash`; `/v1/chat/completions` returns a successful response; Workspace task execution uses `model_gateway_tool` and writes required `usage.model_call` events.
+- Model Gateway production security boundary is accepted in `docs/decisions/ADR-0029-model-gateway-production-security-boundary.md` with evidence in `reviews/066_model_gateway_production_security_boundary_review.md`: New API remains a gateway only, Curis DB stores no credential values, Workspace calls stay behind `ModelGatewayAdapter`, and UsageEvent model-meter fields are constrained.
+- Workspace Official Tool Catalog is implemented and verified: Workspace can read active official tool metadata through `GET /api/catalog/tools` without exposing credentials. Backend regression: 163 tests passed.
+- Workspace Official Model Catalog is implemented and verified: Workspace can read active official model metadata through `GET /api/catalog/models` without exposing credentials. Backend regression: 163 tests passed.
+- Workspace Model Gateway Adapter is implemented and verified: default AI Task Executor model calls route through a New API OpenAI-compatible adapter and UsageEvent records now include gateway metrics. Backend regression: 161 tests passed.
+- Workspace Capability Integration Phase-1 is implemented and verified: Workspace can read the official department catalog and task execution now emits admin-readable UsageEvent records with tenant/CEO attribution.
+- Product direction defined: final product is an AI Company System for solo entrepreneurs.
+- Current launch scope defined: AI Task Executor MVP, with framework compatibility for future L0-L6 layers.
+- Current implementation gate defined: Curis Workspace Tool System v1.8.
+- Sprint roadmap accepted:
+  - Sprint 0: AI 公司执行内核
+  - Sprint 1A: Meta Development System
+  - Sprint 1B: Controlled Self-Evolution Kernel
+  - Sprint 1: 公司运行可视化
+  - Sprint 2: 统一任务操作台
+  - Sprint 3: 轻量角色与职责系统
+  - Sprint 4: 多入口与高级 UI
+- Low-token role workflow initialized in `AGENTS.md` and `knowledge/`.
+- Root workflow surfaces initialized: `PROJECT_STATUS.md`, `TASKS.md`, `issues/`, and `reviews/`.
+- PMO details remain in `docs/pmo/`.
+- Sprint 0 acceptance verification completed with PASS in `reviews/001_sprint_0_acceptance_review.md`.
+- Sprint 0 was approved for closure by 总控决策席 on 2026-07-06.
+- User selected option A: pause Sprint 1 visualization and enter Tool System v1.6 first.
+- Tool System v1.6 Meta Development System was implemented and verified.
+- User approved Tool System v1.8 as Controlled Self-Evolving AI Operating System Kernel.
+- Tool System v1.8 Controlled Self-Evolution Kernel was implemented by 系统交付席, independently verified by 质量运行席, and accepted by 产品规划席 on 2026-07-06.
+- Sprint 1 company visualization PRD slice is drafted in `docs/sprints/sprint-1-company-visualization.md`.
+- Sprint 1 company visualization gate was approved by 总控决策席 on 2026-07-06.
+- Sprint 1 architecture-boundary verification plan was accepted by 产品规划席 on 2026-07-06.
+- Sprint 1 first implementation slice is compact task list plus selected task detail.
+- Sprint 1 architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0002-sprint-1-company-visualization-architecture-boundaries.md`.
+- Sprint 1 visualization first slice was implemented, verified, and accepted on 2026-07-06.
+- User chose to continue Sprint 1 visualization polish before Sprint 2.
+- Sprint 1 CEO-readable visualization polish was implemented, verified, and accepted on 2026-07-06.
+- User chose to enter Sprint 2 on 2026-07-06.
+- Sprint 2 unified task console PRD slice is drafted in `docs/sprints/sprint-2-unified-task-console.md`.
+- Sprint 2 gate issue is opened in `issues/008_sprint_2_unified_task_console_gate.md`.
+- Sprint 2 unified task console gate was approved by 总控决策席 on 2026-07-06.
+- Sprint 2 architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0003-sprint-2-unified-task-console-architecture-boundaries.md`.
+- Sprint 2 architecture-boundary verification planning passed in `reviews/007_sprint_2_architecture_boundaries_review.md`.
+- 产品规划席 accepted the Sprint 2 architecture-boundary verification plan on 2026-07-06.
+- Sprint 2 first implementation issue is `issues/009_sprint_2_unified_task_console_first_slice.md`.
+- Sprint 2 unified task console first slice was implemented by 系统交付席 on 2026-07-06 and is ready for 质量运行席 verification.
+- 质量运行席 verified Sprint 2 unified task console first slice against commit `b799041`.
+- 产品规划席 accepted Sprint 2 unified task console first slice on 2026-07-06.
+- 产品规划席 selected Sprint 2 Project Memory Foundation as the next follow-up before Sprint 3.
+- Sprint 2 Project Memory Foundation PRD slice is drafted in `docs/sprints/sprint-2-project-memory-foundation.md`.
+- Sprint 2 Project Memory Foundation gate issue is opened in `issues/010_sprint_2_project_memory_foundation_gate.md`.
+- Sprint 2 Project Memory Foundation gate was approved by 总控决策席 on 2026-07-06.
+- Project Memory Foundation architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0004-project-memory-foundation-architecture-boundaries.md`.
+- Project Memory Foundation architecture-boundary verification planning passed in `reviews/009_project_memory_foundation_architecture_boundaries_review.md`.
+- 产品规划席 accepted the Project Memory Foundation architecture-boundary verification plan on 2026-07-06.
+- First Project Memory implementation issue is `issues/011_sprint_2_project_memory_first_slice.md`.
+- Project Memory first slice was implemented by 系统交付席 in `knowledge/PROJECT_MEMORY.md` on 2026-07-06 and is ready for 质量运行席 verification.
+- 质量运行席 verified Project Memory first slice against amended commit `3e44d9c`.
+- 产品规划席 accepted Project Memory first slice on 2026-07-06.
+- 产品规划席 selected Sprint 3 lightweight role and responsibility system as the next step on 2026-07-06.
+- Sprint 3 PRD slice is drafted in `docs/sprints/sprint-3-lightweight-role-responsibility.md`.
+- Sprint 3 gate issue is opened in `issues/012_sprint_3_lightweight_role_responsibility_gate.md`.
+- Sprint 3 lightweight role and responsibility gate was approved by 总控决策席 on 2026-07-06.
+- Sprint 3 lightweight role architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0005-sprint-3-lightweight-role-responsibility-boundaries.md`.
+- Sprint 3 lightweight role architecture-boundary verification planning passed in `reviews/011_sprint_3_lightweight_role_architecture_boundaries_review.md`.
+- 产品规划席 accepted the Sprint 3 lightweight role architecture-boundary verification plan on 2026-07-06.
+- First Sprint 3 implementation issue is `issues/013_sprint_3_role_profiles_first_slice.md`.
+- Sprint 3 role profiles first slice is implemented in `knowledge/ROLE_PROFILES.md`.
+- 质量运行席 verified Sprint 3 role profiles first slice against commit `53d8a30`.
+- 产品规划席 accepted Sprint 3 role profiles first slice on 2026-07-06.
+- 产品规划席 opened Sprint 3 role-context runtime reference gate on 2026-07-06.
+- Role-context runtime reference is only a gate for architecture boundary definition; runtime implementation remains blocked.
+- Sprint 3 role-context runtime reference gate was approved by 总控决策席 on 2026-07-06.
+- Sprint 3 role-context runtime reference architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0006-role-context-runtime-reference-boundaries.md`.
+- Sprint 3 role-context runtime reference architecture-boundary verification planning passed in `reviews/013_role_context_runtime_reference_architecture_boundaries_review.md`.
+- 产品规划席 accepted the Sprint 3 role-context runtime reference architecture-boundary verification plan on 2026-07-06.
+- First role-context runtime reference implementation issue is `issues/015_sprint_3_role_context_runtime_reference_first_slice.md`.
+- Sprint 3 role-context runtime reference first slice is implemented in `backend/app/role_context.py`.
+- 质量运行席 verified Sprint 3 role-context runtime reference first slice against commit `71e9577b`.
+- 产品规划席 accepted Sprint 3 role-context runtime reference first slice on 2026-07-06.
+- Sprint 4 product PRD slice is drafted in `docs/sprints/sprint-4-multi-entry-advanced-ui.md`.
+- Sprint 3 closeout and Sprint 4 entry gate issue is `issues/016_sprint_3_closeout_sprint_4_entry_gate.md`.
+- Sprint 3 was approved for closeout by 总控决策席 on 2026-07-06.
+- Sprint 4 multi-entry and advanced UI gate was approved for architecture boundary definition by 总控决策席 on 2026-07-06.
+- Sprint 4 multi-entry and advanced UI architecture boundaries were defined by 系统交付席 in `docs/decisions/ADR-0007-sprint-4-multi-entry-advanced-ui-boundaries.md`.
+- Sprint 4 multi-entry and advanced UI architecture-boundary verification planning passed in `reviews/015_sprint_4_multi_entry_architecture_boundaries_review.md`.
+- 产品规划席 accepted the Sprint 4 multi-entry UI architecture-boundary verification plan on 2026-07-06.
+- First Sprint 4 implementation issue is `issues/017_sprint_4_multi_entry_ui_first_slice.md`.
+- Sprint 4 multi-entry UI first slice was implemented by 系统交付席 on 2026-07-06 and is ready for 质量运行席 verification.
+- Delivery evidence is recorded in `reviews/016_sprint_4_multi_entry_ui_first_slice_review.md`.
+- Implementation remains frontend-only under `frontend/app` and preserves the existing Task API payload shape `{ content }`.
+- 质量运行席 verified Sprint 4 multi-entry UI first slice against commit `c528ed72`.
+- Quality status: PASS; no blockers were found by 质量运行席.
+- 产品规划席 accepted Sprint 4 multi-entry UI first slice on 2026-07-06.
+- 产品规划席 drafted AI Task Executor MVP readiness gate in `docs/sprints/ai-task-executor-mvp-readiness.md`.
+- Sprint 4 closeout and MVP readiness gate issue is `issues/018_sprint_4_closeout_mvp_readiness_gate.md`.
+- Sprint 4 first slice was approved for current-MVP closeout by 总控决策席 on 2026-07-06.
+- AI Task Executor MVP readiness review was approved by 总控决策席 on 2026-07-06 as gate-only planning and gap classification.
+- AI Task Executor MVP readiness review boundaries were defined by 系统交付席 in `docs/decisions/ADR-0008-ai-task-executor-mvp-readiness-boundaries.md`.
+- Boundary and verification-planning evidence is recorded in `reviews/017_ai_task_executor_mvp_readiness_boundaries_review.md`.
+- 质量运行席 verified the MVP readiness boundary, verification plan, and gap-classification plan against commit `031321bf`.
+- Quality status: PASS; no scope blockers were found by 质量运行席.
+- 产品规划席 accepted the AI Task Executor MVP readiness boundary verification plan on 2026-07-06.
+- AI Task Executor MVP readiness review issue is `issues/019_ai_task_executor_mvp_readiness_review.md`.
+- AI Task Executor MVP readiness review was conducted by 系统交付席 on 2026-07-06.
+- Evidence is recorded in `reviews/018_ai_task_executor_mvp_readiness_review.md`.
+- No blocker readiness gaps were found; gaps were classified as stabilization, verification, or future product scope.
+- 质量运行席 verified the AI Task Executor MVP readiness evidence map and gap classification against commit `e657b884`.
+- Quality status: PASS; no readiness blockers or scope blockers were found by 质量运行席.
+- 产品规划席 accepted the AI Task Executor MVP readiness review on 2026-07-06.
+- Operation-console Chinese localization was completed by 系统交付席 on 2026-07-06.
+- Localization evidence is recorded in `reviews/019_chinese_operation_console_localization_review.md`.
+- 产品规划席 opened AI Task Executor MVP release-candidate gate on 2026-07-06.
+- Release-candidate PRD slice is drafted in `docs/sprints/ai-task-executor-mvp-release-candidate.md`.
+- Release-candidate gate issue is `issues/021_ai_task_executor_mvp_release_candidate_gate.md`.
+- AI Task Executor MVP release-candidate gate was approved by 总控决策席 on 2026-07-06 for boundary definition and stabilization/documentation planning only.
+- AI Task Executor MVP release-candidate boundaries were defined by 系统交付席 in `docs/decisions/ADR-0009-ai-task-executor-mvp-release-candidate-boundaries.md`.
+- Boundary and exact stabilization/documentation planning evidence is recorded in `reviews/020_ai_task_executor_mvp_release_candidate_boundaries_review.md`.
+- 质量运行席 verified the AI Task Executor MVP release-candidate boundaries and exact stabilization/documentation plan against commit `d94fc084`.
+- Quality status: PASS; no scope blockers were found by 质量运行席.
+- 产品规划席 accepted the AI Task Executor MVP release-candidate boundaries and exact stabilization/documentation plan on 2026-07-06.
+- 产品规划席 opened release-candidate stabilization/documentation implementation issue `issues/022_ai_task_executor_mvp_release_candidate_stabilization_docs.md` on 2026-07-06.
+- Release-candidate stabilization/documentation package was implemented by 系统交付席 on 2026-07-06.
+- Release artifact is `docs/release/ai-task-executor-mvp-v0.1.md`.
+- Delivery evidence is recorded in `reviews/021_ai_task_executor_mvp_release_candidate_stabilization_docs_review.md`.
+- FastAPI Python 3.14 warning triage decision is `defer-known-gap`; no code fix was made.
+- 质量运行席 verified the release-candidate stabilization/documentation package against commit `33d89da7`.
+- Quality status: PASS; no blockers were found by 质量运行席.
+- 产品规划席 accepted the release-candidate stabilization/documentation package on 2026-07-06.
+- 产品规划席 opened first-version local/demo release verification issue `issues/023_ai_task_executor_mvp_local_demo_release_verification.md` on 2026-07-06.
+- 质量运行席 verified the first-version local/demo release candidate at restore point `c5011acd`.
+- Release verification evidence is recorded in `reviews/022_ai_task_executor_mvp_local_demo_release_verification_review.md`.
+- Quality status: PASS; no blockers were found by 质量运行席.
+- 产品规划席 accepted the first-version local/demo release candidate verification on 2026-07-06.
+- API smoke passed against the real local FastAPI app for health, task creation, and task history; no mock or simulation substitution was used.
+- 产品规划席 closed AI Task Executor MVP v0.1 as the first local/demo version on 2026-07-06.
+- Release record is `docs/release/ai-task-executor-mvp-v0.1-release-record.md`.
+- Closeout evidence is `reviews/023_ai_task_executor_mvp_v0_1_release_closeout_review.md`.
+- Local tag decision: create `v0.1` after the closeout commit; verified code restore point remains `c5011acd`.
+- 总控决策席 approved the post-v0.1 Execution Reliability gate on 2026-07-06.
+- Gate issue is `issues/025_post_v0_1_execution_reliability_gate.md`.
+- Gate brief is `docs/sprints/post-v0.1-execution-reliability.md`.
+- The next phase is architecture boundary definition only; no implementation is approved by this gate.
+- 系统交付席 defined post-v0.1 Execution Reliability architecture boundaries on 2026-07-06.
+- Boundary ADR is `docs/decisions/ADR-0010-post-v0.1-execution-reliability-boundaries.md`.
+- Boundary issue is `issues/026_post_v0_1_execution_reliability_boundaries.md`.
+- Delivery evidence is `reviews/024_post_v0_1_execution_reliability_boundaries_review.md`.
+- Recommended first slice is `Run Evidence Reliability`; implementation remains blocked until quality planning and product acceptance.
+- 质量运行席 verified the post-v0.1 Execution Reliability architecture boundaries on 2026-07-06.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the post-v0.1 Execution Reliability architecture boundaries on 2026-07-06.
+- First implementation slice is `Run Evidence Reliability`.
+- Implementation issue is `issues/027_run_evidence_reliability_first_slice.md`.
+- Implementation is limited to backend tests and evidence quality around existing run behavior; API semantics, persistence schema, UI, external services, new features, new execution behavior, and future-layer scope remain blocked.
+- 系统交付席 implemented the Run Evidence Reliability first slice on 2026-07-06.
+- Delivery evidence is `reviews/025_run_evidence_reliability_first_slice_review.md`.
+- Backend reliability coverage now verifies successful run evidence chain and failed run evidence chain.
+- Duplicate failed-run tool trace persistence was fixed without changing API semantics or persistence schema.
+- Backend regression passed with 36 tests.
+- 质量运行席 verified the Run Evidence Reliability first slice on 2026-07-06.
+- Quality evidence is recorded in `reviews/025_run_evidence_reliability_first_slice_review.md`.
+- Focused reliability tests passed with 2 tests.
+- Backend regression passed with 36 tests.
+- Frontend diff guard passed; no frontend files changed.
+- Scope scan found no forbidden implementation drift.
+- 产品规划席 accepted the Run Evidence Reliability first slice on 2026-07-06.
+- Next proposed post-v0.1 reliability slice is Workflow Error/Fallback Observability.
+- Workflow Error/Fallback Observability gate issue is `issues/028_workflow_error_fallback_observability_gate.md`.
+- 总控决策席 approved the Workflow Error/Fallback Observability gate on 2026-07-06.
+- The gate approves architecture boundary definition only and does not approve implementation.
+- 系统交付席 defined Workflow Error/Fallback Observability architecture boundaries on 2026-07-06.
+- Boundary ADR is `docs/decisions/ADR-0011-workflow-error-fallback-observability-boundaries.md`.
+- Boundary issue is `issues/029_workflow_error_fallback_observability_boundaries.md`.
+- Delivery evidence is `reviews/026_workflow_error_fallback_observability_boundaries_review.md`.
+- Recommended first implementation slice is `Workflow Error/Fallback Evidence Map`; limited implementation is unblocked only through `issues/030_workflow_error_fallback_evidence_map.md`.
+- 质量运行席 verified the Workflow Error/Fallback Observability architecture boundaries on 2026-07-06.
+- Quality status: PASS; no backend/frontend implementation diff or scope blockers were found.
+- 产品规划席 accepted the Workflow Error/Fallback Observability architecture boundaries on 2026-07-06.
+- First implementation issue is `issues/030_workflow_error_fallback_evidence_map.md`.
+- First implementation is limited to backend tests and evidence documentation for existing workflow error/fallback behavior.
+- 系统交付席 implemented Workflow Error/Fallback Evidence Map on 2026-07-06.
+- Delivery evidence is `reviews/027_workflow_error_fallback_evidence_map_review.md`.
+- Backend tests now cover successful fallback evidence map and full fallback-chain failure evidence map.
+- No backend production files or frontend files were changed.
+- Backend regression passed with 38 tests.
+- 质量运行席 verified Workflow Error/Fallback Evidence Map on 2026-07-06.
+- Quality status: PASS; focused tests passed with 2 tests and backend regression passed with 38 tests.
+- No frontend diff, backend production diff, or scope blockers were found.
+- 产品规划席 accepted Workflow Error/Fallback Evidence Map on 2026-07-06.
+- Next proposed post-v0.1 reliability slice is Evolution Decision Evidence Reliability.
+- Evolution Decision Evidence Reliability gate issue is `issues/031_evolution_decision_evidence_reliability_gate.md`.
+- 总控决策席 approved the Evolution Decision Evidence Reliability gate on 2026-07-06.
+- The gate approves architecture boundary definition only and does not approve implementation.
+- 系统交付席 defined Evolution Decision Evidence Reliability architecture boundaries on 2026-07-06.
+- Boundary ADR is `docs/decisions/ADR-0012-evolution-decision-evidence-reliability-boundaries.md`.
+- Boundary issue is `issues/032_evolution_decision_evidence_reliability_boundaries.md`.
+- Delivery evidence is `reviews/028_evolution_decision_evidence_reliability_boundaries_review.md`.
+- Recommended first implementation slice is `Evolution Decision Evidence Map`; limited implementation is unblocked only through `issues/033_evolution_decision_evidence_map.md`.
+- 质量运行席 verified the Evolution Decision Evidence Reliability architecture boundaries on 2026-07-06.
+- Quality status: PASS; no backend/frontend implementation diff or scope blockers were found.
+- 产品规划席 accepted the Evolution Decision Evidence Reliability architecture boundaries on 2026-07-06.
+- First implementation issue is `issues/033_evolution_decision_evidence_map.md`.
+- First implementation is limited to backend tests and evidence documentation for existing Evolution Governor decision behavior.
+- 系统交付席 implemented Evolution Decision Evidence Map on 2026-07-06.
+- Delivery evidence is `reviews/029_evolution_decision_evidence_map_review.md`.
+- Backend tests now cover stable do-not-evolve, threshold-triggered controlled proposal/simulation/rollback, locked-module postpone risk, and evolution-decision API evidence.
+- No backend production files or frontend files were changed.
+- Backend regression passed with 41 tests.
+- 质量运行席 verified Evolution Decision Evidence Map on 2026-07-06.
+- Quality status: PASS; focused tests passed with 4 tests and backend regression passed with 41 tests.
+- No frontend diff, backend production diff, or scope blockers were found.
+- 产品规划席 accepted Evolution Decision Evidence Map on 2026-07-06.
+- Post-v0.1 Execution Reliability closeout gate issue is `issues/034_post_v0_1_execution_reliability_closeout_gate.md`.
+- 总控决策席 approved the post-v0.1 Execution Reliability closeout gate on 2026-07-06.
+- The gate approves closeout review planning only and does not approve implementation.
+- 系统交付席 completed the post-v0.1 Execution Reliability closeout review on 2026-07-06.
+- Closeout evidence is `reviews/030_post_v0_1_execution_reliability_closeout_review.md`.
+- No blocker gaps were identified for the post-v0.1 reliability phase.
+- Recommended next move after quality verification and product acceptance is next-phase selection by 产品规划席.
+- 质量运行席 verified the post-v0.1 Execution Reliability closeout review on 2026-07-06.
+- Backend regression passed with 41 tests.
+- No backend/frontend implementation diff or scope blockers were found.
+
+## Completed Work
+
+- Role model defined.
+- Five operating seats defined.
+- Current forbidden scope defined.
+- Low-token default reads defined for five merged operating seats: 总控决策席, 产品规划席, 系统交付席, 质量运行席, 安全边界席.
+- Backend test environment repaired.
+- Frontend lint/build workflow repaired.
+- Sprint 0 acceptance issue verified by 质量运行席.
+- Sprint 0 closed by 总控决策席.
+- Tool System v1.6 gate opened for Meta Development System planning.
+- Tool System v1.6 issue completed with backend tests, API evidence, and scope drift scan.
+- Tool System v1.8 gate opened by 产品规划席 after user confirmation.
+- Tool System v1.8 issue completed with backend tests, API evidence, scope drift scan, and product acceptance.
+- Sprint 1 company visualization PRD slice drafted by 产品规划席.
+- Sprint 1 company visualization gate approved by 总控决策席.
+- Sprint 1 architecture-boundary verification plan accepted by 产品规划席.
+- Sprint 1 architecture boundaries defined by 系统交付席.
+- Sprint 1 visualization first slice implemented by 系统交付席.
+- Sprint 1 visualization first slice accepted by 产品规划席.
+- Sprint 1 CEO-readable visualization polish issue opened by 产品规划席.
+- Sprint 1 CEO-readable visualization polish implemented by 系统交付席.
+- Sprint 1 CEO-readable visualization polish verified by 质量运行席.
+- Sprint 1 CEO-readable visualization polish accepted by 产品规划席.
+- Sprint 2 unified task console PRD slice drafted by 产品规划席.
+- Sprint 2 gate issue opened for 总控决策席.
+- Sprint 2 unified task console gate approved by 总控决策席.
+- Sprint 2 architecture boundaries defined by 系统交付席.
+- Sprint 2 architecture-boundary verification plan accepted by 产品规划席.
+- Sprint 2 unified task console first slice implemented by 系统交付席.
+- Sprint 2 unified task console first slice verified by 质量运行席.
+- Sprint 2 unified task console first slice accepted by 产品规划席.
+- Sprint 2 Project Memory Foundation PRD slice drafted by 产品规划席.
+- Sprint 2 Project Memory Foundation gate issue opened for 总控决策席.
+- Sprint 2 Project Memory Foundation gate approved by 总控决策席.
+- Project Memory Foundation architecture boundaries defined by 系统交付席.
+- Project Memory Foundation architecture-boundary verification plan accepted by 产品规划席.
+- Project Memory first slice implemented by 系统交付席.
+- Project Memory first slice verified by 质量运行席.
+- Project Memory first slice accepted by 产品规划席.
+- Sprint 3 lightweight role and responsibility PRD slice drafted by 产品规划席.
+- Sprint 3 gate issue opened for 总控决策席.
+- Sprint 3 lightweight role and responsibility gate approved by 总控决策席.
+- Sprint 3 lightweight role architecture boundaries defined by 系统交付席.
+- Sprint 3 lightweight role architecture-boundary verification plan prepared by 质量运行席.
+- Sprint 3 lightweight role architecture-boundary verification plan accepted by 产品规划席.
+- Sprint 3 role profiles first slice implemented by 系统交付席.
+- Sprint 3 role profiles first slice verified by 质量运行席.
+- Sprint 3 role profiles first slice accepted by 产品规划席.
+- Sprint 3 role profiles first slice closed out to user by 产品规划席.
+- Sprint 3 role-context runtime reference PRD slice drafted by 产品规划席.
+- Sprint 3 role-context runtime reference gate issue opened for 总控决策席.
+- Sprint 3 role-context runtime reference gate approved by 总控决策席.
+- Sprint 3 role-context runtime reference architecture boundaries defined by 系统交付席.
+- Sprint 3 role-context runtime reference architecture-boundary verification plan prepared by 质量运行席.
+- Sprint 3 role-context runtime reference architecture-boundary verification plan accepted by 产品规划席.
+- Sprint 3 role-context runtime reference first slice implemented by 系统交付席.
+- Sprint 3 role-context runtime reference first slice verified by 质量运行席.
+- Sprint 3 role-context runtime reference first slice accepted by 产品规划席.
+- Sprint 4 multi-entry and advanced UI PRD slice drafted by 产品规划席.
+- Sprint 3 closed by 总控决策席.
+- Sprint 4 multi-entry and advanced UI gate approved by 总控决策席.
+- Sprint 4 multi-entry and advanced UI architecture boundaries defined by 系统交付席.
+- Sprint 4 multi-entry and advanced UI architecture-boundary verification plan prepared by 质量运行席.
+- Sprint 4 multi-entry and advanced UI architecture-boundary verification plan accepted by 产品规划席.
+- Sprint 4 multi-entry UI first slice implemented by 系统交付席.
+- Sprint 4 multi-entry UI first slice verified by 质量运行席.
+- Sprint 4 multi-entry UI first slice accepted by 产品规划席.
+- Sprint 4 first slice closed for current MVP phase by 总控决策席.
+- AI Task Executor MVP readiness review gate-only planning approved by 总控决策席.
+- AI Task Executor MVP readiness review boundaries defined by 系统交付席.
+- AI Task Executor MVP readiness boundary verification plan prepared by 质量运行席.
+- AI Task Executor MVP readiness boundary verification plan accepted by 产品规划席.
+- AI Task Executor MVP readiness review conducted by 系统交付席.
+- AI Task Executor MVP readiness review verified by 质量运行席.
+- AI Task Executor MVP readiness review accepted by 产品规划席.
+- Operation console visible UI localized to Chinese.
+- AI Task Executor MVP release-candidate gate opened by 产品规划席.
+- AI Task Executor MVP release-candidate gate approved by 总控决策席.
+- AI Task Executor MVP release-candidate boundaries defined by 系统交付席.
+- AI Task Executor MVP release-candidate boundaries verified by 质量运行席.
+- AI Task Executor MVP release-candidate boundaries accepted by 产品规划席.
+- AI Task Executor MVP release-candidate stabilization/documentation implementation issue opened by 产品规划席.
+- AI Task Executor MVP release-candidate stabilization/documentation package implemented by 系统交付席.
+- AI Task Executor MVP release-candidate stabilization/documentation package verified by 质量运行席.
+- AI Task Executor MVP release-candidate stabilization/documentation package accepted by 产品规划席.
+- AI Task Executor MVP first-version local/demo release verification issue opened by 产品规划席.
+- AI Task Executor MVP first-version local/demo release candidate verified by 质量运行席.
+- AI Task Executor MVP first-version local/demo release candidate verification accepted by 产品规划席.
+- AI Task Executor MVP v0.1 local/demo release closed by 产品规划席.
+- Post-v0.1 Execution Reliability gate approved by 总控决策席.
+- Post-v0.1 Execution Reliability architecture boundaries defined by 系统交付席.
+- Post-v0.1 Execution Reliability architecture boundaries verified by 质量运行席.
+- Post-v0.1 Execution Reliability architecture boundaries accepted by 产品规划席.
+- Run Evidence Reliability first slice implemented by 系统交付席.
+- Run Evidence Reliability first slice verified by 质量运行席.
+- Run Evidence Reliability first slice accepted by 产品规划席.
+- Workflow Error/Fallback Observability gate opened by 产品规划席.
+- Workflow Error/Fallback Observability gate approved by 总控决策席.
+- Workflow Error/Fallback Observability architecture boundaries defined by 系统交付席.
+- Workflow Error/Fallback Observability architecture boundaries verified by 质量运行席.
+- Workflow Error/Fallback Observability architecture boundaries accepted by 产品规划席.
+- Workflow Error/Fallback Evidence Map implemented by 系统交付席.
+- Workflow Error/Fallback Evidence Map verified by 质量运行席.
+- Workflow Error/Fallback Evidence Map accepted by 产品规划席.
+- Evolution Decision Evidence Reliability gate opened by 产品规划席.
+- Evolution Decision Evidence Reliability gate approved by 总控决策席.
+- Evolution Decision Evidence Reliability architecture boundaries defined by 系统交付席.
+- Evolution Decision Evidence Reliability architecture boundaries verified by 质量运行席.
+- Evolution Decision Evidence Reliability architecture boundaries accepted by 产品规划席.
+- Evolution Decision Evidence Map implemented by 系统交付席.
+- Evolution Decision Evidence Map verified by 质量运行席.
+- Evolution Decision Evidence Map accepted by 产品规划席.
+- Post-v0.1 Execution Reliability closeout gate opened by 产品规划席.
+- Post-v0.1 Execution Reliability closeout gate approved by 总控决策席.
+- Post-v0.1 Execution Reliability closeout review completed by 系统交付席.
+- Post-v0.1 Execution Reliability closeout review verified by 质量运行席.
+- Post-v0.1 Execution Reliability closeout review accepted by 产品规划席.
+- Product selected Local/Demo Operator Polish and Release Notes as the next bounded phase.
+- Local/demo operator polish gate issue is `issues/035_local_demo_operator_polish_gate.md`.
+- Local/demo operator polish gate approved by 总控决策席 on 2026-07-06.
+- Local/demo operator polish architecture boundaries defined by 系统交付席 on 2026-07-06.
+- Boundary ADR is `docs/decisions/ADR-0013-local-demo-operator-polish-boundaries.md`.
+- Boundary issue is `issues/036_local_demo_operator_polish_boundaries.md`.
+- Delivery evidence is `reviews/031_local_demo_operator_polish_boundaries_review.md`.
+- Recommended first slice is `Local/Demo Operator Release Notes Package`; implementation remains blocked until quality verification and product acceptance.
+- 质量运行席 verified the local/demo operator polish architecture boundaries on 2026-07-06.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the local/demo operator polish architecture boundaries on 2026-07-06.
+- First implementation issue is `issues/037_local_demo_operator_release_notes_package.md`.
+- The accepted implementation is documentation-only operator release notes.
+- 系统交付席 implemented the Local/Demo Operator Release Notes Package on 2026-07-06.
+- Release notes artifact is `docs/release/ai-task-executor-mvp-v0.1-operator-notes.md`.
+- Delivery evidence is `reviews/032_local_demo_operator_release_notes_package_review.md`.
+- 质量运行席 verified the Local/Demo Operator Release Notes Package on 2026-07-06.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the Local/Demo Operator Release Notes Package on 2026-07-06.
+- Local/demo operator polish first slice is complete.
+- Main thread closeout prepared on 2026-07-06.
+- 产品规划席 selected Local/Demo Verification Automation as the next bounded phase on 2026-07-07.
+- Local/demo verification automation gate issue is `issues/038_local_demo_verification_automation_gate.md`.
+- Local/demo verification automation gate approved by 总控决策席 on 2026-07-07.
+- Local/demo verification automation architecture boundaries defined by 系统交付席 on 2026-07-07.
+- Boundary ADR is `docs/decisions/ADR-0014-local-demo-verification-automation-boundaries.md`.
+- Boundary issue is `issues/039_local_demo_verification_automation_boundaries.md`.
+- Delivery evidence is `reviews/033_local_demo_verification_automation_boundaries_review.md`.
+- Recommended first slice is `Local/Demo API Smoke Helper`; implementation remains blocked until quality verification and product acceptance.
+- 质量运行席 verified the local/demo verification automation architecture boundaries on 2026-07-07.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the local/demo verification automation architecture boundaries on 2026-07-07.
+- First implementation issue is `issues/040_local_demo_api_smoke_helper.md`.
+- 系统交付席 implemented the Local/Demo API Smoke Helper on 2026-07-07.
+- Helper artifact is `tools/local_demo_api_smoke.py`.
+- Operator notes reference is in `docs/release/ai-task-executor-mvp-v0.1-operator-notes.md`.
+- Delivery evidence is `reviews/034_local_demo_api_smoke_helper_review.md`.
+- 质量运行席 verified the Local/Demo API Smoke Helper on 2026-07-07.
+- Real local FastAPI smoke passed for health, task creation, and task history.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the Local/Demo API Smoke Helper on 2026-07-07.
+- Local/demo verification automation first slice is complete.
+- Main thread closeout prepared on 2026-07-07.
+- 产品规划席 selected Project Memory Execution Summary as the next bounded phase on 2026-07-07.
+- Project Memory execution summary gate issue is `issues/041_project_memory_execution_summary_gate.md`.
+- Project Memory execution summary gate approved by 总控决策席 on 2026-07-07.
+- Project Memory execution summary architecture boundaries defined by 系统交付席 on 2026-07-07.
+- Boundary ADR is `docs/decisions/ADR-0015-project-memory-execution-summary-boundaries.md`.
+- Boundary issue is `issues/042_project_memory_execution_summary_boundaries.md`.
+- Delivery evidence is `reviews/035_project_memory_execution_summary_boundaries_review.md`.
+- Recommended first slice is documentation-only `knowledge/EXECUTION_SUMMARY_MEMORY.md`; implementation remains blocked until quality verification and product acceptance.
+- 质量运行席 verified the Project Memory execution summary architecture boundaries on 2026-07-07.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the Project Memory execution summary architecture boundaries on 2026-07-07.
+- First implementation issue is `issues/043_project_memory_execution_summary.md`.
+- 系统交付席 implemented the Project Memory Execution Summary on 2026-07-07.
+- Summary artifact is `knowledge/EXECUTION_SUMMARY_MEMORY.md`.
+- Delivery evidence is `reviews/036_project_memory_execution_summary_review.md`.
+- 质量运行席 verified the Project Memory Execution Summary on 2026-07-07.
+- Quality status: PASS; no implementation drift or scope blockers were found.
+- 产品规划席 accepted the Project Memory Execution Summary on 2026-07-07.
+- Project Memory execution summary first slice is complete.
+- Main thread closeout prepared on 2026-07-07.
+
+## Next Task
+
+Implement `issues/phase1c_ceo_office_ui_first_slice.md` through 系统交付席, then verify through 质量运行席 and record evidence in `reviews/phase1c_ceo_office_ui_first_slice_review.md`.
+
+## Known Issues
+
+- FastAPI emits a Python 3.14 deprecation warning during tests.
+- Sprint 2 status filters and local presentation preferences remain deferred.
+- Execution summary memory is not included in the first Project Memory artifact; adding it requires a separately approved read-model gap or helper/API scope.
+- Runtime prompt integration, task evidence attachment, UI selector, backend metadata, persistence, and task-role association remain deferred unless separately approved.
+- Future role-context runtime callers must be constrained by a separately approved issue-declared profile id; no implicit default role is approved.
+- Sprint 4 first implementation is limited to frontend-only task-entry affordances inside the existing AI Task Executor shell.
+- Sprint 4 starter set is intentionally small and local; broader entry expansion remains future gated work.
+- MVP readiness review is approved only for planning and gap classification; implementation follow-up remains blocked until a separate approved issue defines exact scope and verification.
+- Backend readiness verification should use `backend/.venv/bin/python -m unittest discover tests` unless the system Python environment is prepared.
+- Raw JSON evidence inspection may still show backend field names; operation-console presentation labels are Chinese.
+- Release-candidate gate does not approve new features; it can only approve stabilization, verification, and release documentation planning.
+- Release-candidate implementation remains blocked until boundaries, stabilization/documentation scope, and regression verification plan are accepted.
+- FastAPI Python 3.14 warning remains `defer-known-gap`.
+- Workspace Tenant Model Preference Foundation approval does not allow Admin UI, Workspace complex UI, billing, ROI, tenant package, secret storage, provider SDK, New API source changes, New API internal DB dependency, marketplace, automatic model optimization, per-department/per-employee model policy, credential persistence/exposure, direct provider calls, or execution path drift.
+- Workspace Model Preference UI approval is frontend-only and does not allow Admin UI, complex dashboard, billing/ROI/packages, secret handling, provider integration, model optimization, backend semantic changes, Task API payload changes, execution behavior changes, backend persistence/schema changes, New API source/internal DB dependency, provider SDK, direct provider calls, per-department/per-employee policy, or execution path drift.
+- Model Gateway Local Demo Release Candidate approval is documentation/evidence-only and does not allow new product features, backend/frontend behavior change, Admin Platform implementation, hosted production deployment, billing/ROI/packages/marketplace, secret persistence/display, provider SDK/direct provider calls, New API source/internal DB dependency, Task API payload changes, execution-loop changes, or runtime behavior changes.
+- Model Gateway local/demo first-version release closeout approval is documentation/evidence-only and does not allow implementation, backend/frontend behavior change, hosted production deployment, Admin Platform implementation, billing/ROI/packages/marketplace, secret persistence/display, provider SDK/direct provider calls, New API source/internal DB dependency, Task API payload changes, persistence/schema changes, execution-loop changes, or runtime behavior changes.

@@ -1,0 +1,120 @@
+classDiagram
+    %% ── 执行契约 ──
+    class DevAgent {
+        <<Protocol>>
+        +execute(prompt: str) dict
+    }
+
+    class CapabilityAdapter {
+        <<abstract>>
+        #dict config
+        #str cap_key
+        #str cap_type
+        +execute(prompt: str) dict
+        #_resolve_credentials(refs: dict) dict
+        #_build_result(output, status, **kw) dict
+        #_run_subprocess(cmd, input, cwd, timeout) tuple
+    }
+    CapabilityAdapter ..|> DevAgent : 实现
+
+    class CliAdapter {
+        +execute(prompt) dict
+    }
+    class HttpApiAdapter {
+        +execute(prompt) dict
+    }
+    class McpAdapter {
+        +execute(prompt) dict
+        -_spawn_server() process
+        -_jsonrpc(method, params) dict
+    }
+    class WebhookAdapter {
+        +execute(prompt) dict
+    }
+    class LocalProcessAdapter {
+        +execute(prompt) dict
+    }
+    class ExternalAgentAdapter {
+        +execute(prompt) dict
+        -_delegate() CapabilityAdapter
+    }
+
+    CliAdapter --|> CapabilityAdapter
+    HttpApiAdapter --|> CapabilityAdapter
+    McpAdapter --|> CapabilityAdapter
+    WebhookAdapter --|> CapabilityAdapter
+    LocalProcessAdapter --|> CapabilityAdapter
+    ExternalAgentAdapter --|> CapabilityAdapter
+
+    %% ── 工厂 / 注册表 / 解析器（复用 P0） ──
+    class DevAgentFactory {
+        +build(cap: dict) DevAgent
+    }
+    class CapabilityCatalog {
+        +create(capability_key, type, ..., adapter_config) dict
+        +get(key) dict
+        +list(type_filter, include_inactive) list
+    }
+    class CapabilityResolver {
+        +resolve(req: CapabilityRequirement, exclude_keys) CapabilityHandle
+    }
+    class CapabilityHandle {
+        +key: str
+        +type: str
+        +adapter: DevAgent
+        +backup_keys: list
+        +execute(prompt) dict
+    }
+    class CapabilityRequirement {
+        +cap_type: str
+        +io_schema: dict
+        +permissions: list
+        +prefer_employee_bindings: list
+    }
+
+    DevAgentFactory ..> CapabilityAdapter : 构造
+    CapabilityResolver --> CapabilityCatalog : 查
+    CapabilityResolver --> DevAgentFactory : 用
+    CapabilityResolver --> CapabilityHandle : 返回
+    CapabilityHandle ..> DevAgent : 包装
+
+    %% ── 员工=能力组合（P1-2） ──
+    class EmployeeCapabilityService {
+        +get_preferred_capabilities(employee_id) list~str~
+        +list_bindings(employee_id) list~dict~
+    }
+    class EmployeeTemplate {
+        +set_employee_capability_bindings(employee_id, bindings) dict
+        +preferred_capability_for_employee(employee_id) dict
+    }
+    class EmployeeCapabilityBinding {
+        +tenant_id: str
+        +employee_id: str
+        +capability_source: str
+        +capability_type: str
+        +capability_id: str
+        +priority: int
+        +enabled: bool
+    }
+
+    EmployeeCapabilityService --> EmployeeTemplate : 读
+    EmployeeTemplate --> EmployeeCapabilityBinding : 持久化
+    CapabilityResolver ..> CapabilityRequirement : 输入(含员工偏好)
+    EmployeeCapabilityService ..> CapabilityRequirement : 注入 prefer_employee_bindings
+
+    %% ── 运行层接线 ──
+    class PipelineRuntime {
+        +run_node(node, graph) NodeResult
+    }
+    class TaskGraph {
+        +ready_nodes(done) list
+    }
+    class TaskNode {
+        +id: str
+        +owner_employee_id: str
+        +cap_requirement: dict
+    }
+
+    PipelineRuntime --> CapabilityResolver : resolve(含员工偏好)
+    TaskNode --> CapabilityRequirement : 转
+    PipelineRuntime --> TaskGraph : 取节点

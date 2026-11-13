@@ -1,0 +1,31 @@
+{
+  "server": "git",
+  "name": "Git",
+  "description": "Inspect and commit changes in a local git repository.",
+  "license": "MIT",
+  "tools": [
+    {
+      "name": "git_status",
+      "description": "Show the working tree and staging area status of a repository.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "repo_path": {"type": "string", "description": "Path to the git repository."}
+        },
+        "required": ["repo_path"]
+      }
+    },
+    {
+      "name": "git_commit",
+      "description": "Commit staged changes with a message.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "repo_path": {"type": "string", "description": "Path to the git repository."},
+          "message": {"type": "string", "description": "Commit message."}
+        },
+        "required": ["repo_path", "message"]
+      }
+    }
+  ]
+}

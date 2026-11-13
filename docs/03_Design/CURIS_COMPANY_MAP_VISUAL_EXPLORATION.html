@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis 公司版图 · Visual Exploration（Option C Hybrid Company Map）</title>
+<meta name="curis-authority-class" content="RESEARCH">
+<meta name="curis-disposition" content="CONSUMED BY CURRENT PRODUCT TRUTH">
+<style>
+  :root{
+    --green:#1E7A52; --green-d:#155a3d; --green-bg:#e9f4ee;
+    --amber:#b7791f; --amber-bg:#fdf4e2;
+    --red:#c0392b;   --red-bg:#fdeceb;
+    --blue:#2f6f9f;  --blue-bg:#e9f1f8;
+    --violet:#6d5aa8;--violet-bg:#f0edf9;
+    --gray:#8a8f98;  --gray-bg:#eef0f2;
+    --ink:#1f2328; --muted:#5c6470;
+    --line:#e2e6e8; --bg:#f4f6f4;
+    --card:#ffffff;
+    --r-lg:12px; --r-md:8px; --r-sm:4px; --r-pill:999px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Inter","PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); background:var(--bg); font-size:14px; line-height:1.5;}
+
+  /* ---------- Header ---------- */
+  .topbar{position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); padding:10px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .brand{display:flex; flex-direction:column;}
+  .brand h1{font-size:16px; font-weight:700; letter-spacing:.2px;}
+  .brand h1 b{color:var(--green);}
+  .brand span{font-size:11px; color:var(--muted);}
+  .ctrl{display:flex; align-items:center; gap:8px; margin-left:auto; flex-wrap:wrap;}
+  .seg{display:flex; border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; background:#fff;}
+  .seg button{border:0; background:transparent; padding:6px 12px; font-size:12px; cursor:pointer; color:var(--muted);}
+  .seg button.on{background:var(--green); color:#fff;}
+  input[type=text]{padding:6px 10px; border:1px solid var(--line); border-radius:var(--r-md); font-size:12px; width:200px; outline:none;}
+  input[type=text]:focus{border-color:var(--green);}
+  select{padding:6px 8px; border:1px solid var(--line); border-radius:var(--r-md); font-size:12px; background:#fff;}
+  .btn{padding:6px 10px; border:1px solid var(--line); border-radius:var(--r-md); background:#fff; font-size:12px; cursor:pointer; color:var(--ink);}
+  .btn:hover{border-color:var(--green); color:var(--green);}
+  .btn.primary{background:var(--green); border-color:var(--green); color:#fff;}
+  .btn.primary:hover{background:var(--green-d);}
+  .zoom{display:flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;}
+  .zoom button{border:0; background:#fff; width:28px; height:26px; cursor:pointer; font-size:14px; color:var(--ink);}
+  .zoom button:hover{background:var(--green-bg); color:var(--green);}
+  .zoom span{font-size:11px; color:var(--muted); min-width:34px; text-align:center;}
+  .crumb{font-size:12px; color:var(--muted); background:var(--green-bg); padding:4px 10px; border-radius:var(--r-pill); display:none; align-items:center; gap:6px;}
+  .crumb b{color:var(--green-d);}
+  .crumb button{border:0; background:transparent; color:var(--green); cursor:pointer; font-size:12px; font-weight:600;}
+  .crumb.show{display:inline-flex;}
+
+  /* ---------- Legend ---------- */
+  .legend{background:#fff; border-bottom:1px solid var(--line); padding:7px 20px; font-size:11px; color:var(--muted); display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px;}
+  .dot-run{background:var(--green);} .dot-form{background:var(--blue);} .dot-pause{background:var(--gray);} .dot-risk{background:var(--amber);}
+  .legend .k{font-weight:600; color:var(--ink);}
+
+  /* ---------- Stage ---------- */
+  .stage-wrap{padding:22px 26px 90px; overflow:auto;}
+  .stage{display:flex; flex-direction:column; gap:22px; transition:transform .25s ease; transform-origin:top left;}
+
+  /* ---------- Department container (Variant A) ---------- */
+  .dept{background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; transition:opacity .25s, box-shadow .25s, transform .25s;}
+  .dept.focused{box-shadow:0 0 0 3px var(--green), 0 8px 24px rgba(30,122,82,.12);}
+  .dept.dimmed{opacity:.14; pointer-events:none;}
+  .dept-head{display:flex; align-items:center; gap:10px; padding:12px 16px; background:#fafbfa; border-bottom:1px solid var(--line); cursor:pointer; user-select:none;}
+  .dept-head:hover{background:var(--green-bg);}
+  .dept-head h2{font-size:14px; font-weight:700;}
+  .dept-head .meta{font-size:11px; color:var(--muted);}
+  .dept-head .focus-hint{margin-left:auto; font-size:11px; color:var(--green); font-weight:600; opacity:0; transition:opacity .2s;}
+  .dept-head:hover .focus-hint{opacity:1;}
+  .dept-body{padding:14px 16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px;}
+
+  /* ---------- Business card ---------- */
+  .biz{background:#fff; border:1px solid var(--line); border-left:4px solid var(--gray); border-radius:var(--r-md); padding:12px 14px; cursor:pointer; transition:box-shadow .15s, transform .15s; position:relative;}
+  .biz:hover{box-shadow:0 4px 14px rgba(0,0,0,.08); transform:translateY(-1px);}
+  .biz.st-run{border-left-color:var(--green);} .biz.st-form{border-left-color:var(--blue);} .biz.st-pause{border-left-color:var(--gray);} .biz.st-risk{border-left-color:var(--amber);}
+  .biz.dimmed{opacity:.22;}
+  .biz .row1{display:flex; align-items:center; gap:8px;}
+  .biz .nm{font-weight:700; font-size:14px;}
+  .biz .st{font-size:10px; padding:1px 7px; border-radius:var(--r-pill); font-weight:600;}
+  .st-tag.run{background:var(--green-bg); color:var(--green-d);} .st-tag.form{background:var(--blue-bg); color:var(--blue);} .st-tag.pause{background:var(--gray-bg); color:var(--muted);}
+  .biz .badge{margin-left:auto; display:flex; gap:5px;}
+  .biz .bdg{font-size:10px; padding:1px 7px; border-radius:var(--r-pill); font-weight:700;}
+  .bdg.risk{background:var(--amber-bg); color:var(--amber);} .bdg.vac{background:var(--red-bg); color:var(--red);} .bdg.new{background:var(--violet-bg); color:var(--violet);}
+  .biz .row2{display:flex; align-items:center; gap:8px; margin-top:8px;}
+  .biz .lead{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px;}
+  .av{width:20px; height:20px; border-radius:50%; background:var(--green-bg); color:var(--green-d); font-size:10px; font-weight:700; display:inline-flex; align-items:center; justify-content:center;}
+  .biz .roles{display:flex; flex-wrap:wrap; gap:5px; margin-top:9px;}
+  .role-chip{font-size:11px; background:var(--gray-bg); color:var(--ink); border-radius:var(--r-sm); padding:2px 8px; display:inline-flex; gap:5px; align-items:center;}
+  .role-chip .cnt{color:var(--muted);}
+  .role-chip.empty{border:1px dashed var(--red); background:#fff; color:var(--red);}
+  .biz .goal-note{display:none; margin-top:9px; font-size:11px; color:var(--muted); background:#fafbfa; border-radius:var(--r-sm); padding:7px 9px; border:1px dashed var(--line);}
+  .biz:hover .goal-note{display:block;}
+
+  /* ---------- Inline role expansion (Variant A) ---------- */
+  .biz-expand{margin-top:10px; border-top:1px dashed var(--line); padding-top:9px; display:none;}
+  .biz.open .biz-expand{display:block;}
+  .role-row{display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:var(--r-sm); cursor:pointer; font-size:12px;}
+  .role-row:hover{background:var(--gray-bg);}
+  .role-row .rname{font-weight:600; min-width:84px;}
+  .role-row .rpeeps{margin-left:auto; display:flex; gap:4px; align-items:center;}
+  .role-row .rcnt{font-size:11px; color:var(--muted);}
+  .role-row.vacant{outline:1px dashed var(--red); background:#fff; cursor:default;}
+  .role-row.vacant:hover{background:#fff;}
+  .role-row .recruit{font-size:11px; color:var(--red); border:1px dashed var(--red); border-radius:var(--r-sm); padding:1px 8px; cursor:pointer;}
+  .role-row .recruit:hover{background:var(--red-bg);}
+  .emp-chips{display:none; padding:4px 8px 8px 100px; gap:6px; flex-wrap:wrap;}
+  .role-row.open + .emp-chips{display:flex;}
+  .emp{display:inline-flex; align-items:center; gap:5px; background:#fff; border:1px solid var(--line); border-radius:var(--r-pill); padding:2px 10px 2px 4px; font-size:12px;}
+  .emp .av{width:18px; height:18px; font-size:9px;}
+  .biz .detail-link{margin-top:9px; font-size:11px; color:var(--green); font-weight:600; cursor:pointer; display:inline-block;}
+  .biz .detail-link:hover{text-decoration:underline;}
+
+  /* ---------- Variant B : horizontal hierarchy ---------- */
+  .vb{display:flex; gap:0; align-items:stretch; min-height:340px;}
+  .vb-col{display:flex; flex-direction:column; gap:18px; padding:0 14px; position:relative;}
+  .vb-col::after{content:""; position:absolute; right:-2px; top:20px; bottom:20px; width:4px; border-right:2px solid var(--line);}
+  .vb-col:last-child::after{display:none;}
+  .vb-root{background:var(--green-d); color:#fff; border-radius:var(--r-md); padding:14px 20px; text-align:center; font-weight:700;}
+  .vb-dept{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:10px 12px; text-align:center; font-weight:700; font-size:13px;}
+  .vb-dept .small{font-weight:400; font-size:10px; color:var(--muted); display:block; margin-top:2px;}
+  .vb-bizs{display:flex; flex-direction:column; gap:10px;}
+  .vb .biz{min-width:210px;}
+  .vb-note{font-size:11px; color:var(--muted); text-align:center; margin-top:8px;}
+
+  /* ---------- Business Detail drawer ---------- */
+  .drawer-mask{position:fixed; inset:0; background:rgba(20,25,22,.35); z-index:100; display:none; align-items:flex-start; justify-content:flex-end;}
+  .drawer-mask.show{display:flex;}
+  .drawer{background:#fff; width:420px; max-width:92vw; height:100%; overflow:auto; box-shadow:-8px 0 30px rgba(0,0,0,.15); padding:20px 22px;}
+  .drawer h3{font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;}
+  .drawer .d-sub{font-size:11px; color:var(--muted); margin-top:3px;}
+  .drawer .sec{margin-top:16px;}
+  .drawer .sec h4{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; display:flex; align-items:center; gap:6px;}
+  .drawer .sec h4::after{content:""; flex:1; height:1px; background:var(--line);}
+  .drawer .goal{background:var(--green-bg); border-radius:var(--r-md); padding:9px 12px; font-size:13px; color:var(--green-d);}
+  .drawer ul{margin:0; padding-left:18px; font-size:13px; color:var(--ink);}
+  .drawer li{margin:3px 0;}
+  .wf{display:flex; flex-wrap:wrap; gap:5px; align-items:center;}
+  .wf .step{background:#fff; border:1px solid var(--line); border-radius:var(--r-sm); font-size:11px; padding:3px 9px;}
+  .wf .arr{color:var(--muted); font-size:11px;}
+  .d-role{display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:var(--r-sm); font-size:12px; border:1px solid transparent;}
+  .d-role:nth-child(odd){background:#fafbfa;}
+  .d-role.vacant{border-color:var(--red); border-style:dashed; background:#fff;}
+  .d-role .rname{font-weight:600;}
+  .d-role .info{margin-left:auto; font-size:11px; color:var(--muted);}
+  .d-role .info b.red{color:var(--red);}
+  .drawer .foot{margin-top:20px; display:flex; flex-direction:column; gap:8px; position:sticky; bottom:0; background:#fff; padding-top:12px; border-top:1px solid var(--line);}
+  .drawer .foot .btn{width:100%; padding:10px; font-size:13px;}
+  .drawer .foot .hint{font-size:11px; color:var(--muted); text-align:center;}
+  .drawer .close{position:absolute; top:14px; right:16px; border:0; background:var(--gray-bg); border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:13px; color:var(--ink);}
+
+  /* ---------- Minimap ---------- */
+  .minimap{position:fixed; right:18px; bottom:18px; width:120px; background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:8px; box-shadow:0 4px 16px rgba(0,0,0,.10); z-index:60;}
+  .minimap .mm-t{font-size:9px; color:var(--muted); text-align:center; margin-bottom:5px;}
+  .minimap .mm-body{position:relative; height:56px; background:var(--bg); border-radius:var(--r-sm); overflow:hidden;}
+  .mm-dept{position:absolute; background:#d9e8df; border-radius:3px;}
+  .mm-vp{position:absolute; border:1.5px solid var(--green); border-radius:3px; box-shadow:0 0 0 1px #fff inset;}
+
+  /* ---------- Bottom / recommendation ---------- */
+  .footer{border-top:1px solid var(--line); background:#fff; padding:16px 24px; font-size:12px; color:var(--muted);}
+  .footer .rec{background:var(--green-bg); border-left:4px solid var(--green); border-radius:var(--r-md); padding:10px 14px; margin-bottom:10px; color:var(--ink);}
+  .footer .rec b{color:var(--green-d);}
+  .footer .stop{font-weight:700; color:var(--ink); margin-top:8px;}
+
+  @media (max-width:720px){ .dept-body{grid-template-columns:1fr;} .ctrl{margin-left:0; width:100%;} }
+</style>
+</head>
+<body>
+
+<!-- ================= Header ================= -->
+<header class="topbar">
+  <div class="brand">
+    <h1>Curis <b>公司版图</b> · Visual Exploration</h1>
+    <span>Option C · Hybrid Company Map — 非正式高保真 · 未修改任何 Current Authority</span>
+  </div>
+  <div class="crumb" id="crumb"><span>Curis <b>/ <span id="crumbName"></span></b></span><button id="crumbExit">✕ 退出聚焦</button></div>
+  <div class="ctrl">
+    <div class="seg" id="varSeg">
+      <button data-variant="A" class="on" title="Department 容器型（推荐）">A · 容器型</button>
+      <button data-variant="B" title="横向层级型">B · 横向层级</button>
+    </div>
+    <input type="text" id="search" placeholder="搜索 Business / Role / Leader…">
+    <select id="filter">
+      <option value="all">全部</option>
+      <option value="vacancy">仅空岗</option>
+      <option value="risk">仅风险</option>
+      <option value="new">仅新增</option>
+    </select>
+    <div class="zoom">
+      <button id="zoomOut">−</button><span id="zoomPct">100%</span><button id="zoomIn">＋</button>
+    </div>
+    <button class="btn" id="reset">重置视图</button>
+  </div>
+</header>
+
+<!-- ================= Legend ================= -->
+<div class="legend">
+  <span><i class="dot-run"></i>运行中</span>
+  <span><i class="dot-form"></i>形成中</span>
+  <span><i class="dot-pause"></i>暂停</span>
+  <span><i class="dot-risk"></i>风险</span>
+  <span class="k">空岗</span>＝虚线岗位
+  <span class="k">NEW</span>＝复制/新增业务
+  <span>｜ 点 <b>部门头</b>＝聚焦 · 点 <b>Business</b>＝展开岗位 · 点 <b>岗位</b>＝看员工 · 详情里 <b>[进入办公室]</b> 才是去办公室</span>
+</div>
+
+<!-- ================= Stage ================= -->
+<div class="stage-wrap">
+  <div class="stage" id="stage"></div>
+</div>
+
+<!-- ================= Minimap（示意） ================= -->
+<div class="minimap">
+  <div class="mm-t">Minimap（示意）</div>
+  <div class="mm-body" id="mmBody"></div>
+</div>
+
+<!-- ================= Business Detail drawer ================= -->
+<div class="drawer-mask" id="drawerMask">
+  <div class="drawer" id="drawer"></div>
+</div>
+
+<!-- ================= Footer ================= -->
+<div class="footer">
+  <div class="rec"><b>推荐 Variant A（Department 容器型）：</b>业务组合一眼可见、岗位下钻不离开地图、容器随部门/业务扩张自然扩展，最贴近「让 CEO 一眼看懂公司长成什么样」；Variant B 更接近传统树形，适合极小组织，但业务增多后横向空间会被快速压窄。</div>
+  <div>非正式高保真 · 不进产品真源 · 未修改 Blueprint / Master Map / UI Blueprint / Frozen Authority · 未新增产品规则 · 未新增 Runtime Primitive。视觉参考 ChartHop 的组织可读性，语义为 Curis Business-centric Company Map。</div>
+  <div class="stop">CURIS COMPANY MAP VISUAL EXPLORATION — STOP FOR CEO VISUAL REVIEW</div>
+</div>
+
+<script>
+/* ================= 示例数据（Curis 示例，非产品真源） ================= */
+const DATA = {
+  company:"Curis",
+  departments:[
+    { name:"空间工程部", note:"默认第一核心部门 · 把经营目标转化为可运营业务空间",
+      businesses:[
+        { name:"Workspace Engineering", status:"run", leader:"高见远",
+          goal:"把 CEO 经营目标转化为可运营、可进化的业务空间",
+          strategy:["方法论先行","Package First 组合","Gate 验收放行","Operating Learning 进化"],
+          workflow:["业务理解","产品翻译","能力审查","空间组合","验收","上线","运营进化"],
+          roles:[
+            {name:"架构设计", filled:1, total:1, people:["高见远"]},
+            {name:"工程实现", filled:2, total:2, people:["寇豆码","程野"]},
+            {name:"验收质量", filled:1, total:1, people:["严过关"]}
+          ]},
+        { name:"Customer Feedback", status:"run", leader:"严过关",
+          goal:"持续收集客户反馈并驱动产品改进",
+          strategy:["多渠道收集","按业务归类","定期回流产品研发"],
+          workflow:["收集","归类","去重","回流","闭环"],
+          roles:[
+            {name:"反馈收集", filled:1, total:1, people:["顾言"]}
+          ]}
+      ]},
+    { name:"研发部", note:"稳定责任聚合 · 由真实工作触发形成",
+      businesses:[
+        { name:"Curis 产品研发", status:"run", leader:"齐活林",
+          goal:"交付 Curis 产品能力并持续验证",
+          strategy:["产品规划驱动","研发迭代","质量门禁"],
+          workflow:["规划","设计","实现","验收","发布","反馈"],
+          roles:[
+            {name:"产品规划", filled:1, total:1, people:["齐活林"]},
+            {name:"研发", filled:2, total:2, people:["寇豆码","周雨"]},
+            {name:"测试", filled:1, total:1, people:["姜黎"]}
+          ]}
+      ]},
+    { name:"内容增长部", note:"多个渠道业务 + 1 个新复制业务（NEW）",
+      businesses:[
+        { name:"小红书运营", status:"run", leader:"林澈",
+          goal:"建立小红书内容资产与稳定涨粉节奏",
+          strategy:["图文+视频双形态","周更 3 篇","数据复盘驱动选题"],
+          workflow:["选题","策划","文案","审核","发布","复盘"],
+          roles:[
+            {name:"Leader", filled:1, total:1, people:["林澈"]},
+            {name:"选题", filled:2, total:2, people:["周雨","顾言"]},
+            {name:"策划", filled:1, total:1, people:["姜黎"]},
+            {name:"文案", filled:3, total:3, people:["沈一","白露","程野"]},
+            {name:"发布", filled:1, total:1, people:["陈默"]},
+            {name:"数据分析", filled:0, total:1, people:[], vacant:true}
+          ]},
+        { name:"抖音运营", status:"run", leader:"陆川", risk:"外部平台策略变化",
+          goal:"短视频账号矩阵与稳定播放",
+          strategy:["视频批量生产","发布时间节奏","数据驱动内容迭代"],
+          workflow:["选题","脚本","制作","审核","发布","复盘"],
+          roles:[
+            {name:"账号运营", filled:2, total:2, people:["陆川","苏禾"]},
+            {name:"视频剪辑", filled:1, total:2, people:["程野"], vacant:true},
+            {name:"数据分析", filled:1, total:1, people:["白露"]}
+          ]},
+        { name:"公众号运营", status:"form", leader:"—",
+          goal:"图文深度内容与行业影响力",
+          strategy:["深度长文","周更 1 篇","转载互推"],
+          workflow:["选题","写作","审核","发布"],
+          roles:[
+            {name:"内容运营", filled:1, total:1, people:["沈一"]}
+          ]},
+        { name:"抖音 · AI 科技账号", status:"form", leader:"陆川", isNew:true, dupFrom:"抖音运营",
+          goal:"复用抖音成熟方法，独立 AI 科技垂类账号",
+          strategy:["复用 Operating Model","独立定位/账号/结果"],
+          workflow:["选题","脚本","制作","发布"],
+          roles:[
+            {name:"账号运营", filled:0, total:1, people:[], vacant:true}
+          ]}
+      ]}
+  ]
+};
+
+/* ================= 状态 ================= */
+const S = {
+  variant:"A",
+  focus:null,                 // dept name
+  openBiz:null,               // business name (inline expand in A)
+  openRoles:new Set(),        // role names expanded
+  detail:null,                // business name for drawer
+  filter:"all",
+  query:"",
+  zoom:1,
+  dupVisible:true
+};
+const STATUS = { run:{t:"运行中",c:"run"}, form:{t:"形成中",c:"form"}, pause:{t:"暂停",c:"pause"} };
+
+/* ================= 工具 ================= */
+function findDept(name){ return DATA.departments.find(d=>d.name===name); }
+function findBiz(deptName, bizName){ const d=findDept(deptName); return d? d.businesses.find(b=>b.name===bizName) : null; }
+function av(name){ const s=name.replace(/[^\u4e00-\u9fa5A-Za-z]/g,""); return s? s.slice(-1) : "?"; }
+function bizFilter(b){
+  if(!S.dupVisible && b.isNew) return "hide";
+  if(S.filter==="vacancy") return b.roles.some(r=>r.vacant) ? "show" : "hide";
+  if(S.filter==="risk") return b.risk ? "show" : "hide";
+  if(S.filter==="new") return b.isNew ? "show" : "hide";
+  return "show";
+}
+function bizSearch(b){
+  if(!S.query) return "show";
+  const q=S.query.toLowerCase();
+  const hit = b.name.toLowerCase().includes(q) || (b.leader||"").toLowerCase().includes(q) || b.roles.some(r=>r.name.toLowerCase().includes(q));
+  return hit ? "show" : "dim";
+}
+function roleChipsHtml(b){
+  return b.roles.map(r=>{
+    const empty = r.vacant || r.filled < r.total;
+    const cls = r.vacant ? "role-chip empty" : "role-chip";
+    const txt = r.vacant ? `${r.name} · 空岗` : `${r.name} ${r.filled}/${r.total}`;
+    return `<span class="${cls}">${txt}</span>`;
+  }).join("");
+}
+
+/* ================= Variant A : Department 容器型 ================= */
+function renderA(){
+  const focused = S.focus;
+  return DATA.departments.map(dept=>{
+    const cls = focused===dept.name ? "dept focused" : (focused? "dept dimmed" : "dept");
+    const totalBiz = dept.businesses.length;
+    let totRoles=0, totVac=0, totEmp=0;
+    dept.businesses.forEach(b=>{ b.roles.forEach(r=>{ totRoles++; totEmp+=r.filled; if(r.vacant||r.filled<r.total) totVac++; }); });
+    const body = dept.businesses.map(b=>bizCardA(dept,b)).join("");
+    return `<section class="${cls}" data-dept="${dept.name}">
+      <div class="dept-head" data-focus="${dept.name}">
+        <h2>${dept.name}</h2>
+        <span class="meta">${totalBiz} 业务 · ${totRoles} 岗 · ${totEmp} 人 · ${totVac} 空</span>
+        <span class="focus-hint">${focused===dept.name? "已聚焦 ✓" : "点击聚焦 →"}</span>
+      </div>
+      <div class="dept-body">${body}</div>
+    </section>`;
+  }).join("");
+}
+function bizCardA(dept,b){
+  const m = bizFilter(b); if(m==="hide") return "";
+  const sm = bizSearch(b);
+  const st = STATUS[b.status]; if(!st) return "";
+  const cls = ["biz","st-"+st.c, sm==="dim"?"dimmed":""].filter(Boolean).join(" ");
+  const badges = [];
+  if(b.risk) badges.push(`<span class="bdg risk">⚠ 风险</span>`);
+  if(b.roles.some(r=>r.vacant||r.filled<r.total)) badges.push(`<span class="bdg vac">空岗</span>`);
+  if(b.isNew) badges.push(`<span class="bdg new">NEW</span>`);
+  const open = S.openBiz===b.name;
+  const dupTip = b.isNew ? `<div class="goal-note">由「${b.dupFrom}」复制而来（复用 Operating Model，独立业务身份）</div>` : `<div class="goal-note">${b.goal}</div>`;
+  let expandHtml = "";
+  if(open){
+    const rows = b.roles.map(r=>{
+      const isOpen = S.openRoles.has(r.name);
+      const vac = r.vacant || r.filled<r.total;
+      const peeps = vac
+        ? `<span class="rpeeps"><span class="rcnt">${r.filled}/${r.total}</span><span class="recruit" data-recruit="${r.name}" title="Create Where You Organize：Role + → 招募（新建 / 绑定已有 / 从人才与能力）">+ 招募</span></span>`
+        : `<span class="rpeeps">${r.people.map(p=>`<span class="av" title="${p}">${av(p)}</span>`).join("")}<span class="rcnt">${r.filled}/${r.total}</span></span>`;
+      const empHtml = vac ? "" : `<div class="emp-chips">${r.people.map(p=>`<span class="emp"><span class="av">${av(p)}</span>${p}</span>`).join("")}</div>`;
+      return `<div>
+        <div class="role-row ${vac?"vacant":""} ${isOpen?"open":""}" data-role="${r.name}">
+          <span class="rname">${r.name}</span>
+          ${vac? `<span class="rcnt">空岗 · 待招募</span>`:""}
+          ${peeps}
+        </div>${empHtml}
+      </div>`;
+    }).join("");
+    expandHtml = `<div class="biz-expand">${rows}
+      <span class="detail-link" data-detail="${b.name}">打开 Business Detail →</span>
+    </div>`;
+  }
+  return `<div class="${cls} ${open?"open":""}" data-biz="${b.name}" data-dept="${dept.name}" title="点击展开岗位 / 再点收起">
+    <div class="row1">
+      <span class="nm">${b.name}</span>
+      <span class="st st-tag ${st.c}">${st.t}</span>
+      <span class="badge">${badges.join("")}</span>
+    </div>
+    <div class="row2"><span class="lead"><span class="av">${b.leader!=="—"?av(b.leader):"?"}</span> Leader · ${b.leader}</span></div>
+    <div class="roles">${roleChipsHtml(b)}</div>
+    ${dupTip}
+    ${expandHtml}
+  </div>`;
+}
+
+/* ================= Variant B : 横向层级型 ================= */
+function renderB(){
+  const focused = S.focus;
+  const cols = DATA.departments.map(dept=>{
+    const dim = focused && focused!==dept.name;
+    const bizs = dept.businesses.map(b=>{
+      const m=bizFilter(b); if(m==="hide") return "";
+      const sm=bizSearch(b);
+      const st=STATUS[b.status]; if(!st) return "";
+      const badges=[];
+      if(b.risk) badges.push(`<span class="bdg risk">⚠</span>`);
+      if(b.roles.some(r=>r.vacant||r.filled<r.total)) badges.push(`<span class="bdg vac">空</span>`);
+      if(b.isNew) badges.push(`<span class="bdg new">NEW</span>`);
+      const open=S.openBiz===b.name;
+      return `<div class="biz st-${st.c} ${sm==="dim"?"dimmed":""} ${open?"open":""}" data-biz="${b.name}" data-dept="${dept.name}" title="点击查看岗位与详情">
+        <div class="row1"><span class="nm">${b.name}</span><span class="st st-tag ${st.c}">${st.t}</span><span class="badge">${badges.join("")}</span></div>
+        <div class="row2"><span class="lead"><span class="av">${b.leader!=="—"?av(b.leader):"?"}</span>${b.leader}</span></div>
+        <div class="roles">${roleChipsHtml(b)}</div>
+        ${open? `<div class="biz-expand"><span class="detail-link" data-detail="${b.name}">打开 Business Detail →</span></div>`:""}
+      </div>`;
+    }).join("");
+    return `<div class="vb-col ${dim?"dimmed":""}" data-dept="${dept.name}" style="${dim?"opacity:.15;":""}">
+      <div class="vb-dept" data-focus="${dept.name}">${dept.name}<span class="small">点击聚焦</span></div>
+      <div class="vb-bizs">${bizs}</div>
+    </div>`;
+  }).join("");
+  return `<div class="vb">
+    <div class="vb-col"><div class="vb-root">Curis<br><span style="font-size:10px;font-weight:400;">公司</span></div><div class="vb-note">横向层级型<br>（Variant B）</div></div>
+    ${cols}
+  </div>`;
+}
+
+/* ================= 渲染 ================= */
+function render(){
+  const stage=document.getElementById("stage");
+  stage.innerHTML = S.variant==="A" ? renderA() : renderB();
+  // crumb
+  const crumb=document.getElementById("crumb");
+  if(S.focus){ crumb.classList.add("show"); document.getElementById("crumbName").textContent=S.focus; }
+  else crumb.classList.remove("show");
+  renderMinimap();
+  const pct=Math.round(S.zoom*100);
+  document.getElementById("zoomPct").textContent=pct+"%";
+  stage.style.transform=`scale(${S.zoom})`;
+}
+
+/* ================= Minimap（示意） ================= */
+function renderMinimap(){
+  const body=document.getElementById("mmBody");
+  const n=DATA.departments.length;
+  const h=body.clientHeight||56;
+  const w=body.clientWidth||104;
+  const gap=4, bw=w-8, bh=(h-(n+1)*gap)/n;
+  let html="";
+  DATA.departments.forEach((d,i)=>{
+    const dimmed = S.focus && S.focus!==d.name;
+    html+=`<div class="mm-dept" style="top:${4+i*(bh+gap)}px;left:4px;width:${bw}px;height:${Math.max(bh,6)}px;opacity:${dimmed?0.25:1}"></div>`;
+  });
+  html+=`<div class="mm-vp" style="top:4px;left:4px;width:${bw}px;height:${h-8}px" title="视口（示意）"></div>`;
+  body.innerHTML=html;
+}
+
+/* ================= Business Detail drawer ================= */
+function openDetail(name){
+  let biz=null, dept=null;
+  DATA.departments.forEach(d=>{ d.businesses.forEach(b=>{ if(b.name===name){biz=b; dept=d;} }); });
+  if(!biz) return;
+  S.detail=name;
+  const st=STATUS[biz.status]; if(!st) return;
+  const rolesHtml = biz.roles.map(r=>{
+    const vac=r.vacant||r.filled<r.total;
+    return `<div class="d-role ${vac?"vacant":""}">
+      <span class="rname">${r.name}</span>
+      <span class="info">${vac? `<b class="red">${r.filled}/${r.total} · 空岗</b>` : `${r.filled}/${r.total} 人`}</span>
+    </div>`;
+  }).join("");
+  const drawer=document.getElementById("drawer");
+  drawer.innerHTML=`
+    <button class="close" id="dClose">✕</button>
+    <h3>${biz.name} <span class="st st-tag ${st.c}">${st.t}</span> ${biz.isNew?'<span class="bdg new">NEW</span>':""}</h3>
+    <div class="d-sub">${dept.name} · Leader ${biz.leader}${biz.isNew? ` · 由「${biz.dupFrom}」复制`:""}</div>
+
+    <div class="sec"><h4>Goal · 经营目标</h4><div class="goal">${biz.goal}</div></div>
+    <div class="sec"><h4>Strategy · 经营策略</h4><ul>${biz.strategy.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+    <div class="sec"><h4>Workflow Definition · 工作流定义</h4>
+      <div class="wf">${biz.workflow.map((w,i)=>`${i?`<span class="arr">→</span>`:""}<span class="step">${w}</span>`).join("")}</div>
+    </div>
+    <div class="sec"><h4>Role Structure & Staffing</h4>${rolesHtml}</div>
+
+    <div class="foot">
+      <button class="btn primary" id="dEnter">进入办公室（下一步动作）</button>
+      <button class="btn" id="dDup">复制业务（演示）</button>
+      <div class="hint">点击 Business 只到这里 —— Business Detail 是经营视图；<b>进入办公室</b> 是显式下一步，不会自动跳转 Workspace</div>
+    </div>`;
+  document.getElementById("drawerMask").classList.add("show");
+}
+function closeDetail(){ document.getElementById("drawerMask").classList.remove("show"); S.detail=null; }
+
+/* ================= 事件 ================= */
+document.addEventListener("click",e=>{
+  // variant seg
+  const segBtn = e.target.closest("#varSeg button");
+  if(segBtn){ S.variant=segBtn.dataset.variant; document.querySelectorAll("#varSeg button").forEach(b=>b.classList.toggle("on",b===segBtn)); S.openBiz=null; S.openRoles.clear(); render(); return; }
+
+  // focus dept head
+  const fh=e.target.closest("[data-focus]");
+  if(fh){ S.focus = (S.focus===fh.dataset.focus)? null : fh.dataset.focus; S.openBiz=null; S.openRoles.clear(); render(); return; }
+
+  // crumb exit
+  if(e.target.closest("#crumbExit")){ S.focus=null; S.openBiz=null; render(); return; }
+
+  // detail link (inside biz expand / variant B)
+  const dl=e.target.closest("[data-detail]");
+  if(dl){ openDetail(dl.dataset.detail); return; }
+
+  // role expand (variant A)
+  const rr=e.target.closest(".role-row");
+  if(rr && !e.target.closest(".recruit")){ const rn=rr.dataset.role; if(S.openRoles.has(rn)) S.openRoles.delete(rn); else S.openRoles.add(rn); render(); return; }
+
+  // recruit (demo, non-functional)
+  if(e.target.closest(".recruit")){ alert("演示：Role + → 招募（Create Where You Organize）。正式流程：新建员工 / 绑定已有 / 从人才与能力招募。"); return; }
+
+  // business card toggle (variant A inline expand; variant B opens detail)
+  const bizEl=e.target.closest("[data-biz]");
+  if(bizEl && !e.target.closest(".detail-link") && !e.target.closest(".role-row")){
+    const name=bizEl.dataset.biz;
+    if(S.variant==="A"){
+      if(S.openBiz===name){ S.openBiz=null; S.openRoles.clear(); } else { S.openBiz=name; S.openRoles.clear(); }
+    } else {
+      openDetail(name);
+    }
+    render(); return;
+  }
+
+  // drawer close / enter
+  if(e.target.closest("#dClose") || e.target===document.getElementById("drawerMask")){ closeDetail(); return; }
+  if(e.target.closest("#dEnter")){ alert("演示：这是显式「进入办公室」动作 —— 点击 Business 不会自动跳转。正式行为：进入该 Business 的 Workspace。"); return; }
+  if(e.target.closest("#dDup")){ alert("演示：复制业务 → Copy Preview（复用 Operating Model / 重新配置 / 不复制员工身份与历史）→ 新 Business 自动出现在公司版图（NEW）。"); return; }
+});
+
+document.getElementById("search").addEventListener("input",e=>{ S.query=e.target.value.trim(); render(); });
+document.getElementById("filter").addEventListener("change",e=>{ S.filter=e.target.value; render(); });
+document.getElementById("zoomIn").addEventListener("click",()=>{ S.zoom=Math.min(1.6,S.zoom+0.15); render(); });
+document.getElementById("zoomOut").addEventListener("click",()=>{ S.zoom=Math.max(0.6,S.zoom-0.15); render(); });
+document.getElementById("reset").addEventListener("click",()=>{ Object.assign(S,{focus:null,openBiz:null,openRoles:new Set(),detail:null,filter:"all",query:"",zoom:1}); document.getElementById("search").value=""; document.getElementById("filter").value="all"; closeDetail(); render(); });
+
+/* ================= 初始 ================= */
+render();
+</script>
+</body>
+</html>

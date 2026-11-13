@@ -1,0 +1,125 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "内容增长"
+  - button "Curis 产品研发"
+  - button "宠物寄养（激活中）"
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- generic: 内容增长工作空间
+- button "收起 Context":
+- generic: Surface（Domain Navigation）
+- button "经营总览"
+- button "研究与洞察"
+- button "内容运营"
+- button "增长与评估"
+- button "反馈"
+- button "商业化"
+- generic: 共享工作区
+- generic: 选题库
+- generic: 信号：AI 工具类搜索量上升 · 竞品爆文 ×2
+- generic: 素材：实拍图 ×12 · 用户证言 ×3
+- generic: 内容日历：9 月第 3 周 · 3 篇排期
+- main:
+  - link "业务空间":
+    - /url: "#/business"
+  - generic: /
+  - link "内容增长":
+    - /url: "#/business/biz-cg"
+  - generic: /
+  - link "内容增长工作空间":
+    - /url: "#"
+  - generic: /
+  - generic: 经营总览
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - heading "内容增长工作空间" [level=1]
+  - generic: 专业工作空间 · 内容增长（多渠道） · 负责人 陈真 · 目标：本周：验证 AI 工具实测内容的关注转化；《AI 工具测评》复用至三个渠道账号。
+  - button "负责人"
+  - generic: 经营状态
+  - generic: 运行中 · 本周：验证 AI 工具实测内容的关注转化
+  - generic: 本轮重点
+  - generic: 验证「教程 + 工具清单」结构的关注转化
+  - generic: 最新判断
+  - generic: 教程向互动中位数高 34%（EST，何川归因）
+  - generic: 下一步
+  - generic: 周五复盘会确认定位调整
+  - heading "团队运转" [level=2]
+  - generic: 默认流程 · A→B 只表示默认下一责任，不是强制 DAG
+  - generic: 选题
+  - generic: →
+  - generic: 调研
+  - generic: →
+  - generic: 文案
+  - generic: →
+  - generic: 视觉
+  - generic: →
+  - generic: 发布
+  - heading "工作区" [level=2]
+  - generic: 点击员工展开对话 · 点击姓名进员工详情
+  - generic: 陈
+  - generic: 陈真
+  - generic: 资深运营 · Leader
+  - generic: 工作中 · 统筹 AI 科技内容节奏
+  - generic: 统筹内容增长工作空间目标、内容节奏、团队结果与下一轮经营
+  - generic: 林
+  - generic: 林月
+  - generic: 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: AI 工具实测数据收集；测评稿文案起草
+  - generic: 苏
+  - generic: 苏晴
+  - generic: 视觉
+  - generic: 空闲
+  - generic: 封面风格与视觉规范
+  - generic: 何
+  - generic: 何川
+  - generic: 数据分析
+  - generic: 工作中 · 选题归因分析
+  - generic: 数据分析、选题归因
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你
+- generic "设计测试工具 — 非产品 UI":
+  - generic: STATE · DESIGN TOOL
+  - combobox:
+    - option "normal" [selected]
+    - option "emptyFirst"
+    - option "working"
+    - option "error"

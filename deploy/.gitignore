@@ -1,0 +1,13 @@
+# 部署配置：真实凭据与上游仓库绝不进提交
+.env
+.env.*
+!.env.example
+# 上游仓库（手动 git clone，不随本仓提交）
+aitoearn/aiToEarn/
+social-auto-upload/social-auto-upload/
+# 运行时产物
+**/data/
+*.log
+
+# Baseline: do not include any environment file, including examples.
+.env*

@@ -1,0 +1,38 @@
+.settings { color: var(--ui-text); max-width: 980px; margin: 0 auto; min-width: 0; container-type: inline-size; }
+.main { min-width: 0; }
+.categories { display: flex; flex-direction: column; align-self: start; gap: 4px; }
+.categories button { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; border-radius: var(--ui-r-sm); padding: 10px 12px; text-align: left; color: var(--ui-text-2); background: transparent; }
+.categories button:hover { background: var(--ui-surface-2); }
+.categories button[aria-current="page"] { color: var(--ui-text); background: var(--ui-surface-2); font-weight: 600; }
+.main h1 { margin: 0; font-size: var(--ui-fs-6); font-weight: 600; }
+.intro, .note p, .row p, .status, .group > p { color: var(--ui-text-2); line-height: 1.7; max-width: 70ch; }
+.intro { margin: 10px 0 22px; }
+.group { padding: 20px 0; border-top: 1px solid var(--ui-line); }
+.group h2, .note h2 { margin: 0 0 12px; font-size: var(--ui-fs-4); font-weight: 600; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0; }
+.row > div { min-width: 0; }
+.row p { margin: 4px 0 0; font-size: var(--ui-fs-1); }
+.row > span { text-align: right; overflow-wrap: anywhere; }
+.field, .select { width: min(100%, 240px); min-height: 40px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 8px 10px; background: var(--ui-surface); color: var(--ui-text); }
+.field::placeholder { color: var(--ui-text-2); opacity: 1; }
+.button, .link { display: inline-flex; justify-content: center; align-items: center; min-height: 36px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 8px 14px; color: var(--ui-text); background: var(--ui-surface); text-decoration: none; cursor: pointer; }
+.button:hover, .link:hover { background: var(--ui-surface-2); }
+.button:disabled { color: var(--ui-text-2); cursor: default; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+.status { margin: 12px 0; font-size: var(--ui-fs-2); overflow-wrap: anywhere; }
+.note { padding: 16px; color: var(--ui-text); }
+.note p { margin: 12px 0; font-size: var(--ui-fs-2); }
+.return { margin-bottom: 20px; }
+.avatars { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.avatars button[aria-pressed="true"] { outline: 2px solid var(--ui-focus-color); outline-offset: 2px; }
+.backup { min-width: 0; }
+.backup > p, .restoreReview p { color: var(--ui-text-2); line-height: 1.7; max-width: 72ch; }
+.backupActions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.restoreReview { min-width: 0; margin: 18px 0; padding: 16px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+.restoreReview h3 { margin: 0; font-size: var(--ui-fs-3); }
+.restoreReview code, .backup code { overflow-wrap: anywhere; }
+.restoreConfirm { display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
+.restoreConfirm input { flex: none; width: auto; margin-top: 5px; }
+.settings :is(button, a, input, select):focus-visible, .categories button:focus-visible, .note button:focus-visible { outline: var(--ui-focus-w) solid var(--ui-focus-color); outline-offset: var(--ui-focus-offset); }
+@media (max-width: 700px) { .row { align-items: flex-start; flex-direction: column; gap: 10px; } .avatars { justify-content: flex-start; } }
+@container (max-width: 560px) { .row { align-items: flex-start; flex-direction: column; gap: 10px; } .avatars { justify-content: flex-start; } }

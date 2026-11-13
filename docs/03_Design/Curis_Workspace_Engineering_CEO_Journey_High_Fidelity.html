@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis · Workspace Engineering — CEO Journey High-Fidelity</title>
+<style>
+/* ============================================================
+   Frozen Design Tokens (Curis_Design_System.md) — 单文件内联
+   Dark = Frozen 默认；Light 经 data-theme="light" 切换
+   ============================================================ */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --ui-bg: #1a1c1f; --ui-surface: #222529; --ui-surface-2: #2b2f34;
+  --ui-line: #343940; --ui-text: #f3f4f6; --ui-text-2: #a7adb6; --ui-text-3: #a3aab4;
+  --ui-action-primary-bg: #32f08c; --ui-action-primary-hover: #0fdc78; --ui-action-primary-fg: #0c0c0d;
+  --ui-accent: #32f08c;
+  --ui-success: #3fcf86; --ui-warning: #d89a3a; --ui-danger: #e57373;
+  --ui-sidebar-w: 220px; --ui-topbar-h: 52px;
+  --ui-radius: 12px; --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0,0,0,.25); --ui-shadow-2: 0 4px 12px rgba(0,0,0,.32); --ui-shadow-3: 0 12px 32px rgba(0,0,0,.44);
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+  --ui-fs-1: 12px; --ui-fs-2: 13px; --ui-fs-3: 14px; --ui-fs-4: 16px; --ui-fs-5: 20px; --ui-fs-6: 24px; --ui-fs-7: 28px;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+  --ui-line: #e5e7eb; --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+  --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+  --ui-accent: #1a1c1f; --ui-success: #21895d; --ui-warning: #b87922; --ui-danger: #c43f3f;
+  --ui-shadow: 0 1px 2px rgba(15,18,35,.05); --ui-shadow-2: 0 4px 12px rgba(15,18,35,.08); --ui-shadow-3: 0 12px 32px rgba(15,18,35,.12);
+}
+:root {
+  --ui-sp-1: 4px; --ui-sp-2: 8px; --ui-sp-3: 12px; --ui-sp-4: 16px; --ui-sp-5: 20px; --ui-sp-6: 24px; --ui-sp-7: 32px; --ui-sp-8: 48px;
+  --ui-r-xs: 4px; --ui-r-sm: 8px; --ui-r-md: 12px; --ui-r-lg: 16px; --ui-r-pill: 999px;
+  --ui-z-base: 0; --ui-z-sticky: 100; --ui-z-dropdown: 200; --ui-z-drawer: 300; --ui-z-modal: 400; --ui-z-toast: 500; --ui-z-devmode: 9000;
+  --ui-dur-1: 120ms; --ui-dur-2: 200ms; --ui-dur-3: 320ms;
+  --ui-ease-standard: cubic-bezier(.2,0,0,1);
+  --ui-focus-w: 2px; --ui-focus-offset: 2px; --ui-focus-color: var(--ui-accent);
+  --ui-ctl-h-sm: 32px; --ui-ctl-h: 36px; --ui-ctl-h-lg: 40px; --ui-tap-min: 32px;
+  --ui-lh-tight: 1.25; --ui-lh: 1.5; --ui-lh-loose: 1.7;
+}
+html { font-size: 16px; }
+body { font-size: var(--ui-fs-3); margin:0; background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); line-height: var(--ui-lh); }
+h1{font-size:var(--ui-fs-6);margin:0} h2{font-size:var(--ui-fs-5);margin:0} h3{font-size:var(--ui-fs-4);margin:0} h4{font-size:var(--ui-fs-3);margin:0}
+small{font-size:var(--ui-fs-1)}
+button, input, select, textarea{font-family:inherit;font-size:var(--ui-fs-2)}
+:where(a,button,select,input,textarea,summary,[tabindex]):focus-visible{outline:var(--ui-focus-w) solid var(--ui-focus-color);outline-offset:var(--ui-focus-offset);border-radius:var(--ui-r-xs)}
+
+/* ---------- Presentation wrapper (评审层，非产品) ---------- */
+.presbar{position:sticky;top:0;z-index:var(--ui-z-sticky);display:flex;align-items:center;gap:var(--ui-sp-3);padding:var(--ui-sp-3) var(--ui-sp-4);background:var(--ui-surface);border-bottom:1px solid var(--ui-line)}
+.presbar .brand{display:flex;align-items:center;gap:var(--ui-sp-2);font-weight:600}
+.presbar .brand .mk{width:24px;height:24px;border-radius:var(--ui-r-sm);background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);display:grid;place-items:center;font-weight:700}
+.presbar .steps{display:flex;gap:var(--ui-sp-1);overflow:auto;flex:1}
+.step-chip{border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text-2);border-radius:var(--ui-r-pill);padding:var(--ui-sp-1) var(--ui-sp-3);white-space:nowrap;cursor:pointer;font-size:var(--ui-fs-1)}
+.step-chip.active{background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border-color:transparent;font-weight:600}
+.step-chip:hover{color:var(--ui-text)}
+.pres-sub{padding:var(--ui-sp-2) var(--ui-sp-4);background:var(--ui-surface-2);border-bottom:1px solid var(--ui-line);color:var(--ui-text-2);font-size:var(--ui-fs-2);display:flex;gap:var(--ui-sp-2);align-items:center}
+.pres-sub b{color:var(--ui-text)}
+.theme-toggle{border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text);border-radius:var(--ui-r-sm);height:var(--ui-ctl-h-sm);padding:0 var(--ui-sp-3);cursor:pointer;font-size:var(--ui-fs-1)}
+
+/* ---------- App window (产品窗口) ---------- */
+.desk{padding:var(--ui-sp-6);display:flex;justify-content:center}
+.app{width:min(1180px,100%);height:760px;border:1px solid var(--ui-line);border-radius:var(--ui-r-lg);overflow:hidden;box-shadow:var(--ui-shadow-3);background:var(--ui-bg)}
+.shell{display:grid;grid-template-columns:var(--ui-sidebar-w) 0 1fr 0;height:100%;transition:grid-template-columns var(--ui-dur-2) var(--ui-ease-standard)}
+.shell.ctx-open{grid-template-columns:var(--ui-sidebar-w) 340px 1fr 0}
+.shell.util-open{grid-template-columns:var(--ui-sidebar-w) 0 1fr 360px}
+.shell.ctx-open.util-open{grid-template-columns:var(--ui-sidebar-w) 300px 1fr 340px}
+.shell.nav-collapsed{grid-template-columns:0 0 1fr 0}
+.shell.nav-collapsed.ctx-open{grid-template-columns:0 340px 1fr 0}
+.shell.nav-collapsed.util-open{grid-template-columns:0 0 1fr 360px}
+.shell.nav-collapsed.ctx-open.util-open{grid-template-columns:0 300px 1fr 340px}
+.pane{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.pane-nav{background:var(--ui-surface);border-right:1px solid var(--ui-line)}
+.pane-ctx{background:var(--ui-surface);border-right:1px solid var(--ui-line)}
+.pane-util{background:var(--ui-surface);border-left:1px solid var(--ui-line)}
+.pane-main{background:var(--ui-bg)}
+.pane-head{display:flex;align-items:center;gap:var(--ui-sp-2);height:var(--ui-topbar-h);padding:0 var(--ui-sp-3);border-bottom:1px solid var(--ui-line);flex:none}
+.pane-body{flex:1;min-height:0;overflow:auto;padding:var(--ui-sp-4)}
+.nav-head{justify-content:space-between}
+.tl{display:flex;gap:6px}
+.tl i{width:11px;height:11px;border-radius:50%;display:block}
+.tl .r{background:#ec6a5e}.tl .y{background:#f4bf4f}.tl .g{background:#61c554}
+.icon-btn{width:var(--ui-ctl-h-sm);height:var(--ui-ctl-h-sm);display:grid;place-items:center;border:1px solid var(--ui-line);background:transparent;color:var(--ui-text-2);border-radius:var(--ui-r-sm);cursor:pointer}
+.icon-btn:hover{color:var(--ui-text);border-color:var(--ui-text-3)}
+.brandrow{display:flex;align-items:center;gap:var(--ui-sp-2);font-weight:600;padding:var(--ui-sp-3);border-bottom:1px solid var(--ui-line)}
+.brandrow .mk{width:24px;height:24px;border-radius:var(--ui-r-sm);background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);display:grid;place-items:center;font-weight:700}
+.nav-group{padding:var(--ui-sp-2)}
+.nav-label{margin:var(--ui-sp-3) var(--ui-sp-2) var(--ui-sp-1);font-size:var(--ui-fs-1);color:var(--ui-text-3);text-transform:uppercase;letter-spacing:.04em}
+.nav-item{display:flex;align-items:center;gap:var(--ui-sp-2);padding:var(--ui-sp-2) var(--ui-sp-3);border-radius:var(--ui-r-sm);color:var(--ui-text-2);text-decoration:none;font-size:var(--ui-fs-2);cursor:pointer}
+.nav-item:hover{background:var(--ui-surface-2);color:var(--ui-text)}
+.nav-item.active{background:var(--ui-surface-2);color:var(--ui-text);font-weight:600}
+.nav-item .nb{margin-left:auto;background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border-radius:var(--ui-r-pill);font-size:var(--ui-fs-1);padding:0 var(--ui-sp-2);min-width:18px;text-align:center}
+.nav-item .ni{width:18px;height:18px;display:grid;place-items:center;color:var(--ui-text-3)}
+.nav-foot{margin-top:auto;padding:var(--ui-sp-2);border-top:1px solid var(--ui-line);display:grid;gap:var(--ui-sp-1)}
+.breadcrumb{display:flex;align-items:center;gap:var(--ui-sp-2);font-size:var(--ui-fs-2);color:var(--ui-text-2);flex:1;min-width:0;overflow:hidden;white-space:nowrap}
+.breadcrumb b{color:var(--ui-text)}
+.toggles{display:flex;gap:var(--ui-sp-1)}
+.main-head{justify-content:space-between}
+.empty-hint{color:var(--ui-text-3);font-size:var(--ui-fs-2);padding:var(--ui-sp-4);text-align:center}
+
+/* ---------- Components ---------- */
+.card{background:var(--ui-surface);border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-4)}
+.card.soft{background:var(--ui-surface-2)}
+.hrow{display:flex;align-items:center;gap:var(--ui-sp-2);margin-bottom:var(--ui-sp-3)}
+.hrow h3{font-size:var(--ui-fs-4)}
+.muted{color:var(--ui-text-2)}
+.dim{color:var(--ui-text-3)}
+.pill{display:inline-flex;align-items:center;gap:var(--ui-sp-1);border-radius:var(--ui-r-pill);padding:2px var(--ui-sp-3);font-size:var(--ui-fs-1);border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text-2)}
+.pill.green{background:rgba(50,240,140,.14);color:var(--ui-success);border-color:transparent}
+.pill.warn{background:rgba(216,154,58,.16);color:var(--ui-warning);border-color:transparent}
+.pill.danger{background:rgba(229,115,115,.16);color:var(--ui-danger);border-color:transparent}
+.pill.solid{background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border-color:transparent;font-weight:600}
+.btn{height:var(--ui-ctl-h);padding:0 var(--ui-sp-4);border-radius:var(--ui-r-sm);border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text);cursor:pointer;font-size:var(--ui-fs-2)}
+.btn:hover{border-color:var(--ui-text-3)}
+.btn.primary{background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border-color:transparent;font-weight:600}
+.btn.primary:hover{background:var(--ui-action-primary-hover)}
+.btn.lg{height:var(--ui-ctl-h-lg);padding:0 var(--ui-sp-5);font-size:var(--ui-fs-3)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:var(--ui-sp-3);align-items:center}
+.col{display:flex;flex-direction:column;gap:var(--ui-sp-3)}
+.wrap{display:flex;flex-wrap:wrap;gap:var(--ui-sp-2)}
+.stack{display:flex;flex-direction:column;gap:var(--ui-sp-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--ui-sp-3)}
+.divider{height:1px;background:var(--ui-line);margin:var(--ui-sp-4) 0}
+.field-input{width:100%;background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);color:var(--ui-text);padding:var(--ui-sp-3);font-size:var(--ui-fs-3);resize:none}
+.chip-opt{border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text-2);border-radius:var(--ui-r-pill);padding:var(--ui-sp-2) var(--ui-sp-4);cursor:pointer;font-size:var(--ui-fs-2)}
+.chip-opt:hover{border-color:var(--ui-text-3);color:var(--ui-text)}
+.chip-opt.on{background:rgba(50,240,140,.14);color:var(--ui-success);border-color:transparent}
+
+/* timeline */
+.tl-item{display:flex;gap:var(--ui-sp-3);padding:var(--ui-sp-2) 0}
+.tl-dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none;background:var(--ui-line)}
+.tl-dot.done{background:var(--ui-success)}
+.tl-dot.active{background:var(--ui-accent);box-shadow:0 0 0 3px rgba(50,240,140,.2)}
+.tl-line{flex:1;border-left:1px solid var(--ui-line);margin-left:4px;padding-left:var(--ui-sp-3);padding-bottom:var(--ui-sp-2)}
+
+/* employee presence (P2) */
+.emp{border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-3);display:flex;gap:var(--ui-sp-3);align-items:center;background:var(--ui-surface)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--ui-surface-2);display:grid;place-items:center;font-weight:600;color:var(--ui-text);flex:none}
+.emp .role{font-weight:600}
+.emp .doing{color:var(--ui-text-2);font-size:var(--ui-fs-2)}
+.presence-dot{width:8px;height:8px;border-radius:50%;background:var(--ui-success);display:inline-block;margin-right:6px}
+
+/* proposal */
+.prop-q{color:var(--ui-text-3);font-size:var(--ui-fs-2);margin-bottom:2px}
+.prop-a{font-size:var(--ui-fs-3);margin-bottom:var(--ui-sp-4)}
+.prop-a b{color:var(--ui-text)}
+.banner-ok{background:rgba(50,240,140,.12);border:1px solid rgba(50,240,140,.3);color:var(--ui-success);border-radius:var(--ui-r-md);padding:var(--ui-sp-4);font-weight:600;font-size:var(--ui-fs-4)}
+
+/* capability three-class */
+.cap{border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-4);background:var(--ui-surface)}
+.cap h4{margin-bottom:var(--ui-sp-2)}
+.cap .kind{font-size:var(--ui-fs-1);text-transform:uppercase;letter-spacing:.05em;margin-bottom:var(--ui-sp-2)}
+.cap.act .kind{color:var(--ui-danger)}
+.cap.act{border-color:rgba(229,115,115,.4)}
+.cap.spec .kind{color:var(--ui-warning)}
+.cap.opt .kind{color:var(--ui-success)}
+
+/* need CEO (P7) */
+.needs-ceo{background:var(--ui-surface);border:1px solid var(--ui-line);border-left:3px solid var(--ui-accent);border-radius:var(--ui-r-md);padding:var(--ui-sp-4)}
+.needs-ceo .layer0{display:flex;align-items:center;gap:var(--ui-sp-2);font-weight:600;margin-bottom:var(--ui-sp-2)}
+.needs-ceo .layer1{color:var(--ui-text-2);font-size:var(--ui-fs-2)}
+
+/* gap card (empty/failure/gap) */
+.gap{border:1px dashed var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-4);background:var(--ui-surface-2)}
+.gap.fail{border-style:solid;border-color:rgba(229,115,115,.4)}
+.gap .ttl{font-weight:600;margin-bottom:var(--ui-sp-1)}
+.gap .desc{color:var(--ui-text-2);font-size:var(--ui-fs-2)}
+
+/* result reference (P6) */
+.result{border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);padding:var(--ui-sp-3);display:flex;gap:var(--ui-sp-3);align-items:center;background:var(--ui-surface)}
+.result .thumb{width:48px;height:48px;border-radius:var(--ui-r-sm);background:var(--ui-surface-2);flex:none;display:grid;place-items:center;color:var(--ui-text-3)}
+.evi{display:flex;align-items:center;gap:var(--ui-sp-2);padding:var(--ui-sp-2) 0;font-size:var(--ui-fs-2);color:var(--ui-text-2);border-bottom:1px solid var(--ui-line)}
+.evi:last-child{border-bottom:0}
+.kv{display:flex;justify-content:space-between;padding:var(--ui-sp-2) 0;border-bottom:1px solid var(--ui-line);font-size:var(--ui-fs-2)}
+.kv:last-child{border-bottom:0}
+.kv .k{color:var(--ui-text-3)}
+.progress{height:8px;background:var(--ui-surface-2);border-radius:var(--ui-r-pill);overflow:hidden}
+.progress>i{display:block;height:100%;background:var(--ui-action-primary-bg)}
+.intg{display:flex;gap:var(--ui-sp-2);flex-wrap:wrap;margin-top:var(--ui-sp-3)}
+.intg .pill{font-size:var(--ui-fs-1)}
+.tag-new{background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border-radius:var(--ui-r-pill);font-size:var(--ui-fs-1);padding:1px var(--ui-sp-2);margin-left:6px;font-weight:600}
+/* design fixture note (Content Growth 示例数据标注) */
+.fixture{display:flex;align-items:flex-start;gap:var(--ui-sp-2);margin-top:var(--ui-sp-3);padding:var(--ui-sp-2) var(--ui-sp-3);border:1px dashed var(--ui-line);border-radius:var(--ui-r-sm);color:var(--ui-text-3);font-size:var(--ui-fs-1);line-height:var(--ui-lh)}
+.fixture b{color:var(--ui-warning)}
+
+/* Team Operating Model — 部门 / 责任分工 / 交接 / 对话工位 */
+.dept{border:1px solid var(--ui-line);border-left:3px solid var(--ui-accent);border-radius:var(--ui-r-md);padding:var(--ui-sp-4);background:var(--ui-surface)}
+.dept .dname{font-weight:600;font-size:var(--ui-fs-4)}
+.dept .drole{color:var(--ui-text-2);font-size:var(--ui-fs-2);margin-top:2px}
+.resp{border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-3) var(--ui-sp-4);background:var(--ui-surface);cursor:pointer}
+.resp:hover{border-color:var(--ui-text-3)}
+.resp .rhead{display:flex;align-items:center;gap:var(--ui-sp-2);font-weight:600}
+.resp .rhead .num{width:22px;height:22px;border-radius:50%;background:var(--ui-surface-2);display:grid;place-items:center;font-size:var(--ui-fs-1);color:var(--ui-text-2);flex:none}
+.resp .rresult{color:var(--ui-text-2);font-size:var(--ui-fs-2);margin-top:6px}
+.handoff{display:flex;align-items:center;gap:var(--ui-sp-2);color:var(--ui-text-3);font-size:var(--ui-fs-2);margin:var(--ui-sp-2) 0;padding-left:var(--ui-sp-5)}
+.handoff .arrow{color:var(--ui-accent);font-weight:700}
+.coord{border:1px dashed var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-3);background:var(--ui-surface-2);font-size:var(--ui-fs-2);color:var(--ui-text-2)}
+.coord b{color:var(--ui-text)}
+.msg{border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-3);background:var(--ui-surface-2)}
+.msg b{color:var(--ui-text)}
+.emp{cursor:pointer}
+.emp:hover{border-color:var(--ui-text-3)}
+</style>
+</head>
+<body>
+<div class="presbar">
+  <div class="brand"><span class="mk">C</span> Curis · Workspace Engineering</div>
+  <div class="steps" id="steps"></div>
+  <button class="theme-toggle" id="themeBtn">切换明/暗</button>
+</div>
+<div class="pres-sub" id="sub"></div>
+<div class="desk">
+  <div class="app"><div id="app"></div></div>
+</div>
+
+<script>
+/* ====================== 数据：旅程步骤 ====================== */
+const STEPS = [
+  {key:"home",     label:"经营总览",   title:"经营总览（起点）",     desc:"所有经营方向与业务空间的聚合入口；从这里发起「创办新业务」，可委托空间工程部或自行创建。"},
+  {key:"intent",   label:"表达意图",   title:"表达经营意图",         desc:"轻量引导：用一句话或自然语言选项说出「想经营什么结果 / 怎样算成功」；可由你直接委托空间工程部，或由 Assistant 理解后转交。"},
+  {key:"delegate", label:"委托与澄清", title:"委托空间工程部 · 目标澄清", desc:"空间工程部作为 Curis 组织真实核心 Department 出现；Assistant 协调转交，Leader 与你通过 Conversation 澄清目标 / 成功 / 范围 / Non-goals。"},
+  {key:"teamwork", label:"团队工作",   title:"空间工程团队工作过程", desc:"真实责任分工（Leader / 行业研究 / 经营方法 / 产品设计 / 搭建实施 / 质量验收），每阶段以真实结果 + 必要交接推进，不画成流程 / 黑箱。"},
+  {key:"proposal", label:"Proposal",   title:"Workspace Proposal",  desc:"由空间工程 Leader 在团队工作与你的澄清后提交：经营方向 / 成功 / 空间 / 默认运行 / 由谁负责·怎么工作·需要什么能力 / 你能做什么。"},
+  {key:"adapt",    label:"适配·连接",  title:"必要适配 / 能力连接",  desc:"能力缺口按三分类呈现自然语言：启用前需连接 / 连接后某功能可用 / 可稍后连接获得增强。仅 Required for Activation 阻塞激活。"},
+  {key:"activate", label:"激活",       title:"激活确认",             desc:"CEO 点「确认启用」→ 用户面表达「已经可以经营」，绝不写「Package 安装成功」。"},
+  {key:"enter",    label:"进入公司",   title:"新办公室进入公司 · 交付", desc:"办公室动态出现在导航「办公室」分组，拥有真实公司身份；空间工程 Build Team 向 Operating Team 交付，部门退出日常经营。"},
+  {key:"working",  label:"员工工作",   title:"员工开始工作",         desc:"Business Home 呈现真实 Employee Presence（P2）：Operating Team 负责、正在执行真实任务；CEO 可随时点击员工进入其 Workstation。"},
+  {key:"home2",    label:"Business Home", title:"Business Home 运营", desc:"真实运营真相：策略运行 / 重要机会 / AI 已做 / 异常 / 反馈 / 学到什么 / 建议 / 需 CEO 决定的事；含真实结果与证据（P6）。"},
+  {key:"outcome",  label:"结果·异常·Needs CEO", title:"结果 / 异常 / Needs CEO", desc:"结果已生成（P6）；异常以缺口卡诚实呈现；仅当真实结构性变化出现 P7 决策包——不是每个办公室的固定步骤。"}
+];
+
+const state = { step:0, ctxOpen:false, utilOpen:false, navCollapsed:false, connected:false };
+
+/* ====================== 组件渲染 ====================== */
+function navIcon(){return '<span class="ni">◉</span>';}
+function renderNav(active, offices){
+  const persistent = [["CEO 工作台","ceo-desk.html"],["经营","operating.html"],["业务","business.html"],["工作空间","workspace-portal.html"]];
+  let h = '<div class="brandrow"><span class="mk">C</span> Curis</div>';
+  h += '<div class="nav-group">';
+  persistent.forEach(([n,href])=>{
+    const on = href===active ? ' active':'';
+    h += `<a class="nav-item${on}">${navIcon()}<span>${n}</span></a>`;
+  });
+  h += '</div>';
+  // 更多（折叠区示意）
+  h += '<div class="nav-group"><div class="nav-label">办公室</div>';
+  const base = [["研发办公室","workspace-runtime-software.html"]];
+  const all = base.concat(offices);
+  all.forEach(([n,href])=>{
+    const on = href===active ? ' active':'';
+    const isNew = offices.some(o=>o[1]===href) && !base.some(b=>b[1]===href);
+    const tag = isNew ? '<span class="tag-new">新</span>' : '';
+    h += `<a class="nav-item${on}">${navIcon()}<span>${n}${tag}</span></a>`;
+  });
+  h += '</div>';
+  h += '<div class="nav-foot"><a class="nav-item">○ 设置</a><a class="nav-item">? 帮助与反馈</a></div>';
+  return h;
+}
+
+function paneHeadNav(){
+  return `<div class="pane-head nav-head">
+    <div class="tl"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+    <div class="row">
+      <button class="icon-btn" title="搜索">🔍</button>
+      <button class="icon-btn" id="t1" title="收起/展开导航">▤</button>
+    </div>
+  </div>`;
+}
+function paneHeadMain(breadcrumb){
+  const t2 = '<button class="icon-btn" id="t2" title="上下文">▦</button>';
+  const t3 = '<button class="icon-btn" id="t3" title="工具面">▥</button>';
+  return `<div class="pane-head main-head">
+    <div class="breadcrumb">${breadcrumb}</div>
+    <div class="toggles">${t2}${t3}</div>
+  </div>`;
+}
+function paneHeadCtx(title){
+  return `<div class="pane-head"><div class="row"><b>${title}</b></div></div>`;
+}
+function paneHeadUtil(title){
+  return `<div class="pane-head"><div class="row"><b>${title}</b></div><div class="toggles"><button class="icon-btn" id="t3b" title="收起工具面">▥</button></div></div>`;
+}
+
+/* 各类 Surface */
+function sStatusOwner(items){
+  return `<div class="card"><div class="hrow"><h3>经营概览</h3></div>
+    <div class="stack">${items.map(i=>`<div class="kv"><span class="k">${i.k}</span><span>${i.v}</span></div>`).join('')}</div></div>`;
+}
+function sObjectList(items){
+  return `<div class="card"><div class="hrow"><h3>业务空间</h3><span class="pill">${items.length}</span></div>
+    <div class="stack">${items.map(i=>`<div class="card soft" style="display:flex;justify-content:space-between;align-items:center">
+      <div><b>${i.name}</b><div class="muted" style="font-size:var(--ui-fs-2)">${i.recent}</div></div>
+      ${i.badge?`<span class="pill warn">${i.badge}</span>`:`<span class="pill green">运营中</span>`}
+    </div>`).join('')}</div></div>`;
+}
+function sTimeline(events){
+  return `<div class="card"><div class="hrow"><h3>动态</h3></div>
+    <div class="stack">${events.map(e=>`<div class="tl-item"><span class="tl-dot ${e.s}"></span><div class="tl-line"><div>${e.t}</div><div class="dim" style="font-size:var(--ui-fs-1)">${e.d||''}</div></div></div>`).join('')}</div></div>`;
+}
+function sEmployee(emp, doing, resp, clickable){
+  const oc = clickable ? ` onclick="openWorkstation('${emp}')" title="点击进入 ${emp} 的 Workstation"` : '';
+  return `<div class="emp"${oc}><div class="avatar">${emp[0]}</div><div style="flex:1">
+    <div class="role"><span class="presence-dot"></span>${emp} <span class="pill" style="margin-left:6px">在场</span></div>
+    <div class="doing">${doing}</div>
+    <div class="row wrap" style="margin-top:6px">${resp.map(r=>`<span class="pill">${r}</span>`).join('')}</div>
+  </div></div>`;
+}
+function sResult(items){
+  return `<div class="card"><div class="hrow"><h3>结果</h3></div>
+    <div class="stack">${items.map(i=>`<div class="result"><div class="thumb">▤</div><div style="flex:1"><b>${i.t}</b><div class="muted" style="font-size:var(--ui-fs-2)">${i.d}</div></div><span class="pill green">${i.tag}</span></div>`).join('')}</div></div>`;
+}
+function sEvidence(items){
+  return `<div class="card"><div class="hrow"><h3>验收 / 证据</h3></div>
+    <div class="stack">${items.map(i=>`<div class="evi"><span>${i}</span><span class="pill green" style="margin-left:auto">✓</span></div>`).join('')}</div></div>`;
+}
+
+/* ====================== 各 Frame ====================== */
+function frameHome(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / <b>经营总览</b>',
+    main: `<div class="col">
+      ${sStatusOwner([{k:"公司今天按什么策略运行",v:"内容增长优先，研发按节奏推进"},{k:"待你确认",v:"0 项"},{k:"正在运营的业务",v:"1 个"}])}
+      ${sObjectList([{name:"研发办公室",recent:"本周交付 2 个能力，1 项待回归"}])}
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>创办新业务</b><div class="muted" style="font-size:var(--ui-fs-2)">可委托空间工程部为你建好可运营的空间，也可自行创建</div></div>
+        <button class="btn primary" onclick="go(1)">创办新业务 →</button>
+      </div>
+      <div class="coord"><b>空间工程部</b>是 Curis 组织内真实核心建设部门，可受委托搭建新业务；但不是唯一入口——CEO 自建、Assistant 协调、临时团队升级等路径同样开放。</div>
+    </div>`,
+    ctx:'<div class="empty-hint">上下文在此按需展开</div>',
+    util:'<div class="empty-hint">工具面在此按需展开</div>'
+  };
+}
+function frameIntent(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 经营总览 / <b>创办新业务</b>',
+    main: `<div class="col">
+      <div class="card">
+        <div class="hrow"><h3>你想经营什么结果？怎样算成功？</h3></div>
+        <textarea class="field-input" rows="3" style="margin-bottom:var(--ui-sp-3)">我想做内容增长，持续获得客户线索和品牌资产。</textarea>
+        <div class="muted" style="font-size:var(--ui-fs-2);margin-bottom:var(--ui-sp-2)">选一个方向，或用自己的话说：</div>
+        <div class="wrap">
+          <button class="chip-opt on">内容增长</button>
+          <button class="chip-opt">客户反馈</button>
+          <button class="chip-opt">产品推广</button>
+          <button class="chip-opt">知识沉淀</button>
+        </div>
+      </div>
+      <div class="coord">你表达意图后，可由你<b>直接委托空间工程部</b>，或由 <b>CEO Assistant</b> 理解需求后转交空间工程部。Assistant 负责协调、监督、汇报，但不替代专业部门实施。</div>
+      <div class="card soft"><div class="muted" style="font-size:var(--ui-fs-2)">你只需表达经营意图，无需配置任何内部机制。后续由空间工程部与你澄清目标后组织团队。</div></div>
+      <button class="btn primary lg" onclick="go(2)">提交需求，委托空间工程部 →</button>
+    </div>`,
+    ctx:'<div class="empty-hint">表达意图阶段暂无上下文</div>',
+    util:'<div class="empty-hint">验收证据将在团队工作后生成</div>'
+  };
+}
+function frameDelegate(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 创办新业务 / <b>委托与澄清</b>',
+    main: `<div class="col">
+      <div class="dept"><div class="dname">空间工程部</div><div class="dname" style="font-size:var(--ui-fs-2);color:var(--ui-text-2)">Curis 组织 · 真实核心建设部门</div>
+        <div class="drole" style="margin-top:6px">负责搭建与交付新业务空间；可受 CEO 直接委托，或由 Assistant 转交。不是 Business / Department / Workspace 的唯一创建入口。</div>
+        <div class="row wrap" style="margin-top:var(--ui-sp-3)">
+          <span class="pill">Leader · 高建</span><span class="pill">行业研究</span><span class="pill">经营方法</span><span class="pill">产品设计</span><span class="pill">搭建实施</span><span class="pill">质量验收</span>
+        </div>
+      </div>
+      <div class="coord"><b>CEO Assistant</b> 已理解你的需求并转交空间工程部；Assistant 负责协调、监督、汇报，但不替代专业部门实施。</div>
+      <div class="card"><div class="hrow"><h3>目标澄清 Conversation</h3><span class="pill">CEO ↔ 空间工程 Leader</span></div>
+        <div class="stack">
+          <div class="msg"><b>空间工程 Leader（高建）</b><div class="muted" style="font-size:var(--ui-fs-2)">你希望内容增长办公室「怎样算成功」？范围包含哪些平台与内容形态？有哪些明确不做（Non-goals）？</div></div>
+          <div class="msg"><b>CEO</b><div class="muted" style="font-size:var(--ui-fs-2)">成功 = 持续客户线索 + 品牌资产；先做小红书图文；暂不做直播和付费投放。</div></div>
+          <div class="msg"><b>空间工程 Leader（高建）</b><div class="muted" style="font-size:var(--ui-fs-2)">明白，我将据此组织团队，完成后向你提交 Proposal。</div></div>
+        </div>
+        <div class="dim" style="font-size:var(--ui-fs-1);margin-top:var(--ui-sp-2)">目标 / 成功标准 / 范围 / Non-goals 经 Conversation 澄清并确认后，Leader 才组织团队工作。CEO 默认不管理内部流程。</div>
+      </div>
+      <button class="btn primary lg" onclick="go(3)">确认目标，开始团队建设 →</button>
+    </div>`,
+    ctx:`<div class="col">${sTimeline([{t:"需求已由 Assistant 转交空间工程部",s:"done"},{t:"Leader 与你澄清目标/范围/Non-goals",s:"done"},{t:"确认后 Leader 组织团队",s:"active"}])}</div>`,
+    util:'<div class="empty-hint">团队工作过程与证据将在下一阶段生成</div>'
+  };
+}
+function frameTeamwork(){
+  const team = [
+    {role:"空间工程 Leader（高建）", task:"组织与统筹：对齐目标、拆分责任、安排交付", result:"团队责任图与里程碑已定"},
+    {role:"行业研究", task:"研究内容增长赛道、平台规则、竞品打法", result:"赛道研究报告 + 平台规则清单"},
+    {role:"经营 / 运营方法", task:"提炼经营方法、选题→创作→发布→复盘循环", result:"内容增长经营方法文档"},
+    {role:"产品 / 空间设计", task:"设计办公室结构、空间组合与界面", result:"办公室与空间设计方案"},
+    {role:"搭建实施", task:"落地真实对象、连接能力、准备验收", result:"可运行办公室（含真实员工/责任/能力）"},
+    {role:"Quality / 验收", task:"真实验收：7 项证据归档", result:"验收通过 · 7 项证据"}
+  ];
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 创办新业务 / <b>空间工程团队工作</b>',
+    main: `<div class="col">
+      <div class="banner-ok" style="background:rgba(50,240,140,.08);border-color:rgba(50,240,140,.25);color:var(--ui-text)">
+        <div style="font-weight:600;color:var(--ui-success)">空间工程团队正在建设这个业务</div>
+        <div class="muted" style="font-size:var(--ui-fs-2);font-weight:400">由真实责任分工推进；每个阶段以真实结果 + 必要交接进入下一责任，不是后台自动黑箱。</div>
+      </div>
+      ${team.map((t,i)=>`
+        <div class="resp" onclick="openWorkstation('${t.role}')">
+          <div class="rhead"><span class="num">${i+1}</span>${t.role}</div>
+          <div class="rresult"><b>负责：</b>${t.task}</div>
+          <div class="rresult"><b>产出（真实结果）：</b>${t.result}</div>
+        </div>
+        ${i<team.length-1?`<div class="handoff"><span class="arrow">↓</span> 真实结果交接至下一责任（不是后台黑箱，也不画成流程图）</div>`:`<div class="handoff"><span class="arrow">↓</span> 验收通过后交付至新业务 Operating Team</div>`}
+      `).join('')}
+    </div>`,
+    ctx:`<div class="col"><div class="card"><div class="hrow"><h3>真实责任分工</h3></div>
+      <div class="muted" style="font-size:var(--ui-fs-2)">CEO 默认不管理内部流程。任一员工可随时点击进入其 Workstation / Conversation 查看当前工作、Result/Evidence 并讨论调整。</div>
+      <div class="stack" style="margin-top:var(--ui-sp-2)">${team.map((t,i)=>`<span class="pill">${i+1}· ${t.role}</span>`).join('')}</div>
+    </div></div>`,
+    util:`<div class="col">${sEvidence(["赛道研究报告","经营方法文档","办公室设计方案","7 项验收证据归档"])}</div>`
+  };
+}
+function frameProposal(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 创办新业务 / <b>Workspace Proposal</b>',
+    main: `<div class="col">
+      <div class="card">
+        <div class="hrow"><h3>这门业务在你这里长什么样</h3><span class="pill solid">待你确认</span></div>
+        <div class="prop-q">经营方向</div><div class="prop-a"><b>内容增长</b>——为 CEO 带来持续客户线索与品牌资产。</div>
+        <div class="prop-q">成功长什么样</div><div class="prop-a">主屏看到「本周新增关注 / 线索 / 发布达成率」，不堆 Dashboard。</div>
+        <div class="prop-q">要启用哪些空间</div><div class="prop-a">经营总览（聚合）+ 内容增长办公室（专业工作）；不做超级 Workspace。</div>
+        <div class="prop-q">默认怎么运行</div><div class="prop-a">系统自动选题·创作·发布；<b>这个账号单独设置 / 这次例外</b> 仅在你需要时调整。</div>
+        <div class="prop-q">由谁负责 / 怎么工作 / 需要什么能力</div>
+        <div class="prop-a">由 <b>内容增长 Operating Team（小录 任 Leader）</b> 长期负责；按「选题 → 创作 → 发布 → 复盘」循环工作；需要连接 <b>小红书账号</b> 与 <b>图文生成能力</b>。空间工程部完成建设后退出日常经营。</div>
+        <div class="prop-q">你能直接做什么</div><div class="prop-a">你只需确认目标与红线，其余由团队完成。</div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="go(3)">← 返回团队工作</button>
+        <button class="btn primary" onclick="go(5)">确认意图，继续适配 →</button>
+      </div>
+    </div>`,
+    ctx:`<div class="col"><div class="card"><div class="hrow"><h3>Proposal 来源</h3></div>
+      <div class="muted" style="font-size:var(--ui-fs-2)">本 Proposal 由 <b>空间工程 Leader（高建）</b> 在团队工作与你的目标澄清后提交，供你确认。确认后即进入能力连接与激活。</div>
+    </div></div>`,
+    util:`<div class="col">${sEvidence(["团队研究成果","经营方法文档","办公室设计方案","Workspace Proposal 验收通过"])}</div>`
+  };
+}
+function frameAdapt(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 经营总览 / <b>能力连接</b>',
+    main: `<div class="col">
+      <div class="grid2">
+        <div class="cap act"><div class="kind">启用前需连接</div><h4>连接小红书账号</h4>
+          <div class="muted" style="font-size:var(--ui-fs-2);margin-bottom:var(--ui-sp-3)">启用前需先连接 小红书 平台/工具。未连接前不能激活。</div>
+          <button class="btn primary" onclick="connect()">连接小红书</button></div>
+        <div class="cap spec"><div class="kind">连接后可用</div><h4>自动发布到小红书</h4>
+          <div class="muted" style="font-size:var(--ui-fs-2)">连接后，「自动发布」功能才可用；<b>不阻塞激活</b>，该功能在连接前置灰。</div></div>
+      </div>
+      <div class="cap opt"><div class="kind">可稍后连接（增强）</div><h4>数据看板增强</h4>
+        <div class="muted" style="font-size:var(--ui-fs-2)">可稍后连接 数据看板，获得更全的运营看板。不阻塞、纯增强。</div></div>
+      <div class="row">
+        <button class="btn" onclick="go(4)">← 返回 Proposal</button>
+        <button class="btn primary" id="actBtn" ${state.connected?'':'disabled'} onclick="go(6)">确认连接，去激活 →</button>
+      </div>
+    </div>`,
+    ctx:`<div class="col"><div class="gap"><div class="ttl">能力缺口（诚实呈现，不静默降级）</div><div class="desc">权限是「请求」而非「授予」；缺失即诚实告知。仅「启用前需连接」阻塞激活。</div></div></div>`,
+    util:'<div class="empty-hint">连接动作由系统代你完成</div>'
+  };
+}
+function frameActivate(){
+  return {
+    active:"operating.html", offices:[], breadcrumb:'经营 / 经营总览 / <b>激活</b>',
+    main: `<div class="col">
+      <div class="card">
+        <div class="hrow"><h3>确认启用这门业务</h3></div>
+        <div class="prop-q">业务意图</div><div class="prop-a"><b>内容增长</b>：持续获得客户线索与品牌资产。</div>
+        <div class="prop-q">能力</div><div class="prop-a">${state.connected?'小红书账号已连接 ✓':'未连接'}</div>
+        <div class="banner-ok">已为你启用 · <b>现在可以经营</b></div>
+        <div class="muted" style="font-size:var(--ui-fs-1);margin-top:var(--ui-sp-2)">用户面表达「已经可以经营」，不出现「Package 安装成功 / 已部署」等内部状态。</div>
+      </div>
+      <button class="btn primary lg" onclick="go(7)">进入内容增长办公室 →</button>
+    </div>`,
+    ctx:'<div class="empty-hint">激活后上下文将呈现真实运营</div>',
+    util:'<div class="empty-hint">验收证据已归档</div>'
+  };
+}
+function frameEnter(){
+  return {
+    active:"workspace-runtime-xhs.html", offices:["小红书运营办公室","workspace-runtime-xhs.html"], breadcrumb:'办公室 / <b>内容增长办公室</b>',
+    main: `<div class="col">
+      <div class="banner-ok">内容增长办公室 已经加入公司，可以开始经营</div>
+      <div class="card"><div class="muted" style="font-size:var(--ui-fs-2);margin-bottom:var(--ui-sp-3)">它出现在导航「办公室」分组，拥有真实公司 / 空间身份——<b>真正进入 Curis Company OS</b>，不是独立 App 或插件。左侧导航已动态出现该办公室入口。</div>
+        ${sEmployee("小录（内容运营）","在场 · 任内容增长 Operating Team Leader，负责全流程",["选题","创作","发布","复盘"],true)}
+        <div class="kv"><span class="k">所需能力</span><span>小红书账号已连接 ✓ · 图文生成能力可用</span></div>
+        <div class="kv"><span class="k">当前工作状态</span><span>正在创作本周第 3 篇图文</span></div>
+      </div>
+      <div class="dept"><div class="dname" style="font-size:var(--ui-fs-3)">建设交付 · 空间工程部 → 内容增长 Operating Team</div>
+        <div class="drole">空间工程 Leader（高建）已向你汇报完成结果，并将办公室正式交付给 Operating Team 长期负责；空间工程部退出日常经营，需进化 / 重构时可再次被委托。</div>
+        <div class="dim" style="font-size:var(--ui-fs-1);margin-top:6px">这是建设交付（初始责任指派），非 P5 责任转移事件；P5 = Responsibility Handoff Event 仍 NOT TRIGGERED / NOT REQUIRED。</div>
+      </div>
+      <button class="btn primary" onclick="go(8)">看看员工如何工作 →</button>
+    </div>`,
+    ctx:'<div class="empty-hint">真实责任与员工将在此呈现</div>',
+    util:'<div class="empty-hint">真实结果与证据将在此呈现</div>'
+  };
+}
+function frameWorking(){
+  return {
+    active:"workspace-runtime-xhs.html", offices:["小红书运营办公室","workspace-runtime-xhs.html"], breadcrumb:'办公室 / 内容增长办公室 / <b>正在工作</b>',
+    ctxOpen:true, utilOpen:true,
+    main: `<div class="col">
+      <div class="hrow"><h3>内容增长办公室</h3><span class="pill green">运营中</span><span class="pill" style="margin-left:6px">Operating Team 负责 · 空间工程部已退出</span></div>
+      ${sEmployee("小录（内容运营）","正在创作本周第 3 篇图文",["选题","创作","发布","复盘"],true)}
+      <div class="card soft">
+        <div class="row" style="justify-content:space-between"><b>正在执行：创作并发布图文</b><span class="pill">进行中</span></div>
+        <div class="progress" style="margin-top:var(--ui-sp-3)"><i style="width:62%"></i></div>
+        <div class="dim" style="font-size:var(--ui-fs-1);margin-top:6px">真实 Task / Execution · 由真实员工执行，状态实时更新</div>
+      </div>
+      <div class="coord">CEO 默认不管理内部流程；随时点击上方员工进入其 Workstation / Conversation 查看工作、Result/Evidence 并讨论调整。</div>
+      <button class="btn primary" onclick="go(9)">查看完整 Business Home →</button>
+    </div>`,
+    ctx:`<div class="col"><div class="card"><div class="hrow"><h3>员工工作方式</h3></div>
+      <div class="muted" style="font-size:var(--ui-fs-2)">小录是 Company OS 共享员工，在内容增长办公室内以「工作方式」扩展呈现：</div>
+      <div class="stack" style="margin-top:var(--ui-sp-2)">
+        <span class="pill">每日选题基于经营目标</span><span class="pill">图文由 AI 辅助创作</span><span class="pill">发布后自动复盘</span>
+      </div>
+      <div class="dim" style="font-size:var(--ui-fs-1);margin-top:6px">点击员工卡片可进入其真实 Workstation。</div></div></div>`,
+    util:`<div class="col">${sEvidence(["任务执行日志","发布回执","创作草稿快照"])}</div>`
+  };
+}
+function frameHome2(){
+  return {
+    active:"workspace-runtime-xhs.html", offices:["小红书运营办公室","workspace-runtime-xhs.html"], breadcrumb:'办公室 / 内容增长办公室 / <b>Business Home</b>',
+    ctxOpen:true, utilOpen:true,
+    main: `<div class="col">
+      ${sStatusOwner([{k:"今天按什么策略运行",v:"教程型内容为主，逐步引入产品种草"},{k:"重要机会",v:"本周「开学季」话题热度上升"},{k:"AI 已自动做了",v:"发布 3 篇 · 复盘 2 篇"},{k:"异常",v:"无"},{k:"需 CEO 决定",v:"1 项（见下）"}])}
+      ${sEmployee("小录（内容运营）","正在创作本周第 3 篇图文",["选题","创作","发布","复盘"],true)}
+      <div class="card"><div class="hrow"><h3>正在执行的工作</h3></div>
+        <div class="card soft" style="display:flex;justify-content:space-between;align-items:center">
+          <div><b>创作并发布图文 #3</b><div class="muted" style="font-size:var(--ui-fs-2)">真实 Task / Execution</div></div>
+          <span class="pill">62%</span></div>
+      </div>
+      ${sResult([{t:"图文《3 个被低估的内容增长方法》",d:"已发布 · 阅读 1.2k",tag:"结果"}])}
+      <div class="card soft"><div class="muted" style="font-size:var(--ui-fs-2)">📌 最近学到了什么：教程型内容完播率比种草高 18%，建议提高占比。</div></div>
+      <div class="fixture">⚠ <b>设计示例 · DESIGN FIXTURE</b>：以上「已发布 / 阅读 / 线索 / 自动发布」等运营数据为未来运营示例，未连接真实外部平台能力，<b>非 Current Runtime Truth</b>。</div>
+    </div>`,
+    ctx:`<div class="col"><div class="card"><div class="hrow"><h3>责任与员工</h3></div>
+      ${sEmployee("小录（内容运营）","负责内容增长全流程",["选题","创作","发布","复盘"])}
+      <div class="dim" style="font-size:var(--ui-fs-1);margin-top:var(--ui-sp-2)">真实 Responsibility / Current Executor（P2 Employee Presence），非占位。</div>
+      <div class="dim" style="font-size:var(--ui-fs-1);margin-top:6px">P5 责任交接事件：<b>NOT TRIGGERED / NOT REQUIRED</b>——本旅程在办公室创建时即确定真实责任，无后续责任转移；验收证据（Evidence）为独立 Surface，不归类为 P5。</div>
+    </div></div>`,
+    util:`<div class="col">${sResult([{t:"本周发布达成率",d:"3 / 4",tag:"看板"}])}${sEvidence(["发布回执 #3","复盘报告 #2"])}</div>`
+  };
+}
+function frameOutcome(){
+  return {
+    active:"workspace-runtime-xhs.html", offices:["小红书运营办公室","workspace-runtime-xhs.html"], breadcrumb:'办公室 / 内容增长办公室 / <b>结果 · 异常 · 决策</b>',
+    ctxOpen:true, utilOpen:false,
+    main: `<div class="col">
+      ${sResult([{t:"图文《3 个被低估的内容增长方法》",d:"已发布 · 阅读 1.2k · 线索 14",tag:"结果"}])}
+      <div class="gap">
+        <div class="ttl">能力缺口（诚实呈现）</div>
+        <div class="desc">「自动发布到小红书」需先连接小红书账号——连接前该功能置灰，<b>不阻塞激活</b>。</div>
+      </div>
+      <div class="needs-ceo">
+        <div class="layer0"><span class="pill solid">需 CEO 决定</span> 建议调整经营方法</div>
+        <div class="layer1">真实业务需要时才出现此决策包（P7），不是每个办公室的固定步骤。建议把教程内容占比从 25% 提高到 40%，是否采纳？</div>
+        <div class="row" style="margin-top:var(--ui-sp-3)">
+          <button class="btn primary">采纳</button>
+          <button class="btn">暂不调整</button>
+        </div>
+        <div class="fixture">⚠ <b>设计示例 · DESIGN FIXTURE</b>：以上「已发布 / 阅读 / 线索 / 自动发布」等运营数据为未来运营示例，未连接真实外部平台能力，<b>非 Current Runtime Truth</b>。</div>
+      </div>
+    </div>`,
+    ctx:`<div class="col"><div class="card"><div class="hrow"><h3>这次为何需要你决定</h3></div>
+      <div class="muted" style="font-size:var(--ui-fs-2)">运营学习发现「教程内容完播率显著更高」——属结构性变化，故走 P7 决策包。受影响上游将重跑，未受影响证据复用。</div>
+    </div></div>`,
+    util:'<div class="empty-hint">证据按需在此查看（P6 Result Reference）</div>'
+  };
+}
+
+function sWorkstation(name){
+  const e = WS[name] || {doing:"该责任由团队承担，当前阶段工作由 Leader 统筹", resp:["（详见责任分工）"], result:"（实时同步中）", evi:["实时工作日志"], conv:[{who:"系统",said:"该员工的实时工作、Result/Evidence 由 Curis Company OS 真实记录。"}]};
+  return `<div class="col">
+    <div class="card"><div class="hrow"><h3>Workstation · ${name}</h3><span class="pill solid">真实工位</span></div>
+      <div class="emp" style="cursor:default"><div class="avatar">${name[0]}</div><div style="flex:1">
+        <div class="role"><span class="presence-dot"></span>${name} <span class="pill" style="margin-left:6px">在场</span></div>
+        <div class="doing">${e.doing}</div></div></div>
+      <div class="kv"><span class="k">负责任务</span><span>${e.resp.join(" · ")}</span></div>
+    </div>
+    <div class="card"><div class="hrow"><h3>当前工作 / 结果</h3></div>
+      <div class="card soft" style="display:flex;justify-content:space-between;align-items:center"><div><b>${e.result}</b></div><span class="pill">进行中</span></div>
+    </div>
+    ${sEvidence(e.evi)}
+    <div class="card"><div class="hrow"><h3>Conversation（可讨论 / 调整）</h3></div>
+      <div class="stack">${e.conv.map(c=>`<div class="msg"><b>${c.who}</b><div class="muted" style="font-size:var(--ui-fs-2)">${c.said}</div></div>`).join('')}</div>
+      <div class="row" style="margin-top:var(--ui-sp-3)"><input class="field-input" style="flex:1" placeholder="和 ${name} 讨论或调整工作…"/><button class="btn primary">发送</button></div>
+      <div class="dim" style="font-size:var(--ui-fs-1);margin-top:6px">CEO 默认不管理内部流程；随时点击任一员工进入其 Workstation / Conversation 查看工作、Result/Evidence 并讨论调整。</div>
+    </div>
+  </div>`;
+}
+function openWorkstation(name){ state.workstation = name; state.ctxOpen = true; render(); }
+const WS = {
+  "小录（内容运营）": {doing:"正在创作本周第 3 篇图文", resp:["选题","创作","发布","复盘"], result:"图文《3 个被低估的内容增长方法》已发布 · 阅读 1.2k", evi:["创作草稿快照","发布回执 #2","复盘报告"], conv:[
+    {who:"空间工程 Leader（高建）",said:"小录，内容增长办公室已交付给你运营，这是本周选题池与经营方法。"},
+    {who:"小录",said:"收到，我已按经营目标排出 4 篇选题，正在创作第 3 篇。"},
+    {who:"CEO",said:"教程型内容表现更好，可以多加一些。"},
+    {who:"小录",said:"明白，我会把教程占比从 25% 提到 40%，下周转交你确认。"}
+  ]},
+  "空间工程 Leader（高建）": {doing:"统筹空间工程建设与交付", resp:["组织团队","目标澄清","交付汇报"], result:"内容增长办公室已验收并交付 Operating Team", evi:["团队责任图","7 项验收证据","交付汇报"], conv:[
+    {who:"CEO",said:"希望内容增长办公室持续带来客户线索与品牌资产。"},
+    {who:"空间工程 Leader（高建）",said:"明白，我将组织行业研究、方法、设计、实施、验收五个责任，完成后向你提交 Proposal。"},
+    {who:"CEO",said:"范围先做小红书图文，暂不做直播和付费投放。"},
+    {who:"空间工程 Leader（高建）",said:"已记入 Non-goals，团队将据此建设。"}
+  ]}
+};
+const BUILD = {home:frameHome,intent:frameIntent,delegate:frameDelegate,teamwork:frameTeamwork,proposal:frameProposal,adapt:frameAdapt,activate:frameActivate,enter:frameEnter,working:frameWorking,home2:frameHome2,outcome:frameOutcome};
+
+/* ====================== 渲染 ====================== */
+function shell(f){
+  const cls = ['shell'];
+  if(state.ctxOpen) cls.push('ctx-open');
+  if(state.utilOpen) cls.push('util-open');
+  if(state.navCollapsed) cls.push('nav-collapsed');
+  return `<div class="${cls.join(' ')}" style="height:100%">
+    <div class="pane pane-nav">${paneHeadNav()}<div class="pane-body" style="padding:0">${renderNav(f.active, f.offices||[])}</div></div>
+    ${state.ctxOpen?`<div class="pane pane-ctx">${paneHeadCtx('上下文')}<div class="pane-body">${f.ctx||''}</div></div>`:''}
+    <div class="pane pane-main">${paneHeadMain(f.breadcrumb)}<div class="pane-body">${f.main||''}</div></div>
+    ${state.utilOpen?`<div class="pane pane-util">${paneHeadUtil('工具面')}<div class="pane-body">${f.util||''}</div></div>`:''}
+  </div>`;
+}
+function render(){
+  const f = BUILD[STEPS[state.step].key]();
+  // 应用 frame 自带的开合偏好（working/home2 默认开）
+  if(f.ctxOpen!==undefined) state.ctxOpen = f.ctxOpen;
+  if(f.utilOpen!==undefined) state.utilOpen = f.utilOpen;
+  // CEO 介入：点击员工进入其 Workstation / Conversation（覆盖 Context）
+  if(state.workstation){ f.ctx = sWorkstation(state.workstation); f.ctxOpen = true; }
+  document.getElementById('app').innerHTML = shell(f);
+  document.getElementById('sub').innerHTML = `<b>步骤 ${state.step+1}/${STEPS.length} · ${STEPS[state.step].title}</b> &nbsp; ${STEPS[state.step].desc}`;
+  // 步骤条
+  const steps = document.getElementById('steps');
+  steps.innerHTML = STEPS.map((s,i)=>`<button class="step-chip ${i===state.step?'active':''}" onclick="go(${i})">${s.label}</button>`).join('');
+  // 绑定 toggle
+  const t1=document.getElementById('t1'); if(t1) t1.onclick=()=>{state.navCollapsed=!state.navCollapsed;render();};
+  const t2=document.getElementById('t2'); if(t2) t2.onclick=()=>{ state.ctxOpen=!state.ctxOpen; if(!state.ctxOpen) state.workstation=null; render(); };
+  const t3=document.getElementById('t3'); if(t3) t3.onclick=()=>{state.utilOpen=!state.utilOpen;render();};
+  const t3b=document.getElementById('t3b'); if(t3b) t3b.onclick=()=>{state.utilOpen=false;render();};
+}
+function go(i){ state.step = i; state.workstation=null; render(); }
+function connect(){ state.connected = true; const b=document.getElementById('actBtn'); if(b){b.disabled=false;} render(); }
+document.getElementById('themeBtn').onclick=()=>{
+  const html=document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark'?'light':'dark');
+};
+render();
+</script>
+</body>
+</html>

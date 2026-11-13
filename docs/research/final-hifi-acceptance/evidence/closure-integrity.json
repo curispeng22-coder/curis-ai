@@ -1,0 +1,6 @@
+{
+  "tracked_inputs": 204,
+  "changed_after_final_snapshot": [],
+  "audit_writes": "only docs/research/final-hifi-acceptance",
+  "implementation_writes_by_auditor": false
+}

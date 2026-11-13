@@ -1,0 +1,267 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · G. 设置（头像菜单进入，非一级导航）
+  覆盖：G1 Workspace 首页 · G2 个人偏好 · G3 公司设置 · G4 AI与能力/Connector · G5 权限与数据 · G6 运行与成本
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设置 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 880px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--accent, var(--ui-accent)); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); } .tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); } .ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.result-ref { display: inline-flex; align-items: center; gap: var(--ui-sp-1); color: var(--ui-accent); font-size: var(--ui-fs-2); cursor: pointer; text-decoration: none; border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-sm); }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+.dl { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row .k { color: var(--ui-text-2); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.form-row { display: flex; flex-direction: column; gap: var(--ui-sp-1); margin-bottom: var(--ui-sp-3); }
+.form-row label { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.form-row input, .form-row select, .form-row textarea { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-3); }
+.cap-card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); background: var(--ui-surface); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.cap-card .name { font-weight: 600; font-size: var(--ui-fs-3); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="搜索" data-open-utility aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>研发办公室</span></a>
+          <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>小红书运营办公室</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item active" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">设置分类</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-list">
+        <div class="ctx-item active">个人偏好</div>
+        <div class="ctx-item">公司设置</div>
+        <div class="ctx-item">AI 与能力</div>
+        <div class="ctx-item">权限与数据</div>
+        <div class="ctx-item">运行与成本</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="index.html">Curis</a><span class="sep">/</span><span>设置</span></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="page-head">
+        <h1>设置</h1>
+        <div class="sub">G. 个人 / 公司 / AI 与能力 / 权限与数据 / 运行与成本（头像菜单进入）</div>
+      </div>
+
+      <div class="tabs" data-tab-group="set">
+        <button class="tab active" data-tab="home">首页</button>
+        <button class="tab" data-tab="personal">个人偏好</button>
+        <button class="tab" data-tab="company">公司设置</button>
+        <button class="tab" data-tab="ai">AI 与能力</button>
+        <button class="tab" data-tab="perm">权限与数据</button>
+        <button class="tab" data-tab="ops">运行与成本</button>
+      </div>
+
+      <!-- G1 首页 -->
+      <div class="tab-panel active" data-tab-panel="set" data-tab-id="home">
+        <div class="grid cols-3" style="margin-top:var(--ui-sp-4)">
+          <div class="cap-card"><div class="name">个人偏好</div><div class="helper" style="margin-top:var(--ui-sp-2)">姓名、头像、语言、主题、通知</div><button class="btn btn-ghost" style="margin-top:var(--ui-sp-2)" data-open-utility>打开</button></div>
+          <div class="cap-card"><div class="name">公司设置</div><div class="helper" style="margin-top:var(--ui-sp-2)">公司资料、目标、规则</div><button class="btn btn-ghost" style="margin-top:var(--ui-sp-2)" data-open-utility>打开</button></div>
+          <div class="cap-card"><div class="name">AI 与能力</div><div class="helper" style="margin-top:var(--ui-sp-2)">Provider / 模型 / Connector / Skill</div><button class="btn btn-ghost" style="margin-top:var(--ui-sp-2)" data-open-utility>打开</button></div>
+        </div>
+      </div>
+
+      <!-- G2 个人偏好 -->
+      <div class="tab-panel" data-tab-panel="set" data-tab-id="personal">
+        <div class="card" style="max-width:560px;margin-top:var(--ui-sp-4)">
+          <div class="card-title">个人偏好</div>
+          <div class="form-row" style="margin-top:var(--ui-sp-3)"><label>姓名</label><input value="（你的名字）"></div>
+          <div class="form-row"><label>语言</label><select><option>简体中文</option><option>English</option></select></div>
+          <div class="form-row"><label>主题</label><select><option>深色（默认）</option><option>浅色</option><option>跟随系统</option></select></div>
+          <div class="form-row"><label>通知</label><select><option>仅待我决策</option><option>全部</option><option>关闭</option></select></div>
+          <button class="btn btn-primary">保存</button>
+        </div>
+      </div>
+
+      <!-- G3 公司设置 -->
+      <div class="tab-panel" data-tab-panel="set" data-tab-id="company">
+        <div class="card" style="margin-top:var(--ui-sp-4)">
+          <div class="dl">
+            <div class="dl-row"><span class="k">公司名称</span><span>Curis 科技（示例）</span></div>
+            <div class="dl-row"><span class="k">目标</span><span>用 AI 员工跑通核心业务</span></div>
+            <div class="dl-row"><span class="k">规则</span><span>对外变更需 CEO 决策（POLICY）</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- G4 AI 与能力 -->
+      <div class="tab-panel" data-tab-panel="set" data-tab-id="ai">
+        <div class="card" style="margin-top:var(--ui-sp-4)">
+          <div class="card-title">Provider / 模型</div>
+          <div class="dl">
+            <div class="dl-row"><span class="k">Provider</span><span>OpenAI / Anthropic（示例）</span></div>
+            <div class="dl-row"><span class="k">默认模型</span><span>Auto</span></div>
+            <div class="dl-row"><span class="k">Base URL / API Key</span><span>已配置 · ···· (UNK 具体值)</span></div>
+            <div class="dl-row"><span class="k">测试</span><span><span class="status success">可用</span></span></div>
+          </div>
+        </div>
+        <div class="grid cols-2" style="margin-top:var(--ui-sp-4)">
+          <div class="cap-card"><div class="name">Connector 管理</div><div class="helper" style="margin-top:var(--ui-sp-2)">已安装：小红书、GitHub · 健康：正常</div><button class="btn btn-ghost" style="margin-top:var(--ui-sp-2)" data-open-utility>管理</button></div>
+          <div class="cap-card"><div class="name">Skill / Agent / Tool</div><div class="helper" style="margin-top:var(--ui-sp-2)">技术文档生成 · 竞品监测 · Codex · Claude Code</div><button class="btn btn-ghost" style="margin-top:var(--ui-sp-2)" data-open-utility>查看</button></div>
+        </div>
+      </div>
+
+      <!-- G5 权限与数据 -->
+      <div class="tab-panel" data-tab-panel="set" data-tab-id="perm">
+        <div class="card" style="margin-top:var(--ui-sp-4)">
+          <div class="dl">
+            <div class="dl-row"><span class="k">数据范围</span><span>公司级对象（Business/Workspace/Employee…）</span></div>
+            <div class="dl-row"><span class="k">外部动作确认</span><span>需 CEO 确认（Computer Access）</span></div>
+            <div class="dl-row"><span class="k">隐私</span><span>本地数据优先，外部同步需授权</span></div>
+            <div class="dl-row"><span class="k">导出 / 本地数据</span><span><button class="btn btn-ghost" data-open-utility>导出</button></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- G6 运行与成本 -->
+      <div class="tab-panel" data-tab-panel="set" data-tab-id="ops">
+        <div class="grid cols-2" style="margin-top:var(--ui-sp-4)">
+          <div class="card"><div class="card-title">连接健康</div><div class="helper" style="margin-top:var(--ui-sp-2)">小红书 ✅ · GitHub ✅ · 抖音 ⚠ 未连接</div></div>
+          <div class="card"><div class="card-title">能力容量</div><div class="helper" style="margin-top:var(--ui-sp-2)">并发 8 / 上限 12 · 剩余额度 (EST)</div></div>
+          <div class="card"><div class="card-title">成本预算</div><div class="helper" style="margin-top:var(--ui-sp-2)">本月 $ — / 预算 $ — (UNK)</div></div>
+          <div class="card"><div class="card-title">后台运行状态</div><div class="helper" style="margin-top:var(--ui-sp-2)"><span class="status success">正常</span> · 最近诊断 无异常</div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">设置详情</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="detail-field"><div class="k">当前查看</div><div class="v" id="utilSetTitle">设置概览</div></div>
+      <div class="detail-field"><div class="k">说明</div><div class="v">设置修改即时生效，涉及权限与成本的改动会记录至运行日志（示例）。</div></div>
+      <div class="detail-field"><div class="k">相关</div><div class="v"><span class="tag">Provider</span> <span class="tag">Connector</span> <span class="tag">权限</span></div></div>
+    </div>
+  </aside>
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

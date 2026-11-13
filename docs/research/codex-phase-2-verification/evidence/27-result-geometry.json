@@ -1,0 +1,20 @@
+[
+  {
+    "class": "",
+    "font": "24px",
+    "height": 27.59375,
+    "padding": "0px",
+    "radius": "0px",
+    "tag": "H1",
+    "width": 298.96875
+  },
+  {
+    "class": "pane",
+    "font": "14px",
+    "height": 900,
+    "padding": "0px",
+    "radius": "0px",
+    "tag": "ASIDE",
+    "width": 360
+  }
+]

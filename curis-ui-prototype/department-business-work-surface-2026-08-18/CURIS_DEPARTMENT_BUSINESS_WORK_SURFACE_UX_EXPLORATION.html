@@ -1,0 +1,3020 @@
+<!doctype html>
+<!--
+  CURIS · Department / Business Work Surface · UX Exploration  (Round 7 · Quiet Notebook + Inline Workflow)
+  ───────────────────────────────────────────────────────────────────────────────
+  Wireframe-grade · Interactive · Single file
+  States (this round):
+    1. 业务空间总入口          · Hub
+    2. 内容增长部                  · Department · Preset  (Dept pages not redesigned in R5)
+    3. 研发部                     · Department · Preset  (Dept pages not redesigned in R5)
+    4. 小红书运营                  · Business    · Preset + quiet notebook + WS tabs + Rules drawer + Inline Workflow (R5)
+    5. Curis 产品研发             · Business    · Preset + quiet notebook + WS tabs + Rules drawer (compressed) + Inline Workflow (R5)
+    6. 海外业务部                  · Department · Generic  (Dept pages not redesigned in R5)
+    7. 宠物寄养                  · Business    · 刚创建状态 + quiet notebook + 空 WS (no design-doc wording on surface)
+
+  R5 关键变化 (从 R4 简化):
+    · 删除全屏 Workflow Canvas(canvas-* 相关 CSS/JS 一并移除)
+    · 工作流收回业务页「工作空间」卡片内联展示 — 点击 [编辑] 原地展开拖拽轨道,不再跳转
+    · 节点右滑 Inspector 改成 Node Drawer (复用 .rules-drawer 视觉 DNA, width 460px, slide-in-right)
+    · 工作流节点只显 岗位 + 头像/姓名 — 无 status dot / 无 已完成-进行中-待开始
+    · 退回路径 = 内联 dashed 行说明,不画 Canvas 路径
+    · Hub 「工作空间」组描述改为「业务内独立经营的执行空间 · 可从 Business Space 直接进入」
+    · State 2/3/6 (Dept) 与 State 7 (Generic) 结构保持 R4 不变
+    · Rules Drawer (CSS + DOM + JS) R4 已就绪,R5 完全不动
+
+  R6 关键变化 (Workspace Leader Visual Delta · Minimal Insertion Only):
+    · 仅补「谁对整个 Workspace 负责」,不重画 Business / Workflow / Professional Workspace 结构
+    · 5 个 ws-card(AI 科技 / 旅游 / 汽车 / Desktop / Runtime)各插入:
+        工作空间身份行 → 收起的 Workspace Leader Workstation(复用 .emp-row Employee Workstation DNA,
+        默认收起 = Business 页轻量投影;展开 = 完整 Workstation:职责 + 状态 + 可展开 Conversation)
+        → 轻量经营闭环提示(本轮结果回到工作空间负责人)
+    · Leader 作用域用 --ui-accent 强调(头像环 + 角色字),与 Workflow 角色视觉区分同一 Employee 的不同 Scope
+    · 新增 Assignment Conversation Drawer(复用 .node-drawer DNA):
+        点 Workflow 节点员工 / 岗位绑定 pill → 打开按 Role 区分的对话(Employee × Role × Scope 上下文)
+        Leader 对话(emp-row)与 Workflow Role 对话(抽屉)不混为同一责任
+    · Workflow 保持 Round 5 不变(Inline / Add / Delete / Drag / Node Drawer / 流转)
+    · 未动:Product Truth / Frozen Authority / 业务页其他段 / Department 页 / Generic(宠物寄养)空 ws
+
+  R7 关键变化 (Final Interaction Cleanup · No Redesign):
+    · 删除 5 个 Workspace 详情里的独立「岗位 / 员工」摘要行(员工绑定仍保留在 Workflow 节点 + Node Drawer)
+    · 删除 5 个 Workspace Leader 下的「经营闭环」提示条(属产品行为,非长期 UI 说明)
+    · 清理误导 Current Prototype Truth 的 R4 Canvas 旧标识:顶部 mock-badge / ux-hint / title / 头部注释
+      → 当前实际为 Round 7 · Inline Workflow;R5/R6 历史 changelog 注释保留
+    · 修复 Generic Business(宠物寄养)规则 Value:「尚未建立」本身可点击 → 打开空 Rules Drawer 可 +新增;
+      Leader 建议气泡确认后直接更新该 Value 与 RULES_DB['biz7'];删除「重新启用查看/编辑按钮」stale 逻辑
+    · 保持:普通字段 Label 不可点 / Value 可点 · Workflow 显式 [编辑] 保留且原地展开 · 工作流结构不动
+      · Leader 语义不动 · Business 骨架不动 · 不新增按钮 / 页面
+
+  R9 关键变化 (Professional Workspace · Workspace Leader Visual Integration · Minimal Delta Only):
+    · 基于已接受 Professional Workspace(ws-card:AI 科技/旅游/汽车/Desktop/Runtime)做 in-place 最小插入
+    · 5 个 ws-card 的轻量「负责人」字段升级为内联可折叠 Workspace Leader Workstation(复用 .emp-row DNA):
+        首屏收起 = 轻量投影(头像 + 姓名 + 工作空间负责人 + 当前职责 + 状态 + ›)
+        点击头部内联展开 = 完整 Workstation(Assignment 作用域说明 + Conversation + Composer)
+    · Leader 默认收起(不占专业工作区);与 Department Leader 共用同一 toggle 机制([data-emp-row])
+    · 同一 Employee 不同 Assignment 作用域视觉可区分:
+        Leader        → 内联 Workstation 展开(Role=工作空间负责人)
+        Workflow 节点  → 侧 Assignment Drawer(Role=选题/发布等)
+    · 不把 Leader 加为 Workflow 节点(WORKFLOW_NODES 无 工作空间负责人)
+    · 清理 R7 遗留「负责人 Value → 侧抽屉」死 handler;Leader 改为内联展开,不恢复查看/编辑按钮
+    · 未动:Business 骨架 / 普通字段 Value-only 交互 / Workflow(Round 5 冻结) / 小红书·研发专业差异 / Product Truth
+    · 注:R6 曾以完整 Workstation + 经营闭环提示条实现,该形态已于 R7 回退;本 R9 以「内联收起 Workstation」重新落地(无闭环横幅)
+
+  视觉令牌: ../_system/tokens.css
+  组件:    ../_system/shell.css (card / btn / status / mock-badge / kpi …)
+  本页补充类 (R5 新增):
+    · wf-edit-pane / wf-edit-head / wf-edit-foot / wf-track / wf-node / wf-arrow
+    · wf-return-rail / wf-return-row
+    · wf-add-pop (内联添加岗位 popover)
+    · node-overlay / node-drawer / nd-head / nd-field / nd-emp / nd-flow / nd-foot / nd-emp-pop
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Department / Business Work Surface · UX Exploration · Curis · Round 7</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<style>
+/* =====================================================
+   仅本页必要补充类 — 复用 tokens.css / shell.css 提供的卡 /
+   按钮 / 状态 / 字阶 / 间距 / 圆角 / 焦点 / 触达目标。
+   本块不新增 token;颜色与字号一律走 --ui-*。
+   ===================================================== */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+
+/* ─────── 探索外壳(仅本页) ─────── */
+.exploration-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+.ux-states {
+  position: sticky; top: 0; z-index: var(--ui-z-sticky);
+  display: flex; align-items: center; gap: var(--ui-sp-2);
+  padding: var(--ui-sp-2) var(--ui-sp-5);
+  background: var(--ui-surface);
+  border-bottom: 1px solid var(--ui-line);
+  flex-wrap: wrap;
+}
+.ux-states .ux-mark {
+  display: flex; align-items: center; gap: var(--ui-sp-2);
+  margin-right: var(--ui-sp-3);
+  padding-right: var(--ui-sp-3);
+  border-right: 1px solid var(--ui-line);
+}
+.ux-states .ux-mark .dot { width: 8px; height: 8px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+.ux-states .ux-mark .label { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-transform: uppercase; letter-spacing: .06em; }
+.ux-tab {
+  border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2);
+  border-radius: var(--ui-r-pill); padding: var(--ui-sp-1) var(--ui-sp-3);
+  font-size: var(--ui-fs-2); cursor: pointer; font: inherit;
+  min-height: 32px;
+}
+.ux-tab:hover { color: var(--ui-text); }
+.ux-tab.is-active { background: var(--ui-text); color: var(--ui-bg); border-color: var(--ui-text); font-weight: 600; }
+.ux-states .ux-hint { margin-left: auto; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+.states { flex: 1 1 auto; min-width: 0; }
+.state { display: none; padding: var(--ui-sp-5) var(--ui-sp-6) var(--ui-sp-7); }
+.state.is-active { display: block; }
+
+/* ─────── Pane(仅本页:单个主 pane,不引入三栏 shell) ─────── */
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.pane-header {
+  height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h);
+  display: flex; align-items: center; gap: var(--ui-sp-2);
+  padding: 0 var(--ui-sp-5);
+  border-bottom: 1px solid var(--ui-line); background: var(--ui-surface);
+}
+.pane-content { padding: var(--ui-sp-6) var(--ui-sp-5); }
+.pane-title { font-size: var(--ui-fs-3); font-weight: 600; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs .sep { opacity: .5; }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; }
+.crumbs a:hover { color: var(--ui-text); }
+.spacer { flex: 1; }
+.domain-mark {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px var(--ui-sp-2);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-pill);
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+}
+.domain-mark .dot { width: 6px; height: 6px; border-radius: var(--ui-r-pill); background: var(--ui-text-3); }
+.domain-mark.is-content .dot { background: #d89a3a; }
+.domain-mark.is-rd      .dot { background: #4a8dac; }
+.domain-mark.is-hub     .dot { background: var(--ui-text-3); }
+.domain-mark.is-generic .dot { background: var(--ui-text-3); }
+
+.back-link { font-size: var(--ui-fs-2); color: var(--ui-text-2); text-decoration: none; }
+.back-link:hover { color: var(--ui-text); text-decoration: underline; }
+
+/* ─────── Page head / section ─────── */
+.page-head {
+  margin-bottom: var(--ui-sp-6);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: var(--ui-sp-3); flex-wrap: wrap;
+}
+.page-head .title-block { min-width: 0; flex: 1 1 auto; }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.page-head .head-actions { display: flex; gap: var(--ui-sp-2); align-items: center; flex: 0 0 auto; }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.section-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.eyebrow { font-size: var(--ui-fs-1); line-height: 1.45; color: var(--ui-text-2); margin: 0 0 var(--ui-sp-1); }
+
+/* ─────── Grids ─────── */
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid.cols-entry { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-section { grid-template-columns: 1.4fr 1fr; gap: var(--ui-sp-6); }
+@media (max-width: 980px) {
+  .grid.cols-2, .grid.cols-3, .grid.cols-4, .grid.cols-entry, .grid.cols-section { grid-template-columns: 1fr; }
+}
+
+.hub-group { margin-bottom: var(--ui-sp-6); }
+.hub-group .gh { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.hub-group .gh .gt { font-size: var(--ui-fs-4); font-weight: 650; }
+.hub-group .gh .gs { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+/* ─────── Definition list (row-pair) ─────── */
+.dl { display: flex; flex-direction: column; gap: 0; }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row:last-child { border-bottom: 0; }
+.dl-row .k { color: var(--ui-text-2); }
+.dl-row .v { text-align: right; max-width: 60%; }
+
+/* ─────── KPI / Domain metrics ─────── */
+.kpi { display: flex; flex-direction: column; gap: 2px; }
+.kpi .n { font-size: var(--ui-fs-7); font-weight: 650; line-height: 1.1; }
+.kpi .l { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.kpi .s { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+.os-row { display: grid; grid-template-columns: 200px 1fr; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px dashed var(--ui-line); font-size: var(--ui-fs-2); }
+.os-row:last-child { border-bottom: 0; }
+.os-row .k { color: var(--ui-text-2); }
+.os-row .v { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+
+.flow-rail { display: flex; gap: var(--ui-sp-2); align-items: stretch; flex-wrap: wrap; }
+.flow-step { flex: 1 1 0; min-width: 110px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2) var(--ui-sp-3); background: var(--ui-surface); display: flex; flex-direction: column; gap: 2px; }
+.flow-step .n { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.flow-step .t { font-weight: 600; font-size: var(--ui-fs-3); }
+.flow-step .s { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+/* ─────── Entry / business cards ─────── */
+.entry-card {
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-md);
+  padding: var(--ui-sp-4); background: var(--ui-surface);
+  display: flex; flex-direction: column; gap: var(--ui-sp-2);
+  cursor: pointer; text-decoration: none; color: inherit;
+  transition: border-color 150ms ease, background 150ms ease;
+  text-align: left; font: inherit; width: 100%;
+}
+.entry-card:hover { border-color: var(--ui-text-2); }
+.entry-card .name { font-weight: 650; font-size: var(--ui-fs-4); }
+.entry-card .sub { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.entry-card .focus { font-size: var(--ui-fs-2); color: var(--ui-text); }
+.entry-card .top { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-sp-2); }
+.entry-card.is-generic { border-style: dashed; }
+
+/* ─────── Work area · Employee Row → Conversation + Composer ─────── */
+.emp-list { display: flex; flex-direction: column; }
+.emp-row { border-bottom: 1px solid var(--ui-line); }
+.emp-row:last-child { border-bottom: 0; }
+.emp-row-head {
+  display: grid; grid-template-columns: 36px 1fr auto auto; grid-template-rows: auto auto;
+  align-items: center; gap: 0 var(--ui-sp-3);
+  padding: var(--ui-sp-3) var(--ui-sp-2); cursor: pointer;
+}
+.emp-row-head:hover { background: var(--ui-surface); }
+.emp-avatar { grid-row: 1 / 3; width: 36px; height: 36px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: var(--ui-fs-2); }
+.emp-id { grid-column: 2; grid-row: 1; display: flex; align-items: baseline; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.emp-name { font-weight: 600; }
+.emp-role { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.emp-duty { grid-column: 2; grid-row: 2; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.emp-status { grid-column: 3; grid-row: 1 / 3; }
+.emp-chevron { grid-column: 4; grid-row: 1 / 3; color: var(--ui-text-2); transition: transform 150ms ease; }
+.emp-row.is-open .emp-chevron { transform: rotate(90deg); }
+.emp-body { display: none; padding: 0 var(--ui-sp-2) var(--ui-sp-4) calc(36px + var(--ui-sp-3) + var(--ui-sp-2)); }
+.emp-row.is-open .emp-body { display: block; }
+.av-1 { background: #4a6fa5; } .av-2 { background: #5b8c6e; } .av-3 { background: #9a7b4e; }
+.av-4 { background: #7a5b8c; } .av-5 { background: #a05b6b; } .av-6 { background: #4e8c8c; }
+.av-7 { background: #6b8e7d; } .av-8 { background: #8e7d6b; }
+
+.conversation { display: flex; flex-direction: column; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; }
+.msg { display: flex; gap: var(--ui-sp-2); }
+.msg.user { flex-direction: row-reverse; }
+.msg .bubble { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3); max-width: 80%; font-size: var(--ui-fs-3); }
+.msg.user .bubble { background: var(--ui-surface-2); }
+.msg .who { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); }
+.composer { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.composer-input { width: 100%; min-height: 44px; resize: vertical; background: transparent; border: 0; color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-3); line-height: 1.5; }
+.composer-input:focus { outline: none; }
+.composer-bar { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.composer-bar.right { margin-left: auto; }
+.chip { display: inline-flex; align-items: center; gap: var(--ui-sp-1); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; min-height: 32px; }
+
+/* ─────── Team list ─────── */
+.team-list { display: flex; flex-direction: column; }
+.team-row { display: flex; align-items: center; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-3); }
+.team-row:last-child { border-bottom: 0; }
+.team-row .name { font-weight: 600; }
+.team-row .role { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.team-row .av { width: 28px; height: 28px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: var(--ui-fs-1); flex: 0 0 auto; }
+.team-list.is-compact { gap: 0; }
+.team-list.is-compact .team-row { padding: var(--ui-sp-1) 0; gap: var(--ui-sp-2); font-size: var(--ui-fs-2); }
+.team-list.is-compact .team-row .name { font-weight: 500; }
+.team-list.is-compact .team-row .role { font-size: var(--ui-fs-1); }
+.team-list.is-compact .team-row .av { width: 22px; height: 22px; font-size: 10px; }
+
+/* ─────── Misc ─────── */
+.inline-hint {
+  display: flex; gap: var(--ui-sp-2); align-items: center;
+  padding: var(--ui-sp-2) var(--ui-sp-3);
+  border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm);
+  background: var(--ui-surface-2); font-size: var(--ui-fs-1);
+  color: var(--ui-text-2); margin: var(--ui-sp-3) 0;
+}
+.muted { color: var(--ui-text-2); }
+.empty-note { color: var(--ui-text-3); font-size: var(--ui-fs-2); font-style: italic; }
+
+.summary-block { display: flex; flex-direction: column; gap: var(--ui-sp-2); padding: var(--ui-sp-3); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-surface); }
+.summary-block .label { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-transform: uppercase; letter-spacing: .04em; }
+.summary-block .body { font-size: var(--ui-fs-3); }
+
+/* ─────── 兼容保留:R2 4-tab 抹除 ─────── */
+.sub-tabs, .sub-panel { display: none !important; }
+
+/* ─────── R3 兼容保留 (.wf-pill / .wf-arrow-s / .emp-bind-*) ───────
+   这些类是 Workflow 摘要行 的最小形态,在 R4 仍用于工作空间区
+   的一行 chips 表达。 */
+.ws-summary {
+  display: flex; align-items: center; gap: var(--ui-sp-2);
+  flex-wrap: wrap;
+}
+.wf-pill {
+  padding: 2px var(--ui-sp-2);
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-pill);
+  background: var(--ui-surface-2); color: var(--ui-text);
+  font-size: var(--ui-fs-1); white-space: nowrap;
+  font-weight: 500;
+}
+.wf-arrow-s { color: var(--ui-text-3); font-size: var(--ui-fs-2); }
+
+.emp-bind-pill {
+  display: inline-flex; gap: 4px; align-items: baseline;
+  margin-right: var(--ui-sp-2);
+}
+.emp-bind-pill .role { color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+.emp-bind-pill .name { color: var(--ui-text); font-size: var(--ui-fs-2); font-weight: 500; }
+.emp-bind-pill.is-unbound .name { color: var(--ui-text-3); font-style: italic; font-weight: 400; }
+.emp-bind-sep { color: var(--ui-text-3); margin: 0 var(--ui-sp-1); }
+
+/* 标准列表 / 标签行(给 Dept pages 用) */
+.std-list {
+  display: grid; grid-template-columns: 200px 1fr;
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm);
+  background: var(--ui-surface);
+}
+.std-list .sr { display: contents; }
+.std-list .sk {
+  padding: var(--ui-sp-3); font-size: var(--ui-fs-2); color: var(--ui-text-2);
+  border-bottom: 1px solid var(--ui-line); background: var(--ui-surface-2);
+}
+.std-list .sv {
+  padding: var(--ui-sp-3); font-size: var(--ui-fs-3);
+  border-bottom: 1px solid var(--ui-line);
+}
+.std-list .sr:last-child .sk, .std-list .sr:last-child .sv { border-bottom: 0; }
+
+.tag-row { display: flex; gap: var(--ui-sp-1); flex-wrap: wrap; }
+.tag-row .tag { background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding: 2px var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+.kbd { display: inline-block; padding: 1px 6px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-xs); font-size: 10px; color: var(--ui-text-2); background: var(--ui-surface-2); }
+.menu-pop {
+  position: absolute; right: 0; top: 100%;
+  background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm);
+  padding: var(--ui-sp-1); display: none; z-index: 1;
+  min-width: 160px; box-shadow: var(--ui-shadow-2);
+}
+.menu-pop.is-open { display: block; }
+.menu-pop .mi { padding: var(--ui-sp-2); border-radius: var(--ui-r-xs); cursor: pointer; font-size: var(--ui-fs-2); }
+.menu-pop .mi:hover { background: var(--ui-surface-2); }
+.more-wrap { position: relative; }
+
+/* =====================================================
+   Business Work Surface · Quiet notebook skeleton + Inline Workflow
+   ------------------------------------------------------------
+   · 业务面只用 .biz-section + .biz-row;不再有 Part 1/2/3/4
+   · Workflow 编辑器内联在 Business 页「工作空间」卡片;点击 [编辑] 原地展开拖拽轨道
+   · 节点 = 岗位 + 头像/姓名;点击节点右滑 Node Drawer 编辑(非 Canvas Inspector)
+   · 无 status dot / 已完成 / 进行中 / 待开始
+   颜色与字号一律走 --ui-*。
+   ===================================================== */
+
+/* ─── 业务面 · Quiet skeleton ─── */
+.biz-page { max-width: 980px; }
+.biz-section {
+  padding: var(--ui-sp-6) 0;
+  border-top: 1px solid var(--ui-line);
+}
+.biz-section:first-child { border-top: 0; padding-top: 0; }
+.biz-section-title {
+  font-size: var(--ui-fs-5);
+  font-weight: 650;
+  margin: 0 0 var(--ui-sp-4);
+  color: var(--ui-text);
+  letter-spacing: -.01em;
+}
+.biz-section-sub {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  margin: -8px 0 var(--ui-sp-4);
+}
+
+.biz-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: var(--ui-sp-4);
+  align-items: baseline;
+  padding: var(--ui-sp-3) 0;
+  border-bottom: 1px solid var(--ui-line);
+  font-size: var(--ui-fs-3);
+}
+.biz-row:last-child { border-bottom: 0; }
+.biz-row.biz-row-wide { grid-template-columns: 120px 1fr; align-items: center; }
+.biz-row.biz-row-wide .biz-action { grid-column: 2; justify-self: end; }
+.biz-k { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.biz-v { color: var(--ui-text); line-height: var(--ui-lh); min-width: 0; word-break: break-word; }
+.biz-v b { font-weight: 650; }
+.biz-action { white-space: nowrap; }
+
+/* ─── 工作空间 tabs + cards(在业务面的工作空间 section 里) ─── */
+.ws-tabs {
+  display: flex; gap: var(--ui-sp-1); flex-wrap: wrap;
+  border-bottom: 1px solid var(--ui-line);
+  margin-bottom: var(--ui-sp-4);
+  padding-bottom: var(--ui-sp-2);
+}
+.ws-tab {
+  padding: var(--ui-sp-2) var(--ui-sp-3);
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm);
+  background: var(--ui-surface); color: var(--ui-text-2);
+  font-size: var(--ui-fs-2); cursor: pointer; font: inherit;
+  min-height: 32px;
+}
+.ws-tab:hover { color: var(--ui-text); border-color: var(--ui-text-2); }
+.ws-tab.is-active { background: var(--ui-text); color: var(--ui-bg); border-color: var(--ui-text); font-weight: 600; }
+.ws-tab.is-add { background: transparent; border-style: dashed; color: var(--ui-text-2); font-weight: 500; }
+.ws-tab.is-add:hover { color: var(--ui-accent); border-color: var(--ui-accent); }
+
+.ws-card { display: none; }
+.ws-card.is-active { display: block; }
+
+.ws-empty-state {
+  padding: var(--ui-sp-7) var(--ui-sp-5); text-align: center;
+  color: var(--ui-text-2); border: 1px dashed var(--ui-line);
+  border-radius: var(--ui-r-sm); background: var(--ui-surface);
+}
+.ws-empty-state .es-title { font-weight: 600; color: var(--ui-text); margin: 0 0 var(--ui-sp-1); }
+.ws-empty-state .es-desc { font-size: var(--ui-fs-2); margin: 0 0 var(--ui-sp-3); }
+
+/* ─── Working notes(给当前 Leader 处理的几条小事项) ─── */
+.biz-todo {
+  list-style: none; padding: 0; margin: var(--ui-sp-3) 0 0;
+  display: flex; flex-direction: column; gap: var(--ui-sp-2);
+}
+.biz-todo li {
+  display: flex; align-items: center; gap: var(--ui-sp-3);
+  padding: var(--ui-sp-2) var(--ui-sp-3);
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm);
+  background: var(--ui-surface); font-size: var(--ui-fs-2);
+}
+.biz-todo li .t-text { flex: 1 1 auto; }
+.biz-todo li .t-meta { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+/* ─── Bubble 建议(对话 Leader) ─── */
+.bubble-suggest {
+  background: var(--ui-surface-2);
+  border: 1px solid var(--ui-line); border-left: 3px solid var(--ui-accent);
+  border-radius: var(--ui-r-md);
+  padding: var(--ui-sp-3) var(--ui-sp-4);
+  margin: var(--ui-sp-3) 0;
+  display: flex; flex-direction: column; gap: var(--ui-sp-2);
+  max-width: 88%;
+}
+.bubble-suggest .bs-who { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.bubble-suggest .bs-text { font-size: var(--ui-fs-3); line-height: var(--ui-lh); }
+.bubble-suggest .bs-actions { display: flex; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.bubble-suggest.is-applied {
+  border-left-color: var(--ui-success);
+  background: var(--ui-bg);
+  opacity: .65;
+}
+
+/* ─── R4 · 工作流摘要(在 biz-row 里) ─── */
+.biz-row .wf-summary-inline {
+  display: inline-flex; align-items: center; gap: var(--ui-sp-2);
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   R5 · Inline Workflow + Node Drawer
+   ------------------------------------------------------------
+   · 「工作流」就是一个可以被拖几下重排、被点一下重命名的小序列
+   · 全部内联在「工作空间」卡片里,不出 Canvas,不出独立页
+   · 节点 = 岗位 + 头像/姓名;返回 = 在轨下方一行小标注
+   · 点节点 → 右滑 Node Drawer(复用 .rules-drawer 视觉 DNA)
+   · 严禁元素(与 R4 同):Model / Skill / MCP / Tool / Knowledge /
+     Permission,以及 已完成/进行中/待开始 等执行态词条
+   ===================================================== */
+
+/* ─── 内联编辑容器 ─── */
+.wf-edit-pane {
+  margin-top: var(--ui-sp-2);
+  padding: var(--ui-sp-4);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-sm);
+  background: var(--ui-surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-sp-3);
+}
+.wf-edit-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-3);
+  flex-wrap: wrap;
+}
+.wf-edit-head .wf-pane-title {
+  font-size: var(--ui-fs-3);
+  font-weight: 600;
+}
+.wf-edit-head .wf-pane-hint {
+  flex: 1 1 auto;
+  color: var(--ui-text-2);
+  font-size: var(--ui-fs-1);
+}
+.wf-edit-head .wf-pane-sub {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+}
+
+/* ─── 节点轨道 ─── */
+.wf-track {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0;
+  min-height: 60px;
+  padding: var(--ui-sp-2) 0;
+}
+.wf-node {
+  flex: 0 0 auto;
+  width: 120px;
+  min-height: 56px;
+  padding: var(--ui-sp-2) var(--ui-sp-3);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-sm);
+  background: var(--ui-surface);
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  transition: border-color var(--ui-dur-1) var(--ui-ease-standard),
+              box-shadow var(--ui-dur-1) var(--ui-ease-standard);
+}
+.wf-node:hover {
+  border-color: var(--ui-text-2);
+}
+.wf-node.is-selected {
+  border-color: var(--ui-text);
+  box-shadow: 0 0 0 2px var(--ui-text);
+}
+.wf-node.is-dragging {
+  opacity: .35;
+  cursor: grabbing;
+}
+.wf-node.drag-over-left {
+  border-left-width: 3px;
+  border-left-color: var(--ui-text);
+}
+.wf-node.drag-over-right {
+  border-right-width: 3px;
+  border-right-color: var(--ui-text);
+}
+.wf-node .wf-node-name {
+  font-weight: 600;
+  font-size: var(--ui-fs-3);
+  line-height: 1.25;
+}
+.wf-node .wf-node-emp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  min-width: 0;
+}
+.wf-node .wf-node-emp .av {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--ui-r-pill);
+  display: grid;
+  place-items: center;
+  color: #0c0c0d;
+  font-weight: 700;
+  font-size: 10px;
+  flex: 0 0 auto;
+}
+.wf-node .wf-node-emp.is-unbound {
+  color: var(--ui-text-3);
+  font-style: italic;
+}
+.wf-node .wf-node-emp.is-unbound .av {
+  background: var(--ui-surface-2);
+  color: var(--ui-text-3);
+}
+.wf-node .wf-node-emp > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wf-arrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--ui-sp-2);
+  color: var(--ui-text-3);
+  font-size: var(--ui-fs-3);
+  flex: 0 0 auto;
+  user-select: none;
+}
+
+/* ─── 退回行(紧贴 track 下方) ─── */
+.wf-return-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  padding: var(--ui-sp-2) var(--ui-sp-3);
+  background: var(--ui-bg);
+  border: 1px dashed var(--ui-line);
+  border-radius: var(--ui-r-xs);
+}
+.wf-return-rail:empty { display: none; }
+.wf-return-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-2);
+  flex-wrap: wrap;
+}
+.wf-return-row .wf-return-from {
+  font-weight: 600;
+  color: var(--ui-text);
+  font-size: var(--ui-fs-2);
+}
+.wf-return-row .wf-return-arrow-text {
+  color: var(--ui-warning);
+  letter-spacing: .04em;
+  font-family: var(--ui-mono);
+}
+.wf-return-row .wf-return-to {
+  font-weight: 600;
+  color: var(--ui-text);
+  font-size: var(--ui-fs-2);
+}
+.wf-return-row .wf-return-label {
+  color: var(--ui-text-3);
+  margin-left: auto;
+}
+
+/* ─── 内联 footer(添加 + 完成) ─── */
+.wf-edit-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-3);
+  padding-top: var(--ui-sp-3);
+  border-top: 1px solid var(--ui-line);
+}
+.wf-edit-foot .wf-edit-hint {
+  flex: 1 1 auto;
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+}
+
+/* ─── + 添加岗位 popover ─── */
+.wf-add-pop {
+  position: absolute;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-sm);
+  padding: var(--ui-sp-3);
+  z-index: var(--ui-z-dropdown);
+  width: 280px;
+  display: none;
+  box-shadow: var(--ui-shadow-2);
+}
+.wf-add-pop.is-open { display: block; }
+.wf-add-pop .add-title {
+  font-size: var(--ui-fs-2);
+  font-weight: 600;
+  margin-bottom: var(--ui-sp-2);
+}
+.wf-add-pop label {
+  display: block;
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  margin-top: var(--ui-sp-2);
+  margin-bottom: 4px;
+}
+.wf-add-pop select,
+.wf-add-pop input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-xs);
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: var(--ui-fs-2);
+}
+.wf-add-pop .add-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ui-sp-2);
+  margin-top: var(--ui-sp-3);
+}
+
+/* =====================================================
+   R5 · Node Drawer (parallel to .rules-drawer · 同宽度 · 同动效)
+   ------------------------------------------------------------
+   复用 .rules-drawer 的视觉 DNA:
+   · width 460px · slide-in-right · ESC + overlay close
+   字段: 岗位 / 负责人[更换] / 职责 / 输入 / 输出 / 流转 / 删除
+   ===================================================== */
+
+.node-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+  display: none;
+  z-index: var(--ui-z-drawer);
+  animation: fade-in var(--ui-dur-2) var(--ui-ease-standard);
+}
+.node-overlay.is-open { display: block; }
+.node-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 460px;
+  max-width: 96vw;
+  background: var(--ui-surface);
+  border-left: 1px solid var(--ui-line);
+  box-shadow: var(--ui-shadow-3);
+  display: none;
+  flex-direction: column;
+  gap: var(--ui-sp-3);
+  padding: var(--ui-sp-5);
+  z-index: calc(var(--ui-z-drawer) + 1);
+  overflow-y: auto;
+}
+.node-drawer.is-open {
+  display: flex;
+  animation: slide-in-right var(--ui-dur-3) var(--ui-ease-decel);
+}
+.node-drawer .nd-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ui-sp-2);
+}
+.node-drawer .nd-head h3 {
+  margin: 0;
+  font-size: var(--ui-fs-5);
+  font-weight: 650;
+  flex: 1 1 auto;
+}
+.node-drawer .nd-head .nd-sub {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  margin: 0;
+}
+.node-drawer .nd-close {
+  background: transparent;
+  border: 0;
+  color: var(--ui-text-2);
+  cursor: pointer;
+  font-size: var(--ui-fs-5);
+  padding: 0 var(--ui-sp-1);
+  line-height: 1;
+  min-height: 32px;
+  min-width: 32px;
+}
+.node-drawer .nd-close:hover { color: var(--ui-text); }
+.node-drawer .nd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--ui-sp-2) 0;
+  border-bottom: 1px solid var(--ui-line);
+}
+.node-drawer .nd-field:last-child { border-bottom: 0; }
+.node-drawer .nd-field label {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+}
+.node-drawer .nd-field input,
+.node-drawer .nd-field textarea,
+.node-drawer .nd-field select {
+  width: 100%;
+  padding: var(--ui-sp-2);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-xs);
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: var(--ui-fs-2);
+  min-height: 32px;
+}
+.node-drawer .nd-field input:focus-visible,
+.node-drawer .nd-field textarea:focus-visible,
+.node-drawer .nd-field select:focus-visible {
+  outline: var(--ui-focus-w) solid var(--ui-focus-color);
+  outline-offset: 1px;
+  border-color: var(--ui-accent);
+}
+.node-drawer .nd-field textarea {
+  min-height: 64px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.node-drawer .nd-emp {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-2);
+  padding-top: 4px;
+}
+.node-drawer .nd-emp .av {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ui-r-pill);
+  display: grid;
+  place-items: center;
+  color: #0c0c0d;
+  font-weight: 700;
+  font-size: var(--ui-fs-1);
+  flex: 0 0 auto;
+}
+.node-drawer .nd-emp.is-unbound .av {
+  background: var(--ui-surface-2);
+  color: var(--ui-text-3);
+}
+.node-drawer .nd-emp.is-unbound .name {
+  color: var(--ui-text-3);
+  font-style: italic;
+}
+.node-drawer .nd-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-sp-1);
+  font-size: var(--ui-fs-2);
+  color: var(--ui-text);
+  padding-top: 4px;
+}
+.node-drawer .nd-flow .nd-flow-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-2);
+}
+.node-drawer .nd-flow .nd-flow-label {
+  color: var(--ui-text-2);
+  font-size: var(--ui-fs-1);
+  flex: 0 0 60px;
+}
+.node-drawer .nd-danger {
+  margin-top: var(--ui-sp-3);
+  padding-top: var(--ui-sp-3);
+  border-top: 1px solid var(--ui-line);
+}
+.node-drawer .nd-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ui-sp-2);
+  margin-top: var(--ui-sp-3);
+  padding-top: var(--ui-sp-3);
+  border-top: 1px solid var(--ui-line);
+}
+.node-drawer .nd-foot .nd-foot-right {
+  display: flex;
+  gap: var(--ui-sp-2);
+}
+
+/* 抽屉内部的员工选择 popover(更换负责人) */
+.nd-emp-pop {
+  position: absolute;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-sm);
+  padding: var(--ui-sp-2);
+  z-index: var(--ui-z-dropdown);
+  width: 240px;
+  display: none;
+  box-shadow: var(--ui-shadow-2);
+}
+.nd-emp-pop.is-open { display: block; }
+.nd-emp-pop .nd-emp-opt {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-sp-2);
+  padding: var(--ui-sp-1) var(--ui-sp-2);
+  border-radius: var(--ui-r-xs);
+  cursor: pointer;
+  font-size: var(--ui-fs-2);
+}
+.nd-emp-pop .nd-emp-opt:hover { background: var(--ui-surface-2); }
+.nd-emp-pop .nd-emp-opt .av {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--ui-r-pill);
+  display: grid;
+  place-items: center;
+  color: #0c0c0d;
+  font-weight: 700;
+  font-size: 10px;
+}
+.nd-emp-pop .nd-emp-new {
+  padding: var(--ui-sp-2);
+  border-top: 1px solid var(--ui-line);
+  margin-top: var(--ui-sp-1);
+}
+.nd-emp-pop .nd-emp-new input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-xs);
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: var(--ui-fs-2);
+}
+
+/* =====================================================
+   R4 · Single shared Rules Drawer (off-canvas right)
+   --------------------------------------------------------
+   一直挂在 body 上,点击业务内任意 [查看/编辑] 都用同一个 drawer
+   渲染当前 scope 的规则数据。Schema 统一 标题 + 内容 两字段。
+   ===================================================== */
+
+.rules-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .5);
+  display: none; z-index: var(--ui-z-drawer);
+  animation: fade-in var(--ui-dur-2) var(--ui-ease-standard);
+}
+.rules-overlay.is-open { display: block; }
+.rules-drawer {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 460px; max-width: 96vw;
+  background: var(--ui-surface); border-left: 1px solid var(--ui-line);
+  box-shadow: var(--ui-shadow-3);
+  display: none; flex-direction: column; gap: var(--ui-sp-3);
+  padding: var(--ui-sp-5);
+  z-index: calc(var(--ui-z-drawer) + 1);
+  overflow-y: auto;
+}
+.rules-drawer.is-open {
+  display: flex;
+  animation: slide-in-right var(--ui-dur-3) var(--ui-ease-decel);
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-in-right { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.rd-head { display: flex; align-items: center; gap: var(--ui-sp-2); }
+.rd-head h3 { margin: 0; font-size: var(--ui-fs-5); font-weight: 650; flex: 1 1 auto; }
+.rd-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.rd-list { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.rule-item {
+  border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm);
+  background: var(--ui-bg); padding: var(--ui-sp-3);
+}
+.rule-item-head {
+  display: flex; align-items: center; gap: var(--ui-sp-2);
+  margin-bottom: var(--ui-sp-2);
+}
+.rule-item-num {
+  flex: 0 0 auto; font-size: var(--ui-fs-1); color: var(--ui-text-3);
+  font-family: var(--ui-mono);
+}
+.rule-item-title { flex: 1 1 auto; font-weight: 600; font-size: var(--ui-fs-3); }
+.rule-item-del {
+  background: transparent; border: 0; color: var(--ui-text-2);
+  cursor: pointer; font-size: var(--ui-fs-5); padding: 0 var(--ui-sp-1);
+  line-height: 1; min-height: 32px; min-width: 32px;
+}
+.rule-item-del:hover { color: var(--ui-danger); }
+.rule-item-body { font-size: var(--ui-fs-2); color: var(--ui-text); line-height: var(--ui-lh); }
+.rule-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--ui-sp-2); }
+.rule-field label { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.rule-field input,
+.rule-field textarea {
+  width: 100%; border: 1px solid var(--ui-line); border-radius: var(--ui-r-xs);
+  padding: var(--ui-sp-1) var(--ui-sp-2); background: var(--ui-bg);
+  color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-2);
+  min-height: 32px;
+}
+.rule-field input:focus-visible,
+.rule-field textarea:focus-visible {
+  outline: var(--ui-focus-w) solid var(--ui-focus-color);
+  outline-offset: 1px; border-color: var(--ui-accent);
+}
+.rule-field textarea { min-height: 56px; resize: vertical; line-height: 1.5; }
+.rd-foot {
+  display: flex; gap: var(--ui-sp-2); justify-content: flex-end;
+  margin-top: var(--ui-sp-3); padding-top: var(--ui-sp-3);
+  border-top: 1px solid var(--ui-line);
+}
+
+/* =====================================================
+   R6 · Workspace Leader projection + Assignment entry
+   ------------------------------------------------------------
+   · ws-identity       — Selected Workspace Identity (muted)
+   · emp-row (Leader)  — 复用现有 Employee Workstation DNA
+   · assign-ctx        — 角色作用域上下文(区分 Leader / Workflow Role)
+   · 颜色一律走 --ui-*;Leader 作用域强调用 --ui-accent(既存 token)
+   ===================================================== */
+
+.ws-identity {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  margin-bottom: var(--ui-sp-2);
+}
+
+/* Leader 行顶部强调条(作用域一眼可见) */
+.emp-row.is-leader .emp-row-head {
+  background: var(--ui-surface-2);
+  border-radius: var(--ui-r-sm);
+  padding-left: var(--ui-sp-2);
+  padding-right: var(--ui-sp-2);
+}
+.emp-row.is-leader .emp-role {
+  color: var(--ui-accent);
+  font-weight: 600;
+}
+.emp-row.is-leader .emp-avatar {
+  box-shadow: 0 0 0 2px var(--ui-accent);
+}
+
+/* Professional Workspace: Leader Workstation 作为工作空间首屏块(收起态即轻量投影) */
+.ws-card > .emp-row.is-leader { border-bottom: 0; margin: var(--ui-sp-1) 0 var(--ui-sp-3); }
+
+/* Leader 作用域说明(展开后 Conversation 上方) */
+.leader-scope-line {
+  font-size: var(--ui-fs-1);
+  color: var(--ui-text-2);
+  margin: 0 0 var(--ui-sp-2);
+}
+.leader-scope-line b { color: var(--ui-text); font-weight: 600; }
+
+/* 岗位/员工 绑定 pill → 可点击打开角色责任对话 */
+.emp-bind-pill { cursor: pointer; }
+.emp-bind-pill:not(.is-unbound):hover .name { text-decoration: underline; }
+.emp-bind-pill:not(.is-unbound):hover .role { color: var(--ui-accent); }
+
+/* Assignment Conversation 作用域卡片(区分 Leader / Workflow Role) */
+.assign-ctx {
+  display: flex; flex-direction: column; gap: var(--ui-sp-1);
+  border: 1px dashed var(--ui-line); border-radius: var(--ui-r-xs);
+  padding: var(--ui-sp-2) var(--ui-sp-3); background: var(--ui-surface-2);
+  font-size: var(--ui-fs-2);
+}
+.assign-ctx-row { display: flex; gap: var(--ui-sp-2); align-items: baseline; }
+.assign-ctx-k { color: var(--ui-text-2); flex: 0 0 72px; }
+.assign-ctx-v { font-weight: 600; color: var(--ui-text); }
+.assign-ctx-v.is-role { color: var(--ui-accent); }
+
+
+  /* ── R7 · 字段 Value 作为唯一 Hit Target(§9 严禁行级 click) ── */
+  .biz-v.is-actionable { cursor: pointer; }
+  .biz-v.is-actionable::after { content: ' ›'; color: var(--ui-text-2); font-weight: 400; }
+  .biz-v.is-actionable:hover::after { color: var(--ui-accent); }
+  .field-current { background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-2); padding: var(--ui-sp-3); color: var(--ui-text); line-height: var(--ui-lh); white-space: pre-wrap; font-size: var(--ui-fs-2); }
+
+  /* Frame A · Business Workspace Directory（轻量导航对象，整条可点） */
+  .ws-directory { display: flex; flex-direction: column; gap: var(--ui-sp-3); }
+  .ws-dir-head { display: flex; align-items: center; justify-content: space-between; }
+  .ws-dir-title { font-size: var(--ui-fs-4); font-weight: 600; }
+  .ws-dir-add { font-size: var(--ui-fs-1); }
+  .ws-dir-item { display: block; padding: var(--ui-sp-3) var(--ui-sp-4); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); cursor: pointer; text-decoration: none; color: inherit; transition: background 150ms ease, border-color 150ms ease; }
+  .ws-dir-item:hover { background: var(--ui-surface-2); border-color: var(--ui-text-2); }
+  .ws-dir-row1 { display: flex; align-items: baseline; gap: var(--ui-sp-3); }
+  .ws-dir-name { font-weight: 600; font-size: var(--ui-fs-4); }
+  .ws-dir-meta { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+  .ws-dir-status { margin-left: auto; }
+  .ws-dir-go { color: var(--ui-text-2); margin-left: var(--ui-sp-2); }
+  .ws-dir-note { margin-top: 2px; color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+</style>
+</head>
+<body>
+<div class="exploration-shell">
+
+<!-- ───────────────────── 顶部 State Switcher ───────────────────── -->
+<nav class="ux-states" aria-label="UX Exploration States">
+  <div class="ux-mark">
+    <span class="dot"></span>
+    <span class="label">UX Exploration · R12</span>
+  </div>
+  <button class="ux-tab is-active" data-go="1">1 · 总入口</button>
+  <button class="ux-tab" data-go="2">2 · 内容增长部（部门）</button>
+  <button class="ux-tab" data-go="3">3 · 研发部（部门）</button>
+  <button class="ux-tab" data-go="4">4 · 小红书（业务）</button>
+  <button class="ux-tab" data-go="5">5 · Curis 研发（业务）</button>
+  <button class="ux-tab" data-go="6">6 · 海外业务部（通用部门）</button>
+  <button class="ux-tab" data-go="7">7 · 宠物寄养（业务 · 刚创建）</button>
+  <span class="ux-hint">7 states · Hub + 2 Dept + 3 Business（R12 · Business Directory Consistent · 静笔记本 + Inline Workflow）</span>
+</nav>
+
+<div class="states">
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 1 · Business Space 总入口                        ║
+     ║ Hub · 三入口 cards（部门 / 业务 / 工作空间）              ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state is-active" data-state="1">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <span class="pane-title">业务空间</span>
+      <span class="domain-mark is-hub"><span class="dot"></span>Hub</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · STOP FOR CEO REVIEW</span>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>业务空间 = Operating Work Directory</h1>
+          <div class="sub">从 CEO 视角，业务是一组「有责任、有产出、可独立运转」的工作单位。
+            Curis 把业务空间拆成 <b>三层</b>：<b>部门 / 业务 / 工作空间</b>，每一层都对应一类 Leader 与一类工作面。</div>
+        </div>
+      </div>
+
+      <div class="inline-hint">三个入口都是 <b>Operating Work Directory</b> 的三个直接视角，不是新的一级导航 — 从任一视角进入都能直达对应 Work Surface。</div>
+      <div class="inline-hint">Workspace <b>不是一级导航</b>，但在 <b>Business Space 内有直接入口</b>（见下方第三分组）。</div>
+
+      <!-- 部门入口 -->
+      <div class="hub-group">
+        <div class="gh"><span class="gt">部门</span><span class="gs">Department · 一组业务的最小管理单位</span></div>
+        <div class="grid cols-entry">
+          <button class="entry-card" data-go="2">
+            <div class="top"><span class="name">内容增长部</span><span class="domain-mark is-content"><span class="dot"></span>Department</span></div>
+            <div class="sub">统筹 3 个平台的内容节奏 · 公私域联动</div>
+            <div class="focus">部长 · 周宁 · 见 State 2 →</div>
+          </button>
+          <button class="entry-card" data-go="3">
+            <div class="top"><span class="name">研发部</span><span class="domain-mark is-rd"><span class="dot"></span>Department</span></div>
+            <div class="sub">统筹软件类业务的版本节奏、研发质量与工程资源</div>
+            <div class="focus">部长 · 林涛 · 见 State 3 →</div>
+          </button>
+          <button class="entry-card is-generic" data-go="6">
+            <div class="top"><span class="name">海外业务部</span><span class="domain-mark is-generic"><span class="dot"></span>Department</span></div>
+            <div class="sub">通用管理字段 · 暂未配专业领域</div>
+            <div class="focus">见 State 6 →</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 业务入口 -->
+      <div class="hub-group">
+        <div class="gh"><span class="gt">业务</span><span class="gs">Business · 可独立运转的责任单位 · 业务页 = 一根静笔记本</span></div>
+        <div class="grid cols-entry">
+          <button class="entry-card" data-go="4">
+            <div class="top"><span class="name">小红书运营</span><span class="domain-mark is-content"><span class="dot"></span>Business</span></div>
+            <div class="sub">内容增长部下 · 5 步内容轨道 + 完整规则</div>
+            <div class="focus">业务负责人 · 陈真 · 见 State 4 →</div>
+          </button>
+          <button class="entry-card" data-go="5">
+            <div class="top"><span class="name">Curis 产品研发</span><span class="domain-mark is-rd"><span class="dot"></span>Business</span></div>
+            <div class="sub">研发部下 · Build / Release</div>
+            <div class="focus">业务负责人 · 林涛 · 见 State 5 →</div>
+          </button>
+          <button class="entry-card is-generic" data-go="7">
+            <div class="top"><span class="name">宠物寄养</span><span class="domain-mark is-generic"><span class="dot"></span>Business</span></div>
+            <div class="sub">业务刚创建 · 不预设任何行业字段</div>
+            <div class="focus">见 State 7 →</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 工作空间入口 -->
+      <div class="hub-group">
+        <div class="gh"><span class="gt">工作空间</span><span class="gs">业务内独立经营的执行空间 · 可从 Business Space 直接进入</span></div>
+        <div class="grid cols-entry">
+          <button class="entry-card" data-go="4">
+            <div class="top"><span class="name">AI 科技</span><span class="domain-mark is-content"><span class="dot"></span>Workspace · XHS 下</span></div>
+            <div class="sub">AI 产品测评与趋势解读</div>
+            <div class="focus">当前选题 · 见 State 4 →</div>
+          </button>
+          <button class="entry-card" data-go="4">
+            <div class="top"><span class="name">旅游 / 汽车</span><span class="domain-mark is-content"><span class="dot"></span>Workspace · XHS 下</span></div>
+            <div class="sub">女性城市漫游 / 新能源车主画像</div>
+            <div class="focus">当前选题 · 见 State 4 →</div>
+          </button>
+          <button class="entry-card" data-go="5">
+            <div class="top"><span class="name">Curis 研发</span><span class="domain-mark is-rd"><span class="dot"></span>Workspace · Curis 产品研发下</span></div>
+            <div class="focus">当前重点：Team Operating Engine · v0.6-rc3 →</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 2 · 内容增长部 · Department Work Surface        ║
+     ║ Content-Growth Domain · Preset                          ║
+     ║ §2 Leader-first · §3 Create-light                      ║
+     ║ R4 注：Department 页结构不在 R4 重构范围（R3 已通过）,    ║
+     ║      仅 mock-badge 文案对齐到 R4                        ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="2">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><span>部门</span><span class="sep">/</span><span class="muted">内容增长部</span></div>
+      <span class="domain-mark is-content"><span class="dot"></span>部门 · 内容增长</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · DEPT</span>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>内容增长部</h1>
+          <div class="sub">Department · 一组内容类业务的最小管理单位，统一对外的内容节奏与公私域联动。</div>
+        </div>
+        <div class="head-actions">
+          <a class="chip" data-go="4" title="从已有部门复制结构">⎘ 复制部门结构</a>
+          <button class="chip" type="button" title="在此部门下新建业务"><b>+ 新建业务</b></button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">部门 Leader · Employee Workstation</h2><span class="section-sub">点击行 → 展开 Conversation · 第一屏可见</span></div>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-3">周</div>
+              <div class="emp-id">
+                <span class="emp-name">周宁</span>
+                <span class="emp-role">内容增长部部长</span>
+              </div>
+              <div class="emp-duty">当前责任：跨平台节奏统一 · 公私域联动</div>
+              <span class="emp-status"><span class="status success">工作中 · 协调</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">周宁</div><div class="bubble">本周 3 个业务排期已对齐到「周三选题会 — 周五发布」的统一节奏。抖音受预算待 CEO 复核拖累，节奏延后 1 天。</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">先把小红书节奏跑通，抖音等预算批复后单独跟我说一次。</div></div></div>
+                <div class="msg"><div><div class="who">周宁</div><div class="bubble">收到。小红书这周目标：完成 8 月总排期的 80%。</div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对周宁下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">部门 Goal · 当前重点</h2><span class="section-sub">一句话主线 · CEO 已确认</span></div>
+        <div class="card">
+          <div class="kpi"><span class="n" style="font-size:var(--ui-fs-5)">8 月同时推 3 个平台的种草节奏，跑通单平台盈亏模型</span><span class="l">主线（由部门 Leader 周宁申报 · CEO 已确认）</span></div>
+          <div class="dl" style="margin-top:var(--ui-sp-4)">
+            <div class="dl-row"><span class="k">当前进度</span><span>3 个业务本周已开始新排期 · 进度 60% (EST)</span></div>
+            <div class="dl-row"><span class="k">当前问题</span><span><span class="status warning">抖音投放预算 待 CEO 复核</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">所辖 Businesses</h2><span class="section-sub">entry cards · 平铺</span></div>
+        <div class="grid cols-3">
+          <button class="entry-card" data-go="4">
+            <div class="top"><span class="name">小红书运营</span><span class="domain-mark is-content"><span class="dot"></span>Business</span></div>
+            <div class="sub">内容增长部 · 母业务</div>
+            <div class="focus">经营状态：增长验证中（8 月已发 4 / 12 篇）</div>
+          </button>
+          <button class="entry-card" data-go="2" title="占位">
+            <div class="top"><span class="name">抖音运营</span><span class="domain-mark is-content"><span class="dot"></span>Business</span></div>
+            <div class="sub">内容增长部 · 子业务</div>
+            <div class="focus">经营状态：策略调整中（待预算批复后启动）</div>
+          </button>
+          <button class="entry-card" data-go="2" title="占位">
+            <div class="top"><span class="name">公众号运营</span><span class="domain-mark is-content"><span class="dot"></span>Business</span></div>
+            <div class="sub">内容增长部 · 维护中</div>
+            <div class="focus">经营状态：稳定经营（周更 1 篇 · 服务长尾）</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Department Team</h2><span class="section-sub">轻量列表 · 详情去组织中心</span></div>
+        <div class="team-list">
+          <div class="team-row"><div class="av av-3">周</div><span class="name">周宁</span><span class="role">部长 · 内容节奏统筹</span></div>
+          <div class="team-row"><div class="av av-2">陈</div><span class="name">陈真</span><span class="role">资深运营 · 小红书业务负责人</span></div>
+          <div class="team-row"><div class="av av-5">苏</div><span class="name">苏晴</span><span class="role">视觉</span></div>
+          <div class="team-row"><div class="av av-6">何</div><span class="name">何川</span><span class="role">数据分析</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Result · Risk · Resource 摘要</h2><span class="section-sub">无则不显示</span></div>
+        <div class="grid cols-3">
+          <div class="summary-block"><span class="label">Result</span><span class="empty-note">（暂无系统性 Result 摘要，等 8 月底汇总）</span></div>
+          <div class="summary-block"><span class="label">Risk</span><span class="body"><span class="status warning">抖音投放预算 待 CEO 复核</span><br><span class="muted">不解决会让 8 月底跑不出抖音节奏对照</span></span></div>
+          <div class="summary-block"><span class="label">Resource</span><span class="body">本周内容产能 OK（5/5 周更位已排满）</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 3 · 研发部 · Department Work Surface           ║
+     ║ R&D Domain · Preset · 与 State 2 同壳                      ║
+     ║ §13 林涛 同时是部门 Leader + 主营业务负责人               ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="3">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><span>部门</span><span class="sep">/</span><span class="muted">研发部</span></div>
+      <span class="domain-mark is-rd"><span class="dot"></span>部门 · 研发</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · DEPT</span>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>研发部</h1>
+          <div class="sub">Department · 一组软件类业务的最小管理单位，统一对外的版本节奏、研发质量与工程资源调配。</div>
+        </div>
+        <div class="head-actions">
+          <a class="chip" data-go="3">⎘ 复制部门结构</a>
+          <button class="chip" type="button"><b>+ 新建业务</b></button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">部门 Leader · Employee Workstation</h2><span class="section-sub">林涛 · 同时是「Curis 产品研发」业务负责人</span></div>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-2">林</div>
+              <div class="emp-id">
+                <span class="emp-name">林涛</span>
+                <span class="emp-role">研发部部长 / Tech Lead</span>
+              </div>
+              <div class="emp-duty">当前责任：v0.6 联调收口 · 灰度门禁</div>
+              <span class="emp-status"><span class="status success">工作中 · 联调</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">林涛</div><div class="bubble">v0.6 联调通过率 96%，最后 3 个异常分支用例已派发赵敏回归。预计 <b>8-21</b> 走完。</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">灰度只放 5%，监控异常直接回滚。</div></div></div>
+                <div class="msg"><div><div class="who">林涛</div><div class="bubble">已记入发布方案。需 CEO 批准后才能发布（不可逆变更）。</div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对林涛下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 · Codex ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">部门 Goal · 当前研发目标</h2><span class="section-sub">版本 / 里程碑口径</span></div>
+        <div class="card">
+          <div class="kpi"><span class="n" style="font-size:var(--ui-fs-5)">v0.6 灰度 + M3 内部工具同期完成</span><span class="l">主线（由部门 Leader 林涛申报 · CEO 已确认 · 含 1 个待 CEO 决策项）</span></div>
+          <div class="dl" style="margin-top:var(--ui-sp-4)">
+            <div class="dl-row"><span class="k">当前进度</span><span>v0.6 联调 96% · M3 内部工具 v1.2 上线</span></div>
+            <div class="dl-row"><span class="k">当前问题</span><span><span class="status warning">M4 是否进 v0.6 · 待 CEO 决策</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Operating Surface · 研发 6 行</h2><span class="section-sub">domain-specific 经营指标 · 与内容增长部完全不同口径</span></div>
+        <div class="card">
+          <div class="os-row"><span class="k">Version</span><span class="v">v0.6（dev 分支）</span></div>
+          <div class="os-row"><span class="k">Milestone</span><span class="v">M3 登录模块 + Workspaces 灰度 · 截止 <b>9-15</b> (EST)</span></div>
+          <div class="os-row"><span class="k">Delivery Progress</span><span class="v">4.1k / 5k story points · <b>82%</b></span></div>
+          <div class="os-row"><span class="k">Quality / Test</span><span class="v">通过率 96% (3 项待修)</span></div>
+          <div class="os-row"><span class="k">Engineering Resource</span><span class="v">在岗 5 · 借调 2 · 总 7 FTE</span></div>
+          <div class="os-row"><span class="k">Blocker / Dependency</span><span class="v"><span class="status warning">等 CEO 决策：M4 是否进 v0.6</span> · <span class="muted">不批不影响灰度</span></span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">所辖研发 Businesses</h2><span class="section-sub">entry cards · 平铺</span></div>
+        <div class="grid cols-3">
+          <button class="entry-card" data-go="5">
+            <div class="top"><span class="name">Curis 产品研发</span><span class="domain-mark is-rd"><span class="dot"></span>Business</span></div>
+            <div class="sub">研发部 · 主营产品</div>
+            <div class="focus">经营状态：产品验证中（v0.6 灰度 + 100% 发布）</div>
+          </button>
+          <button class="entry-card" data-go="3">
+            <div class="top"><span class="name">Curis 内部工具研发</span><span class="domain-mark is-rd"><span class="dot"></span>Business</span></div>
+            <div class="sub">研发部 · 内服工具</div>
+            <div class="focus">经营状态：稳定交付中（M3 内部工具 v1.2 上线）</div>
+          </button>
+          <button class="entry-card" data-go="3">
+            <div class="top"><span class="name">数据中台研发</span><span class="domain-mark is-rd"><span class="dot"></span>Business</span></div>
+            <div class="sub">研发部 · 跨业务基础设施</div>
+            <div class="focus">经营状态：基础建设期（Connector 适配 4 项）</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Department Team</h2><span class="section-sub">轻量列表</span></div>
+        <div class="team-list">
+          <div class="team-row"><div class="av av-2">林</div><span class="name">林涛</span><span class="role">部长 · 系统架构 / Tech Lead</span></div>
+          <div class="team-row"><div class="av av-4">王</div><span class="name">王琳</span><span class="role">产品经理</span></div>
+          <div class="team-row"><div class="av av-5">周</div><span class="name">周岚</span><span class="role">开发工程师</span></div>
+          <div class="team-row"><div class="av av-1">赵</div><span class="name">赵敏</span><span class="role">QA</span></div>
+          <div class="team-row"><div class="av av-6">孙</div><span class="name">孙浩</span><span class="role">Review · 发布门禁</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Result · Risk · Resource 摘要</h2><span class="section-sub">无则不显示</span></div>
+        <div class="grid cols-3">
+          <div class="summary-block"><span class="label">Result</span><span class="empty-note">（暂无系统性 Result 摘要，等 v0.6 灰度后回归）</span></div>
+          <div class="summary-block"><span class="label">Risk</span><span class="body"><span class="status warning">灰度发布 待 CEO 批准</span><br><span class="muted">不可逆对外变更 · 必须人批</span></span></div>
+          <div class="summary-block"><span class="label">Resource</span><span class="body">借调 2 人到期 9-01，可续；不需要补人</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 4 · 小红书运营 · Business Work Surface          ║
+     ║ Content-Growth Preset · R7 Quiet notebook + WS tabs + Inline Workflow
+     ║ Layout: 业务负责人 → 业务信息 → 当前经营 → 工作空间 → 业务成员  ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="4">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><a href="#" data-go="2">内容增长部</a><span class="sep">/</span><span class="muted">小红书运营</span></div>
+      <span class="domain-mark is-content"><span class="dot"></span>业务 · 小红书</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · BIZ</span>
+    </header>
+    <div class="pane-content biz-page">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>小红书运营</h1>
+          <div class="sub">为都市青年生活方式（20–35 岁一二线女性为主）做真实种草 · 内容增长部下的母业务。</div>
+        </div>
+        <div class="head-actions">
+          <button class="chip" type="button">⎘ 复制业务</button>
+          <button class="chip" type="button">编辑业务</button>
+        </div>
+      </div>
+
+      <!-- 业务负责人 · 第一屏（拆掉 R3 Part 1 容器） -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务负责人</h2>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-2">陈</div>
+              <div class="emp-id"><span class="emp-name">陈真</span><span class="emp-role">小红书业务负责人</span></div>
+              <div class="emp-duty">当前职责：8 月种草节奏 · 选题 vs 转化归因</div>
+              <span class="emp-status"><span class="status success">工作中 · 创作</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">陈真</div><div class="bubble">「通勤穿搭」封面已出 3 版（极简 / 都市 / 单品突出），当前推荐「都市」，等你看一眼定稿。</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">用「都市」，但把右上角的咖啡杯换掉，太抢眼。</div></div></div>
+                <div class="msg"><div><div class="who">陈真</div><div class="bubble">已记，预计今晚出终稿，明天进选题 vs 转化归因（按 EST 先记入）。</div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对陈真下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业务信息 · 一行式 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务信息</h2>
+        <div class="biz-row"><span class="biz-k">业务介绍</span><span class="biz-v is-actionable" data-field-edit="业务介绍">为都市青年生活方式（20–35 岁一二线女性为主）提供真实种草 · 小红书单一平台</span></div>
+        <div class="biz-row"><span class="biz-k">经营方向</span><span class="biz-v is-actionable" data-field-edit="经营方向">8 月建立 3 个账号矩阵的稳定内容节奏 · 跑通单平台盈亏模型</span></div>
+        <div class="biz-row"><span class="biz-k">规则与配置</span><span class="biz-v is-actionable" data-rules-counter="biz4" data-open-rules="biz4">已配置 · <b>11 项</b>（平台 / 内容定位 / 标题规范 / 文案规范 / 封面规范 / 发布规范 / 质量 / 合规 / 经营节奏 …）</span></div>
+      </div>
+
+      <!-- 当前经营 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">当前经营</h2>
+        <div class="biz-row"><span class="biz-k">经营状态</span><span class="biz-v">增长验证中 · 整体进度 <b>60%</b>（EST）· 8 月底为目标</span></div>
+        <div class="biz-row"><span class="biz-k">当前策略</span><span class="biz-v">8 月三平台种草节奏 · 跑通单平台盈亏</span></div>
+        <div class="biz-row"><span class="biz-k">重要结果</span><span class="biz-v">本周已发 4 篇 · 阅读 2.4w · 互动 1.1k · 转化 3.8%</span></div>
+        <div class="biz-row"><span class="biz-k">下一节点</span><span class="biz-v">周五复盘 · 第三观察窗口若成立则形成定位调整建议</span></div>
+        <div class="biz-row"><span class="biz-k">需要关注</span><span class="biz-v"><span class="status warning">投放预算超阈值</span> · <span class="muted">本周告警 2 次</span></span></div>
+        <ul class="biz-todo">
+          <li><span class="status attention">待回应</span><span class="t-text">陈真 报送的封面定稿（已 1 天未回）</span><span class="t-meta">来自：陈真</span></li>
+          <li><span class="status attention">待审批</span><span class="t-text">8 月新增预算 · 抖音板块</span><span class="t-meta">来自：周宁（部长）</span></li>
+        </ul>
+      </div>
+
+      <!-- 工作空间 · Workspace Directory -->
+      <div class="ws-directory">
+          <div class="ws-dir-head">
+            <span class="ws-dir-title">工作空间</span>
+            <button class="chip ws-dir-add" data-ws-add>+ 新建</button>
+          </div>
+
+          <a class="ws-dir-item" data-nav="xhs-aikeji">
+            <div class="ws-dir-row1">
+              <span class="ws-dir-name">AI 科技</span>
+              <span class="ws-dir-meta">陈真 · 工作空间负责人 · 6 人</span>
+              <span class="ws-dir-status"><span class="status success">增长验证中</span></span>
+              <span class="ws-dir-go">→</span>
+            </div>
+            <div class="ws-dir-note">待确认：AI 工具测评稿</div>
+          </a>
+
+          <a class="ws-dir-item" data-nav="xhs-travel">
+            <div class="ws-dir-row1">
+              <span class="ws-dir-name">旅游</span>
+              <span class="ws-dir-meta">林月 · 工作空间负责人 · 5 人</span>
+              <span class="ws-dir-status"><span class="status success">稳定经营</span></span>
+              <span class="ws-dir-go">→</span>
+            </div>
+            <div class="ws-dir-note">当前重点：暑期旅行内容</div>
+          </a>
+
+          <a class="ws-dir-item" data-nav="xhs-auto">
+            <div class="ws-dir-row1">
+              <span class="ws-dir-name">汽车</span>
+              <span class="ws-dir-meta">陈真 · 工作空间负责人 · 4 人</span>
+              <span class="ws-dir-status"><span class="status warning">策略调整中</span></span>
+              <span class="ws-dir-go">→</span>
+            </div>
+            <div class="ws-dir-note">发布节奏落后</div>
+          </a>
+      </div>
+
+      <!-- 业务成员 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务成员</h2>
+        <div class="team-list is-compact">
+          <div class="team-row"><div class="av av-2">陈</div><span class="name">陈真</span><span class="role">业务负责人 · 整体节奏 + 选题</span></div>
+          <div class="team-row"><div class="av av-5">苏</div><span class="name">苏晴</span><span class="role">视觉 · 封面 + 排版</span></div>
+          <div class="team-row"><div class="av av-6">何</div><span class="name">何川</span><span class="role">数据分析 · 选题归因</span></div>
+          <div class="team-row"><div class="av av-1">林</div><span class="name">林月</span><span class="role">排版助理（跨 Wkspc 复用）</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 5 · Curis 产品研发 · Business Work Surface     ║
+     ║ R&D Preset · R7 Quiet notebook + Inline Workflow                  ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="5">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><a href="#" data-go="3">研发部</a><span class="sep">/</span><span class="muted">Curis 产品研发</span></div>
+      <span class="domain-mark is-rd"><span class="dot"></span>业务 · Curis 产品研发</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · BIZ · R&D</span>
+    </header>
+    <div class="pane-content biz-page">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>Curis 产品研发</h1>
+          <div class="sub">B2B SaaS · Curis Studio（Desktop + Runtime） · 服务于 20–500 人规模企业的多业务 / 多 Workspace 可发布能力。</div>
+        </div>
+        <div class="head-actions">
+          <button class="chip" type="button">⎘ 复制业务</button>
+          <button class="chip" type="button">编辑业务</button>
+        </div>
+      </div>
+
+      <!-- 业务负责人 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务负责人</h2>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-2">林</div>
+              <div class="emp-id"><span class="emp-name">林涛</span><span class="emp-role">Curis 产品研发业务负责人 · 同时是研发部部长</span></div>
+              <div class="emp-duty">当前职责：登录模块重构 · 灰度门禁</div>
+              <span class="emp-status"><span class="status success">工作中 · 联调</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">林涛</div><div class="bubble">v0.6-rc3 联调回归已通过，建议灰度 5% 上线，等你拍。</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">先把回滚脚本演练一次再上来。</div></div></div>
+                <div class="msg"><div><div class="who">林涛</div><div class="bubble">收到。已安排 8-20 上午演练，演练完再提交最终决定。</div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对林涛下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 · Codex ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业务信息 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务信息</h2>
+        <div class="biz-row"><span class="biz-k">业务介绍</span><span class="biz-v is-actionable" data-field-edit="业务介绍">B2B SaaS · Curis Studio（Desktop + Runtime） · 服务 20–500 人规模企业的多业务 / 多 Workspace 可发布能力</span></div>
+        <div class="biz-row"><span class="biz-k">经营方向</span><span class="biz-v is-actionable" data-field-edit="经营方向">v0.6 灰度 + M3 内部工具同期完成 · 持续可发布的版本节奏，把 Curis 推向首批 100 家付费企业</span></div>
+        <div class="biz-row"><span class="biz-k">规则与配置</span><span class="biz-v is-actionable" data-rules-counter="biz5" data-open-rules="biz5">已配置 · <b>9 项</b>（架构规则 / DoD / Release 策略 / 合规要求 / 发布门禁 / 经营节奏 …）</span></div>
+      </div>
+
+      <!-- 当前经营 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">当前经营</h2>
+        <div class="biz-row"><span class="biz-k">经营状态</span><span class="biz-v">产品验证中 · 整体进度 <b>82%</b>（4.1k / 5k story points）</span></div>
+        <div class="biz-row"><span class="biz-k">当前策略</span><span class="biz-v">v0.6 灰度（5%）· M3 内部工具同期完成</span></div>
+        <div class="biz-row"><span class="biz-k">重要结果</span><span class="biz-v">Build 通道绿 · v0.6-rc3 联调回归 96%（3 项待修）</span></div>
+        <div class="biz-row"><span class="biz-k">下一节点</span><span class="biz-v">完成 Frontend provenance 与真实 E2E，提交灰度发布</span></div>
+        <div class="biz-row"><span class="biz-k">需要关注</span><span class="biz-v"><span class="status blocked">IE11 跨域 token 校验 阻塞</span> · 灰度发布待 CEO 批准（不可逆对外变更）</span></div>
+      </div>
+
+      <!-- 工作空间 · Workspace Directory(轻量导航对象,整条可点进入 Curis 研发 Workspace) -->
+      <div class="ws-directory">
+        <div class="ws-dir-head">
+          <span class="ws-dir-title">工作空间</span>
+          <button class="chip ws-dir-add" data-ws-add>+ 新建</button>
+        </div>
+
+        <a class="ws-dir-item" href="../coverage-exploration-2026-08-17/08-rd-workspace.html" data-ws-jump="biz5">
+          <div class="ws-dir-row1">
+            <span class="ws-dir-name">Curis 研发</span>
+            <span class="ws-dir-meta">孙浩 · 工作空间负责人 · 5 人</span>
+            <span class="ws-dir-status"><span class="status success">产品验证中</span></span>
+            <span class="ws-dir-go">→</span>
+          </div>
+          <div class="ws-dir-note">当前重点：完成 Canonical Business Spine 真实产品闭环</div>
+        </a>
+      </div>
+
+      <!-- 业务成员 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务成员</h2>
+        <div class="team-list is-compact">
+          <div class="team-row"><div class="av av-2">林</div><span class="name">林涛</span><span class="role">业务负责人 · Tech Lead · 同时是部长</span></div>
+          <div class="team-row"><div class="av av-4">王</div><span class="name">王琳</span><span class="role">产品经理 · 需求澄清 + 验收</span></div>
+          <div class="team-row"><div class="av av-5">周</div><span class="name">周岚</span><span class="role">开发 · 登录模块</span></div>
+          <div class="team-row"><div class="av av-1">赵</div><span class="name">赵敏</span><span class="role">QA · 回归 + 异常分支</span></div>
+          <div class="team-row"><div class="av av-6">孙</div><span class="name">孙浩</span><span class="role">Review · 发布门禁</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 6 · Department · 海外业务部                     ║
+     ║ 仅依赖通用管理字段 · 不预设行业 KPI                       ║
+     ║ R4 注：Dept 不在重构范围,仅 mock-badge 调整                ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="6">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><span>部门</span><span class="sep">/</span><span class="muted">海外业务部</span></div>
+      <span class="domain-mark is-generic"><span class="dot"></span>部门</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · DEPT · 通用</span>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>海外业务部</h1>
+          <div class="sub">尚未挂载任何专业领域。展示 Curis 基础产品对一个部门的最低管理面。</div>
+        </div>
+        <div class="head-actions">
+          <a class="chip" data-go="6">⎘ 复制部门结构</a>
+          <button class="chip" type="button"><b>+ 新建业务</b></button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">部门 Leader · Employee Workstation</h2><span class="section-sub">通用管理 · 无特殊化</span></div>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-4">宋</div>
+              <div class="emp-id">
+                <span class="emp-name">宋远</span>
+                <span class="emp-role">海外业务部部长（暂）</span>
+              </div>
+              <div class="emp-duty">当前责任：组建海外业务部 · 选定第一业务方向</div>
+              <span class="emp-status"><span class="status neutral">在岗 · 筹备</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">宋远</div><div class="bubble">本月先把部门骨架搭起来，等 CEO 确认第一业务方向后再展开业务层。暂无专业领域指标，因为还没有挂接。</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">先把通用管理的几件事跑顺，不要提前造数据。</div></div></div>
+              </div>
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对宋远下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid cols-section">
+        <div>
+          <div class="section">
+            <div class="section-head"><h2 class="section-title">Department Identity · 简介</h2></div>
+            <div class="card">
+              <div class="kpi"><span class="n" style="font-size:var(--ui-fs-5)">筹建中的海外业务承载单位</span><span class="l">尚未挂载专业领域 · 仅展示通用管理字段</span></div>
+              <div class="dl" style="margin-top:var(--ui-sp-4)">
+                <div class="dl-row"><span class="k">部门代号</span><span>海外业务部（OVS）</span></div>
+                <div class="dl-row"><span class="k">目标市场</span><span class="empty-note">（暂无 · 待 CEO 与宋远对齐）</span></div>
+                <div class="dl-row"><span class="k">部门 Goal</span><span class="empty-note">（暂无 · 等第一业务确定）</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head"><h2 class="section-title">当前 Focus</h2><span class="section-sub">一句话主线 · 通用表达</span></div>
+            <div class="summary-block"><span class="label">Focus</span><span class="body">先把部门骨架搭起来；选定第一业务方向后再展开业务层。</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section">
+            <div class="section-head"><h2 class="section-title">所辖 Businesses</h2><span class="section-sub">占位 / 可空</span></div>
+            <div class="summary-block"><span class="label">State</span><span class="empty-note">暂无业务 · 可 <b>+ 新建业务</b></span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head"><h2 class="section-title">Department Team</h2><span class="section-sub">占位 1–2 人 · 详情去组织中心</span></div>
+            <div class="team-list">
+              <div class="team-row"><div class="av av-4">宋</div><span class="name">宋远</span><span class="role">部长（暂）· 筹备负责人</span></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head"><h2 class="section-title">Result · Risk 摘要</h2><span class="section-sub">无则不显示</span></div>
+            <div class="grid cols-1">
+              <div class="summary-block"><span class="label">Result</span><span class="empty-note">（暂无）</span></div>
+              <div class="summary-block"><span class="label">Risk</span><span class="body"><span class="status warning">目标市场待定</span> · <span class="muted">不解决无法展开业务层</span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ STATE 7 · 宠物寄养 · Business · 刚创建状态           ║
+     ║ R4 Quiet notebook · 不使用 Generic / Validation / Schema / scope-rule 词汇 ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<section class="state" data-state="7">
+  <div class="pane pane-main">
+    <header class="pane-header">
+      <div class="crumbs"><a href="#" data-go="1">业务空间</a><span class="sep">/</span><span>业务</span><span class="sep">/</span><span class="muted">宠物寄养 · 刚创建</span></div>
+      <span class="domain-mark is-generic"><span class="dot"></span>业务 · 刚创建</span>
+      <div class="spacer"></div>
+      <span class="mock-badge">UX EXPLORATION R7 · BIZ · 刚创建</span>
+    </header>
+    <div class="pane-content biz-page">
+
+      <div class="page-head">
+        <div class="title-block">
+          <h1>宠物寄养 <span class="mock-badge" style="margin-left:var(--ui-sp-2);vertical-align:middle">业务刚创建</span></h1>
+          <div class="sub">业务刚创建，第一个工作空间已建立；业务定义、规则与专业工作面仍待 CEO / Leader 继续完善。</div>
+        </div>
+        <div class="head-actions">
+          <button class="chip" type="button">⎘ 复制业务</button>
+          <button class="chip" type="button">编辑业务</button>
+        </div>
+      </div>
+
+      <!-- 业务负责人 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务负责人</h2>
+        <div class="emp-list">
+          <div class="emp-row is-open" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-8">周</div>
+              <div class="emp-id"><span class="emp-name">周璐</span><span class="emp-role">宠物寄养业务负责人 · 待任</span></div>
+              <div class="emp-duty">当前职责：与 CEO 对齐业务边界 · 搭建第 1 套规则</div>
+              <span class="emp-status"><span class="status neutral">在岗 · 起步</span></span>
+              <span class="emp-chevron">›</span>
+            </div>
+            <div class="emp-body">
+              <div class="conversation">
+                <div class="msg"><div><div class="who">周璐</div><div class="bubble">业务刚命名，方向我还在想。第一个工作空间已经建好了，我们要不要围绕它，把目标、规则、团队和专业工作面这几件事先聊清楚？</div></div></div>
+                <div class="msg user"><div><div class="who">你</div><div class="bubble">先做家庭寄养，客群定位常出差的中等收入家庭。其他你来提。</div></div></div>
+                <div class="msg"><div><div class="who">周璐</div><div class="bubble">收到。我先把服务时间上限 + 服务范围圈一下。</div></div></div>
+              </div>
+
+              <!-- 气泡建议 -->
+              <div class="bubble-suggest" data-bubble-suggest>
+                <span class="bs-who">周璐 · 建议</span>
+                <span class="bs-text">你说「家庭寄养 · 为常出差家庭服务」 — 我可以形成 2 条规则：<b>服务类型</b>（家庭寄养 · 短中期）+ <b>服务对象</b>（常出差 / 长途旅行家庭 · 中等收入）。要确认吗？</span>
+                <div class="bs-actions">
+                  <button class="btn btn-primary" data-bubble-confirm>确认修改</button>
+                  <button class="chip" data-bubble-chat>再聊聊</button>
+                </div>
+              </div>
+
+              <div class="composer">
+                <textarea class="composer-input" placeholder="对周璐下达指令或提问…"></textarea>
+                <div class="composer-bar">
+                  <button class="chip">+ 添加</button><button class="chip">访问权限 ▾</button><button class="chip">工作模式 ▾</button>
+                  <div class="composer-bar right"><button class="chip">执行 ▾</button><button class="btn btn-primary">发送</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业务信息 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务信息</h2>
+        <div class="biz-row"><span class="biz-k">业务介绍</span><span class="biz-v empty-note is-actionable" data-field-edit="业务介绍">尚待完善 · 与周璐对齐业务边界后写入</span></div>
+        <div class="biz-row"><span class="biz-k">经营方向</span><span class="biz-v empty-note is-actionable" data-field-edit="经营方向">尚待确认 · 与 Leader 对齐后写入</span></div>
+        <div class="biz-row"><span class="biz-k">规则与配置</span><span class="biz-v is-actionable" data-rules-counter="biz7" data-open-rules="biz7"><span class="empty-note">尚未建立（可与 Leader 对话建立 ›）</span></span></div>
+      </div>
+
+      <!-- 当前经营 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">当前经营</h2>
+        <div class="biz-row"><span class="biz-k">经营状态</span><span class="biz-v">筹备中 · 业务已命名，第一个工作空间已建，规则与目标待完善</span></div>
+        <div class="biz-row"><span class="biz-k">当前策略</span><span class="biz-v">先围绕「家庭寄养 · 常出差中等收入家庭」搭建首轮服务方案</span></div>
+        <div class="biz-row"><span class="biz-k">重要结果</span><span class="biz-v empty-note">（暂无 · 业务未启动）</span></div>
+        <div class="biz-row"><span class="biz-k">下一节点</span><span class="biz-v">与 Leader 对齐目标与规则，确认后进入首轮执行</span></div>
+        <div class="biz-row"><span class="biz-k">需要关注</span><span class="biz-v">团队与专业工作面仍待完善</span></div>
+        <ul class="biz-todo">
+          <li><span class="status attention">待对齐</span><span class="t-text">服务类型 + 服务对象 2 条规则 · 周璐气泡已建议（见业务负责人）</span><span class="t-meta">来自：周璐</span></li>
+        </ul>
+      </div>
+
+      <!-- 工作空间 · Workspace Directory -->
+      <div class="ws-directory">
+          <div class="ws-dir-head">
+            <span class="ws-dir-title">工作空间</span>
+            <button class="chip ws-dir-add" data-ws-add>+ 新建</button>
+          </div>
+
+          <a class="ws-dir-item" href="#biz7-first-workspace" data-ws-jump="biz7">
+            <div class="ws-dir-row1">
+              <span class="ws-dir-name">宠物寄养工作空间</span>
+              <span class="ws-dir-meta">周璐 · 工作空间负责人</span>
+              <span class="ws-dir-status"><span class="status attention">筹备中</span></span>
+              <span class="ws-dir-go">→</span>
+            </div>
+            <div class="ws-dir-note">DESIGN FIXTURE · 行业专属工作面将在与 Leader 对话后挂载,不在本轮设计范围内</div>
+          </a>
+      </div>
+
+      <!-- 业务成员 -->
+      <div class="biz-section">
+        <h2 class="biz-section-title">业务成员</h2>
+        <div class="team-list is-compact">
+          <div class="team-row"><div class="av av-8">周</div><span class="name">周璐</span><span class="role">业务负责人（待正式任命） · 接单 + 复核</span></div>
+          <div class="team-row"><div class="av av-7" style="opacity:.55">白</div><span class="name muted">白珂</span><span class="role muted">家庭寄养师 · 占位（未绑定）</span></div>
+        </div>
+        <p class="empty-note" style="margin-top:var(--ui-sp-3)">当前 Workspace 团队仍待完善，后续补充 Responsibility / Employee Binding。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</div><!-- /states -->
+</div><!-- /exploration-shell -->
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ R5 · Node Drawer (right-side · 同 .rules-drawer 视觉 DNA) ║
+     ║ 点工作流的某个节点 → 在业务页里右滑抽屉编辑岗位          ║
+     ║ 字段: 岗位 / 负责人 / 职责 / 输入 / 输出 / 流转 / 删除     ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="node-overlay" data-node-overlay hidden></div>
+<aside class="node-drawer" data-node-drawer aria-label="节点编辑" role="dialog" aria-modal="false" hidden>
+  <div class="nd-head">
+    <div>
+      <h3 data-node-title>节点</h3>
+      <p class="nd-sub" data-node-sub>点空白处或按 ESC 关闭</p>
+    </div>
+    <button class="nd-close" data-node-close aria-label="关闭">×</button>
+  </div>
+  <div class="nd-field">
+    <label>岗位名称</label>
+    <input type="text" data-node-name placeholder="岗位名">
+  </div>
+  <div class="nd-field">
+    <label>负责人</label>
+    <div class="nd-emp" data-node-emp-block>
+      <span class="av" data-node-emp-av>·</span>
+      <span class="name" data-node-emp-name>未绑定</span>
+      <button class="chip" data-node-emp-change style="margin-left:auto">更换</button>
+    </div>
+  </div>
+  <div class="nd-field">
+    <label>职责</label>
+    <textarea data-node-role placeholder="一句话说明本岗做什么"></textarea>
+  </div>
+  <div class="nd-field">
+    <label>输入</label>
+    <textarea data-node-input placeholder="上一岗交付的产物"></textarea>
+  </div>
+  <div class="nd-field">
+    <label>输出</label>
+    <textarea data-node-output placeholder="本岗完成后交付"></textarea>
+  </div>
+  <div class="nd-field">
+    <label>流转</label>
+    <div class="nd-flow" data-node-flow>
+      <div class="nd-flow-row"><span class="nd-flow-label">下一步</span><select data-node-next></select></div>
+      <div class="nd-flow-row"><span class="nd-flow-label">退回</span><select data-node-return></select></div>
+    </div>
+  </div>
+  <div class="nd-foot">
+    <div class="nd-foot-left">
+      <button class="chip" data-node-delete>删除岗位</button>
+    </div>
+    <div class="nd-foot-right">
+      <button class="btn btn-ghost" data-node-cancel>取消</button>
+      <button class="btn btn-primary" data-node-save>保存</button>
+    </div>
+  </div>
+
+  <!-- 抽屉内的员工绑定 popover -->
+  <div class="nd-emp-pop" data-node-emp-pop>
+    <div data-node-emp-pop-list></div>
+    <div class="nd-emp-new">
+      <input type="text" placeholder="新建员工 · 输入姓名 + 回车" data-node-emp-pop-new>
+    </div>
+  </div>
+</aside>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ R5 · Inline 「+ 添加岗位」 popover (挂在 body 上,        ║
+     ║ position:fixed 由 JS 定位到 + 添加岗位 按钮旁)             ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="wf-add-pop" data-wf-add-pop>
+  <div class="add-title">添加岗位</div>
+  <label>选择已有岗位</label>
+  <select data-wf-add-pick></select>
+  <label>或新建岗位名称</label>
+  <input type="text" placeholder="如：审核、复盘、对外对接 …" data-wf-add-input>
+  <div class="add-foot">
+    <button class="chip" data-wf-add-cancel>取消</button>
+    <button class="btn btn-primary" data-wf-add-confirm>添加</button>
+  </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ R6 · Assignment Conversation Drawer                    ║
+     ║ 点 Workflow 节点员工 / 岗位绑定 → 打开按 Role 区分的对话   ║
+     ║ Employee × Role × Scope 上下文明确,不混入 Leader 对话      ║
+     ║ 复用 .node-drawer 视觉 DNA                               ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="node-overlay" data-assign-overlay hidden></div>
+<aside class="node-drawer" data-assign-drawer aria-label="Assignment Conversation" role="dialog" aria-modal="false" hidden>
+  <div class="nd-head">
+    <div>
+      <h3 data-assign-title>陈真</h3>
+      <p class="nd-sub" data-assign-sub>Assignment Conversation</p>
+    </div>
+    <button class="nd-close" data-assign-close aria-label="关闭">×</button>
+  </div>
+  <div class="nd-field">
+    <label>Conversation Context</label>
+    <div class="assign-ctx">
+      <div class="assign-ctx-row"><span class="assign-ctx-k">Employee</span><span class="assign-ctx-v" data-assign-emp>陈真</span></div>
+      <div class="assign-ctx-row"><span class="assign-ctx-k">Role</span><span class="assign-ctx-v is-role" data-assign-role>选题</span></div>
+      <div class="assign-ctx-row"><span class="assign-ctx-k">Scope</span><span class="assign-ctx-v" data-assign-scope>当前工作空间</span></div>
+    </div>
+  </div>
+  <div class="nd-field">
+    <label>当前责任对话</label>
+    <div class="conversation" data-assign-convo></div>
+  </div>
+  <div class="nd-foot">
+    <div class="nd-foot-right">
+      <button class="btn btn-ghost" data-assign-cancel>取消</button>
+      <button class="btn btn-primary" data-assign-send>发送</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ R7 · 字段轻量编辑面(复用 .node-drawer DNA)               ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="node-overlay" data-field-overlay hidden></div>
+<aside class="node-drawer" data-field-drawer aria-label="编辑字段" role="dialog" aria-modal="false" hidden>
+  <div class="nd-head">
+    <div>
+      <h3 data-field-title>字段</h3>
+      <p class="nd-sub">编辑 · 当前工作空间</p>
+    </div>
+    <button class="nd-close" data-field-close aria-label="关闭">×</button>
+  </div>
+  <div class="nd-field">
+    <label>当前内容</label>
+    <div class="field-current" data-field-current></div>
+  </div>
+  <div class="nd-field">
+    <label>编辑</label>
+    <textarea class="nd-textarea" data-field-input placeholder="输入新内容…"></textarea>
+  </div>
+  <div class="nd-foot">
+    <button class="chip" data-field-cancel>取消</button>
+    <button class="btn btn-primary" data-field-save>保存</button>
+  </div>
+</aside>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║ R4 · Single shared Rules Drawer                        ║
+     ║ 数据由 JS 按 scope 注入                                  ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="rules-overlay" data-rules-overlay hidden></div>
+<aside class="rules-drawer" data-rules-drawer aria-label="规则与配置" role="dialog" aria-modal="false" hidden>
+  <div class="rd-head">
+    <h3 data-rules-title>规则与配置</h3>
+    <button class="chip" data-rules-add>+ 新增</button>
+    <button class="chip" data-rules-close>关闭</button>
+  </div>
+  <div class="rd-sub" data-rules-sub>已配置 · N 项 · 通用 schema（标题 / 内容）</div>
+  <div class="rd-list" data-rules-list></div>
+  <div class="rd-foot">
+    <button class="btn btn-ghost" data-rules-close>取消</button>
+    <button class="btn btn-primary" data-rules-save>保存</button>
+  </div>
+</aside>
+
+<script>
+/* ============================================================
+   R5 · JavaScript
+   ------------------------------------------------------------
+   工作原理:
+   · RULES_DB      — 每个 scope 一份规则数据(共享 Rules Drawer)
+   · WORKFLOW_NODES — 每个 workspace scope 一份节点数据(内联工作流)
+   · state 切换 → 只切换 .state.is-active
+   · ws-tabs 切换 → 切换 ws-card.is-active + 同步隐藏其他
+   · wf-edit 按钮 → 原地展开 wf-edit-pane,渲染 wf-track 节点
+   · 节点 click → 右滑 Node Drawer 编辑岗位详情
+   · 节点 drag → 重排顺序,同步 WORKFLOW_NODES 顺序
+   ============================================================ */
+(function () {
+
+  /* ── 公共：DOM helpers ── */
+  var $  = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ════════════ Rules 单一数据源(共享 Drawer) ════════════
+     scope 形态:
+     · biz4 / biz5 / biz7 — 业务级规则
+     · ws-bizN-x — Workspace 级规则
+     · biz7 初始无任何规则,进 Drawer 显示空 + [+ 新增]
+  */
+  var RULES_DB = {
+    'biz4': {
+      title: '业务规则 · 小红书运营',
+      items: [
+        { title: '平台',           body: '小红书 · 单平台内容种草' },
+        { title: '内容定位',       body: '都市青年生活方式 · 真实种草' },
+        { title: '客群',           body: '20–35 岁 · 一二线城市女性为主' },
+        { title: '内容标准',       body: '标题 ≤ 20 字 · 封面 1:1 或 3:4 · 笔记正文前 3 行必出 Hook' },
+        { title: '标题规范',       body: '数字 + 关键词 + 痛点；禁用绝对化承诺' },
+        { title: '文案规范',       body: '段落 ≤ 4 行 · emoji 适度 · 总字数 400–800' },
+        { title: '封面规范',       body: '不超过 2 个色块 · 主文字固定位置 · 主体占比 ≥ 60%' },
+        { title: '发布规范',       body: '早 8 点 / 中 12 点 / 晚 8 点 三档；周三选题会、周五发布' },
+        { title: '质量标准',       body: '阅读 · 互动 · 转化 三维；任一低于上周 70% 自动告警' },
+        { title: '合规要求',       body: '不出现医疗 / 金融 / 减肥等承诺；必须挂品牌标签' },
+        { title: '经营节奏',       body: '月度：选题库 42 → 在跑 5；周节奏已对齐部门统一' }
+      ]
+    },
+    'ws-biz4-a': {
+      title: '工作空间规则 · AI 科技',
+      items: [
+        { title: '标题专业术语',   body: '出现 ≥ 2 个 AI 行业术语（LLM / RAG / Agent …）· 不堆砌' },
+        { title: '首行出 Hook',    body: '正文首句必出对比 / 数字 / 反问之一，≤ 24 字' },
+        { title: '封面主文字',     body: '主文字 ≤ 6 字 · 固定在封面上 1/3 位置' },
+        { title: '禁用医疗承诺',   body: '不出现「治愈」「根治」「无效退款」医疗承诺' },
+        { title: '转评 24h 内回',  body: '所有转发 + 评论 24 小时内 1 次回复' }
+      ]
+    },
+    'ws-biz4-b': {
+      title: '工作空间规则 · 旅游',
+      items: [
+        { title: '城市选 3',       body: '每个笔记覆盖 ≥ 3 个推荐城市；不出国线' },
+        { title: '路线可复制',     body: 'POI + 时间表 + 交通段 必须能 1:1 复刻' },
+        { title: '配图 ≥ 6 张',    body: '≥ 6 张原图 · 至少 1 张夜景' },
+        { title: '标题加地名',     body: '标题必含城市或地标名 · 不抽象' }
+      ]
+    },
+    'ws-biz4-c': {
+      title: '工作空间规则 · 汽车',
+      items: [
+        { title: '标题数字开头',   body: '标题以数字 / 时间 / 数字词开头 · 不堆形容词' },
+        { title: '篇幅 ≥ 800 字',  body: '正文 ≥ 800 字 · 必须含用车场景 ≥ 3 个' },
+        { title: '引用车主证言',   body: '必须 ≥ 1 段直接车主证言（带名字 + 用车时长）' }
+      ]
+    },
+    'biz5': {
+      title: '业务规则 · Curis 产品研发',
+      items: [
+        { title: '产品 / 业务类型',  body: 'B2B SaaS · Curis Studio（Desktop + Runtime）' },
+        { title: '客群',             body: '首批 100 家付费企业 · 20–500 人规模' },
+        { title: '产品定位',         body: '从「空间工程」到「多业务 / 多 Workspace」的可发布能力' },
+        { title: '架构规则',         body: '架构边缘冻结 · 仅允许受控范围变更' },
+        { title: 'DoD（验收）',      body: '主链路回归 100% · 异常分支覆盖 ≥ 95% · 通过 CEO 可见报告' },
+        { title: 'Release 策略',     body: '灰度 5% → 50% → 100% 三档 · 回滚窗口 ≤ 30 min' },
+        { title: '合规要求',         body: '客户数据不出境 · 等保 2.0 二级 · 鉴权链路审计' },
+        { title: '发布门禁',         body: '不可逆对外变更必须 CEO 批准 · 由孙浩统一把关' },
+        { title: '经营节奏',         body: '6 周一版本 · 双周五下午灰度 · 周一 100%' }
+      ]
+    },
+    'ws-biz5-a': {
+      title: '工作空间规则 · Desktop',
+      items: [
+        { title: '架构冻结',        body: '主操作面边界冻结 · 仅允许受控变更' },
+        { title: 'DoD 100%',        body: 'DoD 主链路 100% · 异常分支覆盖 ≥ 95%' },
+        { title: '灰度三档',        body: '5% → 50% → 100% · 每档 ≥ 24h' },
+        { title: '不可逆变更 CEO 批', body: '数据库迁移 / 鉴权链路 / 对外接口 必 CEO 批准' },
+        { title: '异常分支覆盖',    body: '≥ 95% · 赵敏把关' }
+      ]
+    },
+    'ws-biz5-b': {
+      title: '工作空间规则 · Runtime',
+      items: [
+        { title: '主链路 100% 回归', body: 'Runtime 核心链路 7×24 监控 · 每次发布必先回归' },
+        { title: '引擎版本对齐',    body: 'Runtime 与 Desktop 引擎版本必须同步升级' },
+        { title: '故障演练季度 1 次', body: '每季度 1 次全链路故障演练 · 由孙浩组织' },
+        { title: '数据保留 30 天',   body: '任务级日志与运行数据保留 30 天 · 历史归档到对象存储' }
+      ]
+    },
+    'biz7': {
+      title: '业务规则 · 宠物寄养',
+      items: []
+    }
+  };
+
+  /* ════════════ Workflow Inline (R5) ════════════
+     每个 scope: { biz, ctx, nodes:[{id,name,role,input,output,empName,av,avClass,unbound,returnTo,returnLabel}] }
+     · 节点 = Definition,not Execution(无 status / 已完成 / 进行中 / 待开始)
+     · returnTo 指向本工作流内某一节点的 id(在此节点上点 Node Drawer 可改)
+     · returnLabel: 退回行在轨道下方的说明文案
+  */
+  var WORKFLOW_NODES = {
+    'biz4-a': {
+      biz: '小红书运营',
+      ctx: 'AI 科技',
+      nodes: [
+        { id:'n1', name:'选题', role:'内容主理',  input:'业务定位 + 当周话题',     output:'本周选题清单',   empName:'陈真', av:'陈', avClass:'av-2' },
+        { id:'n2', name:'调研', role:'研究助理',  input:'本周选题清单',           output:'素材包 + 数据点', empName:'林月', av:'林', avClass:'av-1' },
+        { id:'n3', name:'文案', role:'撰写',      input:'素材包',                 output:'初稿笔记',       empName:'林月', av:'林', avClass:'av-1' },
+        { id:'n4', name:'视觉', role:'视觉',      input:'初稿',                   output:'终稿 + 封面',     empName:'苏晴', av:'苏', avClass:'av-5', returnTo:'n3', returnLabel:'视觉 不过 → 回 文案' },
+        { id:'n5', name:'发布', role:'发布',      input:'终稿 + 封面',           output:'已发布笔记',     empName:'陈真', av:'陈', avClass:'av-2' }
+      ]
+    },
+    'biz4-b': {
+      biz: '小红书运营',
+      ctx: '旅游',
+      nodes: [
+        { id:'n1', name:'选题', role:'内容主理',  input:'业务定位',               output:'城市清单',        empName:'陈真', av:'陈', avClass:'av-2' },
+        { id:'n2', name:'踩点', role:'外出采集',  input:'城市清单',               output:'照片 + 草图',     empName:'林月', av:'林', avClass:'av-1' },
+        { id:'n3', name:'文案', role:'撰写',      input:'照片 + 草图',           output:'笔记初稿',         empName:'林月', av:'林', avClass:'av-1' },
+        { id:'n4', name:'视觉', role:'视觉',      input:'笔记初稿',               output:'终稿 + 封面',     empName:'苏晴', av:'苏', avClass:'av-5', returnTo:'n3', returnLabel:'视觉 不过 → 回 文案' },
+        { id:'n5', name:'发布', role:'发布',      input:'终稿 + 封面',           output:'已发布',           empName:'陈真', av:'陈', avClass:'av-2' }
+      ]
+    },
+    'biz4-c': {
+      biz: '小红书运营',
+      ctx: '汽车',
+      nodes: [
+        { id:'n1', name:'选题', role:'内容主理',  input:'业务定位',               output:'车型清单',        empName:'陈真', av:'陈', avClass:'av-2' },
+        { id:'n2', name:'调研', role:'研究助理',  input:'车型清单',               output:'调研报告',         empName:'林月', av:'林', avClass:'av-1' },
+        { id:'n3', name:'长文', role:'撰写',      input:'调研报告',               output:'长文初稿',         empName:'',     av:'·',  avClass:'av-3', unbound:true },
+        { id:'n4', name:'视觉', role:'视觉',      input:'长文初稿',               output:'终稿',            empName:'苏晴', av:'苏', avClass:'av-5', returnTo:'n3', returnLabel:'视觉 不过 → 回 长文' },
+        { id:'n5', name:'发布', role:'发布',      input:'终稿',                   output:'已发布',           empName:'陈真', av:'陈', avClass:'av-2' }
+      ]
+    },
+    'biz5-a': {
+      biz: 'Curis 产品研发',
+      ctx: 'Desktop',
+      nodes: [
+        { id:'n1', name:'需求', role:'产品经理',   input:'业务诉求',               output:'PRD + DoD',       empName:'王琳', av:'王', avClass:'av-4' },
+        { id:'n2', name:'开发', role:'开发工程师', input:'PRD',                   output:'代码 + 单测',     empName:'周岚', av:'周', avClass:'av-5' },
+        { id:'n3', name:'测试', role:'QA',         input:'代码 + 单测',           output:'测试报告',         empName:'赵敏', av:'赵', avClass:'av-1' },
+        { id:'n4', name:'验收', role:'产品经理',   input:'测试报告',               output:'验收结论',        empName:'王琳', av:'王', avClass:'av-4', returnTo:'n2', returnLabel:'验收 不过 → 回 开发' },
+        { id:'n5', name:'发布', role:'发布门禁',   input:'验收结论',               output:'已发布',           empName:'孙浩', av:'孙', avClass:'av-6' }
+      ]
+    },
+    'biz5-b': {
+      biz: 'Curis 产品研发',
+      ctx: 'Runtime',
+      nodes: [
+        { id:'n1', name:'需求', role:'产品经理',   input:'业务诉求',               output:'PRD',              empName:'王琳', av:'王', avClass:'av-4' },
+        { id:'n2', name:'开发', role:'开发工程师', input:'PRD',                   output:'代码 + 单测',     empName:'周岚', av:'周', avClass:'av-5' },
+        { id:'n3', name:'回归', role:'QA 回归',    input:'代码',                   output:'回归报告',         empName:'赵敏', av:'赵', avClass:'av-1' },
+        { id:'n4', name:'灰度', role:'发布门禁',   input:'回归报告',               output:'灰度上线',         empName:'孙浩', av:'孙', avClass:'av-6' }
+      ]
+    }
+  };
+
+  /* ── 共享员工名单(给 Inspector 切换 负责人 时使用) ── */
+  var EMPLOYEE_POOL = {
+    'biz4': ['陈真','林月','苏晴','何川','白珂','周璐'],
+    'biz5': ['林涛','王琳','周岚','赵敏','孙浩'],
+    'biz7': ['周璐','白珂']
+  };
+
+  /* ══════════════════════ State Switcher ══════════════════════ */
+  var tabs   = $$('.ux-tab');
+  var states = $$('.state');
+
+  function go(n, opts) {
+    opts = opts || {};
+    var key = String(n);
+    states.forEach(function (s) {
+      s.classList.toggle('is-active', s.getAttribute('data-state') === key);
+    });
+    tabs.forEach(function (t) {
+      t.classList.toggle('is-active', t.getAttribute('data-go') === key);
+    });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    if (!opts.silent) {
+      var h = '#state-' + key;
+      if (location.hash !== h) { history.replaceState(null, '', h); }
+    }
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { go(t.getAttribute('data-go')); }); });
+  $$('[data-go]').forEach(function (el) {
+    if (el.classList.contains('ux-tab')) return;
+    el.addEventListener('click', function (e) {
+      var n = el.getAttribute('data-go');
+      if (!n) return;
+      e.preventDefault();
+      go(n);
+    });
+  });
+
+  /* ── #state-N 深链接：供 Workspace 面包屑跨文件跳转（内容增长部=2 / 研发部=3 / 小红书运营=4 / Curis 产品研发=5 / 宠物寄养=7） ── */
+  function applyHashState() {
+    var m = (location.hash || '').match(/^#state-(\d+)$/);
+    if (m) go(parseInt(m[1], 10), { silent: true });
+  }
+  window.addEventListener('hashchange', applyHashState);
+  applyHashState();
+
+  /* ══════════════════════ emp-row 行点击展开 ══════════════════════ */
+  $$('[data-emp-row]').forEach(function (row) {
+    var head = row.querySelector('.emp-row-head');
+    if (!head) return;
+    head.addEventListener('click', function () { row.classList.toggle('is-open'); });
+  });
+
+  /* ══════════════════════ Workspace tabs 切换 ══════════════════════ */
+  $$('[data-ws-tabs]').forEach(function (group) {
+    var name = group.getAttribute('data-ws-tabs');
+    group.querySelectorAll('[data-ws]').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        if (tab.hasAttribute('data-ws-add')) return;
+        group.querySelectorAll('[data-ws]').forEach(function (b) { b.classList.remove('is-active'); });
+        tab.classList.add('is-active');
+        var panels = $$('[data-ws-panel="' + name + '"]');
+        panels.forEach(function (card) {
+          var match = card.getAttribute('data-ws-id') === tab.getAttribute('data-ws');
+          card.classList.toggle('is-active', match);
+          if (match) card.removeAttribute('hidden'); else card.setAttribute('hidden', '');
+        });
+      });
+    });
+  });
+  $$('[data-ws-add], [data-ws-clone]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var tip = document.createElement('span');
+      tip.textContent = '（wireframe：新建 / 复制占位）';
+      tip.style.cssText = 'color:var(--ui-text-2);font-size:var(--ui-fs-1);margin-left:var(--ui-sp-2);';
+      b.insertAdjacentElement('afterend', tip);
+      setTimeout(function () { tip.remove(); }, 2400);
+    });
+  });
+
+  /* ══════════════════════ Rules Drawer (single shared) ══════════════════════ */
+  var rulesOverlay = $('[data-rules-overlay]');
+  var rulesDrawer  = $('[data-rules-drawer]');
+  var rulesTitle   = $('[data-rules-title]');
+  var rulesSub     = $('[data-rules-sub]');
+  var rulesList    = $('[data-rules-list]');
+  var rulesCurrentScope = null;
+
+  function renderRules(scope) {
+    var data = RULES_DB[scope];
+    if (!data) {
+      rulesTitle.textContent = '规则与配置';
+      rulesSub.textContent = '（暂无该 scope 数据）';
+      rulesList.innerHTML = '<div class="ws-empty-state" style="padding:var(--ui-sp-5) var(--ui-sp-4);text-align:center"><p class="es-title" style="font-size:var(--ui-fs-3)">还没有规则</p><p class="es-desc">点 [+ 新增] 建立第一条</p></div>';
+      return;
+    }
+    rulesTitle.textContent = data.title;
+    rulesSub.textContent = '已配置 · ' + data.items.length + ' 项 · 通用 schema（标题 / 内容）';
+    rulesList.innerHTML = '';
+    if (data.items.length === 0) {
+      rulesList.innerHTML = '<div class="ws-empty-state" style="padding:var(--ui-sp-5) var(--ui-sp-4);text-align:center"><p class="es-title" style="font-size:var(--ui-fs-3)">还没有规则</p><p class="es-desc">点 [+ 新增] 建立第一条 · 或回到「业务负责人」接收 Leader 的建议气泡</p></div>';
+      return;
+    }
+    data.items.forEach(function (it, idx) {
+      var div = document.createElement('div');
+      div.className = 'rule-item';
+      div.innerHTML =
+        '<div class="rule-item-head"><span class="rule-item-num">' + (idx + 1) + '</span>' +
+        '<span class="rule-item-title">' + escapeHtml(it.title) + '</span>' +
+        '<button class="rule-item-del" data-rule-del aria-label="删除">×</button></div>' +
+        '<div class="rule-item-body">' + escapeHtml(it.body) + '</div>';
+      rulesList.appendChild(div);
+    });
+    bindRuleDelete(rulesList);
+  }
+
+  function openRules(scope) {
+    rulesCurrentScope = scope;
+    renderRules(scope);
+    rulesOverlay.removeAttribute('hidden');
+    rulesOverlay.classList.add('is-open');
+    rulesDrawer.removeAttribute('hidden');
+    rulesDrawer.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeRules() {
+    rulesOverlay.classList.remove('is-open');
+    rulesOverlay.setAttribute('hidden', '');
+    rulesDrawer.classList.remove('is-open');
+    rulesDrawer.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+    rulesCurrentScope = null;
+  }
+  $$('[data-open-rules]').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      if (b.hasAttribute('disabled')) { e.preventDefault(); return; }
+      var scope = b.getAttribute('data-open-rules');
+      openRules(scope);
+    });
+  });
+  $$('[data-rules-close]').forEach(function (b) {
+    b.addEventListener('click', closeRules);
+  });
+  rulesOverlay.addEventListener('click', closeRules);
+  $$('[data-rules-add]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      // 移除现有空状态
+      var empty = rulesList.querySelector('.ws-empty-state');
+      if (empty) empty.remove();
+      var n = rulesList.querySelectorAll('.rule-item').length + 1;
+      var item = document.createElement('div');
+      item.className = 'rule-item';
+      item.innerHTML =
+        '<div class="rule-item-head"><span class="rule-item-num">' + n + '</span>' +
+        '<span class="rule-item-title">新规则 · 待填写</span>' +
+        '<button class="rule-item-del" data-rule-del aria-label="删除">×</button></div>' +
+        '<div class="rule-field"><label>标题</label><input type="text" placeholder="如：标题规范 / 文案规范 / …"></div>' +
+        '<div class="rule-field"><label>内容</label><textarea placeholder="一句话规则内容"></textarea></div>';
+      rulesList.appendChild(item);
+      bindRuleDelete(item);
+    });
+  });
+  function bindRuleDelete(root) {
+    $$('[data-rule-del]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var item = b.closest('.rule-item');
+        if (item) item.remove();
+      });
+    });
+  }
+
+  /* ══════════════════════ Workflow Inline (R5) ══════════════════════
+     · 工作流就是业务页工作空间卡片里的一段可拖拽小序列
+     · 点 [编辑] → 原地展开 wf-edit-pane(内联,不跳独立页)
+     · 拖节点 = 拖拽重排;点节点 = 打开 Node Drawer (右滑 460px)
+  */
+  var wfEditOpen = {};  // scope → bool(当前是否在编辑状态)
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function pickAvClass(name) {
+    var map = ['av-1','av-2','av-3','av-4','av-5','av-6','av-7','av-8'];
+    var sum = 0;
+    for (var i = 0; i < name.length; i++) sum += name.charCodeAt(i);
+    return map[sum % map.length];
+  }
+
+  function getBizKey(scope) {
+    return (scope || '').split('-')[0]; // biz4 / biz5 / biz7
+  }
+
+  function renderWfTrack(scope) {
+    var data = WORKFLOW_NODES[scope];
+    var track = document.querySelector('[data-wf-track="' + scope + '"]');
+    if (!data || !track) return;
+    track.innerHTML = '';
+    data.nodes.forEach(function (n, i) {
+      if (i > 0) {
+        var arrow = document.createElement('span');
+        arrow.className = 'wf-arrow';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.textContent = '→';
+        track.appendChild(arrow);
+      }
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'wf-node';
+      btn.setAttribute('data-wf-node', n.id);
+      btn.setAttribute('draggable', 'true');
+      if (n.unbound) {
+        btn.innerHTML =
+          '<span class="wf-node-name">' + escapeHtml(n.name) + '</span>' +
+          '<span class="wf-node-emp is-unbound"><span class="av av-3">·</span><span>未绑定</span></span>';
+      } else {
+        btn.innerHTML =
+          '<span class="wf-node-name">' + escapeHtml(n.name) + '</span>' +
+          '<span class="wf-node-emp"><span class="av ' + n.avClass + '">' + escapeHtml(n.av) + '</span><span>' + escapeHtml(n.empName) + '</span></span>';
+      }
+      track.appendChild(btn);
+
+      // R6 · 节点上的员工 → 打开按 Role 区分的 Assignment Conversation(不触发节点 Node Drawer)
+      var empSpan = btn.querySelector('.wf-node-emp');
+      if (empSpan && !empSpan.classList.contains('is-unbound')) {
+        empSpan.style.cursor = 'pointer';
+        empSpan.title = '打开「' + n.empName + ' · ' + n.name + '」责任对话';
+        empSpan.addEventListener('click', function (e) {
+          e.stopPropagation();
+          openAssign(n.empName, n.name, '当前工作空间');
+        });
+      }
+    });
+
+    // Bind drag-to-reorder + click-to-edit on every node
+    var nodes = $$('.wf-node', track);
+    var dragSrc = null;
+    nodes.forEach(function (node) {
+      node.addEventListener('dragstart', function (e) {
+        dragSrc = node;
+        node.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', node.getAttribute('data-wf-node'));
+      });
+      node.addEventListener('dragend', function () {
+        dragSrc = null;
+        node.classList.remove('is-dragging');
+        nodes.forEach(function (n) { n.classList.remove('drag-over-left', 'drag-over-right'); });
+      });
+      node.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        if (!dragSrc || dragSrc === node) return;
+        var rect = node.getBoundingClientRect();
+        nodes.forEach(function (n) { n.classList.remove('drag-over-left', 'drag-over-right'); });
+        if (e.clientX < rect.left + rect.width / 2) node.classList.add('drag-over-left');
+        else node.classList.add('drag-over-right');
+      });
+      node.addEventListener('dragleave', function () {
+        node.classList.remove('drag-over-left', 'drag-over-right');
+      });
+      node.addEventListener('drop', function (e) {
+        e.preventDefault();
+        if (!dragSrc || dragSrc === node) return;
+        var rect = node.getBoundingClientRect();
+        var goLeft = e.clientX < rect.left + rect.width / 2;
+        var arrows = $$('.wf-arrow', track);
+        // Reorder DOM: 简单做法 — 把 dragSrc 从 track 抽出,按 goLeft 插到 target 前后
+        if (goLeft) track.insertBefore(dragSrc, node);
+        else track.insertBefore(dragSrc, node.nextSibling);
+        // Reconcile arrows: 每个 wf-node 之间应恰好有一个 wf-arrow
+        reconcileWfArrows(track);
+        // Sync to data
+        syncWfFromDom(scope);
+        // Re-render return rail (回退可能因节点顺序变化而变化)
+        renderWfReturnRail(scope);
+      });
+      node.addEventListener('click', function () {
+        openNodeDrawer(scope, node.getAttribute('data-wf-node'));
+      });
+    });
+
+    renderWfReturnRail(scope);
+  }
+
+  function reconcileWfArrows(track) {
+    // ensure exactly one → between every adjacent pair of wf-nodes
+    var kids = Array.prototype.slice.call(track.children);
+    // remove all arrows
+    kids.forEach(function (el) { if (el.classList && el.classList.contains('wf-arrow')) el.remove(); });
+    kids = Array.prototype.slice.call(track.children);
+    var nodes = kids.filter(function (el) { return el.classList && el.classList.contains('wf-node'); });
+    nodes.forEach(function (node, i) {
+      if (i > 0) {
+        var arrow = document.createElement('span');
+        arrow.className = 'wf-arrow';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.textContent = '→';
+        track.insertBefore(arrow, node);
+      }
+    });
+  }
+
+  function syncWfFromDom(scope) {
+    var data = WORKFLOW_NODES[scope];
+    var track = document.querySelector('[data-wf-track="' + scope + '"]');
+    if (!data || !track) return;
+    var ids = $$('.wf-node', track).map(function (b) { return b.getAttribute('data-wf-node'); });
+    data.nodes = ids.map(function (id) {
+      return data.nodes.find(function (n) { return n.id === id; });
+    });
+  }
+
+  function renderWfReturnRail(scope) {
+    var data = WORKFLOW_NODES[scope];
+    var rail = document.querySelector('[data-wf-return-rail="' + scope + '"]');
+    if (!data || !rail) return;
+    rail.innerHTML = '';
+    var returns = data.nodes.filter(function (n) { return n.returnTo; });
+    if (returns.length === 0) { rail.style.display = 'none'; return; }
+    rail.style.display = '';
+    returns.forEach(function (n) {
+      var target = data.nodes.find(function (nn) { return nn.id === n.returnTo; });
+      if (!target) return;
+      var row = document.createElement('div');
+      row.className = 'wf-return-row';
+      row.innerHTML =
+        '<span class="wf-return-from">' + escapeHtml(n.name) + '</span>' +
+        '<span class="wf-return-arrow-text" aria-hidden="true">─ ─ ─ ─ ─ ─ ⤺</span>' +
+        '<span class="wf-return-to">' + escapeHtml(target.name) + '</span>' +
+        '<span class="wf-return-label">' + escapeHtml(n.returnLabel || ('退回 → ' + target.name)) + '</span>';
+      rail.appendChild(row);
+    });
+  }
+
+  /* ── 展开 / 关闭工作流编辑区 ── */
+  function openWfEdit(scope) {
+    var pane = document.querySelector('[data-wf-pane="' + scope + '"]');
+    if (!pane) return;
+    wfEditOpen[scope] = true;
+    pane.removeAttribute('hidden');
+    renderWfTrack(scope);
+  }
+  function closeWfEdit(scope) {
+    var pane = document.querySelector('[data-wf-pane="' + scope + '"]');
+    if (!pane) return;
+    wfEditOpen[scope] = false;
+    pane.setAttribute('hidden', '');
+    closeNodeDrawer();
+  }
+  $$('[data-wf-edit]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      openWfEdit(b.getAttribute('data-wf-edit'));
+    });
+  });
+  $$('[data-wf-done]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      closeWfEdit(b.getAttribute('data-wf-done'));
+    });
+  });
+
+  /* ── + 添加岗位 popover ── */
+  var wfAddPop      = $('[data-wf-add-pop]');
+  var wfAddPick     = $('[data-wf-add-pick]', wfAddPop);
+  var wfAddInput    = $('[data-wf-add-input]', wfAddPop);
+  var wfAddScope    = null;
+  function openWfAdd(scope, anchorBtn) {
+    wfAddScope = scope;
+    var data = WORKFLOW_NODES[scope];
+    if (!data) return;
+    var pool = data.nodes.map(function (n) { return n.name; });
+    wfAddPick.innerHTML = '<option value="">— 请选择 —</option>' +
+      pool.map(function (name) { return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>'; }).join('');
+    wfAddInput.value = '';
+    // Position popover near anchor
+    var rect = anchorBtn.getBoundingClientRect();
+    wfAddPop.style.top  = (window.scrollY + rect.bottom + 6) + 'px';
+    wfAddPop.style.left = (window.scrollX + rect.left) + 'px';
+    wfAddPop.classList.add('is-open');
+    setTimeout(function () { wfAddInput.focus(); }, 50);
+  }
+  function closeWfAdd() {
+    wfAddPop.classList.remove('is-open');
+    wfAddScope = null;
+  }
+  $$('[data-wf-add]').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      openWfAdd(b.getAttribute('data-wf-add'), b);
+    });
+  });
+  $('[data-wf-add-cancel]', wfAddPop).addEventListener('click', closeWfAdd);
+  $('[data-wf-add-confirm]', wfAddPop).addEventListener('click', function () {
+    if (!wfAddScope) return;
+    var data = WORKFLOW_NODES[wfAddScope];
+    if (!data) return;
+    var picked = wfAddPick.value.trim();
+    var typed  = wfAddInput.value.trim();
+    var name = picked || typed;
+    if (!name) { wfAddInput.focus(); return; }
+    var exists = data.nodes.some(function (n) { return n.name === name; });
+    if (exists) { wfAddInput.value = ''; wfAddInput.focus(); return; }
+    var newId = 'n' + Date.now().toString(36).slice(-4);
+    data.nodes.push({
+      id: newId,
+      name: name,
+      role: '由 Leader 配合分配',
+      input: '上一岗交付的产物',
+      output: '本岗完成后的产物',
+      empName: '',
+      av: '·',
+      avClass: 'av-3',
+      unbound: true
+    });
+    closeWfAdd();
+    renderWfTrack(wfAddScope);
+  });
+  wfAddInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); $('[data-wf-add-confirm]', wfAddPop).click(); }
+    if (e.key === 'Escape') { closeWfAdd(); }
+  });
+  wfAddPick.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); $('[data-wf-add-confirm]', wfAddPop).click(); }
+  });
+
+  /* ══════════════════════ Node Drawer ══════════════════════
+     右滑 460px 抽屉,复用 .rules-drawer 视觉 DNA,字段:
+     岗位 / 负责人 (点击[更换]→ popover) / 职责 / 输入 / 输出 /
+     流转(下一步 + 退回) / 删除岗位
+  */
+  var nodeOverlay     = $('[data-node-overlay]');
+  var nodeDrawer      = $('[data-node-drawer]');
+  var nodeDrawerTitle = $('[data-node-title]');
+  var nodeDrawerSub   = $('[data-node-sub]');
+  var nodeEmpBlock    = $('[data-node-emp-block]');
+  var nodeEmpAv       = $('[data-node-emp-av]');
+  var nodeEmpName     = $('[data-node-emp-name]');
+  var nodeEmpChangeBtn= $('[data-node-emp-change]');
+  var nodeNameInput   = $('[data-node-name]');
+  var nodeRoleInput   = $('[data-node-role]');
+  var nodeInputInput  = $('[data-node-input]');
+  var nodeOutputInput = $('[data-node-output]');
+  var nodeNextSelect  = $('[data-node-next]');
+  var nodeReturnSelect= $('[data-node-return]');
+  var nodePop         = $('[data-node-emp-pop]');
+  var nodePopList     = $('[data-node-emp-pop-list]');
+  var nodePopNew      = $('[data-node-emp-pop-new]');
+  var nodeCurrentScope = null;
+  var nodeCurrentNodeId = null;
+
+  function openNodeDrawer(scope, nodeId) {
+    var data = WORKFLOW_NODES[scope];
+    if (!data) return;
+    var n = data.nodes.find(function (nn) { return nn.id === nodeId; });
+    if (!n) return;
+    nodeCurrentScope = scope;
+    nodeCurrentNodeId = nodeId;
+
+    nodeDrawerTitle.textContent = n.name || '节点';
+    nodeDrawerSub.textContent = '工作空间 · ' + (data.ctx || '');
+
+    // 负责人显示
+    if (n.unbound) {
+      nodeEmpAv.className = 'av av-3';
+      nodeEmpAv.textContent = '·';
+      nodeEmpName.textContent = '未绑定';
+      nodeEmpBlock.classList.add('is-unbound');
+    } else {
+      nodeEmpAv.className = 'av ' + (n.avClass || 'av-3');
+      nodeEmpAv.textContent = n.av || (n.empName ? n.empName.charAt(0) : '·');
+      nodeEmpName.textContent = n.empName || '未命名';
+      nodeEmpBlock.classList.remove('is-unbound');
+    }
+
+    nodeNameInput.value  = n.name || '';
+    nodeRoleInput.value  = n.role || '';
+    nodeInputInput.value = n.input || '';
+    nodeOutputInput.value= n.output || '';
+
+    // 流转 dropdown
+    var idx = data.nodes.findIndex(function (nn) { return nn.id === n.id; });
+    var nextNode = data.nodes[idx + 1];
+    nodeNextSelect.innerHTML = '';
+    var opt1 = document.createElement('option');
+    opt1.value = '__next__'; opt1.textContent = nextNode ? nextNode.name : '（结束）';
+    if (!nextNode) opt1.setAttribute('disabled', '');
+    nodeNextSelect.appendChild(opt1);
+    data.nodes.forEach(function (nn, i) {
+      if (i === idx + 1) return; // 已是下一岗,跳过
+      var o = document.createElement('option');
+      o.value = nn.id;
+      o.textContent = nn.name;
+      nodeNextSelect.appendChild(o);
+    });
+
+    nodeReturnSelect.innerHTML = '';
+    var optR0 = document.createElement('option');
+    optR0.value = ''; optR0.textContent = '（无退回）';
+    nodeReturnSelect.appendChild(optR0);
+    data.nodes.forEach(function (nn) {
+      if (nn.id === n.id) return;
+      var o = document.createElement('option');
+      o.value = nn.id;
+      o.textContent = nn.name;
+      nodeReturnSelect.appendChild(o);
+    });
+    // 当前 selection
+    if (n.returnTo && data.nodes.some(function (nn) { return nn.id === n.returnTo; })) {
+      nodeReturnSelect.value = n.returnTo;
+    } else {
+      nodeReturnSelect.value = '';
+    }
+
+    // 重置 popover
+    nodePop.classList.remove('is-open');
+
+    // 打开
+    nodeOverlay.removeAttribute('hidden');
+    nodeOverlay.classList.add('is-open');
+    nodeDrawer.removeAttribute('hidden');
+    nodeDrawer.classList.add('is-open');
+  }
+  function closeNodeDrawer() {
+    nodeDrawer.classList.remove('is-open');
+    nodeOverlay.classList.remove('is-open');
+    setTimeout(function () {
+      nodeDrawer.setAttribute('hidden', '');
+      nodeOverlay.setAttribute('hidden', '');
+    }, 50);
+    nodeCurrentScope = null;
+    nodeCurrentNodeId = null;
+    nodePop.classList.remove('is-open');
+  }
+  $('[data-node-close]').addEventListener('click', closeNodeDrawer);
+  $('[data-node-cancel]').addEventListener('click', closeNodeDrawer);
+  nodeOverlay.addEventListener('click', closeNodeDrawer);
+
+  // 保存:把抽屉字段写回数据 + 重渲染轨道
+  $('[data-node-save]').addEventListener('click', function () {
+    var data = WORKFLOW_NODES[nodeCurrentScope];
+    if (!data) return;
+    var n = data.nodes.find(function (nn) { return nn.id === nodeCurrentNodeId; });
+    if (!n) return;
+    n.name  = nodeNameInput.value.trim() || n.name;
+    n.role  = nodeRoleInput.value;
+    n.input = nodeInputInput.value;
+    n.output= nodeOutputInput.value;
+    // 退回
+    var retVal = nodeReturnSelect.value;
+    n.returnTo = retVal || null;
+    if (retVal) {
+      var target = data.nodes.find(function (nn) { return nn.id === retVal; });
+      n.returnLabel = target ? ('退回 → ' + target.name) : n.returnLabel;
+    }
+    closeNodeDrawer();
+    renderWfTrack(nodeCurrentScope);
+  });
+
+  // 删除岗位
+  $('[data-node-delete]').addEventListener('click', function () {
+    var data = WORKFLOW_NODES[nodeCurrentScope];
+    if (!data) return;
+    var idx = data.nodes.findIndex(function (nn) { return nn.id === nodeCurrentNodeId; });
+    if (idx < 0) return;
+    if (data.nodes.length <= 1) {
+      // 至少 1 个,此处用 alert 提示不删
+      var hint = document.createElement('div');
+      hint.textContent = '工作流至少保留一个岗位';
+      hint.style.cssText = 'color:var(--ui-danger);font-size:var(--ui-fs-1);margin-top:var(--ui-sp-2);';
+      var foot = $('[data-node-save]').parentElement.parentElement;
+      // 把 hint 放在 foot 前
+      var existing = foot.parentElement.querySelector('.nd-delete-hint');
+      if (existing) existing.remove();
+      hint.className = 'nd-delete-hint';
+      foot.parentElement.insertBefore(hint, foot);
+      setTimeout(function () { hint.remove(); }, 2400);
+      return;
+    }
+    data.nodes.splice(idx, 1);
+    // 同步把其他节点上指向该 id 的 returnTo 清掉
+    data.nodes.forEach(function (nn) {
+      if (nn.returnTo === nodeCurrentNodeId) nn.returnTo = null;
+    });
+    closeNodeDrawer();
+    renderWfTrack(nodeCurrentScope);
+  });
+
+  // 抽屉内:点 [更换] 打开员工 popover
+  function openNodeEmpPop() {
+    var data = WORKFLOW_NODES[nodeCurrentScope];
+    if (!data) return;
+    var n = data.nodes.find(function (nn) { return nn.id === nodeCurrentNodeId; });
+    if (!n) return;
+    var bizKey = getBizKey(nodeCurrentScope);
+    var pool = EMPLOYEE_POOL[bizKey] || [];
+    nodePopList.innerHTML = pool.map(function (name) {
+      var letter = name.charAt(0);
+      return '<div class="nd-emp-opt" data-emp-opt="' + escapeHtml(name) + '"><span class="av ' + pickAvClass(name) + '">' + escapeHtml(letter) + '</span><span>' + escapeHtml(name) + '</span></div>';
+    }).join('') + '<div class="nd-emp-opt" data-emp-opt-unbound="1"><span class="av" style="background:var(--ui-surface-2);color:var(--ui-text-3)">·</span><span style="color:var(--ui-text-3);font-style:italic">未绑定</span></div>';
+    $$('[data-emp-opt]', nodePopList).forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        var name = opt.getAttribute('data-emp-opt');
+        n.empName = name; n.unbound = false;
+        n.av = name.charAt(0); n.avClass = pickAvClass(name);
+        // 同步 UI
+        nodeEmpAv.className = 'av ' + n.avClass;
+        nodeEmpAv.textContent = n.av;
+        nodeEmpName.textContent = n.empName;
+        nodeEmpBlock.classList.remove('is-unbound');
+        nodePop.classList.remove('is-open');
+      });
+    });
+    var unboundOpt = nodePopList.querySelector('[data-emp-opt-unbound]');
+    if (unboundOpt) unboundOpt.addEventListener('click', function () {
+      n.empName = ''; n.unbound = true; n.av = '·'; n.avClass = 'av-3';
+      nodeEmpAv.className = 'av av-3';
+      nodeEmpAv.textContent = '·';
+      nodeEmpName.textContent = '未绑定';
+      nodeEmpBlock.classList.add('is-unbound');
+      nodePop.classList.remove('is-open');
+    });
+    // Position popover near [更换] button
+    var rect = nodeEmpChangeBtn.getBoundingClientRect();
+    nodePop.style.top  = (window.scrollY + rect.top + 24) + 'px';
+    nodePop.style.left = (window.scrollX + Math.min(rect.right - 240, window.innerWidth - 240 - 16)) + 'px';
+    nodePop.classList.add('is-open');
+    setTimeout(function () { nodePopNew.value = ''; nodePopNew.focus(); }, 50);
+  }
+  nodeEmpChangeBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (nodePop.classList.contains('is-open')) nodePop.classList.remove('is-open');
+    else openNodeEmpPop();
+  });
+  nodePopNew.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var v = nodePopNew.value.trim();
+      if (!v) return;
+      var bizKey = getBizKey(nodeCurrentScope);
+      EMPLOYEE_POOL[bizKey] = (EMPLOYEE_POOL[bizKey] || []).concat([v]);
+      var data = WORKFLOW_NODES[nodeCurrentScope];
+      var n = data && data.nodes.find(function (nn) { return nn.id === nodeCurrentNodeId; });
+      if (n) {
+        n.empName = v; n.unbound = false;
+        n.av = v.charAt(0); n.avClass = pickAvClass(v);
+        nodeEmpAv.className = 'av ' + n.avClass;
+        nodeEmpAv.textContent = n.av;
+        nodeEmpName.textContent = n.empName;
+        nodeEmpBlock.classList.remove('is-unbound');
+      }
+      nodePop.classList.remove('is-open');
+    }
+    if (e.key === 'Escape') { nodePop.classList.remove('is-open'); }
+  });
+  // 点击空白处关闭 popover
+  document.addEventListener('click', function (e) {
+    if (!nodePop.classList.contains('is-open')) return;
+    if (nodePop.contains(e.target) || nodeEmpChangeBtn.contains(e.target)) return;
+    nodePop.classList.remove('is-open');
+  });
+
+
+  /* ════════════════════════ R7 · 字段 Value → 轻量编辑面 ════════════════════════ */
+  var fieldOverlay = $('[data-field-overlay]');
+  var fieldDrawer  = $('[data-field-drawer]');
+  var fieldTitle   = $('[data-field-title]');
+  var fieldCurrent = $('[data-field-current]');
+  var fieldInput   = $('[data-field-input]');
+  function openFieldEdit(label, current, srcEl) {
+    fieldTitle.textContent = label;
+    fieldCurrent.textContent = current || '（空）';
+    fieldInput.value = current || '';
+    fieldDrawer._src = srcEl;
+    fieldOverlay.removeAttribute('hidden');
+    fieldOverlay.classList.add('is-open');
+    fieldDrawer.removeAttribute('hidden');
+    fieldDrawer.classList.add('is-open');
+    setTimeout(function () { fieldInput.focus(); }, 60);
+  }
+  function closeFieldEdit() {
+    if (!fieldDrawer) return;
+    fieldDrawer.classList.remove('is-open');
+    fieldOverlay.classList.remove('is-open');
+    setTimeout(function () { fieldDrawer.setAttribute('hidden', ''); fieldOverlay.setAttribute('hidden', ''); }, 50);
+  }
+  if (fieldDrawer) {
+    $('[data-field-close]').addEventListener('click', closeFieldEdit);
+    $('[data-field-cancel]').addEventListener('click', closeFieldEdit);
+    $('[data-field-save]').addEventListener('click', function () {
+      if (fieldDrawer._src) fieldDrawer._src.textContent = (fieldInput.value || '').trim() || fieldDrawer._src.textContent;
+      closeFieldEdit();
+    });
+    fieldOverlay.addEventListener('click', closeFieldEdit);
+    $$('[data-field-edit]').forEach(function (v) {
+      v.addEventListener('click', function () {
+        openFieldEdit(v.getAttribute('data-field-edit'), v.textContent.trim(), v);
+      });
+    });
+  }
+
+  // ESC 优先级:Node Drawer popover → Node Drawer → Rules Drawer → wf-add-pop
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (nodePop.classList.contains('is-open')) { nodePop.classList.remove('is-open'); return; }
+    if (assignOverlay && assignOverlay.classList.contains('is-open')) { closeAssign(); return; }
+    if (wfAddPop.classList.contains('is-open')) { closeWfAdd(); return; }
+    if (nodeDrawer.classList.contains('is-open')) { closeNodeDrawer(); return; }
+    if (rulesDrawer.classList.contains('is-open')) { closeRules(); return; }
+    if (fieldDrawer && fieldDrawer.classList.contains('is-open')) { closeFieldEdit(); return; }
+  });
+  rulesOverlay.addEventListener('click', closeRules);
+
+  /* ══════════════════════ Bubble 确认修改(7) ══════════════════════ */
+  $$('[data-bubble-confirm]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var bubble = btn.closest('.bubble-suggest');
+      if (!bubble) return;
+      bubble.classList.add('is-applied');
+      var actions = bubble.querySelector('.bs-actions');
+      if (actions) actions.remove();
+      // 实时写回 def-row
+      var state = bubble.closest('.state');
+      if (state) {
+        // 1) 直接更新 规则与配置 Value 与 RULES_DB('biz7')
+        var ruleV = state.querySelector('[data-rules-counter="biz7"]');
+        if (ruleV) {
+          ruleV.classList.remove('empty-note');
+          ruleV.innerHTML = '已配置 · <b>2 项</b>（服务类型 · 服务对象） · 由周璐建议后 1 键确认';
+        }
+        RULES_DB['biz7'] = {
+          title: '业务规则 · 宠物寄养',
+          items: [
+            { title: '服务类型', body: '寄养 / 日间照料 / 上门喂养 三类;按需求勾选' },
+            { title: '服务对象', body: '猫 / 小型犬为主;大型犬需提前备注性情' }
+          ]
+        };
+        // 2) 把对应 todo-row 隐藏
+        var todos = state.querySelectorAll('.biz-todo li');
+        if (todos[0]) todos[0].style.display = 'none';
+      }
+    });
+  });
+  $$('[data-bubble-chat]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var bubble = btn.closest('.bubble-suggest');
+      var composer = bubble && bubble.parentElement.querySelector('.composer-input');
+      if (composer) composer.focus();
+    });
+  });
+
+  /* ══════════════════════ R6 · Assignment Conversation ══════════════════════
+     · 角色作用域对话:Employee × Role × Scope 明确
+     · 与 Leader Workstation(emp-row) 不混为一谈
+     · 点 Workflow 节点员工 / 岗位绑定 pill → 打开按 Role 区分的对话
+  */
+  var assignOverlay  = $('[data-assign-overlay]');
+  var assignDrawer   = $('[data-assign-drawer]');
+  var assignTitle    = $('[data-assign-title]');
+  var assignSub      = $('[data-assign-sub]');
+  var assignEmp      = $('[data-assign-emp]');
+  var assignRole     = $('[data-assign-role]');
+  var assignScope    = $('[data-assign-scope]');
+  var assignConvo    = $('[data-assign-convo]');
+
+  function openAssign(emp, role, scope) {
+    if (!emp || !role) return;
+    assignTitle.textContent = emp + ' · ' + role;
+    assignSub.textContent = 'Assignment Conversation · ' + role;
+    assignEmp.textContent = emp;
+    assignRole.textContent = role;
+    assignScope.textContent = scope || '当前工作空间';
+    assignConvo.innerHTML =
+      '<div class="msg"><div><div class="who">' + escapeHtml(emp) + '</div><div class="bubble">作为「' + escapeHtml(role) + '」，这一环的产出我正在推进。有需要你拍板的地方我会主动同步。</div></div></div>' +
+      '<div class="msg user"><div><div class="who">你</div><div class="bubble">把「' + escapeHtml(role) + '」当前的阻塞或待确认项直接告诉我。</div></div></div>';
+    assignOverlay.removeAttribute('hidden');
+    assignOverlay.classList.add('is-open');
+    assignDrawer.removeAttribute('hidden');
+    assignDrawer.classList.add('is-open');
+  }
+  function closeAssign() {
+    if (!assignDrawer) return;
+    assignDrawer.classList.remove('is-open');
+    assignOverlay.classList.remove('is-open');
+    setTimeout(function () { assignDrawer.setAttribute('hidden', ''); assignOverlay.setAttribute('hidden', ''); }, 50);
+  }
+  if (assignDrawer) {
+    $('[data-assign-close]').addEventListener('click', closeAssign);
+    $('[data-assign-cancel]').addEventListener('click', closeAssign);
+    $('[data-assign-send]').addEventListener('click', closeAssign);
+    assignOverlay.addEventListener('click', closeAssign);
+
+    // 岗位/员工 绑定 pill → 打开按 Role 区分的 Assignment Conversation
+    $$('.emp-bind-pill').forEach(function (pill) {
+      if (pill.classList.contains('is-unbound')) return;
+      var role = (pill.querySelector('.role') || {}).textContent || '';
+      var name = (pill.querySelector('.name') || {}).textContent || '';
+      if (!role || !name) return;
+      pill.addEventListener('click', function () {
+        openAssign(name, role, '当前工作空间');
+      });
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

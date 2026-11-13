@@ -1,0 +1,18 @@
+{
+  "packageId": "com.curis.local.music",
+  "version": "0.2.0",
+  "digest": "cb05fd21e4237d046e20f0b96a81f6894e71caee95c2b0c6559b91ecf56ec802",
+  "published": true,
+  "decision": {
+    "kind": "MUSIC_DEFINITION_PUBLICATION",
+    "digest": "cb05fd21e4237d046e20f0b96a81f6894e71caee95c2b0c6559b91ecf56ec802",
+    "owner": "Curis V1 交付负责人",
+    "path": "docs/reviews/CURIS_LOCAL_USE_BETA_DEFINITION_ADMISSION_20261018.md",
+    "sha256": "3ef27ba83a4ec3a40d7a26787b8539009aab1c336a009f9ea3c41cb5c11e47d9",
+    "scope": "LOCAL_BETA_DEFINITION_ONLY"
+  },
+  "scope": "MANUAL_SOURCE_OPERATING_CHAIN_AND_LOCAL_SONG",
+  "notice": "本地 Beta：人工经营依据、歌词与制作版本、用户提供 WAV 试听及人工选版/本地准备；商业权利未核验，不生成音频或发行。",
+  "publicRelease": false,
+  "providerFeeGrant": false
+}

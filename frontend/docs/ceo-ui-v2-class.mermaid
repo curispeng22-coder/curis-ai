@@ -1,0 +1,159 @@
+classDiagram
+    %% ── 主题与令牌 ──
+    class TerraTheme {
+        +COLORS: color/spacing/radius/shadow
+        +STYLE: overlay/drawer/form/card/button
+        +statusLabel() / roleLabel() / deptTypeLabel()
+    }
+
+    %% ── 导航与外壳 ──
+    class TerraNavData {
+        +ITEMS: NavItem[10]  %% 10 一级 IA；决策中心/重要汇报/战略会议室归总裁办公室二级（不计入顶级）
+        +ORDER: string[10]
+        +findActiveNav(pathname)
+    }
+    class TerraSidebar {
+        +variant: "rail" | "drawer"
+        +expanded: map
+        +onToggle(top)
+        +renderRail()  %% 1024 76px / 1440 220px 纯 CSS
+        +renderDrawer() %% 390 286px
+    }
+    class TerraShell {
+        +drawerOpen: bool
+        +topCrumb / topbarExtra
+        +children
+    }
+    TerraShell *-- TerraSidebar
+    TerraSidebar ..> TerraNavData : 读取两级数据源
+
+    %% ── 通用组件 ──
+    class TerraPrimitives {
+        +TerraButton() +TerraCard() +TerraCardHeader()
+        +TerraEmpty() +TerraBoundary() +TerraTag() +TerraStatusBadge()
+        +TerraFact()/TerraFacts() +TerraPageHead() +TerraBackLink()
+        +TerraSearch()  %% 受控 value/onChange
+    }
+    class TerraIcons {
+        +TerraIcon(name) +TerraIconSprite()
+    }
+    class TerraState {
+        +DATA_COPY: 未记录/未同步/未分配/未读取事实/示例快照
+        +TerraEmptyState() +TerraErrorState() +TerraLoadingSkeleton()
+    }
+    class TerraConfirm {
+        +TerraConfirmDialog(open, onConfirm, disabledReason)
+    }
+    class TerraResourcePicker {
+        +open +onSelect(scope)
+    }
+
+    %% ── 共享本地草稿（T4）──
+    class UseLocalDraft {
+        +useLocalDraft(initial)
+        +createDraft() / updateDraft() / reset()
+        +isDraft / savedAt
+    }
+
+    %% ── 10 一级 IA 页（页面组件）+ 3 二级（总裁办公室：决策中心/重要汇报/战略会议室，仍为独立路由页）──
+    class Pages {
+        <<interface>>
+        +loadData() +renderEmptyOrError() +renderPartial()
+    }
+    class CeoHomePage
+    class ProjectsPage
+    class OrganizationPage
+    class CapabilitiesPage
+    class AnalyticsPage
+    class DecisionsPage
+    class ReportsPage
+    class StrategyRoomPage
+    class BrainstormPage
+    class KnowledgePage
+    class ExecutionPage
+    class SettingsPage
+    class CompanyRuntimePage
+    Pages <|.. CeoHomePage
+    Pages <|.. ProjectsPage
+    Pages <|.. OrganizationPage
+    Pages <|.. CapabilitiesPage
+    Pages <|.. AnalyticsPage
+    Pages <|.. DecisionsPage
+    Pages <|.. ReportsPage
+    Pages <|.. StrategyRoomPage
+    Pages <|.. BrainstormPage
+    Pages <|.. KnowledgePage
+    Pages <|.. ExecutionPage
+    Pages <|.. SettingsPage
+    Pages <|.. CompanyRuntimePage
+
+    %% ── 9 个动态详情页（T3）──
+    class ProjectDetailPage
+    class DepartmentDetailPage
+    class EmployeeDetailPage
+    class SkillDetailPage
+    class ReportDetailPage
+    class BrainstormSessionPage
+    class KnowledgeEntryPage
+    class RunDetailPage
+    class TaskDetailPage
+    Pages <|.. ProjectDetailPage
+    Pages <|.. DepartmentDetailPage
+    Pages <|.. EmployeeDetailPage
+    Pages <|.. SkillDetailPage
+    Pages <|.. ReportDetailPage
+    Pages <|.. BrainstormSessionPage
+    Pages <|.. KnowledgeEntryPage
+    Pages <|.. RunDetailPage
+    Pages <|.. TaskDetailPage
+
+    %% ── 创建/编辑抽屉（本地草稿，T1+T4）──
+    class ProjectFormDrawer
+    class DepartmentFormDrawer
+    class EmployeeFormDrawer
+    class EmployeeEditDrawer
+    class CreateEmployeeDrawer
+
+    %% ── 关系 ──
+    CeoHomePage ..> TerraShell
+    ProjectsPage ..> TerraShell
+    OrganizationPage ..> TerraShell
+    CapabilitiesPage ..> TerraShell
+    AnalyticsPage ..> TerraShell
+    DecisionsPage ..> TerraShell
+    ReportsPage ..> TerraShell
+    StrategyRoomPage ..> TerraShell
+    BrainstormPage ..> TerraShell
+    KnowledgePage ..> TerraShell
+    ExecutionPage ..> TerraShell
+    SettingsPage ..> TerraShell
+    CompanyRuntimePage ..> TerraShell
+    ProjectDetailPage ..> TerraShell
+    DepartmentDetailPage ..> TerraShell
+    EmployeeDetailPage ..> TerraShell
+    SkillDetailPage ..> TerraShell
+    ReportDetailPage ..> TerraShell
+    BrainstormSessionPage ..> TerraShell
+    KnowledgeEntryPage ..> TerraShell
+    RunDetailPage ..> TerraShell
+    TaskDetailPage ..> TerraShell
+
+    Pages ..> TerraPrimitives
+    Pages ..> TerraState : 空/错/partial/Loading
+    CapabilitiesPage ..> TerraResourcePicker
+    ProjectsPage ..> TerraResourcePicker
+    OrganizationPage ..> TerraConfirm
+    ProjectsPage ..> TerraConfirm
+
+    ProjectFormDrawer ..> UseLocalDraft : 本地草稿(不POST)
+    DepartmentFormDrawer ..> UseLocalDraft
+    EmployeeFormDrawer ..> UseLocalDraft
+    EmployeeEditDrawer ..> UseLocalDraft
+    CreateEmployeeDrawer ..> UseLocalDraft
+    EmployeeDetailPage ..> EmployeeEditDrawer
+    DepartmentDetailPage ..> CreateEmployeeDrawer
+
+    TerraPrimitives ..> TerraTheme : 消费 STYLE/token
+    TerraState ..> TerraTheme
+    TerraResourcePicker ..> TerraIcons
+    TerraShell ..> TerraIcons

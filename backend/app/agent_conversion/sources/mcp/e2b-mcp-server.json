@@ -1,0 +1,15 @@
+{
+  "server": "e2b-mcp-server",
+  "name": "E2B Code Sandbox MCP",
+  "description": "云端隔离沙箱执行代码（JavaScript / Python）：每个沙箱为独立容器，AI 生成的代码在隔离环境运行，不影响本地系统。",
+  "license": "Apache-2.0",
+  "_source_url": "https://github.com/e2b-dev/mcp-server",
+  "_original_name": "e2b mcp-server",
+  "_scan_batch": "2026-08-31 持续扫描第三批",
+  "_security_review": "代码上云执行 + 需 E2B API key（有免费额度），非自托管；进入产线前须凭据最小化与执行审计。",
+  "tools": [
+    {"name": "create_sandbox", "description": "创建隔离代码沙箱。"},
+    {"name": "execute_code", "description": "在沙箱中执行代码并返回结果。"},
+    {"name": "list_sandboxes", "description": "列出当前沙箱。"}
+  ]
+}

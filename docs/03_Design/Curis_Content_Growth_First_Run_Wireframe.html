@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Growth · First-Run / Account Setup — Wireframe (Mid-fidelity)</title>
+<style>
+  :root{
+    --bg:#1a1c1f; --surface-1:#202327; --surface-2:#24282d; --surface-3:#2a2f36;
+    --border:#333a42; --text-1:#e6e9ec; --text-2:#9aa3ad; --text-3:#6b7480;
+    --accent:#2e9e63; --accent-deep:#1f7a4d; --warning:#d9952a; --danger:#d05a4f; --success:#2e9e63;
+    --r1:4px; --r2:8px; --r3:12px; --pill:999px; --nav-w:220px;
+    --font:system-ui,-apple-system,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;font-family:var(--font);}
+  body{margin:0;background:var(--bg);color:var(--text-1);font-size:13px;line-height:1.5;}
+  .app{display:grid;grid-template-columns:var(--nav-w) 1fr;min-height:100vh;}
+  .pane-header{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 12px;border-bottom:1px solid var(--border);background:var(--surface-1);}
+  /* frozen shell markers */
+  .pane-tag{font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:var(--pill);padding:1px 7px;letter-spacing:.3px;}
+  .tag-shell{color:#7fb0ff;border-color:#2c4a73;}
+  .traffic{display:flex;gap:6px;}
+  .traffic i{width:11px;height:11px;border-radius:50%;background:#3a3f47;display:inline-block;}
+  .search{color:var(--text-2);font-size:16px;cursor:default;}
+  /* Navigation pane */
+  .nav{padding:10px 10px 0;}
+  .brand{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;font-weight:600;}
+  .brand .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#1d6b46);}
+  .nav-section{font-size:11px;color:var(--text-3);padding:10px 8px 4px;}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r2);color:var(--text-2);cursor:default;margin-bottom:2px;}
+  .nav-item .ico{width:16px;text-align:center;opacity:.8;}
+  .nav-item.active{background:var(--surface-3);color:var(--text-1);}
+  .nav-item.child{margin-left:18px;font-size:12px;}
+  .nav-item.child.active{color:var(--accent);}
+  .nav-foot{position:absolute;bottom:10px;left:10px;color:var(--text-3);font-size:11px;}
+  .nav-col{position:relative;border-right:1px solid var(--border);background:var(--surface-1);}
+  /* Main */
+  .main-col{display:flex;flex-direction:column;min-width:0;}
+  .crumb{color:var(--text-2);font-size:12px;}
+  .crumb b{color:var(--text-1);}
+  .t-toggle{width:26px;height:26px;border:1px solid var(--border);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:13px;}
+  .mock-badge{position:absolute;top:10px;right:14px;font-size:10px;color:var(--text-3);border:1px dashed var(--border);border-radius:var(--pill);padding:2px 8px;}
+  .content{padding:22px 28px;overflow:auto;flex:1;position:relative;}
+  h1{font-size:19px;margin:0 0 4px;}
+  .sub{color:var(--text-2);margin:0 0 18px;font-size:13px;}
+  /* CASE switcher */
+  .case-sw{display:inline-flex;border:1px solid var(--border);border-radius:var(--pill);overflow:hidden;margin-bottom:18px;}
+  .case-sw button{border:0;background:transparent;color:var(--text-2);padding:6px 14px;font-size:12px;cursor:pointer;font-family:var(--font);}
+  .case-sw button.on{background:var(--accent-deep);color:#fff;}
+  .case{display:none;}
+  .case.on{display:block;}
+  /* empty state */
+  .empty{border:1px dashed var(--border);border-radius:var(--r3);padding:40px;text-align:center;background:var(--surface-1);}
+  .empty .big{font-size:15px;margin-bottom:6px;}
+  .empty .dim{color:var(--text-2);margin-bottom:18px;}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:var(--r2);padding:9px 18px;font-size:13px;cursor:pointer;font-family:var(--font);}
+  .btn.ghost{background:transparent;color:var(--text-1);border:1px solid var(--border);}
+  .btn.sm{padding:5px 12px;font-size:12px;}
+  /* platform pick */
+  .platforms{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .plat{width:120px;border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center;background:var(--surface-1);cursor:pointer;}
+  .plat:hover{border-color:var(--accent);}
+  .plat .pico{font-size:22px;}
+  /* account card */
+  .acct{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;background:var(--surface-1);margin-bottom:10px;}
+  .acct .avatar{width:38px;height:38px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .acct .meta{flex:1;min-width:0;}
+  .acct .name{font-weight:600;}
+  .acct .tag{font-size:12px;color:var(--text-2);}
+  .pill{font-size:11px;border-radius:var(--pill);padding:2px 9px;border:1px solid var(--border);color:var(--text-2);}
+  .pill.ok{color:var(--success);border-color:#2c5a40;}
+  .pill.warn{color:var(--warning);border-color:#5a4420;}
+  /* AI bubble */
+  .ai{display:flex;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:14px 16px;margin:16px 0;max-width:640px;}
+  .ai .curis{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1d6b46);flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;}
+  .ai .body{font-size:13px;}
+  .ai .acts{margin-top:10px;display:flex;gap:8px;}
+  /* groups (CASE D) */
+  .group{border:1px solid var(--border);border-radius:var(--r2);padding:12px;margin-bottom:10px;background:var(--surface-1);}
+  .group h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:8px;}
+  .group .cnt{font-size:11px;color:var(--text-3);}
+  .move{font-size:11px;color:var(--accent);text-decoration:underline;cursor:pointer;}
+  .legend{margin-top:26px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border);padding-top:12px;}
+  .legend code{background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--text-2);}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ NAVIGATION PANE (Frozen Shell) ============ -->
+  <div class="nav-col">
+    <div class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="search">🔍</span>
+        <span class="pane-tag tag-shell">SHELL · T1</span>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="brand"><span class="logo"></span> Curis</div>
+      <div class="nav-item"><span class="ico">🏠</span> 首页 / CEO 工作台</div>
+      <div class="nav-section">业务空间</div>
+      <div class="nav-item active"><span class="ico">🗂</span> 业务空间</div>
+      <div class="nav-item child active"><span class="ico">▶</span> 内容增长 <span class="pill" style="margin-left:auto;">设置中</span></div>
+      <div class="nav-item"><span class="ico">🔬</span> 研发办公室</div>
+      <div class="nav-section">其他</div>
+      <div class="nav-item"><span class="ico">🧩</span> 组织中心</div>
+      <div class="nav-item"><span class="ico">🎯</span> 人才市场</div>
+      <div class="nav-item"><span class="ico">📚</span> 资料库</div>
+      <div class="nav-item"><span class="ico">💬</span> 会议</div>
+      <div class="nav-foot">设置 · 帮助与反馈</div>
+    </div>
+  </div>
+
+  <!-- ============ MAIN PANE (Frozen Shell · CG content) ============ -->
+  <div class="main-col">
+    <div class="pane-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="t-toggle">☰</span>
+        <span class="crumb">业务空间 / <b>内容增长</b> / 账号设置</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="pane-tag">MAIN · SHELL</span>
+        <span class="t-toggle">⤢</span>
+      </div>
+    </div>
+    <div class="content">
+      <span class="mock-badge">示例数据</span>
+      <h1>添加你要经营的账号</h1>
+      <p class="sub">先把账号连上，Curis 就能帮你做内容、运营账号。不用先学任何配置。</p>
+
+      <div class="case-sw" id="caseSw">
+        <button class="on" data-c="A">CASE A · 单账号</button>
+        <button data-c="B">CASE B · 同平台2账号</button>
+        <button data-c="C">CASE C · 跨平台同定位</button>
+        <button data-c="D">CASE D · 大量账号</button>
+      </div>
+
+      <!-- CASE A -->
+      <div class="case on" id="caseA">
+        <div class="empty">
+          <div class="big">还没有连接任何账号</div>
+          <div class="dim">连上一个，就能开始让 Curis 帮你做内容。</div>
+          <button class="btn">+ 添加账号</button>
+        </div>
+        <div style="margin-top:18px;">
+          <div class="acct">
+            <div class="avatar">📕</div>
+            <div class="meta">
+              <div class="name">小红书 · 我的账号</div>
+              <div class="tag">@curis_life · 连接正常</div>
+            </div>
+            <span class="pill ok">已连接</span>
+          </div>
+          <p class="sub" style="margin-top:14px;">✓ 账号已连上，直接进入内容增长即可。全程不出现「经营方向 / 绑定 / 账号矩阵」等词。</p>
+          <button class="btn">进入内容增长 →</button>
+        </div>
+      </div>
+
+      <!-- CASE B -->
+      <div class="case" id="caseB">
+        <div class="acct">
+          <div class="avatar">🎵</div>
+          <div class="meta"><div class="name">抖音 · AI 科普</div><div class="tag">@curis_ai · 连接正常</div></div>
+          <span class="pill ok">已连接</span>
+        </div>
+        <div class="acct">
+          <div class="avatar">🎵</div>
+          <div class="meta"><div class="name">抖音 · 个人 IP</div><div class="tag">@curis_me · 连接正常</div></div>
+          <span class="pill ok">已连接</span>
+        </div>
+        <div class="ai">
+          <div class="curis">C</div>
+          <div class="body">
+            这两个抖音账号讲的东西不太一样——一个偏 <b>AI 科普</b>，一个偏 <b>个人日常</b>。建议分开经营，各自有独立选题和策略，互不干扰。要分开吗？
+            <div class="acts">
+              <button class="btn sm">分开经营（推荐）</button>
+              <button class="btn ghost sm">放一起试试</button>
+            </div>
+          </div>
+        </div>
+        <p class="sub">选「分开」→ 建两个经营方向，各自独立选题库 / 策略（用户面称「经营方向」，不出现 Office 原词）。</p>
+        <button class="btn">进入内容增长 →</button>
+      </div>
+
+      <!-- CASE C -->
+      <div class="case" id="caseC">
+        <div class="acct"><div class="avatar">🎵</div><div class="meta"><div class="name">抖音 · Curis AI</div><div class="tag">@curis_ai · 连接正常</div></div><span class="pill ok">已连接</span></div>
+        <div class="acct"><div class="avatar">📕</div><div class="meta"><div class="name">小红书 · Curis AI</div><div class="tag">@curis_ai · 连接正常</div></div><span class="pill ok">已连接</span></div>
+        <div class="acct"><div class="avatar">📺</div><div class="meta"><div class="name">B站 · Curis AI</div><div class="tag">@curis_ai · 连接正常</div></div><span class="pill ok">已连接</span></div>
+        <div class="acct"><div class="avatar">🌐</div><div class="meta"><div class="name">TikTok · Curis AI</div><div class="tag">@curis_ai · 连接正常</div></div><span class="pill ok">已连接</span></div>
+        <div class="ai">
+          <div class="curis">C</div>
+          <div class="body">
+            这几个账号都在讲同一套内容（<b>Curis AI 品牌</b>），建议放进<b>同一个经营方向</b>，共享选题、资料和策略；需要时再为每个平台分别制作。
+            <div class="acts">
+              <button class="btn sm">放一起（推荐）</button>
+              <button class="btn ghost sm">我想分开管理</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn">进入内容增长 →</button>
+      </div>
+
+      <!-- CASE D -->
+      <div class="case" id="caseD">
+        <div class="ai">
+          <div class="curis">C</div>
+          <div class="body">
+            我按内容和定位先分了 3 组。你可以直接采用，或拖动 / 用「移动」调整。
+          </div>
+        </div>
+        <div class="group">
+          <h4>① Curis AI 品牌 <span class="cnt">4 个账号</span></h4>
+          <div class="acct"><div class="avatar">🎵</div><div class="meta"><div class="name">抖音 · Curis AI</div></div><span class="move" onclick="this.closest('.acct').style.opacity=.4">移动到 →</span></div>
+          <div class="acct"><div class="avatar">📕</div><div class="meta"><div class="name">小红书 · Curis AI</div></div><span class="move">移动到 →</span></div>
+          <div class="acct"><div class="avatar">📺</div><div class="meta"><div class="name">B站 · Curis AI</div></div><span class="move">移动到 →</span></div>
+          <div class="acct"><div class="avatar">🌐</div><div class="meta"><div class="name">TikTok · Curis AI</div></div><span class="move">移动到 →</span></div>
+        </div>
+        <div class="group">
+          <h4>② 个人 IP <span class="cnt">2 个账号</span></h4>
+          <div class="acct"><div class="avatar">🎵</div><div class="meta"><div class="name">抖音 · 个人 IP</div></div><span class="move">移动到 →</span></div>
+          <div class="acct"><div class="avatar">📕</div><div class="meta"><div class="name">小红书 · 个人 IP</div></div><span class="move">移动到 →</span></div>
+        </div>
+        <div class="group">
+          <h4>③ 数码测评 <span class="cnt">2 个账号</span></h4>
+          <div class="acct"><div class="avatar">📺</div><div class="meta"><div class="name">B站 · 数码测评</div></div><span class="move">移动到 →</span></div>
+          <div class="acct"><div class="avatar">🎵</div><div class="meta"><div class="name">抖音 · 数码测评</div></div><span class="move">移动到 →</span></div>
+        </div>
+        <p class="sub" style="margin-top:6px;">确认后进入；后续仍可在「账号」管理面调整。OAuth 过期仅标「授权已过期 · 可重连」，不删账号与历史。</p>
+        <button class="btn">确认分组，进入内容增长 →</button>
+      </div>
+
+      <!-- I4.8 推荐默认经营节奏（First-Run 不复杂化） -->
+      <div class="ai" style="margin-top:22px;max-width:680px;border-color:#2c5a40;">
+        <div class="curis">C</div>
+        <div class="body">
+          账号连好了。我先按比较稳妥的节奏帮你运行，不用你现在就设一堆规则：
+          <b>每天收集几次选题 · 每天准备一定数量内容 · 按各账号常用时间自动发布</b>。之后我会根据数据给你调整建议。
+          <div class="acts">
+            <button class="btn sm">就这样开始 →</button>
+            <button class="btn ghost sm">调整一下</button>
+          </div>
+        </div>
+      </div>
+      <p class="sub" style="margin-top:10px;">选「就这样开始」即进入内容增长；选「调整一下」才展开少量自然选项（如每天条数、各账号发布时间），不要求填几十项规则。具体次数 / 时间仅为示例，不 Frozen。</p>
+
+      <div class="legend">
+        <b>Pane 标注</b>：左列 <code>Navigation (SHELL · T1)</code> = Frozen Shell 六区导航；右列 <code>Main (SHELL)</code> 承载本场景 CG 内容（账号连接与分组引导）。<br/>
+        <b>本轮未用</b>：Context / Utility 在首轮默认收起（OAuth 技术细节不设计）。无 Global Topbar；T1/T2/T3 位置遵循 Frozen Shell。<br/>
+        <b>未暴露词</b>：OfficeAccountBinding / Account Pool / Target Account Set / Office（内部语义完整，用户面零暴露）。<br/>
+        <b>本轮新增（I4.8）</b>：连接完成后由 Curis 提供「推荐默认经营节奏」+ [就这样开始]/[调整一下]，First-Run 保持极简，不要求新用户填大量规则。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sw = document.getElementById('caseSw');
+  sw.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...sw.children].forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.querySelectorAll('.case').forEach(c=>c.classList.remove('on'));
+    document.getElementById('case'+b.dataset.c).classList.add('on');
+  });
+</script>
+</body>
+</html>

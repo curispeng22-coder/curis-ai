@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<!--
+  Curis XHS Workspace — Visual Exploration v4 (Pane Shell + Automation)
+  Status: XHS INSTANCE APPROVED CANDIDATE · SHELL / SHARED DELTA REVIEW REQUIRED
+  设计产物（design artifact），非 Curis 正式前端代码。
+  相对 v3 的变化：
+   1. 撤销 Global Topbar 横跨结构 → 新 Shell = Top-aligned Independent Pane
+      Navigation Pane | Context Pane(optional) | Main Pane | Utility Pane(optional)
+      四 Pane 各自独立、顶部齐平、各自 Pane Header + Pane Content；
+      Main Header 仅属 Main Pane，不横跨；Context/Utility 打开不挤压 Main Header。
+      （对应 Shell Contract Delta-X7 Candidate，未 Frozen）
+   2. 修正自动工作流（Automation by default, Human action only at Decision Gates）：
+      删除 CEO 人工"提交审核"按钮 → 改为状态/事件（自动交接审核）；
+      删除 Review Gate"通过并送审 CEO"按钮 → 升级由系统自动完成，仅 Decision Gate 出现 CEO Action；
+      AI 自处理审核（自动继续/退回/Handoff）；CEO 决策后工作流自动恢复。
+  继承已通过项：Content Object×Time / Calendar→Split / Note 专业创作 / Employee Presence /
+               Workstation 按需展开 / Handoff / Result Reference / Context·Utility Adaptive+Resizable。
+  五状态：A.Default Calendar  B.Note Selected→Split Working  C.Review Gate/Needs CEO
+          D.Utility→Note Preview  E.Published→Analytics
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis XHS Workspace · Visual v4 (Pane Shell + Automation)</title>
+<style>
+/* ===== Frozen Design System tokens（唯一真源，照搬 _system/tokens.css） ===== */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --ui-bg: #1a1c1f; --ui-surface: #222529; --ui-surface-2: #2b2f34;
+  --ui-line: #343940; --ui-text: #f3f4f6; --ui-text-2: #a7adb6; --ui-text-3: #a3aab4;
+  --ui-action-primary-bg: #32f08c; --ui-action-primary-hover: #0fdc78; --ui-action-primary-fg: #0c0c0d;
+  --ui-accent: #32f08c; --ui-success: #3fcf86; --ui-warning: #d89a3a; --ui-danger: #e57373;
+  --ui-sidebar-w: 220px; --ui-topbar-h: 52px;
+  --ui-radius: 12px; --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0,0,0,0.25); --ui-shadow-2: 0 4px 12px rgba(0,0,0,0.32); --ui-shadow-3: 0 12px 32px rgba(0,0,0,0.44);
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-fs-1: 12px; --ui-fs-2: 13px; --ui-fs-3: 14px; --ui-fs-4: 16px; --ui-fs-5: 20px; --ui-fs-6: 24px; --ui-fs-7: 28px;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+  --ui-line: #e5e7eb; --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+  --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+  --ui-accent: #1a1c1f; --ui-success: #21895d; --ui-warning: #b87922; --ui-danger: #c43f3f;
+  --ui-shadow: 0 1px 2px rgba(15,18,35,0.05); --ui-shadow-2: 0 4px 12px rgba(15,18,35,0.08); --ui-shadow-3: 0 12px 32px rgba(15,18,35,0.12);
+}
+:root {
+  --ui-sp-1: 4px; --ui-sp-2: 8px; --ui-sp-3: 12px; --ui-sp-4: 16px; --ui-sp-5: 20px; --ui-sp-6: 24px; --ui-sp-7: 32px; --ui-sp-8: 48px;
+  --ui-r-xs: 4px; --ui-r-sm: 8px; --ui-r-md: 12px; --ui-r-lg: 16px; --ui-r-pill: 999px;
+  --ui-z-base: 0; --ui-z-sticky: 100; --ui-z-dropdown: 200; --ui-z-drawer: 300; --ui-z-modal: 400; --ui-z-toast: 500;
+  --ui-dur-1: 120ms; --ui-dur-2: 200ms; --ui-dur-3: 320ms; --ui-ease-standard: cubic-bezier(0.2,0,0,1);
+  --ui-focus-w: 2px; --ui-focus-offset: 2px; --ui-focus-color: var(--ui-accent);
+  --ui-ctl-h-sm: 32px; --ui-ctl-h: 36px; --ui-ctl-h-lg: 40px; --ui-tap-min: 32px;
+  --ui-lh-tight: 1.25; --ui-lh: 1.5; --ui-lh-loose: 1.7;
+}
+* { box-sizing: border-box; }
+body { margin:0; background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+:where(a,button,input,textarea,select):focus-visible { outline: var(--ui-focus-w) solid var(--ui-focus-color); outline-offset: var(--ui-focus-offset); border-radius: var(--ui-r-xs); }
+
+/* ===== doc header ===== */
+.doc-head { padding: var(--ui-sp-6) var(--ui-sp-6) var(--ui-sp-4); border-bottom: 1px solid var(--ui-line); }
+.doc-head h1 { font-size: var(--ui-fs-6); margin: 0 0 var(--ui-sp-2); letter-spacing: -0.01em; }
+.doc-head p { color: var(--ui-text-2); margin: 0; font-size: var(--ui-fs-2); max-width: 980px; line-height: var(--ui-lh-loose); }
+.chip { display:inline-block; font-size: var(--ui-fs-1); font-weight:600; padding: 3px 10px; border-radius: var(--ui-r-pill); border:1px solid var(--ui-warning); color: var(--ui-warning); margin-left: var(--ui-sp-2); vertical-align: middle; }
+
+/* ===== app frame: Top-aligned Independent Pane ===== */
+.app { border:1px solid var(--ui-line); border-radius: var(--ui-r-lg); overflow:hidden; margin: var(--ui-sp-6); background: var(--ui-bg); box-shadow: var(--ui-shadow-2); }
+.panes { display:flex; align-items:stretch; min-height:680px; position:relative; }
+.pane { display:flex; flex-direction:column; min-width:0; position:relative; }
+.pane-head { height: var(--ui-topbar-h); flex:none; display:flex; align-items:center; gap: var(--ui-sp-3); padding: 0 var(--ui-sp-4); border-bottom:1px solid var(--ui-line); }
+.pane-body { flex:1; min-height:0; overflow:auto; }
+
+/* Navigation Pane */
+.pane-nav { width: var(--ui-sidebar-w); flex:none; background: var(--ui-surface-2); border-right:1px solid var(--ui-line); transition:width var(--ui-dur-3) var(--ui-ease-standard), opacity var(--ui-dur-3) var(--ui-ease-standard); overflow:hidden; position:relative; z-index:2; }
+/* Navigation Pane Header = 单行顶栏：左侧 Traffic Lights，右侧 T1 折叠按钮 */
+.nav-head { background: var(--ui-surface-2); display:flex; flex-direction:row; align-items:center; justify-content:space-between; flex-shrink:0; padding: 0 var(--ui-sp-3) 0 var(--ui-sp-4); gap: var(--ui-sp-2); }
+.nav-head .traffic-lights { flex:none; margin:0; }
+.traffic-lights { display:flex; gap:7px; }
+.tl-dot { width:12px; height:12px; border-radius:50%; flex:none; cursor:pointer; }
+.tl-close { background:#ff5f57; } .tl-minimize { background:#febc2e; } .tl-maximize { background:#28c840; }
+/* Curis logo 固定显示在导航内容区顶部（顶栏以下） */
+.nav-brand { display:flex; align-items:center; gap: var(--ui-sp-2); padding: var(--ui-sp-3) var(--ui-sp-4); border-bottom:1px solid var(--ui-line); font-size: var(--ui-fs-4); font-weight:600; color: var(--ui-text); flex-shrink:0; }
+.nav-brand .logo { width:22px; height:22px; border-radius: var(--ui-r-sm); background: var(--ui-accent); display:inline-flex; align-items:center; justify-content:center; color: var(--ui-action-primary-fg); font-weight:700; font-size: var(--ui-fs-1); flex:none; }
+
+/* ===== 统一 Toggle Icon Control（T1/T2/T3 共用基类）===== */
+.pane-toggle { width:28px; height:28px; min-width:28px; border-radius: var(--ui-r-sm); border:none; background:transparent; color: var(--ui-text-2); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; flex:none; transition:background 150ms ease, color 150ms ease; }
+.pane-toggle svg { width:16px; height:16px; stroke: currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.pane-toggle:hover { background: var(--ui-surface); color: var(--ui-text); }
+.pane-toggle:active { background: var(--ui-surface-2); }
+
+/* T1 Navigation Toggle — 展开时在 Nav Header 右侧；折叠后转移到 Main Header 左侧 */
+.nh-toggle { margin-left:auto; }                     /* Nav Header 中靠右 */
+.main-head .nh-toggle { margin-left:0; margin-right: var(--ui-sp-2); order:-1; }  /* Main Header 中靠左 */
+.pane-nav:not(.collapsed) ~ .pane-main .main-head .nh-toggle { display:none; }
+.pane-nav.collapsed .nav-head .nh-toggle { display:none; }
+.nav-body { padding: var(--ui-sp-3); display:flex; flex-direction:column; gap:2px; }
+.nav-head-right { display:flex; align-items:center; gap: var(--ui-sp-1); }
+.nav-search-trigger svg { width:16px; height:16px; stroke: currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.nav-zone { display:flex; align-items:center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-radius: var(--ui-r-sm); color: var(--ui-text-2); min-height: var(--ui-tap-min); font-size: var(--ui-fs-3); cursor:pointer; }
+.nav-zone .ic { width:18px; text-align:center; opacity:.8; }
+.nav-zone.active { background: var(--ui-surface); color: var(--ui-text); }
+.nav-zone.child { margin-left: var(--ui-sp-4); font-size: var(--ui-fs-2); }
+.nav-zone.child.active { color: var(--ui-accent); }
+.nav-foot { margin-top:auto; display:flex; align-items:center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-3); border-top:1px solid var(--ui-line); }
+.nav-foot-txt { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+/* collapsed nav (T1) — 完全收起，不是细轨；浮动按钮独立显示 */
+.pane-nav.collapsed { width:0; border-right-color:transparent; opacity:0; }
+
+/* Context Pane (optional, Adaptive) */
+.pane-ctx { width:260px; flex:none; background: var(--ui-surface-2); border-right:1px solid var(--ui-line); display:none; }
+.panes.ctx-open .pane-ctx { display:flex; }
+.ctx-head { background: var(--ui-surface-2); }
+.ctx-name { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); flex:1; }
+.ctx-switch, .ut-mode, .mh-more { height:28px; min-width:28px; border-radius: var(--ui-r-sm); border:none; background:transparent; color: var(--ui-text-2); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; font-size: var(--ui-fs-2); transition:background 150ms ease, color 150ms ease; }
+.ctx-switch, .ut-mode, .mh-more { flex:none; }
+.ctx-switch svg, .ut-mode svg, .mh-more svg { width:14px; height:14px; stroke: currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.ctx-switch:hover, .ut-mode:hover, .mh-more:hover { background: var(--ui-surface); color: var(--ui-text); }
+/* T2 Context Toggle / T3 Utility Toggle — 复用 .pane-toggle 基类 */
+.mh-ctx { margin-right: var(--ui-sp-1); margin-left: var(--ui-sp-1); }
+/* T3 Utility Toggle 位置转移（与 T1 对称）：
+ * 折叠时（util 未开）→ 显示在 Main Header 右侧
+ * 展开时（util-open）→ 显示在 Utility Header 右侧（最大化按钮之后） */
+.mh-util { margin-left: var(--ui-sp-1); }
+.util-head .mh-util { margin-left: var(--ui-sp-1); }
+.panes:not(.util-open) .util-head .mh-util { display:none; }
+.panes.util-open .main-head .mh-util { display:none; }
+.ctx-body { padding: var(--ui-sp-3); }
+.ctx-row { padding: var(--ui-sp-3); border:1px solid var(--ui-line); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); color: var(--ui-text-2); margin-bottom:2px; cursor:pointer; background: var(--ui-surface); }
+.ctx-row:hover { color: var(--ui-text); border-color: var(--ui-accent); }
+
+/* Main Pane */
+.pane-main { flex:1; min-width:0; }
+.main-head { background: var(--ui-surface); }
+.crumbs { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs b { color: var(--ui-text); font-weight:600; }
+.crumb-obj { color: var(--ui-text); }
+.mh-ctx { margin-right: var(--ui-sp-2); }
+.mh-util { margin-left: var(--ui-sp-2); }
+.mh-more { margin-left: var(--ui-sp-2); }
+.main-body { padding: var(--ui-sp-5); }
+.spacer { flex:1; }
+
+/* Utility Pane (optional, Adaptive) — 内置浏览器 */
+.pane-util { width:360px; flex:none; background: var(--ui-surface-2); border-left:1px solid var(--ui-line); display:none; flex-direction:column; }
+.panes.util-open .pane-util { display:flex; }
+.util-head { background: var(--ui-surface-2); flex-shrink:0; }
+.ut-name { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); flex:1; display:flex; align-items:center; gap:6px; min-width:0; }
+.ut-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); font-weight:400; }
+/* 最大化按钮 */
+.util-maximize { width:28px; height:28px; min-width:28px; border-radius: var(--ui-r-sm); border:none; background:transparent; color: var(--ui-text-2); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; flex:none; transition:background 150ms ease, color 150ms ease; }
+.util-maximize svg { width:14px; height:14px; stroke: currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.util-maximize:hover { background: var(--ui-surface); color: var(--ui-text); }
+
+/* Utility 浏览器内容区 */
+.util-body { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+/* 文件标签栏 */
+.util-tabs { display:flex; align-items:center; gap:0; padding: 0 var(--ui-sp-3); border-bottom:1px solid var(--ui-line); flex-shrink:0; height:34px; overflow-x:auto; }
+.util-tab { padding: 0 var(--ui-sp-3); height:100%; font-size: var(--ui-fs-2); color: var(--ui-text-2); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:4px; transition:color 150ms ease, border-color 150ms ease; }
+.util-tab:hover { color: var(--ui-text); background: var(--ui-surface); }
+.util-tab.active { color: var(--ui-accent); border-bottom-color: var(--ui-accent); font-weight:500; }
+.util-tab .tab-close { width:14px; height:14px; border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:.5; font-size:10px; }
+.util-tab .tab-close:hover { opacity:1; background: var(--ui-surface-2); }
+/* 浏览器视口 */
+.util-viewport { flex:1; min-height:0; background: var(--ui-bg); display:flex; align-items:center; justify-content:center; position:relative; overflow:auto; }
+.util-viewport-inner { width:100%; min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: var(--ui-sp-3); padding: var(--ui-sp-6); color: var(--ui-text-2); font-size: var(--ui-fs-3); }
+.util-viewport-inner svg { width:48px; height:48px; stroke: var(--ui-line); stroke-width:1; fill:none; margin-bottom: var(--ui-sp-2); }
+
+/* ===== 最大化 Overlay 模式（Utility 覆盖全页面）===== */
+.util-overlay { position:fixed; inset:0; z-index:9999; background: var(--ui-bg); display:none; flex-direction:column; }
+.util-overlay.active { display:flex; animation: util-overlay-in 200ms var(--ui-ease-standard) forwards; }
+@keyframes util-overlay-in { from{opacity:0; transform:scale(.98);} to{opacity:1; transform:scale(1);} }
+.util-overlay-head { height: var(--ui-topbar-h); flex:none; display:flex; align-items:center; padding: 0 var(--ui-sp-4); border-bottom:1px solid var(--ui-line); background: var(--ui-surface-2); }
+.util-overlay-title { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); flex:1; }
+.util-overlay-close { width:28px; height:28px; border-radius: var(--ui-r-sm); border:none; background:transparent; color: var(--ui-text-2); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.util-overlay-close svg { width:16px; height:16px; stroke: currentColor; stroke-width:1.5; fill:none; }
+.util-overlay-close:hover { background: var(--ui-surface); color: var(--ui-text); }
+.util-overlay-body { flex:1; min-height:0; overflow:auto; background: var(--ui-bg); }
+
+/* ===== Search Surface（Company-wide Object Search · v1 基础对象搜索） ===== */
+.search-surface { position:fixed; inset:0; z-index:9998; display:none; }
+.search-surface.open { display:block; }
+.search-scrim { position:absolute; inset:0; background: rgba(0,0,0,0.30); }
+.search-panel { position:absolute; top: var(--ui-sp-7); left:50%; transform: translateX(-50%); width:min(680px, calc(100vw - 32px)); max-height: calc(100vh - 2*var(--ui-sp-7)); background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); box-shadow: var(--ui-shadow-3); display:flex; flex-direction:column; overflow:hidden; animation: search-in 200ms var(--ui-ease-standard) forwards; }
+@keyframes search-in { from{opacity:0; transform: translateX(-50%) translateY(-8px);} to{opacity:1; transform: translateX(-50%) translateY(0);} }
+[data-theme="light"] .search-scrim { background: rgba(15,18,35,0.18); }
+.search-input-row { display:flex; align-items:center; gap: var(--ui-sp-2); padding: var(--ui-sp-3) var(--ui-sp-4); border-bottom:1px solid var(--ui-line); flex:none; }
+.search-input-row > svg { width:18px; height:18px; stroke: var(--ui-text-2); stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+.search-input { flex:1; min-width:0; border:none; background:transparent; color: var(--ui-text); font-size: var(--ui-fs-4); font-family: var(--ui-font); outline:none; }
+.search-input::placeholder { color: var(--ui-text-3); }
+.search-close { width:28px; height:28px; border-radius: var(--ui-r-sm); border:none; background:transparent; color: var(--ui-text-2); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; }
+.search-close svg { width:16px; height:16px; stroke: currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.search-close:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.search-body { flex:1; min-height:0; overflow:auto; padding: var(--ui-sp-2) var(--ui-sp-3) var(--ui-sp-4); }
+.search-section-label { font-size: var(--ui-fs-1); font-weight:600; letter-spacing:.04em; text-transform:uppercase; color: var(--ui-text-3); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.search-group { margin-bottom: var(--ui-sp-3); }
+.search-group-title { display:flex; align-items:center; gap: var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight:600; letter-spacing:.04em; text-transform:uppercase; color: var(--ui-text-3); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.search-group-title .dot { width:7px; height:7px; border-radius:50%; background: var(--ui-accent); flex:none; }
+.search-result { display:flex; align-items:center; gap: var(--ui-sp-3); padding: var(--ui-sp-2) var(--ui-sp-3); border-radius: var(--ui-r-sm); cursor:pointer; }
+.search-result:hover { background: var(--ui-surface-2); }
+.search-result .sr-ic { width:30px; height:30px; border-radius: var(--ui-r-sm); background: var(--ui-surface-2); display:flex; align-items:center; justify-content:center; font-size: var(--ui-fs-3); flex:none; }
+.search-result .sr-main { flex:1; min-width:0; }
+.search-result .sr-title { font-size: var(--ui-fs-3); color: var(--ui-text); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.search-result .sr-ctx { font-size: var(--ui-fs-1); color: var(--ui-text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.search-result .sr-type { font-size: var(--ui-fs-1); color: var(--ui-text-3); flex:none; padding: 2px 8px; border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); white-space:nowrap; }
+.search-hint { flex:none; padding: var(--ui-sp-2) var(--ui-sp-4); border-top:1px solid var(--ui-line); font-size: var(--ui-fs-1); color: var(--ui-text-3); background: var(--ui-surface-2); }
+
+/* resizers (Resizable Adaptive Surface · Delta-X5) */
+.pane-resize { position:absolute; top:0; bottom:0; width:6px; cursor:ew-resize; z-index:var(--ui-z-sticky); }
+.pane-resize:hover { background: var(--ui-accent); opacity:.35; }
+.ctx-resize { right:-3px; }
+.util-resize { left:-3px; }
+
+/* ===== avatar / theme (global, live in Navigation Pane) ===== */
+.avatar { width: 32px; height:32px; border-radius: var(--ui-r-pill); background: var(--ui-surface-2); border:1px solid var(--ui-line); display:inline-flex; align-items:center; justify-content:center; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.theme-btn { height: var(--ui-ctl-h-sm); min-width: var(--ui-ctl-h-sm); padding: 0 var(--ui-sp-3); border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text); font-size: var(--ui-fs-1); cursor:pointer; }
+
+/* ===== State A: Default Calendar（Note 作为业务对象，非普通 Scheduler） ===== */
+.cal-head { display:flex; align-items:center; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-4); flex-wrap:wrap; }
+.cal-head h2 { font-size: var(--ui-fs-5); margin:0; }
+.seg { display:inline-flex; border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); overflow:hidden; }
+.seg button { border:0; background:transparent; color: var(--ui-text-2); padding:0 var(--ui-sp-3); height: var(--ui-ctl-h-sm); font-size: var(--ui-fs-2); cursor:pointer; }
+.seg button.on { background: var(--ui-surface-2); color: var(--ui-text); }
+.btn-primary { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border:0; height: var(--ui-ctl-h); padding:0 var(--ui-sp-4); border-radius: var(--ui-r-sm); font-weight:600; font-size: var(--ui-fs-2); cursor:pointer; }
+.legend { display:flex; gap: var(--ui-sp-3); font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-left:auto; align-items:center; flex-wrap:wrap; }
+.dot { width:8px; height:8px; border-radius:50%; display:inline-block; vertical-align:middle; margin-right:4px; }
+.cal-grid { display:grid; grid-template-columns: repeat(7,1fr); gap: var(--ui-sp-2); }
+.cal-dow { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-align:center; padding: var(--ui-sp-2) 0; }
+.cal-cell { background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-2); min-height: 168px; display:flex; flex-direction:column; gap: var(--ui-sp-2); }
+.cal-cell.today { border-color: var(--ui-accent); }
+.dnum { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.note-card { position:relative; background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-sm); overflow:hidden; cursor:pointer; transition: border-color var(--ui-dur-1) var(--ui-ease-standard); }
+.note-card:hover { border-color: var(--ui-accent); }
+.note-card .cover { position:relative; aspect-ratio: 3/4; background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); }
+.note-card .av-over { position:absolute; left:6px; bottom:6px; width:22px; height:22px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size:10px; color: var(--ui-text); box-shadow: var(--ui-shadow); }
+.note-card .meta { padding: var(--ui-sp-2); }
+.note-card .ttl { font-size: var(--ui-fs-1); color: var(--ui-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.note-card .st { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:3px; display:flex; align-items:center; }
+/* 密集单元格：Primary 封面收为紧凑缩略，受控不无限增高 */
+.cal-cell.dense .note-card .cover { height:56px; aspect-ratio:auto; }
+
+/* Compact Note Row — 低视觉重量，非完整卡片 */
+.note-row { display:flex; align-items:center; gap:6px; padding:4px 4px; border-radius: var(--ui-r-sm); cursor:pointer; font-size: var(--ui-fs-1); color: var(--ui-text); }
+.note-row:hover { background: var(--ui-surface-2); }
+.note-row .t { color: var(--ui-text-3); font-variant-numeric: tabular-nums; flex:none; width:34px; }
+.note-row .av-mini { width:18px; height:18px; border-radius:50%; background: var(--ui-surface-2); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size:9px; color: var(--ui-text-2); flex:none; }
+.note-row .ttl { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.note-row .st { display:flex; align-items:center; flex:none; color: var(--ui-text-2); }
+
+/* +N 篇 入口 */
+.more-notes { font-size: var(--ui-fs-1); color: var(--ui-accent); cursor:pointer; padding:4px 4px; border-radius: var(--ui-r-sm); margin-top:2px; }
+.more-notes:hover { background: var(--ui-surface-2); }
+
+/* Day Focus / Day Detail 覆盖层（仅列当天完整 Note，不扩展复杂页面） */
+.day-focus { position:fixed; inset:0; z-index:9998; display:none; }
+.day-focus.open { display:block; }
+.df-backdrop { position:absolute; inset:0; background: rgba(10,12,16,.5); }
+.df-panel { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:min(440px,92vw); max-height:80vh; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); box-shadow: var(--ui-shadow); display:flex; flex-direction:column; overflow:hidden; }
+.df-head { display:flex; align-items:center; justify-content:space-between; padding: var(--ui-sp-3) var(--ui-sp-4); border-bottom:1px solid var(--ui-line); font-size: var(--ui-fs-3); font-weight:600; }
+.df-close { width:28px; height:28px; border-radius:var(--ui-r-sm); border:1px solid var(--ui-line); background:transparent; color:var(--ui-text-2); cursor:pointer; font-size:var(--ui-fs-2); }
+.df-close:hover { background: var(--ui-surface-2); }
+.df-list { flex:1; min-height:0; overflow:auto; padding: var(--ui-sp-2) var(--ui-sp-3) var(--ui-sp-4); display:flex; flex-direction:column; gap: var(--ui-sp-2); }
+.df-row { display:flex; align-items:center; gap:8px; padding: var(--ui-sp-2) var(--ui-sp-3); border:1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); cursor:pointer; }
+.df-row:hover { border-color: var(--ui-accent); }
+.df-row.primary { border-color: var(--ui-accent); }
+.df-row .t { color: var(--ui-text-3); font-variant-numeric: tabular-nums; flex:none; width:38px; font-size: var(--ui-fs-1); }
+.df-row .av-mini { width:22px; height:22px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size:10px; color: var(--ui-text-2); flex:none; }
+.df-row .ttl { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size: var(--ui-fs-2); }
+.df-row .st { font-size: var(--ui-fs-1); color: var(--ui-text-2); display:flex; align-items:center; flex:none; }
+.df-hint { font-size: var(--ui-fs-1); color: var(--ui-text-3); padding: 0 var(--ui-sp-3) var(--ui-sp-2); }
+
+/* ===== State B/E: Split Working（专业创作工作面 + 员工持续可感知） ===== */
+.split { display:flex; gap: var(--ui-sp-4); min-height: 600px; }
+.time-ctx { width: 220px; flex:none; background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3); overflow:auto; }
+.tc-h { font-size: var(--ui-fs-1); color: var(--ui-text-2); text-transform:uppercase; letter-spacing:.06em; margin-bottom: var(--ui-sp-2); }
+.tc-day { padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); color: var(--ui-text-2); margin-bottom:2px; }
+.tc-day.cur { background: var(--ui-surface); color: var(--ui-text); }
+.tc-day .mini { display:flex; gap:4px; margin-top:6px; }
+
+.note-work { position:relative; flex:1; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-5); overflow:auto; }
+.nw-close { position:absolute; top: var(--ui-sp-4); right: var(--ui-sp-4); width:32px; height:32px; border-radius: var(--ui-r-sm); border:1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); cursor:pointer; font-size: var(--ui-fs-2); }
+
+/* Employee Presence（持续可感知，非常驻列表） */
+.presence { display:flex; align-items:center; gap: var(--ui-sp-3); padding: var(--ui-sp-3); background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); margin-bottom: var(--ui-sp-3); }
+.presence .av { width:36px; height:36px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size: var(--ui-fs-2); color: var(--ui-text); flex:none; }
+.presence .who { font-size: var(--ui-fs-3); }
+.presence .who b { font-weight:600; }
+.presence .doing { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:2px; }
+.presence .state { font-size: var(--ui-fs-1); border:1px solid var(--ui-line); padding:3px 10px; border-radius: var(--ui-r-pill); color: var(--ui-text-2); }
+.presence .expand { margin-left:auto; font-size: var(--ui-fs-1); color: var(--ui-accent); background:transparent; border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:4px 10px; cursor:pointer; }
+.handoff-light { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-4); display:flex; align-items:center; gap:6px; }
+
+/* 创作工作面（直接编辑内容本身，无表单边框） */
+.nw-body { display:flex; gap: var(--ui-sp-5); align-items:flex-start; }
+.nw-cover { width:240px; flex:none; }
+.nw-cover .cover { position:relative; aspect-ratio:3/4; border-radius: var(--ui-r-md); background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); border:1px solid var(--ui-line); }
+.nw-cover .badge { position:absolute; top:8px; left:8px; font-size:10px; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:2px 8px; color: var(--ui-text-2); }
+.nw-cover .hint { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top: var(--ui-sp-2); }
+.nw-fields { flex:1; min-width:0; display:flex; flex-direction:column; gap: var(--ui-sp-4); }
+.ed-title { width:100%; border:0; background:transparent; color: var(--ui-text); font-family:inherit; font-size: var(--ui-fs-6); font-weight:600; line-height: var(--ui-lh-tight); padding:0; }
+.ed-title:focus { outline:none; }
+.ed-body { width:100%; border:0; background:transparent; color: var(--ui-text); font-family:inherit; font-size: var(--ui-fs-3); line-height: var(--ui-lh-loose); resize:vertical; min-height:170px; padding:0; }
+.ed-body:focus { outline:none; }
+.tags { display:flex; gap: var(--ui-sp-2); flex-wrap:wrap; align-items:center; }
+.tag { font-size: var(--ui-fs-1); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:4px 10px; color: var(--ui-text-2); }
+.tag.add { border-style:dashed; cursor:pointer; }
+.nw-actions { display:flex; align-items:center; gap: var(--ui-sp-3); margin-top: var(--ui-sp-2); }
+.result-ref { font-size: var(--ui-fs-2); color: var(--ui-accent); background:transparent; border:0; cursor:pointer; padding:0; }
+.autosave { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-left:auto; }
+
+/* 自动工作流事件（替代人工推进按钮） */
+.flow-event { display:flex; align-items:center; gap:6px; font-size: var(--ui-fs-1); color: var(--ui-success); background: var(--ui-surface-2); border:1px solid var(--ui-line); border-left:3px solid var(--ui-success); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2) var(--ui-sp-3); margin-bottom: var(--ui-sp-3); line-height:1.5; }
+
+/* System Activity — 独立的非员工 Runtime 组件，与 Employee Presence 严格区分：
+   无员工头像、虚线边框、无「工作过程」入口；仅表达系统自动 Analytics / Automation。 */
+.sys-activity { display:flex; align-items:flex-start; gap: var(--ui-sp-3); padding: var(--ui-sp-3); background: var(--ui-surface-2); border:1px dashed var(--ui-line); border-radius: var(--ui-r-md); margin-bottom: var(--ui-sp-3); }
+.sys-activity .sys-ico { width:30px; height:30px; border-radius:50%; background: var(--ui-surface); border:1px solid var(--ui-line); display:flex; align-items:center; justify-content:center; font-size:14px; color: var(--ui-text-2); flex:none; }
+.sys-activity .sys-body { flex:1; min-width:0; }
+.sys-activity .sys-title { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); }
+.sys-activity .sys-meta { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:2px; }
+.sys-activity .sys-sub { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-top:2px; }
+
+/* Day Focus 呈现形态未冻结标记 */
+.df-flag { font-size: var(--ui-fs-1); color: var(--ui-warning); background: var(--ui-surface-2); border-bottom:1px solid var(--ui-line); padding: var(--ui-sp-2) var(--ui-sp-4); line-height:1.5; }
+.flow-event.flow-pending { color: var(--ui-warning); border-left-color: var(--ui-warning); }
+
+/* ===== State C: Review Gate / Needs CEO（审核闸 + Workspace 级决策横幅） ===== */
+.decision-banner { display:flex; align-items:flex-start; gap: var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-4); background: var(--ui-surface-2); border:1px solid var(--ui-warning); border-left-width:3px; border-radius: var(--ui-r-md); margin-bottom: var(--ui-sp-4); }
+.db-ic { color: var(--ui-warning); font-size: var(--ui-fs-4); line-height:1.1; flex:none; }
+.db-main { flex:1; min-width:0; }
+.db-title { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); }
+.db-desc { font-size: var(--ui-fs-2); color: var(--ui-text-2); margin-top:3px; line-height:1.5; }
+.db-actions { display:flex; gap: var(--ui-sp-2); flex:none; align-items:center; flex-wrap:wrap; }
+.db-btn { height: var(--ui-ctl-h-sm); padding:0 var(--ui-sp-3); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); cursor:pointer; border:1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text); }
+.db-btn.exec { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border-color: transparent; font-weight:600; }
+.db-btn.warn { border-color: var(--ui-warning); color: var(--ui-warning); }
+.review-gate { background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); margin-bottom: var(--ui-sp-3); }
+.rg-title { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); margin-bottom: var(--ui-sp-3); }
+.rg-check { display:flex; flex-direction:column; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-3); }
+.rg-item { display:flex; align-items:center; gap: var(--ui-sp-2); font-size: var(--ui-fs-2); color: var(--ui-text); }
+.rg-item .mk { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex:none; border:1px solid var(--ui-line); color: var(--ui-text-2); }
+.rg-item .mk.ok { color: var(--ui-success); border-color: var(--ui-success); }
+.rg-item .mk.warn { color: var(--ui-warning); border-color: var(--ui-warning); }
+.rg-note { font-size: var(--ui-fs-1); color: var(--ui-text-2); line-height:1.5; border-top:1px dashed var(--ui-line); padding-top: var(--ui-sp-3); }
+
+/* ===== State D/E: Utility Surface（右 · Resizable）· 图文预览 ===== */
+.phone { width: 240px; margin: 0 auto; background: var(--ui-bg); border:1px solid var(--ui-line); border-radius: 20px; padding: 10px; box-shadow: var(--ui-shadow-2); }
+.ph-bar { display:flex; justify-content:space-between; font-size:10px; color: var(--ui-text-2); margin-bottom:8px; }
+.xhs-screen { background: var(--ui-surface); border-radius: 12px; overflow:hidden; border:1px solid var(--ui-line); }
+.xhs-cover { aspect-ratio:3/4; background: linear-gradient(135deg, var(--ui-surface-2), var(--ui-line)); position:relative; }
+.xhs-cover .badge { position:absolute; top:8px; left:8px; font-size:10px; background: var(--ui-surface); border:1px solid var(--ui-line); border-radius: var(--ui-r-pill); padding:2px 8px; color: var(--ui-text-2); }
+.xhs-body { padding: var(--ui-sp-3); }
+.xhs-ttl { font-size: var(--ui-fs-3); font-weight:600; color: var(--ui-text); line-height:1.3; }
+.xhs-txt { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top:6px; line-height:1.5; }
+.xhs-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:8px; }
+.xhs-foot { display:flex; gap: var(--ui-sp-3); padding: var(--ui-sp-3); border-top:1px solid var(--ui-line); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.xhs-foot .ic { color: var(--ui-accent); margin-right:3px; }
+.util-note { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-top: var(--ui-sp-3); line-height:1.5; }
+
+/* ===== State E: Published → Analytics（轻量数据看板，Result Reference 展开） ===== */
+.analytics { background: var(--ui-surface-2); border:1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); margin-top: var(--ui-sp-2); }
+.an-h { font-size: var(--ui-fs-2); font-weight:600; color: var(--ui-text); margin-bottom: var(--ui-sp-3); display:flex; align-items:baseline; gap: var(--ui-sp-2); flex-wrap:wrap; }
+.an-grid { display:grid; grid-template-columns: repeat(2,1fr); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.metric .m-k { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.metric .m-v { font-size: var(--ui-fs-5); font-weight:600; color: var(--ui-text); margin-top:2px; }
+.bars { display:flex; flex-direction:column; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-3); }
+.bar-row { display:flex; align-items:center; gap: var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.bar-row .bl { width:40px; flex:none; }
+.bar-track { flex:1; height:6px; background: var(--ui-surface); border-radius: var(--ui-r-pill); overflow:hidden; }
+.bar-fill { height:100%; background: var(--ui-accent); border-radius: var(--ui-r-pill); display:block; }
+.bar-row .bv { width:44px; text-align:right; color: var(--ui-text); flex:none; }
+.ces { font-size: var(--ui-fs-1); color: var(--ui-text-2); border-top:1px solid var(--ui-line); padding-top: var(--ui-sp-3); line-height:1.6; }
+.ces b { color: var(--ui-accent); }
+
+/* caption */
+.cap { margin: var(--ui-sp-2) var(--ui-sp-6) var(--ui-sp-6); font-size: var(--ui-fs-2); color: var(--ui-text-2); line-height: var(--ui-lh-loose); max-width: 1000px; }
+.cap b { color: var(--ui-text); font-weight:600; }
+.cap .k { color: var(--ui-accent); }
+</style>
+</head>
+<body>
+
+<!-- ===== 全局 Search Surface（Company-wide Object Search · v1 展开态设计稿） =====
+     交互：Nav Header 轻量 Search Icon 点击 → 展开；✕ / 点击遮罩 / Esc → 收起。
+     语义：Company OS 对象搜索（Object-first, Task-capable），非 Task 历史列表、非文件浏览器。
+     空查询态显示 Recent；本稿渲染「已输入 小红书」的按对象类型分组结果态以确认信息结构。
+-->
+<div class="search-surface open" id="searchSurface">
+  <div class="search-scrim" id="searchScrim"></div>
+  <div class="search-panel" role="dialog" aria-modal="true" aria-label="全局搜索">
+    <div class="search-input-row">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="搜索业务空间、员工、笔记、知识、结果、会议…" value="小红书" aria-label="搜索 Curis 对象" />
+      <button class="search-close" id="searchClose" title="关闭搜索" aria-label="关闭搜索"><svg viewBox="0 0 16 16"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button>
+    </div>
+    <div class="search-body">
+      <div class="search-section-label">“小红书” 的关联对象</div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>业务空间 · Business</div>
+        <div class="search-result"><span class="sr-ic">🏢</span><span class="sr-main"><span class="sr-title">小红书运营办公室</span><span class="sr-ctx">Company · Curis / 业务空间</span></span><span class="sr-type">业务空间</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>员工 / 角色 · Employee</div>
+        <div class="search-result"><span class="sr-ic">👤</span><span class="sr-main"><span class="sr-title">林晚（内容运营）</span><span class="sr-ctx">小红书运营办公室 · 在职</span></span><span class="sr-type">员工</span></div>
+        <div class="search-result"><span class="sr-ic">👤</span><span class="sr-main"><span class="sr-title">审核专员（角色）</span><span class="sr-ctx">小红书运营办公室 · 岗位</span></span><span class="sr-type">角色</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>笔记 · Note</div>
+        <div class="search-result"><span class="sr-ic">📝</span><span class="sr-main"><span class="sr-title">小红书 8 月选题池</span><span class="sr-ctx">小红书运营办公室 · Note</span></span><span class="sr-type">笔记</span></div>
+        <div class="search-result"><span class="sr-ic">📝</span><span class="sr-main"><span class="sr-title">爆款标题拆解（草稿）</span><span class="sr-ctx">小红书运营办公室 · Note</span></span><span class="sr-type">笔记</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>知识 / 文档 · Knowledge</div>
+        <div class="search-result"><span class="sr-ic">📚</span><span class="sr-main"><span class="sr-title">小红书品牌视觉规范.pdf</span><span class="sr-ctx">资料库 · 知识资产</span></span><span class="sr-type">知识</span></div>
+        <div class="search-result"><span class="sr-ic">📚</span><span class="sr-main"><span class="sr-title">竞品分析：3 家美妆账号</span><span class="sr-ctx">小红书运营办公室 · 知识</span></span><span class="sr-type">知识</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>结果 / 制品 · Result</div>
+        <div class="search-result"><span class="sr-ic">📊</span><span class="sr-main"><span class="sr-title">小红书 7 月数据月报</span><span class="sr-ctx">小红书运营办公室 · 发布结果</span></span><span class="sr-type">结果</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>会议 · Meeting</div>
+        <div class="search-result"><span class="sr-ic">📅</span><span class="sr-main"><span class="sr-title">小红书双周选题会（8/12）</span><span class="sr-ctx">会议 · 出席 6 人</span></span><span class="sr-type">会议</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>决策 · Decision</div>
+        <div class="search-result"><span class="sr-ic">⚖️</span><span class="sr-main"><span class="sr-title">Q3 小红书投放预算决策</span><span class="sr-ctx">决策 · 已批准</span></span><span class="sr-type">决策</span></div>
+      </div>
+
+      <div class="search-group">
+        <div class="search-group-title"><span class="dot"></span>能力 · Capability</div>
+        <div class="search-result"><span class="sr-ic">🧩</span><span class="sr-main"><span class="sr-title">小红书发布 Skill</span><span class="sr-ctx">能力 · Skill</span></span><span class="sr-type">能力</span></div>
+      </div>
+    </div>
+    <div class="search-hint">↵ 进入对象 · Esc 关闭 · 仅对象搜索（v1，不含自然语言问答 / Command Palette / 高级过滤）</div>
+  </div>
+</div>
+
+<header class="doc-head">
+  <h1>Curis XHS Workspace · Visual Exploration v4 <span class="chip">XHS INSTANCE APPROVED CANDIDATE</span></h1>
+  <p>新 Pane Shell（Top-aligned Independent Pane）+ 自动工作流修正。撤销 Global Topbar 横跨结构：四 Pane 各自独立、顶部齐平、各自 Pane Header，Main Header 不横跨、Context/Utility 打开不挤压 Main。
+  修正自动工作流（Automation by default, Human action only at Decision Gates）：删除 CEO 人工"提交审核"/"通过并送审 CEO"推进按钮，改为状态/事件；仅 Decision Gate 出现 CEO Action；决策后自动恢复。继承 Calendar→Split / Note 专业创作 / Employee Presence / Handoff / Result Reference / Context·Utility Adaptive+Resizable。</p>
+</header>
+
+<!-- 复用导航 Pane 片段（每个 state 一致） -->
+<!-- ============ 状态 A：Default Calendar ============ -->
+<section class="app" aria-label="状态 A Default Calendar">
+  <div class="panes">
+    <nav class="pane pane-nav">
+      <header class="pane-head nav-head">
+        <div class="traffic-lights"><span class="tl-dot tl-close"></span><span class="tl-dot tl-minimize"></span><span class="tl-dot tl-maximize"></span></div>
+        <div class="nav-head-right">
+          <button class="nav-search-trigger pane-toggle" title="搜索" aria-label="打开全局搜索"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg></button>
+          <button class="nh-toggle pane-toggle" title="折叠导航" aria-label="折叠导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        </div>
+      </header>
+      <div class="pane-body nav-body">
+        <div class="nav-brand"><span class="logo">C</span> Curis</div>
+        <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+        <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+        <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+        <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+        <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+        <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+        <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+        <div class="nav-foot"><div class="avatar">CE</div><button class="theme-btn" onclick="document.documentElement.dataset.theme=(document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓</button><span class="nav-foot-txt">设置 / 帮助</span></div>
+      </div>
+    </nav>
+
+    <aside class="pane pane-ctx">
+      <div class="pane-resize ctx-resize"></div>
+      <header class="pane-head ctx-head">
+        <div class="ctx-name">选题库 · 信号</div>
+        <button class="ctx-switch" title="切换上下文">⇄</button>
+      </header>
+      <div class="pane-body ctx-body">
+        <div class="ctx-row">夏日通勤穿搭 · 信号</div>
+        <div class="ctx-row">平价好物趋势 · 素材</div>
+        <div class="ctx-row">油皮护肤流程 · 信号</div>
+      </div>
+    </aside>
+
+    <main class="pane pane-main">
+      <header class="pane-head main-head">
+        <button class="nh-toggle pane-toggle" title="展开导航" aria-label="展开导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-ctx pane-toggle" title="上下文" aria-label="切换上下文面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        <div class="crumbs">业务空间 / <b>小红书运营办公室</b></div>
+        <div class="spacer"></div>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-more" title="更多">⋯</button>
+      </header>
+      <div class="pane-body main-body">
+        <div class="cal-head">
+          <h2>八月 2026</h2>
+          <div class="seg"><button class="on">月</button><button>周</button></div>
+          <button class="btn-primary">+ 新建笔记</button>
+          <div class="legend">
+            <span><i class="dot" style="background:var(--ui-warning)"></i>制作中</span>
+            <span><i class="dot" style="background:var(--ui-danger)"></i>待 CEO 决策</span>
+            <span><i class="dot" style="background:var(--ui-text-2)"></i>待审核</span>
+            <span><i class="dot" style="background:var(--ui-success)"></i>已发布</span>
+            <span><i class="dot" style="background:var(--ui-accent)"></i>已排期</span>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-dow">一</div><div class="cal-dow">二</div><div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div><div class="cal-dow">日</div>
+          <div class="cal-cell"><div class="dnum">1</div></div>
+          <div class="cal-cell today"><div class="dnum">2</div>
+            <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">夏日通勤穿搭合集</div><div class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</div></div></div>
+          </div>
+          <div class="cal-cell"><div class="dnum">3</div>
+            <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">平价好物开箱</div><div class="st"><i class="dot" style="background:var(--ui-accent)"></i>已排期</div></div></div>
+          </div>
+          <div class="cal-cell"><div class="dnum">4</div></div>
+          <div class="cal-cell"><div class="dnum">5</div>
+            <div class="note-card"><div class="cover"><span class="av-over">林</span></div><div class="meta"><div class="ttl">油皮护肤流程</div><div class="st"><i class="dot" style="background:var(--ui-success)"></i>已发布</div></div></div>
+          </div>
+          <div class="cal-cell"><div class="dnum">6</div></div>
+          <div class="cal-cell"><div class="dnum">7</div></div>
+          <div class="cal-cell"><div class="dnum">8</div></div>
+          <div class="cal-cell"><div class="dnum">9</div>
+            <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">周末露营清单</div><div class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</div></div></div>
+          </div>
+          <div class="cal-cell"><div class="dnum">10</div></div>
+          <div class="cal-cell"><div class="dnum">11</div>
+            <div class="note-card"><div class="cover"><span class="av-over">陈</span></div><div class="meta"><div class="ttl">职场新人妆容</div><div class="st"><i class="dot" style="background:var(--ui-text-2)"></i>待审核</div></div></div>
+          </div>
+          <div class="cal-cell dense"><div class="dnum">12</div>
+            <div class="note-card"><div class="cover"><span class="av-over">王</span></div><div class="meta"><div class="ttl">通勤穿搭合规审核</div><div class="st"><i class="dot" style="background:var(--ui-danger)"></i>待 CEO 决策</div></div></div>
+            <div class="note-row"><span class="t">09:00</span><span class="av-mini">陈</span><span class="ttl">通勤穿搭灵感库</span><span class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</span></div>
+            <div class="note-row"><span class="t">14:00</span><span class="av-mini">陈</span><span class="ttl">早八妆容教程</span><span class="st"><i class="dot" style="background:var(--ui-accent)"></i>已排期</span></div>
+            <div class="more-notes" data-date="8月12日">+2 篇</div>
+          </div>
+          <div class="cal-cell"><div class="dnum">13</div></div>
+          <div class="cal-cell"><div class="dnum">14</div></div>
+          <div class="cal-cell"><div class="dnum">15</div></div>
+          <div class="cal-cell"><div class="dnum">16</div></div>
+          <div class="cal-cell"><div class="dnum">17</div>
+            <div class="note-card"><div class="cover"><span class="av-over">林</span></div><div class="meta"><div class="ttl">家居收纳神器</div><div class="st"><i class="dot" style="background:var(--ui-success)"></i>已发布</div></div></div>
+          </div>
+          <div class="cal-cell"><div class="dnum">18</div></div>
+          <div class="cal-cell"><div class="dnum">19</div></div>
+          <div class="cal-cell"><div class="dnum">20</div></div>
+          <div class="cal-cell"><div class="dnum">21</div></div>
+          <div class="cal-cell"><div class="dnum">22</div></div>
+          <div class="cal-cell"><div class="dnum">23</div></div>
+          <div class="cal-cell"><div class="dnum">24</div></div>
+          <div class="cal-cell"><div class="dnum">25</div></div>
+          <div class="cal-cell"><div class="dnum">26</div></div>
+          <div class="cal-cell"><div class="dnum">27</div></div>
+          <div class="cal-cell"><div class="dnum">28</div></div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="pane pane-util">
+      <div class="pane-resize util-resize"></div>
+      <header class="pane-head util-head">
+        <div class="ut-name">📱 图文预览 <span class="ut-sub">小红书 App</span></div>
+        <button class="ut-mode" title="切换模式" aria-label="切换预览模式">预览</button>
+        <button class="util-maximize" title="最大化预览" aria-label="最大化预览面板"><svg viewBox="0 0 16 16"><polyline points="7,2 14,2 14,9"/><polyline points="2,7 2,14 9,14"/><polyline points="11,11 14,14 14,11"/></svg></button>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+      </header>
+      <div class="pane-body util-body">
+        <div class="util-tabs">
+          <button class="util-tab active"><span>📱 图文预览</span></button>
+          <button class="util-tab"><span>📊 数据看板</span></button>
+          <button class="util-tab"><span>📋 审核记录</span></button>
+        </div>
+        <div class="util-viewport">
+          <div class="util-viewport-inner">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+            <span>图文预览 · 小红书信息流真实样貌</span>
+            <span style="font-size:var(--ui-fs-1);opacity:.6;">选择笔记后自动加载预览</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 A · Default Calendar（Note 作为业务对象）。</b> 新 Pane Shell：左侧 Navigation Pane 自有 Header（品牌 + T1 导航开合），中间 Main Pane 自有 Header（T2 上下文 / 面包屑 / T3 工具面 / ⋯），右侧 Context/Utility 为可选 Adaptive Surface（默认收起，由 T2/T3 开合）。日历格内是带<b>封面 + 作者头像 + 状态</b>的 Note 卡片，非 Google Calendar 式纯事件条。
+<span class="k">员工持续可感知：</span>每张卡片左下角作者头像轻量表达责任归属。Main Header 仅属 Main Pane，未横跨；Context/Utility 默认不占空间。</p>
+<p class="cap"><b>状态 A · 单日多篇（同一天 4+ Note）。</b> Month View 真实支持一天多篇：<b>0 篇</b>空格；<b>1 篇</b>完整 Primary Note Card；<b>2–3 篇</b> 1 Primary + 紧凑 Compact Row；<b>4+ 篇</b> 1 Primary（密集格用紧凑封面）+ 2 条 Compact Row + <b>「+N 篇」</b> 入口（打开 Day Focus 列出当天全部 Note）。<span class="k">Primary 选择</span>不默认第一篇：示例 day 12 以「制作中（in-progress）」命中优先级，置顶 <b>通勤穿搭灵感库</b>；其余按 Compact Row 展示（时间 / 轻量 Presence / 标题 / 状态）。日期格高度受控，不无限增高。</p>
+
+<!-- ============ 状态 B：Note Selected → Split Working ============ -->
+<section class="app" aria-label="状态 B Note Selected Split Working">
+  <div class="panes">
+    <nav class="pane pane-nav">
+      <header class="pane-head nav-head">
+        <div class="traffic-lights"><span class="tl-dot tl-close"></span><span class="tl-dot tl-minimize"></span><span class="tl-dot tl-maximize"></span></div>
+        <div class="nav-head-right">
+          <button class="nav-search-trigger pane-toggle" title="搜索" aria-label="打开全局搜索"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg></button>
+          <button class="nh-toggle pane-toggle" title="折叠导航" aria-label="折叠导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        </div>
+      </header>
+      <div class="pane-body nav-body">
+        <div class="nav-brand"><span class="logo">C</span> Curis</div>
+        <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+        <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+        <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+        <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+        <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+        <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+        <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+        <div class="nav-foot"><div class="avatar">CE</div><button class="theme-btn" onclick="document.documentElement.dataset.theme=(document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓</button><span class="nav-foot-txt">设置 / 帮助</span></div>
+      </div>
+    </nav>
+
+    <aside class="pane pane-ctx">
+      <div class="pane-resize ctx-resize"></div>
+      <header class="pane-head ctx-head">
+        <div class="ctx-name">选题库 · 信号</div>
+        <button class="ctx-switch" title="切换上下文">⇄</button>
+      </header>
+      <div class="pane-body ctx-body">
+        <div class="ctx-row">夏日通勤穿搭 · 信号</div>
+        <div class="ctx-row">平价好物趋势 · 素材</div>
+        <div class="ctx-row">油皮护肤流程 · 信号</div>
+      </div>
+    </aside>
+
+    <main class="pane pane-main">
+      <header class="pane-head main-head">
+        <button class="nh-toggle pane-toggle" title="展开导航" aria-label="展开导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-ctx pane-toggle" title="上下文" aria-label="切换上下文面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        <div class="crumbs">业务空间 / <b>小红书运营办公室</b><span class="crumb-obj"> / 夏日通勤穿搭合集</span></div>
+        <div class="spacer"></div>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-more" title="更多">⋯</button>
+      </header>
+      <div class="pane-body main-body">
+        <div class="split">
+          <aside class="time-ctx">
+            <div class="tc-h">时间上下文 · 八月</div>
+            <div class="tc-day">1 周三</div>
+            <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-accent)"></i></div></div>
+            <div class="tc-day">3 周五</div>
+            <div class="tc-day">4 周六</div>
+            <div class="tc-day">5 周日 <div class="mini"><i class="dot" style="background:var(--ui-success)"></i></div></div>
+            <div class="tc-day">9 周四</div>
+            <div class="tc-day">11 周六</div>
+            <div class="tc-day">17 周五</div>
+          </aside>
+          <section class="note-work">
+            <button class="nw-close" title="返回日历">✕</button>
+            <div class="presence">
+              <div class="av">陈</div>
+              <div>
+                <div class="who"><b>陈真</b> · 内容创作</div>
+                <div class="doing">正在为你制作：封面生成中…</div>
+              </div>
+              <span class="state">制作中</span>
+              <button class="expand">▸ 工作过程</button>
+            </div>
+            <div class="handoff-light">⇄ 从 策划·李翔 交接至 内容创作·陈真（自动）</div>
+            <div class="flow-event">➡ 下一步：内容审核 · 王芳</div>
+            <div class="nw-body">
+              <div class="nw-cover">
+                <div class="cover"><span class="badge">AI 封面</span></div>
+                <div class="hint">点击替换封面</div>
+              </div>
+              <div class="nw-fields">
+                <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" />
+                <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（直接编辑正文，AI 与你共同打磨，无表单边框）</textarea>
+                <div class="tags">
+                  <span class="tag">#通勤穿搭</span>
+                  <span class="tag">#平价好物</span>
+                  <span class="tag add">+ 添加标签</span>
+                </div>
+                <div class="nw-actions">
+                  <button class="result-ref">📊 数据看板 ▸</button>
+                  <span class="autosave">已自动保存 · 刚刚</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <aside class="pane pane-util">
+      <div class="pane-resize util-resize"></div>
+      <header class="pane-head util-head">
+        <div class="ut-name">📱 图文预览 <span class="ut-sub">小红书 App</span></div>
+        <button class="ut-mode" title="切换模式" aria-label="切换预览模式">预览</button>
+        <button class="util-maximize" title="最大化预览" aria-label="最大化预览面板"><svg viewBox="0 0 16 16"><polyline points="7,2 14,2 14,9"/><polyline points="2,7 2,14 9,14"/><polyline points="11,11 14,14 14,11"/></svg></button>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+      </header>
+      <div class="pane-body util-body">
+        <div class="util-tabs">
+          <button class="util-tab active"><span>📱 图文预览</span></button>
+          <button class="util-tab"><span>📊 数据看板</span></button>
+          <button class="util-tab"><span>📋 审核记录</span></button>
+        </div>
+        <div class="util-viewport">
+          <div class="util-viewport-inner">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+            <span>图文预览 · 小红书信息流真实样貌</span>
+            <span style="font-size:var(--ui-fs-1);opacity:.6;">选择笔记后自动加载预览</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 B · Note Selected → Split Working（专业创作工作面）。</b> 选 Note 触发 Main re-partition：左时间上下文压缩 + 右 Content Object 主工作面。右侧<b>直接编辑内容</b>：封面即封面、标题/正文 borderless 编辑、标签自然附着。
+<span class="k">工作流：</span>创作完成后自动交接王芳审核。顶部 Presence 条「陈真·内容创作 正在为你制作」+ 轻量 Handoff；完整 Workstation 按「▸ 工作过程」展开。</p>
+
+<!-- ============ 状态 C：Review Gate / Needs CEO ============ -->
+<section class="app" aria-label="状态 C Review Gate Needs CEO">
+  <div class="panes">
+    <nav class="pane pane-nav">
+      <header class="pane-head nav-head">
+        <div class="traffic-lights"><span class="tl-dot tl-close"></span><span class="tl-dot tl-minimize"></span><span class="tl-dot tl-maximize"></span></div>
+        <div class="nav-head-right">
+          <button class="nav-search-trigger pane-toggle" title="搜索" aria-label="打开全局搜索"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg></button>
+          <button class="nh-toggle pane-toggle" title="折叠导航" aria-label="折叠导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        </div>
+      </header>
+      <div class="pane-body nav-body">
+        <div class="nav-brand"><span class="logo">C</span> Curis</div>
+        <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+        <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+        <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+        <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+        <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+        <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+        <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+        <div class="nav-foot"><div class="avatar">CE</div><button class="theme-btn" onclick="document.documentElement.dataset.theme=(document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓</button><span class="nav-foot-txt">设置 / 帮助</span></div>
+      </div>
+    </nav>
+
+    <aside class="pane pane-ctx">
+      <div class="pane-resize ctx-resize"></div>
+      <header class="pane-head ctx-head">
+        <div class="ctx-name">选题库 · 信号</div>
+        <button class="ctx-switch" title="切换上下文">⇄</button>
+      </header>
+      <div class="pane-body ctx-body">
+        <div class="ctx-row">夏日通勤穿搭 · 信号</div>
+        <div class="ctx-row">平价好物趋势 · 素材</div>
+        <div class="ctx-row">油皮护肤流程 · 信号</div>
+      </div>
+    </aside>
+
+    <main class="pane pane-main">
+      <header class="pane-head main-head">
+        <button class="nh-toggle pane-toggle" title="展开导航" aria-label="展开导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-ctx pane-toggle" title="上下文" aria-label="切换上下文面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        <div class="crumbs">业务空间 / <b>小红书运营办公室</b><span class="crumb-obj"> / 夏日通勤穿搭合集</span></div>
+        <div class="spacer"></div>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-more" title="更多">⋯</button>
+      </header>
+      <div class="pane-body main-body">
+        <!-- Workspace 级 Needs CEO / Decision（§3.3，橙色横幅，顶部） -->
+        <div class="decision-banner">
+          <div class="db-ic">⚠</div>
+          <div class="db-main">
+            <div class="db-title">需要 CEO 决策：文案含绝对化用语「最便宜」</div>
+            <div class="db-desc">AI 审核员王芳已完成判断并自动升级至此决策闸。影响 1 篇笔记的发布。请做人类判断：</div>
+          </div>
+          <div class="db-actions">
+            <button class="db-btn exec">按建议处理</button>
+            <button class="db-btn">其他方案</button>
+            <button class="db-btn">暂缓</button>
+          </div>
+        </div>
+        <div class="flow-event flow-pending">⏸ 等待你的决定</div>
+
+        <div class="split">
+          <aside class="time-ctx">
+            <div class="tc-h">时间上下文 · 八月</div>
+            <div class="tc-day">1 周三</div>
+            <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-text-2)"></i></div></div>
+            <div class="tc-day">3 周五</div>
+            <div class="tc-day">4 周六</div>
+            <div class="tc-day">5 周日</div>
+            <div class="tc-day">9 周四</div>
+            <div class="tc-day">11 周六</div>
+            <div class="tc-day">17 周五</div>
+          </aside>
+          <section class="note-work">
+            <button class="nw-close" title="返回日历">✕</button>
+            <div class="presence">
+              <div class="av">王</div>
+              <div>
+                <div class="who"><b>王芳</b> · 内容审核</div>
+                <div class="doing">已完成判断：命中绝对化用语，已自动升级 CEO 决策</div>
+              </div>
+              <span class="state" style="border-color:var(--ui-warning);color:var(--ui-warning)">已升级 CEO</span>
+              <button class="expand">▸ 工作过程</button>
+            </div>
+            <div class="handoff-light">⇄ 内容创作·陈真 → 内容审核·王芳（自动）　⚡ 自动升级 CEO 决策</div>
+
+            <!-- Review Gate（审核闸，业务对象上的轻量责任面，透明呈现 AI 发现） -->
+            <div class="review-gate">
+              <div class="rg-title">审核闸 · 品牌合规（AI 审核发现，透明呈现）</div>
+              <div class="rg-check">
+                <div class="rg-item"><span class="mk ok">✓</span> 品牌调性合规</div>
+                <div class="rg-item"><span class="mk ok">✓</span> 事实核查通过</div>
+                <div class="rg-item"><span class="mk warn">!</span> 敏感词命中：绝对化用语「最便宜」需 CEO 授权</div>
+              </div>
+              <div class="rg-note">AI 审核员已完成判断；需人类授权的部分已自动升级 CEO 决策闸。</div>
+              <div style="font-size:var(--ui-fs-1);color:var(--ui-warning);font-weight:600;padding:6px 10px;border-radius:var(--ui-r-sm);background:color-mix(in srgb,var(--ui-warning) 10%,transparent);border:1px solid color-mix(in srgb,var(--ui-warning) 40%,var(--ui-line));width:fit-content;cursor:pointer;margin-top:var(--ui-sp-2);">⚠ 等待你的决定 · 查看决策方案 ▸</div>
+            </div>
+
+            <div class="nw-body">
+              <div class="nw-cover">
+                <div class="cover"><span class="badge">AI 封面</span></div>
+                <div class="hint">封面 · 待发布</div>
+              </div>
+              <div class="nw-fields">
+                <input class="ed-title" value="夏日通勤穿搭合集｜全网最便宜的 5 套" aria-label="标题" />
+                <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（审核中，标题命中绝对化用语）</textarea>
+                <div class="tags">
+                  <span class="tag">#通勤穿搭</span>
+                  <span class="tag">#平价好物</span>
+                  <span class="tag add">+ 添加标签</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <aside class="pane pane-util">
+      <div class="pane-resize util-resize"></div>
+      <header class="pane-head util-head">
+        <div class="ut-name">📱 图文预览 <span class="ut-sub">小红书 App</span></div>
+        <button class="ut-mode" title="切换模式" aria-label="切换预览模式">预览</button>
+        <button class="util-maximize" title="最大化预览" aria-label="最大化预览面板"><svg viewBox="0 0 16 16"><polyline points="7,2 14,2 14,9"/><polyline points="2,7 2,14 9,14"/><polyline points="11,11 14,14 14,11"/></svg></button>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+      </header>
+      <div class="pane-body util-body">
+        <div class="util-tabs">
+          <button class="util-tab active"><span>📱 图文预览</span></button>
+          <button class="util-tab"><span>📊 数据看板</span></button>
+          <button class="util-tab"><span>📋 审核记录</span></button>
+        </div>
+        <div class="util-viewport">
+          <div class="util-viewport-inner">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+            <span>图文预览 · 小红书信息流真实样貌</span>
+            <span style="font-size:var(--ui-fs-1);opacity:.6;">选择笔记后自动加载预览</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 C · Review Gate / Needs CEO（审核闸 + 等待决策）。</b>
+<span class="k">当前阶段：</span>王芳·内容审核已完成判断——命中绝对化用语，已自动升级为 CEO 决策（Frozen §3.13 CEO Decision Package · P7，简单合规类）。顶部 Decision Banner 直接给出 CEO 三动作（按建议处理 / 其他方案 / 暂缓），展开后显示紧凑 Plain Package；王芳的汇报仅白话摘要 + 决策引用，指向与 Banner 相同的唯一 Decision Packet，不复制完整 8 要素、不产生新 Handoff。CEO 决策后工作流自动恢复（自动发布或退回修改）。</p>
+
+<!-- ============ 状态 D：Utility → Note Preview ============ -->
+<section class="app" aria-label="状态 D Utility Note Preview">
+  <div class="panes util-open">
+    <nav class="pane pane-nav">
+      <header class="pane-head nav-head">
+        <div class="traffic-lights"><span class="tl-dot tl-close"></span><span class="tl-dot tl-minimize"></span><span class="tl-dot tl-maximize"></span></div>
+        <div class="nav-head-right">
+          <button class="nav-search-trigger pane-toggle" title="搜索" aria-label="打开全局搜索"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg></button>
+          <button class="nh-toggle pane-toggle" title="折叠导航" aria-label="折叠导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        </div>
+      </header>
+      <div class="pane-body nav-body">
+        <div class="nav-brand"><span class="logo">C</span> Curis</div>
+        <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+        <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+        <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+        <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+        <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+        <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+        <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+        <div class="nav-foot"><div class="avatar">CE</div><button class="theme-btn" onclick="document.documentElement.dataset.theme=(document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓</button><span class="nav-foot-txt">设置 / 帮助</span></div>
+      </div>
+    </nav>
+
+    <aside class="pane pane-ctx">
+      <div class="pane-resize ctx-resize"></div>
+      <header class="pane-head ctx-head">
+        <div class="ctx-name">选题库 · 信号</div>
+        <button class="ctx-switch" title="切换上下文">⇄</button>
+      </header>
+      <div class="pane-body ctx-body">
+        <div class="ctx-row">夏日通勤穿搭 · 信号</div>
+        <div class="ctx-row">平价好物趋势 · 素材</div>
+        <div class="ctx-row">油皮护肤流程 · 信号</div>
+      </div>
+    </aside>
+
+    <main class="pane pane-main">
+      <header class="pane-head main-head">
+        <button class="nh-toggle pane-toggle" title="展开导航" aria-label="展开导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-ctx pane-toggle" title="上下文" aria-label="切换上下文面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        <div class="crumbs">业务空间 / <b>小红书运营办公室</b><span class="crumb-obj"> / 夏日通勤穿搭合集</span></div>
+        <div class="spacer"></div>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-more" title="更多">⋯</button>
+      </header>
+      <div class="pane-body main-body">
+        <div class="split">
+          <aside class="time-ctx">
+            <div class="tc-h">时间上下文 · 八月</div>
+            <div class="tc-day">1 周三</div>
+            <div class="tc-day cur">2 周四 <div class="mini"><i class="dot" style="background:var(--ui-warning)"></i><i class="dot" style="background:var(--ui-accent)"></i></div></div>
+            <div class="tc-day">3 周五</div>
+            <div class="tc-day">4 周六</div>
+            <div class="tc-day">5 周日</div>
+            <div class="tc-day">9 周四</div>
+            <div class="tc-day">11 周六</div>
+            <div class="tc-day">17 周五</div>
+          </aside>
+          <section class="note-work">
+            <button class="nw-close" title="返回日历">✕</button>
+            <div class="presence">
+              <div class="av">陈</div>
+              <div>
+                <div class="who"><b>陈真</b> · 内容创作</div>
+                <div class="doing">正在为你制作：封面生成中…</div>
+              </div>
+              <span class="state">制作中</span>
+              <button class="expand">▸ 工作过程</button>
+            </div>
+            <div class="handoff-light">⇄ 从 策划·李翔 交接至 内容创作·陈真（自动）</div>
+            <div class="flow-event">➡ 下一步：内容审核 · 王芳</div>
+            <div class="nw-body">
+              <div class="nw-cover">
+                <div class="cover"><span class="badge">AI 封面</span></div>
+                <div class="hint">点击替换封面</div>
+              </div>
+              <div class="nw-fields">
+                <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" />
+                <textarea class="ed-body" aria-label="正文">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」……（直接编辑正文，AI 与你共同打磨，无表单边框）</textarea>
+                <div class="tags">
+                  <span class="tag">#通勤穿搭</span>
+                  <span class="tag">#平价好物</span>
+                  <span class="tag add">+ 添加标签</span>
+                </div>
+                <div class="nw-actions">
+                  <button class="result-ref">📊 数据看板 ▸</button>
+                  <span class="autosave">已自动保存 · 刚刚</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <aside class="pane pane-util">
+      <div class="pane-resize util-resize"></div>
+      <header class="pane-head util-head">
+        <div class="ut-name">📱 图文预览 <span class="ut-sub">小红书 App</span></div>
+        <button class="ut-mode" title="切换模式">预览</button>
+      </header>
+      <div class="pane-body util-body">
+        <div class="phone">
+          <div class="ph-bar"><span>9:41</span><span>小红书</span></div>
+          <div class="xhs-screen">
+            <div class="xhs-cover"><span class="badge">AI 封面</span></div>
+            <div class="xhs-body">
+              <div class="xhs-ttl">夏日通勤穿搭合集｜5 套不踩雷</div>
+              <div class="xhs-txt">通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」。第 1 套：白衬衫 + 西装阔腿裤……</div>
+              <div class="xhs-tags"><span class="tag">#通勤穿搭</span><span class="tag">#平价好物</span></div>
+            </div>
+            <div class="xhs-foot"><span><span class="ic">♥</span> 1.2k</span><span><span class="ic">☆</span> 860</span><span><span class="ic">💬</span> 73</span></div>
+          </div>
+        </div>
+        <p class="util-note">预览为发布后在小红书信息流的真实呈现；数据均为示例。Utility Surface 为 Resizable Adaptive Surface（默认 360px，可拖拽 ⠿ 边界调宽）。</p>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 D · Utility → Note Preview（图文预览，右 · Resizable）。</b> 选择「📱 图文预览」打开 <b>Utility Surface（§3.7 / Delta-X5 Resizable）</b>——右侧 360px 默认宽度、可拖拽调宽（边界 ⠿ 手柄）、可关闭。预览以手机框呈现笔记发布后在小红书信息流的真实样貌，<b>数据不内嵌主工作区</b>（仅 Result Reference 引用）。
+<span class="k">Pane Shell 验证：</span>继承 Split Working 视觉（左时间上下文 + 右内容对象不变）；Utility 作为按需 Adaptive Surface 叠加为独立第四 Pane，<b>不挤压 Main Header</b>；T2/T3 常驻 Main Header，跨 Workspace 一致。同时本状态沿用 B 的自动工作流修正（无"提交审核"按钮）。</p>
+
+<!-- ============ 状态 E：Published → Analytics ============ -->
+<section class="app" aria-label="状态 E Published Analytics">
+  <div class="panes">
+    <nav class="pane pane-nav">
+      <header class="pane-head nav-head">
+        <div class="traffic-lights"><span class="tl-dot tl-close"></span><span class="tl-dot tl-minimize"></span><span class="tl-dot tl-maximize"></span></div>
+        <div class="nav-head-right">
+          <button class="nav-search-trigger pane-toggle" title="搜索" aria-label="打开全局搜索"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg></button>
+          <button class="nh-toggle pane-toggle" title="折叠导航" aria-label="折叠导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        </div>
+      </header>
+      <div class="pane-body nav-body">
+        <div class="nav-brand"><span class="logo">C</span> Curis</div>
+        <div class="nav-zone"><span class="ic">⌂</span> 首页 / CEO 工作台</div>
+        <div class="nav-zone active"><span class="ic">▦</span> 业务空间</div>
+        <div class="nav-zone child active"><span class="ic">◆</span> 小红书运营办公室</div>
+        <div class="nav-zone"><span class="ic">⚇</span> 组织中心</div>
+        <div class="nav-zone"><span class="ic">✦</span> 人才市场</div>
+        <div class="nav-zone"><span class="ic">▤</span> 资料库</div>
+        <div class="nav-zone"><span class="ic">◉</span> 会议</div>
+        <div class="nav-foot"><div class="avatar">CE</div><button class="theme-btn" onclick="document.documentElement.dataset.theme=(document.documentElement.dataset.theme==='dark'?'light':'dark')">🌓</button><span class="nav-foot-txt">设置 / 帮助</span></div>
+      </div>
+    </nav>
+
+    <aside class="pane pane-ctx">
+      <div class="pane-resize ctx-resize"></div>
+      <header class="pane-head ctx-head">
+        <div class="ctx-name">选题库 · 信号</div>
+        <button class="ctx-switch" title="切换上下文">⇄</button>
+      </header>
+      <div class="pane-body ctx-body">
+        <div class="ctx-row">夏日通勤穿搭 · 信号</div>
+        <div class="ctx-row">平价好物趋势 · 素材</div>
+        <div class="ctx-row">油皮护肤流程 · 信号</div>
+      </div>
+    </aside>
+
+    <main class="pane pane-main">
+      <header class="pane-head main-head">
+        <button class="nh-toggle pane-toggle" title="展开导航" aria-label="展开导航面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-ctx pane-toggle" title="上下文" aria-label="切换上下文面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="5.5" y1="5" x2="5.5" y2="11"/></svg></button>
+        <div class="crumbs">业务空间 / <b>小红书运营办公室</b><span class="crumb-obj"> / 夏日通勤穿搭合集</span></div>
+        <div class="spacer"></div>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+        <button class="mh-more" title="更多">⋯</button>
+      </header>
+      <div class="pane-body main-body">
+        <div class="split">
+          <aside class="time-ctx">
+            <div class="tc-h">时间上下文 · 八月</div>
+            <div class="tc-day">1 周三</div>
+            <div class="tc-day">2 周四</div>
+            <div class="tc-day">3 周五</div>
+            <div class="tc-day">4 周六</div>
+            <div class="tc-day cur">5 周日 <div class="mini"><i class="dot" style="background:var(--ui-success)"></i></div></div>
+            <div class="tc-day">9 周四</div>
+            <div class="tc-day">11 周六</div>
+            <div class="tc-day">17 周五</div>
+          </aside>
+          <section class="note-work">
+            <button class="nw-close" title="返回日历">✕</button>
+            <div class="sys-activity">
+              <div class="sys-ico">⚙</div>
+              <div class="sys-body">
+                <div class="sys-title">自动数据观察中</div>
+                <div class="sys-meta">发布员工已完成发布（历史 Handoff / Result）　·　Object Owner：小红书运营办公室</div>
+                <div class="sys-sub">当前无执行员工　·　正在进行 Analytics / Content Reuse Loop（非员工 Runtime）</div>
+              </div>
+            </div>
+            <div class="handoff-light">✅ Handoff：陈真 → 王芳 → 发布员工 已完成发布（历史 Result）</div>
+            <div class="nw-body">
+              <div class="nw-cover">
+                <div class="cover"><span class="badge">已发布</span></div>
+                <div class="hint">8/5 发布</div>
+              </div>
+              <div class="nw-fields">
+                <input class="ed-title" value="夏日通勤穿搭合集｜5 套不踩雷" aria-label="标题" readonly />
+                <textarea class="ed-body" aria-label="正文" readonly>通勤穿搭的核心是「看起来用心，其实 10 分钟搞定」。第 1 套：白衬衫 + 西装阔腿裤……</textarea>
+                <div class="tags">
+                  <span class="tag">#通勤穿搭</span>
+                  <span class="tag">#平价好物</span>
+                </div>
+                <div class="analytics">
+                  <div class="an-h">📊 数据看板 <span style="font-size:var(--ui-fs-1);color:var(--ui-text-2);font-weight:400">默认 Analytics Template（CES 可配置）</span></div>
+                  <div class="an-grid">
+                    <div class="metric"><div class="m-k">曝光</div><div class="m-v">12.4k</div></div>
+                    <div class="metric"><div class="m-k">阅读</div><div class="m-v">3.1k</div></div>
+                    <div class="metric"><div class="m-k">互动</div><div class="m-v">486</div></div>
+                    <div class="metric"><div class="m-k">收藏</div><div class="m-v">862</div></div>
+                  </div>
+                  <div class="bars">
+                    <div class="bar-row"><span class="bl">曝光</span><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span><span class="bv">12.4k</span></div>
+                    <div class="bar-row"><span class="bl">阅读</span><span class="bar-track"><span class="bar-fill" style="width:42%"></span></span><span class="bv">3.1k</span></div>
+                    <div class="bar-row"><span class="bl">收藏</span><span class="bar-track"><span class="bar-fill" style="width:30%"></span></span><span class="bv">862</span></div>
+                    <div class="bar-row"><span class="bl">涨粉</span><span class="bar-track"><span class="bar-fill" style="width:18%"></span></span><span class="bv">214</span></div>
+                  </div>
+                  <div class="ces">CES 综合评分 <b>8.2 / 10</b>（默认模板，指标与阈值可配置，非不可变 Curis 体系）。收藏率 6.9% 高于基线 5%，建议复盘反哺选题库。</div>
+                </div>
+                <div class="nw-actions">
+                  <button class="result-ref">🔁 复盘反哺选题 ▸</button>
+                  <span class="autosave">已发布 · 8/5</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <aside class="pane pane-util">
+      <div class="pane-resize util-resize"></div>
+      <header class="pane-head util-head">
+        <div class="ut-name">📱 图文预览 <span class="ut-sub">小红书 App</span></div>
+        <button class="ut-mode" title="切换模式" aria-label="切换预览模式">预览</button>
+        <button class="util-maximize" title="最大化预览" aria-label="最大化预览面板"><svg viewBox="0 0 16 16"><polyline points="7,2 14,2 14,9"/><polyline points="2,7 2,14 9,14"/><polyline points="11,11 14,14 14,11"/></svg></button>
+        <button class="mh-util pane-toggle" title="工具面" aria-label="切换工具面板"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><line x1="10.5" y1="5" x2="10.5" y2="11"/></svg></button>
+      </header>
+      <div class="pane-body util-body">
+        <div class="util-tabs">
+          <button class="util-tab active"><span>📱 图文预览</span></button>
+          <button class="util-tab"><span>📊 数据看板</span></button>
+          <button class="util-tab"><span>📋 审核记录</span></button>
+        </div>
+        <div class="util-viewport">
+          <div class="util-viewport-inner">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+            <span>图文预览 · 小红书信息流真实样貌</span>
+            <span style="font-size:var(--ui-fs-1);opacity:.6;">选择笔记后自动加载预览</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<p class="cap"><b>状态 E · Published → Analytics（已发布 + 数据）。</b> CEO 批准后系统自动发布。发布员工 completed 后<b>不再作为 Employee Presence</b>（Current Executor = none）；改用独立的 <b>System Activity</b> 组件表达自动 Analytics / Content Reuse Loop（非员工 Runtime：无员工头像、无「工作过程」入口）。<b>Object Owner</b> 仍稳定归属小红书运营办公室。数据以 <b>轻量 Analytics</b> 呈现在内容流内（指标阈值可配置）。正文只读，强调「已完成 → 可复盘」闭环。</p>
+
+<!-- 全局 Utility 最大化 Overlay（覆盖全页面） -->
+<div class="util-overlay" id="utilOverlay">
+  <div class="util-overlay-head">
+    <span class="util-overlay-title">📱 图文预览 · 最大化</span>
+    <button class="util-overlay-close" id="utilOverlayClose" title="退出最大化" aria-label="退出最大化预览"><svg viewBox="0 0 16 16"><polyline points="2,2 9,2 9,9"/><polyline points="7,7 14,14"/><polyline points="7,14 14,7"/></svg></button>
+  </div>
+  <div class="util-overlay-body" id="utilOverlayBody">
+    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ui-text-2);font-size:var(--ui-fs-3);">
+      <svg width="64" height="64" viewBox="0 0 24 24" style="stroke:var(--ui-line);fill:none;stroke-width:1;margin-bottom:16px;"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+      <span>最大化预览 · 覆盖整个工作区</span><br>
+      <span style="opacity:.6;font-size:var(--ui-fs-1);">按 Esc 或点击 ✕ 退出</span>
+    </div>
+  </div>
+</div>
+
+<!-- Day Focus / Day Detail 覆盖层（仅列当天完整 Note，本轮不扩展复杂页面） -->
+<div class="day-focus" id="dayFocus">
+  <div class="df-backdrop" id="dfBackdrop"></div>
+  <div class="df-panel">
+    <div class="df-head"><span id="dfDate">8月12日</span><button class="df-close" id="dfClose" title="关闭" aria-label="关闭 Day Focus">✕</button></div>
+    <div class="df-flag">⚠ PRESENTATION EXAMPLE ONLY · Day Focus 的<b>呈现形态未冻结</b>（Main 内 Day Focus / Calendar Morph / Overlay 三选一 PENDING）· 本 Overlay 仅作演示，<b>不作为 Product / Pattern Contract</b></div>
+    <div class="df-hint">当天完整 Note 列表（按 Primary 优先级排序，Primary 置顶）· 点击进入对应 Note</div>
+    <div class="df-list">
+      <div class="df-row primary"><span class="t">10:00</span><span class="av-mini">王</span><span class="ttl">通勤穿搭合规审核</span><span class="st"><i class="dot" style="background:var(--ui-danger)"></i>待 CEO 决策</span></div>
+      <div class="df-row"><span class="t">09:00</span><span class="av-mini">陈</span><span class="ttl">通勤穿搭灵感库</span><span class="st"><i class="dot" style="background:var(--ui-warning)"></i>制作中</span></div>
+      <div class="df-row"><span class="t">11:30</span><span class="av-mini">王</span><span class="ttl">平价通勤包测评</span><span class="st"><i class="dot" style="background:var(--ui-accent)"></i>已排期</span></div>
+      <div class="df-row"><span class="t">14:00</span><span class="av-mini">陈</span><span class="ttl">早八妆容教程</span><span class="st"><i class="dot" style="background:var(--ui-accent)"></i>已排期</span></div>
+      <div class="df-row"><span class="t">16:30</span><span class="av-mini">林</span><span class="ttl">油皮定妆实测</span><span class="st"><i class="dot" style="background:var(--ui-text-2)"></i>待审核</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 轻量交互：三个 Toggle + Resizable（设计产物演示用） */
+(function(){
+  function each(fn){ document.querySelectorAll('.app').forEach(fn); }
+  each(function(app){
+    var panes = app.querySelector('.panes');
+    var nav = app.querySelector('.pane-nav');
+    var t1s = app.querySelectorAll('.nh-toggle');
+    var t2s = app.querySelectorAll('.mh-ctx');
+    var t3s = app.querySelectorAll('.mh-util');
+    /* 三个 Toggle 均为双向：点击展开，再点折叠。无需独立关闭按钮。
+       用 querySelectorAll 绑定所有实例（Main / Context / Utility Header 中均可能含同类 Toggle），
+       避免「展开后激活的 Toggle 未绑定事件 → 无法折叠」的 bug。 */
+    function toggleNav(){
+      if(!nav) return;
+      nav.classList.toggle('collapsed');
+    }
+    t1s.forEach(function(t){ if(t) t.addEventListener('click', toggleNav); });
+    t2s.forEach(function(t){ if(t && panes) t.addEventListener('click', function(){ panes.classList.toggle('ctx-open'); }); });
+    t3s.forEach(function(t){ if(t && panes) t.addEventListener('click', function(){ panes.classList.toggle('util-open'); }); });
+  });
+  function resizer(handle, pane, side){
+    if(!handle || !pane) return;
+    handle.addEventListener('mousedown', function(e){
+      e.preventDefault();
+      var startX = e.clientX;
+      var startW = pane.getBoundingClientRect().width;
+      function move(ev){
+        var dx = ev.clientX - startX;
+        var w = side === 'left' ? startW - dx : startW + dx;
+        pane.style.width = Math.max(180, Math.min(520, w)) + 'px';
+      }
+      function up(){ document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); }
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    });
+  }
+  document.querySelectorAll('.ctx-resize').forEach(function(h){ resizer(h, h.closest('.pane-ctx'), 'left'); });
+  document.querySelectorAll('.util-resize').forEach(function(h){ resizer(h, h.closest('.pane-util'), 'right'); });
+
+  /* Utility 最大化 Overlay */
+  var overlay = document.getElementById('utilOverlay');
+  var overlayClose = document.getElementById('utilOverlayClose');
+  document.querySelectorAll('.util-maximize').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(overlay) { overlay.classList.add('active'); }
+    });
+  });
+  if(overlayClose && overlay){
+    overlayClose.addEventListener('click', function(){ overlay.classList.remove('active'); });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay && overlay.classList.contains('active')){
+      overlay.classList.remove('active');
+    }
+  });
+
+  /* Utility Tab 切换 */
+  document.querySelectorAll('.util-tabs').forEach(function(tabBar){
+    tabBar.addEventListener('click', function(e){
+      var tab = e.target.closest('.util-tab');
+      if(!tab) return;
+      tabBar.querySelectorAll('.util-tab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+
+  /* 全局 Search Surface（Company-wide Object Search） */
+  var searchSurface = document.getElementById('searchSurface');
+  var searchInput = document.getElementById('searchInput');
+  var searchClose = document.getElementById('searchClose');
+  var searchScrim = document.getElementById('searchScrim');
+  function openSearch(){ if(searchSurface){ searchSurface.classList.add('open'); if(searchInput) searchInput.focus(); } }
+  function closeSearch(){ if(searchSurface){ searchSurface.classList.remove('open'); } }
+  document.querySelectorAll('.nav-search-trigger').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(searchSurface && searchSurface.classList.contains('open')){ closeSearch(); } else { openSearch(); }
+    });
+  });
+  if(searchClose) searchClose.addEventListener('click', closeSearch);
+  if(searchScrim) searchScrim.addEventListener('click', closeSearch);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && searchSurface && searchSurface.classList.contains('open')){ closeSearch(); }
+  });
+
+  /* Day Focus / Day Detail（点击 +N 篇打开，列出当天完整 Note） */
+  var dayFocus = document.getElementById('dayFocus');
+  var dfDate = document.getElementById('dfDate');
+  var dfClose = document.getElementById('dfClose');
+  var dfBackdrop = document.getElementById('dfBackdrop');
+  function openDayFocus(date){
+    if(!dayFocus) return;
+    if(dfDate && date) dfDate.textContent = date;
+    dayFocus.classList.add('open');
+  }
+  function closeDayFocus(){ if(dayFocus) dayFocus.classList.remove('open'); }
+  document.querySelectorAll('.more-notes').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      openDayFocus(btn.getAttribute('data-date'));
+    });
+  });
+  if(dfClose) dfClose.addEventListener('click', closeDayFocus);
+  if(dfBackdrop) dfBackdrop.addEventListener('click', closeDayFocus);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && dayFocus && dayFocus.classList.contains('open')){ closeDayFocus(); }
+  });
+})();
+</script>
+
+</body>
+</html>

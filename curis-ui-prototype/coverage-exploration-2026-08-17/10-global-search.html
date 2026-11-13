@@ -1,0 +1,413 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · J. 全局能力 / 全局对象搜索
+  设计系统：Frozen tokens.css + shell.css
+  Shell：四独立 Pane；导航六区（全局搜索为跨区能力，导航区不标记 active）
+  覆盖：J1 搜索入口（空查询=Recent；有查询=按对象类型分组）· J2 搜索结果（图标+标题+上下文+类型标签，点击直达）
+  标注：v1 RESERVED（NL 查询 / AI 问答 / Command Palette）仅静态占位
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全局搜索 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); }
+.pane-btn svg { width: 18px; height: 18px; }
+.pane-btn.is-active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; }
+.nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); }
+.tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.note { border: 1px solid var(--ui-line); border-left: 3px solid var(--ui-accent); background: var(--ui-surface); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.note b { color: var(--ui-text); }
+
+/* ===== Search Surface（J1 / J2） ===== */
+.search-surface { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-3) var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); }
+.search-input { display: flex; align-items: center; gap: var(--ui-sp-3); }
+.search-input .lead { color: var(--ui-text-2); flex: 0 0 18px; }
+.search-input input { flex: 1; background: transparent; border: 0; color: var(--ui-text); font-family: inherit; font-size: var(--ui-fs-5); line-height: 1.4; }
+.search-input input:focus { outline: none; }
+.search-input .clear { background: transparent; border: 0; color: var(--ui-text-2); font: inherit; cursor: pointer; font-size: var(--ui-fs-4); padding: 0 var(--ui-sp-1); }
+.search-input .clear:hover { color: var(--ui-text); }
+.composer-bar { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.composer-bar.right { margin-left: auto; }
+.chip { display: inline-flex; align-items: center; gap: var(--ui-sp-1); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; }
+.result-group { margin-top: var(--ui-sp-6); }
+.group-head { display: flex; align-items: center; gap: var(--ui-sp-2); font-size: var(--ui-fs-4); font-weight: 650; margin-bottom: var(--ui-sp-3); }
+.group-head .count { font-size: var(--ui-fs-1); color: var(--ui-text-2); font-weight: 400; }
+.result-list { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.result-item { display: flex; align-items: center; gap: var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-4); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); text-decoration: none; color: inherit; transition: border-color 150ms ease, background 150ms ease; }
+.result-item:hover { border-color: var(--ui-accent); background: var(--ui-surface-2); }
+.ri-ico { width: 34px; height: 34px; flex: 0 0 34px; border-radius: var(--ui-r-sm); background: var(--ui-surface-2); display: grid; place-items: center; color: var(--ui-accent); }
+.ri-ico svg { width: 18px; height: 18px; }
+.ri-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ri-title { font-weight: 600; }
+.ri-ctx { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+
+  <!-- ===== Navigation Pane ===== -->
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn is-active" title="全局对象搜索" aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <div class="nav-group">
+          <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+          <div class="nav-children">
+            <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>研发办公室</span></a>
+            <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>小红书运营办公室</span></a>
+          </div>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Context Pane（默认收起：搜索范围 / 过滤） ===== -->
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">检索范围</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">检索范围</div>
+      <div class="ctx-list">
+        <div class="ctx-item active">全公司</div>
+        <div class="ctx-item">当前业务</div>
+        <div class="ctx-item">我负责的</div>
+      </div>
+      <div class="ctx-head">对象类型</div>
+      <div class="ctx-list">
+        <div class="ctx-item">业务</div>
+        <div class="ctx-item">Workspace</div>
+        <div class="ctx-item">员工</div>
+        <div class="ctx-item">业务对象</div>
+        <div class="ctx-item">资料</div>
+        <div class="ctx-item">结果</div>
+        <div class="ctx-item">会议</div>
+        <div class="ctx-item">能力</div>
+      </div>
+      <div class="ctx-head">时间</div>
+      <div class="ctx-list">
+        <div class="ctx-item active">全部</div>
+        <div class="ctx-item">近 7 天</div>
+        <div class="ctx-item">近 30 天</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main Pane · Search Surface ===== -->
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="index.html">Curis</a><span class="sep">/</span><span>全局搜索</span></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+
+      <div class="page-head">
+        <h1>全局搜索</h1>
+        <div class="sub">跨业务、Workspace、员工、资料、结果的对象检索 · <span class="mock-badge">示例数据</span></div>
+      </div>
+
+      <!-- J1 搜索入口 -->
+      <div class="search-surface" style="margin-bottom:var(--ui-sp-4)">
+        <div class="search-input">
+          <svg class="lead" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input value="登录模块" aria-label="搜索对象" />
+          <button class="clear" title="清除" aria-label="清除">×</button>
+        </div>
+        <div class="composer-bar">
+          <button class="chip">范围：全公司 ▾</button>
+          <button class="chip">类型：全部 ▾</button>
+          <button class="chip">时间：全部 ▾</button>
+          <div class="composer-bar right">
+            <button class="chip">排序：相关度 ▾</button>
+            <button class="btn btn-primary">搜索</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-bottom:var(--ui-sp-5)">
+        <b>v1 RESERVED：</b>自然语言查询 / AI 问答 / Command Palette 为预留能力，本轮仅做静态占位。当前 v1 为对象检索：<b>空查询 → 显示 Recent</b>，<b>有查询 → 按对象类型分组</b>。
+      </div>
+
+      <!-- J1/J2 切换：空查询(Recent) vs 有查询(分组结果) -->
+      <div class="tabs" data-tab-group="search">
+        <button class="tab" data-tab="recent">最近访问（空查询）</button>
+        <button class="tab active" data-tab="results">搜索结果（有查询）</button>
+      </div>
+
+      <!-- 空查询 → Recent -->
+      <div class="tab-panel" data-tab-panel="search" data-tab-id="recent">
+        <div class="result-list" style="margin-top:var(--ui-sp-4)">
+          <a class="result-item" href="08-rd-workspace.html">
+            <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
+            <span class="ri-main"><span class="ri-title">研发办公室 · 登录模块重构</span><span class="ri-ctx">今天 · 进行中</span></span>
+            <span class="tag">最近</span>
+          </a>
+          <a class="result-item" href="09-xhs-workspace.html">
+            <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span>
+            <span class="ri-main"><span class="ri-title">小红书运营办公室 · 8 月种草笔记排期</span><span class="ri-ctx">今天 · 待发布</span></span>
+            <span class="tag">最近</span>
+          </a>
+          <a class="result-item" href="05-library.html">
+            <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg></span>
+            <span class="ri-main"><span class="ri-title">产品需求文档 v2</span><span class="ri-ctx">资料库 / 公司产生 · 昨天</span></span>
+            <span class="tag">最近</span>
+          </a>
+          <a class="result-item" href="06-meeting.html">
+            <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span>
+            <span class="ri-main"><span class="ri-title">Q3 经营复盘会议</span><span class="ri-ctx">会议 · 3 天前</span></span>
+            <span class="tag">最近</span>
+          </a>
+          <a class="result-item" href="08-rd-workspace.html">
+            <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12l3 3 5-6"/></svg></span>
+            <span class="ri-main"><span class="ri-title">竞品周报生成结果</span><span class="ri-ctx">结果 · 本周</span></span>
+            <span class="tag">最近</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 有查询 → 按对象类型分组（J2） -->
+      <div class="tab-panel active" data-tab-panel="search" data-tab-id="results">
+
+        <div class="result-group">
+          <div class="group-head">业务 <span class="count">2</span></div>
+          <div class="result-list">
+            <a class="result-item" href="02-business-space.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+              <span class="ri-main"><span class="ri-title">产品平台</span><span class="ri-ctx">研发办公室 · 进行中</span></span>
+              <span class="tag">业务</span>
+            </a>
+            <a class="result-item" href="02-business-space.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+              <span class="ri-main"><span class="ri-title">用户增长</span><span class="ri-ctx">业务空间 · 规划中</span></span>
+              <span class="tag">业务</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">Workspace <span class="count">2</span></div>
+          <div class="result-list">
+            <a class="result-item" href="08-rd-workspace.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
+              <span class="ri-main"><span class="ri-title">研发办公室</span><span class="ri-ctx">产品平台业务 · 多员工 Workstation</span></span>
+              <span class="tag">Workspace</span>
+            </a>
+            <a class="result-item" href="09-xhs-workspace.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
+              <span class="ri-main"><span class="ri-title">小红书运营办公室</span><span class="ri-ctx">内容增长业务</span></span>
+              <span class="tag">Workspace</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">员工 <span class="count">2</span></div>
+          <div class="result-list">
+            <a class="result-item" href="03-org-center.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+              <span class="ri-main"><span class="ri-title">林涛 · 架构师</span><span class="ri-ctx">研发办公室 · 工作中</span></span>
+              <span class="tag">员工</span>
+            </a>
+            <a class="result-item" href="03-org-center.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+              <span class="ri-main"><span class="ri-title">周岚 · 开发工程师</span><span class="ri-ctx">研发办公室 · 联调中</span></span>
+              <span class="tag">员工</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">业务对象 <span class="count">2</span></div>
+          <div class="result-list">
+            <a class="result-item" href="08-rd-workspace.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span>
+              <span class="ri-main"><span class="ri-title">登录模块重构 · 需求</span><span class="ri-ctx">产品平台业务</span></span>
+              <span class="tag">业务对象</span>
+            </a>
+            <a class="result-item" href="08-rd-workspace.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span>
+              <span class="ri-main"><span class="ri-title">登录接口联调 · 任务</span><span class="ri-ctx">研发办公室</span></span>
+              <span class="tag">业务对象</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">资料 <span class="count">2</span></div>
+          <div class="result-list">
+            <a class="result-item" href="05-library.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg></span>
+              <span class="ri-main"><span class="ri-title">登录模块设计文档 v1.3</span><span class="ri-ctx">资料库 / 公司产生</span></span>
+              <span class="tag">资料</span>
+            </a>
+            <a class="result-item" href="05-library.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg></span>
+              <span class="ri-main"><span class="ri-title">竞品登录流程分析</span><span class="ri-ctx">资料库 / 外部</span></span>
+              <span class="tag">资料</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">结果 <span class="count">1</span></div>
+          <div class="result-list">
+            <a class="result-item" href="08-rd-workspace.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12l3 3 5-6"/></svg></span>
+              <span class="ri-main"><span class="ri-title">登录模块 v1.3 联调报告</span><span class="ri-ctx">研发办公室 · 结果已回收</span></span>
+              <span class="tag">结果</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">会议 <span class="count">1</span></div>
+          <div class="result-list">
+            <a class="result-item" href="06-meeting.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span>
+              <span class="ri-main"><span class="ri-title">登录模块技术方案评审</span><span class="ri-ctx">研发办公室 · 已结束</span></span>
+              <span class="tag">会议</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="group-head">能力 <span class="count">1</span></div>
+          <div class="result-list">
+            <a class="result-item" href="04-talent-market.html">
+              <span class="ri-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+              <span class="ri-main"><span class="ri-title">Codex · 代码生成 Skill</span><span class="ri-ctx">人才市场 / 已安装</span></span>
+              <span class="tag">能力</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Utility Pane（默认收起：对象预览） ===== -->
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">对象预览</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="detail-field"><div class="k">对象类型</div><div class="v"><span class="tag">业务对象 · 需求</span></div></div>
+      <div class="detail-field"><div class="k">名称</div><div class="v">登录模块重构</div></div>
+      <div class="detail-field"><div class="k">归属业务</div><div class="v">产品平台</div></div>
+      <div class="detail-field"><div class="k">归属 Workspace</div><div class="v">研发办公室</div></div>
+      <div class="detail-field"><div class="k">当前责任</div><div class="v">接口联调协调 · 林涛</div></div>
+      <div class="detail-field"><div class="k">状态</div><div class="v"><span class="status success">进行中</span></div></div>
+      <div class="detail-field"><div class="k">最近结果</div><div class="v">v1.3 联调通过率 96% <span class="mock-badge">示例数据</span></div></div>
+      <div class="note" style="margin-top:var(--ui-sp-2)">点击左侧任意搜索结果可直接进入对应对象 / Workspace；本预览为点击后展开的轻量引用视图（Result→Utility）。</div>
+    </div>
+  </aside>
+
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

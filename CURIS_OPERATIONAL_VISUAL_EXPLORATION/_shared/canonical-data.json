@@ -1,0 +1,268 @@
+{
+  "workspace": {
+    "name": "Content Growth",
+    "host": "Curis · 一人公司",
+    "scope": "内容制作"
+  },
+  "screen1": {
+    "title": "Production Overview",
+    "pageTitle": "内容制作 · Production Overview",
+    "scopeNote": "经营来源：抖音｜创始人IP · 数字人口播的反馈周期与稳定之境",
+    "tabs": ["全部", "图文制作", "口播制作", "视频制作", "长文章制作"],
+    "activeTab": "全部",
+    "filters": {
+      "state": ["全部", "执行中", "等待中", "Review", "Blocked", "可发布"],
+      "account": ["账号：已选 1 个", "小红书｜品牌号", "小红书｜创始人IP", "抖音｜品牌号", "抖音｜创始人IP", "公众号｜品牌官方号", "公众号｜创始人号"]
+    },
+    "summary": {
+      "total": 7,
+      "working": 2,
+      "waiting": 2,
+      "review": 1,
+      "blocked": 1,
+      "ready": 1,
+      "employees": 5
+    },
+    "lines": [
+      {
+        "key": "oral",
+        "name": "口播制作",
+        "format": "视频（口播类）",
+        "methods": ["数字人口播", "真人素材口播"],
+        "works": [
+          {
+            "id": "W-202",
+            "title": "AI 会不会取代你的岗位",
+            "account": "抖音｜创始人IP",
+            "method": "数字人口播",
+            "spec": "9:16 · 60s · 1080×1920",
+            "stage": "数字人口播合成",
+            "state": "working",
+            "stateLabel": "执行中",
+            "owner": "高戈",
+            "ownerAvatar": "高",
+            "ownerColor": "#1f7ae0",
+            "next": "用言舟 v2 生成口播，试听后进入剪辑",
+            "artifact": "脚本 v3",
+            "progress": 56
+          },
+          {
+            "id": "W-204",
+            "title": "3 个让 AI 写得更像你的方法",
+            "account": "抖音｜品牌号",
+            "method": "数字人口播",
+            "spec": "9:16 · 25s",
+            "stage": "等待数字人队列",
+            "state": "waiting",
+            "stateLabel": "等待中",
+            "owner": "周砚",
+            "ownerAvatar": "周",
+            "ownerColor": "#0f9d63",
+            "next": "言舟队列空闲后自动继续",
+            "artifact": "脚本 v1",
+            "progress": 45
+          }
+        ]
+      },
+      {
+        "key": "image",
+        "name": "图文制作",
+        "format": "图文",
+        "methods": ["图文排版"],
+        "works": [
+          {
+            "id": "W-201",
+            "title": "AI 时代的职场效率清单",
+            "account": "小红书｜品牌号",
+            "method": "图文排版",
+            "spec": "3:4 · 8 页",
+            "stage": "封面与包装",
+            "state": "working",
+            "stateLabel": "执行中",
+            "owner": "乔叶",
+            "ownerAvatar": "乔",
+            "ownerColor": "#d97706",
+            "next": "乔叶出结论前置封面 v2，随后提交人工把关",
+            "artifact": "内页文案 v2",
+            "progress": 74
+          },
+          {
+            "id": "W-205",
+            "title": "创业第 180 天",
+            "account": "小红书｜创始人IP",
+            "method": "图文排版",
+            "spec": "3:4 · 6 页",
+            "stage": "缺创始人授权照片",
+            "state": "blocked",
+            "stateLabel": "Blocked",
+            "owner": "徐白",
+            "ownerAvatar": "徐",
+            "ownerColor": "#0e8f7e",
+            "next": "需 CEO 提供 2 张授权照片（AR-1）",
+            "artifact": "正文 v2",
+            "progress": 30
+          },
+          {
+            "id": "W-207",
+            "title": "数据卡点自查表",
+            "account": "抖音｜品牌号",
+            "method": "图文排版",
+            "spec": "3:4 · 9 页",
+            "stage": "责任未配置",
+            "state": "waiting",
+            "stateLabel": "等待中",
+            "owner": null,
+            "ownerAvatar": null,
+            "ownerColor": null,
+            "next": "缺内容制作责任人，已进入组织路由等待分配",
+            "artifact": "—",
+            "progress": 0
+          }
+        ]
+      },
+      {
+        "key": "article",
+        "name": "长文章制作",
+        "format": "文章",
+        "methods": ["长文章"],
+        "works": [
+          {
+            "id": "W-203",
+            "title": "一人公司如何搭建内容系统",
+            "account": "公众号｜品牌官方号",
+            "method": "长文章",
+            "spec": "2,400 字 · 系统图 1 张",
+            "stage": "待人工把关",
+            "state": "review",
+            "stateLabel": "Review",
+            "owner": "周砚",
+            "ownerAvatar": "周",
+            "ownerColor": "#0f9d63",
+            "next": "创始人 IP 内容必须人工 Review，等待确认",
+            "artifact": "初稿 v1",
+            "progress": 88
+          }
+        ]
+      },
+      {
+        "key": "video",
+        "name": "视频制作",
+        "format": "视频（非口播）",
+        "methods": ["混剪", "屏幕演示"],
+        "works": [
+          {
+            "id": "W-206",
+            "title": "上周热点：AI 职场报告",
+            "account": "抖音｜品牌号",
+            "method": "混剪",
+            "spec": "9:16 · 45s",
+            "stage": "可发布成品",
+            "state": "ready",
+            "stateLabel": "可发布",
+            "owner": "高戈",
+            "ownerAvatar": "高",
+            "ownerColor": "#1f7ae0",
+            "next": "进入发布队列排期",
+            "artifact": "成片 v1",
+            "progress": 100
+          }
+        ]
+      }
+    ]
+  },
+  "screen2": {
+    "title": "W-202 · Production Work",
+    "work": {
+      "id": "W-202",
+      "title": "AI 会不会取代你的岗位",
+      "account": "抖音｜创始人IP",
+      "method": "数字人口播",
+      "methodKey": "dh-oral",
+      "owner": "高戈",
+      "ownerAvatar": "高",
+      "ownerColor": "#1f7ae0",
+      "spec": "9:16 · 60s · 1080×1920 · 字幕底部 12%",
+      "status": "working",
+      "statusLabel": "执行中",
+      "stage": "数字人口播合成",
+      "progress": 56,
+      "next": "用言舟 v2 生成口播，试听后进入剪辑"
+    },
+    "targetDeliverable": {
+      "id": "TD-2",
+      "proposal": "PROP-7",
+      "account": "抖音｜创始人IP",
+      "purpose": "建立判断者形象：用一条强观点口播讲清“为什么删工具”",
+      "criteria": "完播率 ≥ 30%，评论区出现真实讨论",
+      "spec": "9:16 · 60s · 1080×1920 · 字幕底部 12% · 每行 ≤14 字",
+      "review": "创始人 IP 内容必须人工 Review（事实与承诺表述）",
+      "basis": "Account Goal v1 · 硬观点口播定位 · 言舟 v2 授权覆盖本账号"
+    },
+    "workflow": {
+      "current": "synth",
+      "steps": [
+        {"key": "brief", "name": "Brief", "state": "done", "stateLabel": "已完成", "by": "周砚", "byAvatar": "周", "byColor": "#0f9d63", "artifact": "Brief v1", "in": "提案 v1 · CEO 输入", "review": "—", "note": "判断与受众已锁定，判据＝完播 ≥30%"},
+        {"key": "script", "name": "Script", "state": "review", "stateLabel": "待 Review", "by": "徐白", "byAvatar": "徐", "byColor": "#0e8f7e", "artifact": "脚本 v3", "in": "Brief v1", "review": "待创始人确认事实表述（“面试 11 人”）", "note": "按 REF-1 反常识结构重写开头；v1/v2 保留"},
+        {"key": "dh", "name": "数字人 / Asset", "state": "done", "stateLabel": "已完成", "by": "江雪", "byAvatar": "江", "byColor": "#be185d", "artifact": "数字人 言舟 v2", "in": "脚本 v2", "review": "通过：授权覆盖 dy-founder 商用内容", "note": ""},
+        {"key": "synth", "name": "Synthesis", "state": "working", "stateLabel": "执行中", "by": "高戈", "byAvatar": "高", "byColor": "#1f7ae0", "artifact": "口播 Artifact", "in": "脚本 v3", "review": "—", "note": "试听后进入剪辑；若 Script 再改，本步输入版本失效需重合成", "blocker": "等待队列；不阻塞其它 Work"},
+        {"key": "edit", "name": "Editing", "state": "wait", "stateLabel": "等待依赖", "by": "高戈", "byAvatar": "高", "byColor": "#1f7ae0", "artifact": "成片", "in": "口播 Artifact", "review": "—", "note": ""},
+        {"key": "sub", "name": "Subtitle / Packaging", "state": "wait", "stateLabel": "等待依赖", "by": "乔叶", "byAvatar": "乔", "byColor": "#d97706", "artifact": "字幕 / 封面", "in": "成片", "review": "—", "note": ""},
+        {"key": "qa", "name": "QA", "state": "wait", "stateLabel": "等待依赖", "by": "周砚", "byAvatar": "周", "byColor": "#0f9d63", "artifact": "把关结论", "in": "字幕版成片", "review": "创始人 IP 内容必须人工 Review，不得自审", "note": ""}
+      ]
+    },
+    "artifact": {
+      "type": "script",
+      "title": "脚本 v3",
+      "subtitle": "当前输入：Synthesis · 负责人：高戈",
+      "body": [
+        {"sec": "0-3 秒", "text": "先别问 AI 会不会取代你。先找出今天重复了三次的工作。"},
+        {"sec": "3-15 秒", "text": "在我们团队过去半年的 11 次面试样本中，有 8 位候选人仍沿用旧流程。这只是团队观察，不代表所有职场人。"},
+        {"sec": "15-35 秒", "text": "AI 真正的风险不是替代，而是让“还按旧方式做”的人显得贵。 "},
+        {"sec": "35-50 秒", "text": "一人公司没有冗余岗位。你要么用 AI 把重复压到 10%，要么把省下的时间投到判断上。"},
+        {"sec": "50-60 秒", "text": "本周我会把我们在用的 3 个筛选动作拆成清单。关注我，下一条直接给模板。"}
+      ],
+      "meta": [
+        {"k": "Hook", "v": "反常识：先别问 AI，先找重复"},
+        {"k": "结构", "v": "结论 → 证据 → 判断 → CTA"},
+        {"k": "字数", "v": "约 180 字 / 60 秒"}
+      ]
+    },
+    "versions": [
+      {"v": "v3", "status": "current", "title": "当前", "summary": "按 REF-1 反常识结构重写开头", "by": "徐白", "time": "09-16 03:20"},
+      {"v": "v2", "status": "superseded", "title": "v2", "summary": "弱化结论，增加案例缓冲", "by": "徐白", "time": "09-15 21:10"},
+      {"v": "v1", "status": "superseded", "title": "v1", "summary": "初稿，平铺直叙", "by": "徐白", "time": "09-15 16:40"}
+    ],
+    "conversation": {
+      "with": "高戈",
+      "withAvatar": "高",
+      "withColor": "#1f7ae0",
+      "context": "W-202 · Synthesis 步骤 · 输入脚本 v3",
+      "messages": [
+        {"from": "me", "text": "高戈，脚本 v3 已按 REF-1 结构改完。看下开头是否太硬，以及 60 秒口播节奏是否压得住。"},
+        {"from": "高戈", "text": "开头没问题，反常识在抖音创始人 IP 上能抓注意力。11 人样本那句需要创始人确认，否则 QA 会卡。"},
+        {"from": "me", "text": "好，那我先让言舟 v2 进队列合成。队列大概多久？"},
+        {"from": "高戈", "text": "当前约 6 分钟。合成完我会先听一遍，再决定节奏点。如果 Script 还要改，这版口播就作废。"}
+      ]
+    },
+    "qa": {
+      "owner": "周砚",
+      "ownerAvatar": "周",
+      "ownerColor": "#0f9d63",
+      "state": "wait",
+      "note": "创始人 IP 内容必须人工 Review，不得自审",
+      "items": [
+        {"k": "事实准确性", "v": "待确认：11 人样本表述"},
+        {"k": "承诺与数据表述", "v": "待 Review"},
+        {"k": "平台规格", "v": "待检查"},
+        {"k": "数字人授权", "v": "已通过：言舟 v2 覆盖本账号"}
+      ]
+    },
+    "team": [
+      {"name": "高戈", "role": "Work Owner / 视频", "resp": "数字人口播合成、视频生成与成片", "avatar": "高", "color": "#1f7ae0", "current": true},
+      {"name": "徐白", "role": "文案 / 脚本", "resp": "脚本 v3，等待创始人确认", "avatar": "徐", "color": "#0e8f7e", "current": false},
+      {"name": "周砚", "role": "制作 Owner / QA", "resp": "最终 QA 与人工 Review", "avatar": "周", "color": "#0f9d63", "current": false},
+      {"name": "江雪", "role": "素材 Owner", "resp": "数字人 言舟 v2 授权与版本", "avatar": "江", "color": "#be185d", "current": false},
+      {"name": "乔叶", "role": "视觉 / 包装", "resp": "字幕与封面（等待剪辑完成）", "avatar": "乔", "color": "#d97706", "current": false}
+    ]
+  }
+}

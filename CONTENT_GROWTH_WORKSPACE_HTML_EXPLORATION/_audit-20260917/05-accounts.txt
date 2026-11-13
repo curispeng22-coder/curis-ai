@@ -1,0 +1,110 @@
+- complementary:
+  - generic: Curis · 一人公司
+  - generic: Content Growth
+  - generic: Professional Workspace
+  - navigation:
+    - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）":
+      - generic: 经营
+      - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）": "2"
+    - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量":
+      - generic: 研究与选题
+      - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量": "3"
+    - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）":
+      - generic: 内容制作
+      - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）": "7"
+    - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）":
+      - generic: 发布
+      - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）": "4"
+    - generic "连接异常账号：绑定状态不是 ok 的账号数量":
+      - generic: 账号
+      - generic "连接异常账号：绑定状态不是 ok 的账号数量": "2"
+    - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）":
+      - generic: 复盘
+      - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）": "3"
+    - generic "待准备资产：尚未就绪的素材 / 授权请求数量":
+      - generic: 素材
+      - generic "待准备资产：尚未就绪的素材 / 授权请求数量": "2"
+  - generic: 经营进行中
+  - generic: 下一检查 09-18 10:00
+  - generic: 你
+  - generic: CEO 视角
+- banner:
+  - button "←"
+  - generic: Content Growth
+  - generic: /
+  - generic: 账号
+  - generic: 经营边界
+  - generic: 团队持续经营中
+- generic: 账号
+- generic "找 孔黎 交流":
+  - generic: 孔
+  - generic: 孔黎
+  - emphasis: 账号 负责人
+- generic: "1"
+- generic: 相关工作
+- button "责任与团队"
+- textbox "直接说账号相关的事，例如：公众号为什么不能自动同步？"
+- button "交给团队"
+- generic: 想指定某个人：点左侧员工名
+- textbox "搜索账号 / handle / 定位"
+- generic: 全部平台
+- generic: 小红书
+- generic: 抖音
+- generic: 公众号
+- table:
+  - rowgroup:
+    - row "账号 连接 发布方式 数据获取 负责人":
+      - columnheader "账号"
+      - columnheader "连接"
+      - columnheader "发布方式"
+      - columnheader "数据获取"
+      - columnheader "负责人"
+  - rowgroup:
+    - row "小红书｜品牌号 @Curis效率笔记 OAuth 正常 · 到期 2026-12-31 自动 自动同步 孔黎":
+      - cell "小红书｜品牌号 @Curis效率笔记":
+        - text: 小红书｜品牌号
+        - generic: "@Curis效率笔记"
+      - cell "OAuth 正常 · 到期 2026-12-31"
+      - cell "自动"
+      - cell "自动同步"
+      - cell "孔黎"
+    - row "小红书｜创始人IP @陈屿Wander OAuth 正常 · 到期 2026-11-15 自动 自动同步 孔黎":
+      - cell "小红书｜创始人IP @陈屿Wander":
+        - text: 小红书｜创始人IP
+        - generic: "@陈屿Wander"
+      - cell "OAuth 正常 · 到期 2026-11-15"
+      - cell "自动"
+      - cell "自动同步"
+      - cell "孔黎"
+    - row "抖音｜品牌号 @Curis效率实验室 OAuth 正常 · 仅允许发布已审核版本 自动 部分同步 孔黎":
+      - cell "抖音｜品牌号 @Curis效率实验室":
+        - text: 抖音｜品牌号
+        - generic: "@Curis效率实验室"
+      - cell "OAuth 正常 · 仅允许发布已审核版本"
+      - cell "自动"
+      - cell "部分同步"
+      - cell "孔黎"
+    - row "抖音｜创始人IP @陈屿说AI创业 OAuth 正常 · 内容需人工 审核 后方可自动发布 审核后发布 自动同步 孔黎":
+      - cell "抖音｜创始人IP @陈屿说AI创业":
+        - text: 抖音｜创始人IP
+        - generic: "@陈屿说AI创业"
+      - cell "OAuth 正常 · 内容需人工 审核 后方可自动发布"
+      - cell "审核后发布"
+      - cell "自动同步"
+      - cell "孔黎"
+    - row "公众号｜品牌官方号 Curis 官方 无 API 授权 · 发布与数据均需人工 手动发布 手动录入 孔黎":
+      - cell "公众号｜品牌官方号 Curis 官方":
+        - text: 公众号｜品牌官方号
+        - generic: Curis 官方
+      - cell "无 API 授权 · 发布与数据均需人工"
+      - cell "手动发布"
+      - cell "手动录入"
+      - cell "孔黎"
+    - row "公众号｜创始人号 陈屿的月度判断 无 API 授权 · 人工发布 手动发布 手动录入 孔黎":
+      - cell "公众号｜创始人号 陈屿的月度判断":
+        - text: 公众号｜创始人号
+        - generic: 陈屿的月度判断
+      - cell "无 API 授权 · 人工发布"
+      - cell "手动发布"
+      - cell "手动录入"
+      - cell "孔黎"

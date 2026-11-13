@@ -1,0 +1,332 @@
+{
+  "ceo-desk.html": {
+    "dark": {
+      "dataTheme": "dark",
+      "hasDarkClass": false,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": {
+        "bg": "rgb(34, 37, 41)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "light": {
+      "dataTheme": "light",
+      "hasDarkClass": false,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemLight": {
+      "dataTheme": "system",
+      "hasDarkClass": false,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": {
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemDark": {
+      "dataTheme": "system",
+      "hasDarkClass": false,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": {
+        "bg": "rgb(34, 37, 41)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    }
+  },
+  "workspace-portal.html": {
+    "dark": {
+      "dataTheme": "dark",
+      "hasDarkClass": true,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "light": {
+      "dataTheme": "light",
+      "hasDarkClass": true,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemLight": {
+      "dataTheme": "system",
+      "hasDarkClass": true,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemDark": {
+      "dataTheme": "system",
+      "hasDarkClass": true,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    }
+  },
+  "workspace-studio.html": {
+    "dark": {
+      "dataTheme": "dark",
+      "hasDarkClass": true,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "light": {
+      "dataTheme": "light",
+      "hasDarkClass": true,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemLight": {
+      "dataTheme": "system",
+      "hasDarkClass": true,
+      "uiBg": "#f5f5f7",
+      "uiAccent": "#1a1c1f",
+      "bgBaseDefault": "#f5f5f7",
+      "statusPrimary": "#1a1c1f",
+      "bodyBg": "rgb(245, 245, 247)",
+      "bodyColor": "rgb(26, 28, 31)",
+      "cTopbar": {
+        "bg": "rgb(245, 245, 247)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cSidebar": {
+        "bg": "rgb(247, 248, 250)",
+        "color": "rgb(26, 28, 31)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    },
+    "systemDark": {
+      "dataTheme": "system",
+      "hasDarkClass": true,
+      "uiBg": "#1a1c1f",
+      "uiAccent": "#32f08c",
+      "bgBaseDefault": "#1a1c1f",
+      "statusPrimary": "#32f08c",
+      "bodyBg": "rgb(26, 28, 31)",
+      "bodyColor": "rgb(243, 244, 246)",
+      "cTopbar": {
+        "bg": "rgb(26, 28, 31)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cSidebar": {
+        "bg": "rgb(43, 47, 52)",
+        "color": "rgb(243, 244, 246)"
+      },
+      "cCard": null,
+      "btnPrimary": 1,
+      "primaryClass": 0,
+      "fab": true,
+      "badge": true,
+      "companion": false,
+      "askFab": 0,
+      "drawerBare": false
+    }
+  }
+}

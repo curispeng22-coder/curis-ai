@@ -1,0 +1,96 @@
+- complementary:
+  - generic: Curis · 一人公司
+  - generic: Content Growth
+  - generic: Professional Workspace
+  - navigation:
+    - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）":
+      - generic: 经营
+      - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）": "2"
+    - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量":
+      - generic: 研究与选题
+      - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量": "3"
+    - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）":
+      - generic: 内容制作
+      - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）": "7"
+    - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）":
+      - generic: 发布
+      - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）": "4"
+    - generic "连接异常账号：绑定状态不是 ok 的账号数量":
+      - generic: 账号
+      - generic "连接异常账号：绑定状态不是 ok 的账号数量": "2"
+    - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）":
+      - generic: 复盘
+      - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）": "3"
+    - generic "待准备资产：尚未就绪的素材 / 授权请求数量":
+      - generic: 素材
+      - generic "待准备资产：尚未就绪的素材 / 授权请求数量": "2"
+  - generic: 经营进行中
+  - generic: 下一检查 09-18 10:00
+  - generic: 你
+  - generic: CEO 视角
+- banner:
+  - button "←"
+  - generic: Content Growth
+  - generic: /
+  - generic: 复盘
+  - generic: 经营边界
+  - generic: 团队持续经营中
+- generic: 复盘
+- generic "找 苏澈 交流":
+  - generic: 苏
+  - generic: 苏澈
+  - emphasis: 分析 负责人
+- generic: "3"
+- generic: 相关工作
+- generic: 1 进行中
+- button "责任与团队"
+- textbox "直接问数据，例如：为什么完播涨了但没人咨询？"
+- button "交给团队"
+- generic: 想指定某个人：点左侧员工名
+- generic: 数据概览
+- generic: 内容表现
+- generic: 趋势与对比
+- generic: 分析判断
+- generic: 下一步
+- generic: 先看数据，再解释变化
+- generic: 从判断到动作的出口都在这一页：每条下一步都保留来源判断与观测范围；换页返回时比较集合、日期、指标与选择都还在。
+- generic: 下一步行动
+- generic: 来源：本期判断 / 实验窗口
+- text: 建立实验 工作：CTA 位置测试
+- generic: 实验
+- generic: 负责人 苏澈 → 周砚 · 09-20 实验结束后
+- button "建实验 工作"
+- text: 新选题：AI 写得更像你（系列 3 条）
+- generic: 选题
+- generic: 负责人 沈述 · 本周内
+- button "去研究"
+- text: 补录公众号 2 篇数据后重算打开率
+- generic: 数据
+- generic: 负责人 苏澈 · 待人工录入
+- button "去补数据"
+- text: 提供创始人授权照片 2 张
+- generic: 需 CEO
+- generic: 负责人 CEO · 阻塞中
+- generic: 需 CEO
+- generic: 学习候选与已接受学习
+- generic: 须经 审核 才能成为真相
+- generic: 全部
+- generic: 已接受
+- generic: 候选
+- generic: 不适用
+- text: 前 3 秒结论前置可提升完播
+- generic: 候选
+- generic: 适用：抖音｜品牌号 · 来源 E-1（5 条样本）
+- generic: 待 09-20 实验窗口结束后 审核
+- text: 封面结论前置 + 清单内页 稳定提升收藏率
+- generic: 已接受
+- generic: 适用：小红书｜品牌号 · 来源 E-2 / K-2
+- generic: 09-08 苏澈提交、CEO 接受
+- text: 公众号不适合追热点
+- generic: 不适用
+- generic: 适用：微信公众号｜品牌官方号 · 来源 历史复盘
+- generic: 09-02 判定不适用并归档
+- text: 创始人号早期观点类优于叙事类
+- generic: 候选
+- generic: 适用：小红书｜创始人IP · 来源 语气 A/B（8 条）
+- generic: 未排除时段因素

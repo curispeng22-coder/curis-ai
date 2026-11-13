@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "gates": {
+    "production_deploy": { "enabled": true },
+    "external_send": { "enabled": true, "allow_list": [] },
+    "data_deletion": {
+      "enabled": true,
+      "protected_collections": ["customers", "orders", "employees"]
+    },
+    "billing_config": { "enabled": true },
+    "marketplace": { "enabled": true },
+    "permission_boundary": { "enabled": true },
+    "core_asset": { "enabled": true }
+  },
+  "budget": {
+    "token_hard_limit": 200000,
+    "warn_ratio": 0.8,
+    "auto_simulate_before_send": true,
+    "fail_closed": true
+  },
+  "default_decision_policy": "ask",
+  "whitelist": { "actions": [] }
+}

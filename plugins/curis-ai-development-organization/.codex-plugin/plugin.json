@@ -1,0 +1,24 @@
+{
+  "name": "curis-ai-development-organization",
+  "version": "0.1.0",
+  "description": "Governance plugin for the Curis Workspace AI Development Organization.",
+  "author": {
+    "name": "Curis Workspace"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Curis AI Development Organization",
+    "shortDescription": "Apply Curis engineering roles, gates, and workflow.",
+    "longDescription": "Provides Curis Workspace organization guidance for AI-assisted engineering, including role boundaries, collaboration protocol, standards, and Sprint gates.",
+    "developerName": "Curis Workspace",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Review this Curis task against the organization gates.",
+      "Draft a Sprint plan using the Curis workflow.",
+      "Check whether this request is allowed before Sprint 1."
+    ]
+  }
+}

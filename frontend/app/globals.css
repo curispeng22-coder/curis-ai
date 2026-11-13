@@ -1,0 +1,338 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════
+   FROZEN DESIGN TOKENS — Curis v1 Desktop（权威视觉源）
+   详见 docs/03_Design/Curis_UI_Frozen_Spec_2026-08-04.md
+   本组 --ui-* 为唯一视觉真源；ceo-* 已桥接至本组，旧前端视觉层全部作废（2026-08-05 总控裁定）。
+   2026-10-05 Owner 裁定：双主题。light（默认）= 浅中性底 + Direction D 紫 #806BE5；
+   dark = 暗底 + 绿 #32f08c；system 随 OS。语义色跨主题统一。
+   ═══════════════════════════════════════════ */
+:root {
+  --ui-sidebar-w: 190px;
+  --ui-topbar-h: 48px;
+  --ui-radius: 12px;
+  --ui-radius-sm: 8px;
+  /* Accepted desktop baseline uses local system fonts; packaging never downloads fonts. */
+  --ui-font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+  --ui-fs-1: 12px;
+  --ui-fs-2: 13px;
+  --ui-fs-3: 14px;
+  --ui-fs-4: 16px;
+  --ui-fs-5: 20px;
+  --ui-fs-6: 24px;
+  --ui-fs-7: 28px;
+  --ui-sp-1: 4px;
+  --ui-sp-2: 8px;
+  --ui-sp-3: 12px;
+  --ui-sp-4: 16px;
+  --ui-sp-5: 20px;
+  --ui-sp-6: 24px;
+  --ui-sp-7: 32px;
+  --ui-sp-8: 48px;
+  --ui-r-xs: 4px;
+  --ui-r-sm: 8px;
+  --ui-r-md: 12px;
+  --ui-r-lg: 16px;
+  --ui-r-pill: 999px;
+  --ui-z-base: 0;
+  --ui-z-sticky: 100;
+  --ui-z-dropdown: 200;
+  --ui-z-drawer: 300;
+  --ui-z-modal: 400;
+  --ui-z-toast: 500;
+  --ui-z-devmode: 9000;
+  --ui-dur-1: 120ms;
+  --ui-dur-2: 200ms;
+  --ui-dur-3: 320ms;
+  --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ui-ease-decel: cubic-bezier(0, 0, 0, 1);
+  --ui-ease-accel: cubic-bezier(0.3, 0, 0, 1);
+  --ui-focus-w: 2px;
+  --ui-focus-offset: 2px;
+  --ui-focus-color: var(--ui-accent);
+  --ui-ctl-h-sm: 32px;
+  --ui-ctl-h: 36px;
+  --ui-ctl-h-lg: 40px;
+  --ui-tap-min: 32px;
+  --ui-lh-tight: 1.25;
+  --ui-lh: 1.5;
+  --ui-lh-loose: 1.7;
+}
+/* ── light（默认主题）：浅中性底 + Direction D 紫 ── */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --ui-bg: #f5f5f7;
+  --ui-surface: #ffffff;
+  --ui-surface-2: #f6f5fa;
+  --ui-line: #e5e7eb;
+  --ui-text: #1a1c1f;
+  --ui-text-2: #4b5563;
+  --ui-text-3: #626b76;
+  --ui-action-primary-bg: #806be5;
+  --ui-action-primary-hover: #6d58d8;
+  --ui-action-primary-fg: #ffffff;
+  --ui-action-primary-text: #5b469e;
+  --ui-accent: #806be5;
+  --ui-primary-soft: #eee9fb;
+  --ui-primary-tint: rgba(128, 107, 229, 0.13);
+  --ui-ink: #252b37;
+  --ui-shade-soft: rgba(37, 43, 55, 0.1);
+  --ui-shade: rgba(37, 43, 55, 0.3);
+  --ui-success: #257d53;
+  --ui-warning: #9a6206;
+  --ui-danger: #c33f3f;
+  --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+  --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+  --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+}
+/* ── dark：暗底 + 绿主色（保留原暗色 token 值）── */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ui-bg: #1a1c1f;
+  --ui-surface: #222529;
+  --ui-surface-2: #2b2f34;
+  --ui-line: #343940;
+  --ui-text: #f3f4f6;
+  --ui-text-2: #a7adb6;
+  --ui-text-3: #a3aab4;
+  --ui-action-primary-bg: #32f08c;
+  --ui-action-primary-hover: #0fdc78;
+  --ui-action-primary-fg: #0c0c0d;
+  --ui-action-primary-text: #32f08c;
+  --ui-accent: #32f08c;
+  --ui-primary-soft: rgba(50, 240, 140, 0.14);
+  --ui-primary-tint: rgba(50, 240, 140, 0.13);
+  --ui-ink: #f3f4f6;
+  --ui-shade-soft: rgba(0, 0, 0, 0.28);
+  --ui-shade: rgba(0, 0, 0, 0.5);
+  --ui-success: #38ab72;
+  --ui-warning: #c98f1f;
+  --ui-danger: #f07575;
+  --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+}
+@media (prefers-color-scheme: light) {
+  html[data-theme="system"] {
+    color-scheme: light;
+    --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f6f5fa;
+    --ui-line: #e5e7eb; --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+    --ui-action-primary-bg: #806be5; --ui-action-primary-hover: #6d58d8; --ui-action-primary-fg: #ffffff;
+    --ui-action-primary-text: #5b469e; --ui-accent: #806be5;
+    --ui-primary-soft: #eee9fb; --ui-primary-tint: rgba(128, 107, 229, 0.13);
+    --ui-ink: #252b37; --ui-shade-soft: rgba(37, 43, 55, 0.1); --ui-shade: rgba(37, 43, 55, 0.3);
+    --ui-success: #257d53; --ui-warning: #9a6206; --ui-danger: #c33f3f;
+    --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05); --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08); --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="system"] {
+    color-scheme: dark;
+    --ui-bg: #1a1c1f; --ui-surface: #222529; --ui-surface-2: #2b2f34;
+    --ui-line: #343940; --ui-text: #f3f4f6; --ui-text-2: #a7adb6; --ui-text-3: #a3aab4;
+    --ui-action-primary-bg: #32f08c; --ui-action-primary-hover: #0fdc78; --ui-action-primary-fg: #0c0c0d;
+    --ui-action-primary-text: #32f08c; --ui-accent: #32f08c;
+    --ui-primary-soft: rgba(50, 240, 140, 0.14); --ui-primary-tint: rgba(50, 240, 140, 0.13);
+    --ui-ink: #f3f4f6; --ui-shade-soft: rgba(0, 0, 0, 0.28); --ui-shade: rgba(0, 0, 0, 0.5);
+    --ui-success: #38ab72; --ui-warning: #c98f1f; --ui-danger: #f07575;
+    --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32); --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+  }
+}
+/* ── 壳组件别名（D0 module.css 引用名 → Frozen 令牌）── */
+:root {
+  --ui-txt: var(--ui-text);
+  --ui-txt-2: var(--ui-text-2);
+  --ui-txt-3: var(--ui-text-3);
+  --ui-primary: var(--ui-accent);
+}
+/* 字号钉死 7 档，杜绝派生档外字号 */
+html { font-size: 16px; }
+body { font-size: var(--ui-fs-3); }
+h1 { font-size: var(--ui-fs-6); }
+h2 { font-size: var(--ui-fs-5); }
+h3 { font-size: var(--ui-fs-4); }
+h4, h5, h6 { font-size: var(--ui-fs-3); }
+small, sub, sup, figcaption { font-size: var(--ui-fs-1); }
+button, input, select, textarea, optgroup { font-size: var(--ui-fs-2); font-family: inherit; }
+/* 触达下限 32px（WCAG 2.5.8 AA，桌面端下限） */
+button, select, summary, [role="button"], input[type="button"], input[type="submit"], input[type="reset"] { min-height: var(--ui-tap-min); min-width: var(--ui-tap-min); }
+a[data-cta], .crumbs a, .sidebar-nav a, .nav a { min-height: var(--ui-tap-min); display: inline-flex; align-items: center; }
+[data-tap="none"] { min-height: 0; min-width: 0; display: revert; }
+:where(a, button, select, input, textarea, summary, [tabindex]):focus-visible { outline: var(--ui-focus-w) solid var(--ui-focus-color); outline-offset: var(--ui-focus-offset); border-radius: var(--ui-r-xs); }
+@media (prefers-reduced-motion: reduce) {
+  :root { --ui-dur-1: 0ms; --ui-dur-2: 0ms; --ui-dur-3: 0ms; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+body {
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* ── 桥接：旧 ceo- 变量指向 Frozen --ui-（零位移，兼容内联 var 用法）──
+   2026-08-05 总控裁定：Frozen --ui-* 为唯一视觉真源。 */
+:root {
+  /* ceo-* 兼容兜底 → Frozen */
+  --ceo-ink: var(--ui-text);
+  --ceo-muted: var(--ui-text-3);
+  --ceo-line: var(--ui-line);
+  --ceo-panel: var(--ui-surface);
+  --ceo-green: var(--ui-success);
+  --ceo-cyan: var(--ui-accent);
+  --ceo-amber: var(--ui-warning);
+  --ceo-red: var(--ui-danger);
+
+  /* 响应式 shell 辅助 */
+  --ui-nav-width-desktop: var(--ui-sidebar-w);
+  --ui-nav-width-tablet: 76px;
+  --ui-nav-width-mobile: 286px;
+  --ui-content-padding-desktop: 24px;
+  --ui-content-padding-tablet: 20px;
+  --ui-content-padding-mobile: 16px;
+}
+
+/* ── 响应式 shell 辅助类（T0-patch）── */
+.no-h-scroll { overflow-x: hidden; }
+.no-h-scroll > * { max-width: 100%; box-sizing: border-box; }
+
+/* 长表 / 宽卡片横向滚动容器（避免父级横向溢出） */
+.h-scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.h-scroll-x > * { min-width: max-content; }
+
+/* 文本截断保护（长 ID / 路径不撑破栅格） */
+.truncate-safe { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ═══════════════════════════════════════════
+   旧暗色 .ceo-office-* 类块（T3 物理删除）
+   当前仅注释/置灰，不物理删除以免破坏引用。
+   新页面一律使用 TerraShell + Tailwind ui-* token。
+   ═══════════════════════════════════════════ */
+
+/*
+.ceo-office-shell { ... }   ← 暗色，T3 删除
+.ceo-sidebar { ... }         ← 暗色，T3 删除
+.ceo-office-content { ... }  ← 暗色，T3 删除
+... 其余 .ceo-* 暗色类同 ...
+*/
+
+/* ── Admin 资产工厂控制台：专业控制台风（明确区别于 ceo-* 运营品牌风）──
+   定位：克制、高信息密度、冷色中性底 + 专业蓝强调。不混用 ceo-* 的
+   深色 teal/green 运营视觉。所有面板 / 按钮 / 表单 / 徽章 / 表格均引用本组 token。 */
+:root {
+  --admin-bg: #eef1f5;
+  --admin-panel: #ffffff;
+  --admin-panel-2: #f8fafc;
+  --admin-line: #e2e8f0;
+  --admin-line-strong: #cbd5e1;
+  --admin-ink: #0f172a;
+  --admin-muted: #64748b;
+  --admin-faint: #94a3b8;
+  --admin-accent: #2563eb;
+  --admin-accent-ink: #ffffff;
+  --admin-active: #16a34a;
+  --admin-active-soft: #dcfce7;
+  --admin-risk: #dc2626;
+  --admin-risk-soft: #fee2e2;
+  --admin-warn: #d97706;
+  --admin-warn-soft: #fef3c7;
+
+  /* 阴影层级 */
+  --admin-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --admin-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --admin-shadow-lg: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+
+  /* 圆角 */
+  --admin-radius-sm: 4px;
+  --admin-radius: 8px;
+  --admin-radius-lg: 12px;
+
+  /* 间距 */
+  --admin-space-xs: 4px;
+  --admin-space-sm: 8px;
+  --admin-space: 16px;
+  --admin-space-lg: 24px;
+  --admin-space-xl: 32px;
+
+  /* 字体 */
+  --admin-font-xs: 11px;
+  --admin-font-sm: 12px;
+  --admin-font: 13px;
+  --admin-font-lg: 15px;
+  --admin-font-xl: 18px;
+  --admin-font-2xl: 24px;
+}
+
+.admin-shell { min-height: 100vh; background: var(--admin-bg); color: var(--admin-ink); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; }
+.admin-card { background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: var(--admin-radius); padding: var(--admin-space-lg); box-shadow: var(--admin-shadow); }
+.admin-card-title { font-size: var(--admin-font-xl); font-weight: 700; color: var(--admin-ink); margin: 0; }
+
+.admin-tab { display: inline-flex; align-items: center; padding: 10px 18px; font-size: var(--admin-font); font-weight: 600; color: var(--admin-muted); cursor: pointer; border: 0; background: transparent; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; white-space: nowrap; }
+.admin-tab:hover { color: var(--admin-ink); }
+.admin-tab-active { color: var(--admin-accent); border-bottom-color: var(--admin-accent); }
+
+.admin-btn { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--admin-line-strong); background: var(--admin-panel); color: var(--admin-ink); border-radius: var(--admin-radius-sm); padding: 8px 16px; font-size: var(--admin-font); font-weight: 600; cursor: pointer; transition: background 0.15s, border-color 0.15s; gap: 6px; }
+.admin-btn:hover { background: var(--admin-panel-2); border-color: var(--admin-line-strong); }
+.admin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.admin-btn-primary { background: var(--admin-accent); color: var(--admin-accent-ink); border-color: var(--admin-accent); }
+.admin-btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.admin-btn-danger { border-color: var(--admin-risk); color: var(--admin-risk); }
+.admin-btn-danger:hover { background: var(--admin-risk-soft); border-color: var(--admin-risk); }
+
+.admin-input { width: 100%; border: 1px solid var(--admin-line-strong); border-radius: var(--admin-radius-sm); padding: 8px 12px; font-size: var(--admin-font); color: var(--admin-ink); background: var(--admin-panel); transition: border-color 0.15s, box-shadow 0.15s; }
+.admin-input:focus { outline: none; border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+.admin-input.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--admin-font-sm); }
+
+.admin-field { display: block; font-size: var(--admin-font-sm); font-weight: 600; color: var(--admin-muted); }
+.admin-field > div { margin-top: var(--admin-space-xs); }
+.admin-field-hint { margin-top: var(--admin-space-xs); font-size: var(--admin-font-sm); color: var(--admin-faint); line-height: 1.5; }
+
+.admin-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; line-height: 1.4; letter-spacing: 0.02em; }
+.admin-badge-active { background: var(--admin-active-soft); color: var(--admin-active); }
+.admin-badge-muted { background: var(--admin-panel-2); color: var(--admin-muted); border: 1px solid var(--admin-line); }
+.admin-badge-risk { background: var(--admin-risk-soft); color: var(--admin-risk); }
+
+.admin-item { background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: var(--admin-radius); padding: var(--admin-space); transition: box-shadow 0.15s, border-color 0.15s; }
+.admin-item:hover { border-color: var(--admin-line-strong); box-shadow: var(--admin-shadow-sm); }
+
+.admin-message { border-radius: var(--admin-radius); padding: 12px 16px; font-size: var(--admin-font); font-weight: 600; line-height: 1.5; }
+.admin-message-success { border: 1px solid var(--admin-active-soft); background: var(--admin-active-soft); color: var(--admin-active); }
+.admin-message-error { border: 1px solid var(--admin-risk-soft); background: var(--admin-risk-soft); color: var(--admin-risk); }
+
+.admin-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; border: 1px solid var(--admin-line); background: var(--admin-panel); border-radius: var(--admin-radius); padding: 12px 16px; box-shadow: var(--admin-shadow-sm); }
+.admin-toolbar-label { font-size: var(--admin-font-sm); font-weight: 600; color: var(--admin-muted); white-space: nowrap; }
+
+.admin-meta { color: var(--admin-muted); font-size: var(--admin-font-sm); line-height: 1.5; }
+
+.admin-empty { border: 1px dashed var(--admin-line-strong); border-radius: var(--admin-radius); padding: var(--admin-space-lg); color: var(--admin-faint); font-weight: 500; font-size: var(--admin-font); text-align: center; }
+
+.admin-pre { background: var(--admin-panel-2); border: 1px solid var(--admin-line); border-radius: var(--admin-radius-sm); padding: 10px 12px; font-size: var(--admin-font-sm); color: var(--admin-ink); overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; line-height: 1.5; }
+
+.admin-header-link { color: var(--admin-muted); font-size: var(--admin-font-sm); font-weight: 500; text-decoration: none; transition: color 0.15s; }
+.admin-header-link:hover { color: var(--admin-ink); }
+
+.admin-note { border: 1px solid var(--admin-warn-soft); background: var(--admin-warn-soft); color: var(--admin-warn); border-radius: var(--admin-radius); padding: 12px 16px; font-size: var(--admin-font-sm); line-height: 1.5; }
+.admin-note-info { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+
+.admin-table { width: 100%; text-align: left; font-size: var(--admin-font-sm); border-collapse: collapse; }
+.admin-table thead { background: var(--admin-panel-2); color: var(--admin-muted); }
+.admin-table th { padding: 8px 10px; font-weight: 600; white-space: nowrap; }
+.admin-table td { padding: 8px 10px; border-top: 1px solid var(--admin-line); vertical-align: top; }
+.admin-table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.admin-table .muted { color: var(--admin-muted); }
+.admin-table .nowrap { white-space: nowrap; }
+.admin-table .breakall { max-width: 20rem; word-break: break-all; }
+
+.admin-count { background: var(--admin-panel-2); border: 1px solid var(--admin-line); border-radius: 4px; padding: 1px 7px; font-size: var(--admin-font-xs); font-weight: 600; color: var(--admin-muted); }
+.admin-divider { border: 0; border-bottom: 1px solid var(--admin-line); }

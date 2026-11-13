@@ -1,0 +1,36 @@
+{
+  "tenant_id": "default",
+  "ceo_id": "local-demo-ceo",
+  "company_id": "local-demo-company",
+  "department": {
+    "template_id": "official.department.software_rnd",
+    "name": "Phase-7 Demo R&D",
+    "enabled": true
+  },
+  "credential": {
+    "name": "Phase-7 Demo Credential",
+    "provider": "newapi",
+    "credential_type": "api_key",
+    "demo_value": "demo-local-credential-value"
+  },
+  "private_model": {
+    "name": "phase7-workflow-private-model",
+    "provider_type": "newapi-compatible",
+    "base_url": "http://127.0.0.1:18080",
+    "model_name": "phase7-workflow-private-model",
+    "enabled": true
+  },
+  "employees": [
+    "tech_lead",
+    "product_manager",
+    "architect",
+    "frontend_engineer",
+    "backend_engineer",
+    "qa_engineer"
+  ],
+  "workflow": {
+    "workflow_template_id": "official.workflow.software_rnd_sop",
+    "name": "Phase-7 Stable Demo R&D SOP",
+    "content": "Build a local demo customer lead management feature with frontend, backend, and QA validation."
+  }
+}

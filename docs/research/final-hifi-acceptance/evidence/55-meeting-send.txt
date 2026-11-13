@@ -1,0 +1,124 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- generic: 会议材料
+- button "收起 Context":
+- generic: 证据（会议引用）
+- button "选题研究简报"
+- button "竞品选题结构周报"
+- button "上周发布数据"
+- generic: 相关对象
+- button "《AI 工具测评 · 极简风》图文制作（复用至 3 个渠道账号）"
+- button "定位调整 Decision"
+- main:
+  - link "会议":
+    - /url: "#/meeting"
+  - generic: /
+  - generic: 周五复盘：AI 科技内容转化
+  - generic: 已同步
+  - button "通知":
+  - button "主题":
+  - button "Utility"
+  - heading "周五复盘：AI 科技内容转化" [level=1]
+  - generic: 今天 16:00 · 进行中 · 议程 3 项
+  - generic: 4 人
+  - heading "参与者" [level=2]
+  - generic: 陈
+  - generic: 陈真
+  - text: 资深运营 ·
+  - generic: 工作中 · 统筹 AI 科技内容节奏
+  - generic: 林
+  - generic: 林月
+  - text: 调研 / 文案 ·
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 苏
+  - generic: 苏晴
+  - text: 视觉 ·
+  - generic: 空闲
+  - generic: 何
+  - generic: 何川
+  - text: 数据分析 ·
+  - generic: 工作中 · 选题归因分析
+  - heading "讨论" [level=2]
+  - generic: 员工准备背景与事实 · CEO 确认承诺与决议
+  - generic: 陈
+  - text: 陈真 · 资深运营
+  - generic: 工作中 · 统筹 AI 科技内容节奏
+  - generic: 议程三项已就绪：①定位调整证据门槛 ②下周排期 ③归因结论确认。何川的归因数据已附在证据区。
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.6 · GLM-5.3
+  - generic: 先看第一项。教程向的数据够不够下结论？
+  - generic: 何
+  - text: 何川 · 数据分析
+  - generic: 工作中 · 选题归因分析
+  - generic: 归因：教程向互动中位数高 34%（EST，样本 120 篇 + 1,842 条评论）。单看本周够方向性；建议本周教程向、下周复测一次再固化规则。
+  - generic: 来源 · 选题研究简报
+  - generic: 来源 · 竞品选题结构周报
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.9 · DeepSeek-V4.1
+  - generic: 陈
+  - text: 陈真 · 资深运营
+  - generic: 工作中 · 统筹 AI 科技内容节奏
+  - generic: Proposal：本篇按教程向发布，9/19 复盘后再定长期规则。请 CEO 确认。
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.4 · GLM-5.3
+  - generic: FINAL-MEETING-CONTINUATION
+  - generic: 已发送 · Employee 开始处理
+  - textbox "在会议中发言或追问…"
+  - button "添加附件":
+  - 'button "引用 @员工 / #文件 / #结果"':
+  - button "最小权限":
+    - text: 最小权限
+  - button "对话":
+    - text: 对话
+  - button "执行 · 会议":
+    - text: 执行 · 会议
+  - button "GLM-5.3":
+    - text: GLM-5.3
+  - button "停止（保留未完成输出）":
+  - generic: 运行中 · 发送将排队（Steering）
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你

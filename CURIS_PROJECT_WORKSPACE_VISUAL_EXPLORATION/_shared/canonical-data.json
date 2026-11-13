@@ -1,0 +1,174 @@
+{
+  "rd": {
+    "project": {
+      "name": "Curis Desktop",
+      "type": "Software Project",
+      "goal": "让 Curis 桌面端能够稳定承载本地 AI Employee 与 Workspace Runtime",
+      "stage": "v0.4 迭代期",
+      "version": "0.3.8",
+      "branch": "main",
+      "revision": "a4f7c2d",
+      "lastAccepted": "W-228 修复启动时 Workspace 加载顺序",
+      "build": "passing",
+      "tests": "412/412",
+      "coverage": "68%",
+      "needsCeo": true,
+      "nextCheck": "W-231 缓存策略决策 — 今天 18:00"
+    },
+    "employees": [
+      {"id": "E-01", "name": "陈真", "role": "Leader · 研发负责人", "color": "#806BE5", "status": "working", "workId": "W-229", "workTitle": "统一 Runtime 错误码与恢复语义"},
+      {"id": "E-02", "name": "李翔", "role": "Architecture · 架构", "color": "#0e8f7e", "status": "review", "workId": "W-230", "workTitle": "Workspace 隔离模型与 Git Worktree 约定"},
+      {"id": "E-03", "name": "陈昊", "role": "Development · 后端", "color": "#1f7ae0", "status": "working", "workId": "W-231", "workTitle": "优化 getUserData API 性能"},
+      {"id": "E-04", "name": "苏铭", "role": "Development · 前端", "color": "#d97706", "status": "waiting", "workId": "W-232", "workTitle": "Employee Workstation 异常状态 UI"},
+      {"id": "E-05", "name": "王磊", "role": "Verification · 验证", "color": "#be185d", "status": "blocked", "workId": "W-233", "workTitle": "跨 Work 并发执行冲突检测"}
+    ],
+    "works": [
+      {"id": "W-229", "title": "统一 Runtime 错误码与恢复语义", "owner": "陈真", "status": "working", "statusLabel": "执行中", "stage": "Codex 实现第 2 轮", "provider": "Codex", "providerTime": "14m", "artifact": "错误码重构 diff", "next": "完成后交给 Verification 跑集成测试"},
+      {"id": "W-230", "title": "Workspace 隔离模型与 Git Worktree 约定", "owner": "李翔", "status": "review", "statusLabel": "Review", "stage": "待 CEO 确认", "provider": "Claude Code", "providerTime": "—", "artifact": "架构 ADR v2", "next": "CEO 确认 worktree 外置目录后成为 Canonical"},
+      {"id": "W-231", "title": "优化 getUserData API 性能", "owner": "陈昊", "status": "working", "statusLabel": "执行中", "stage": "Codex 执行中", "provider": "Codex", "providerTime": "6m", "artifact": "批量加载实现 diff", "next": "CEO 需判断缓存策略方向"},
+      {"id": "W-232", "title": "Employee Workstation 异常状态 UI", "owner": "苏铭", "status": "waiting", "statusLabel": "等待依赖", "stage": "等待 W-229", "provider": "—", "providerTime": "—", "artifact": "—", "next": "陈真完成错误码后启动"},
+      {"id": "W-233", "title": "跨 Work 并发执行冲突检测", "owner": "王磊", "status": "blocked", "statusLabel": "Blocked", "stage": "需架构输入", "provider": "—", "providerTime": "—", "artifact": "验证计划 v1", "next": "等待李翔确认文件集重叠规则"},
+      {"id": "W-234", "title": "桌面端启动崩溃上报", "owner": "陈真", "status": "completed", "statusLabel": "已完成", "stage": "已收口", "provider": "Codex", "providerTime": "—", "artifact": "崩溃捕获 PR", "next": "已进入 main"},
+      {"id": "W-235", "title": "本地模型网关容错", "owner": "陈昊", "status": "waiting", "statusLabel": "等待中", "stage": "队列中", "provider": "—", "providerTime": "—", "artifact": "—", "next": "W-231 后启动"}
+    ],
+    "currentWork": {
+      "id": "W-231",
+      "title": "优化 getUserData API 性能",
+      "owner": "陈昊",
+      "role": "Development · 后端",
+      "ownerColor": "#1f7ae0",
+      "status": "working",
+      "statusLabel": "执行中",
+      "goal": "把 getUserData 单次查询改成批量加载，减少 60% 以上 RPC 调用",
+      "provider": "Codex",
+      "providerState": "Running 6m",
+      "workspace": "work/W-231-getuserdata-batch",
+      "baseSha": "a4f7c2d",
+      "progress": 72,
+      "conversation": [
+        {"from": "me", "text": "陈昊，getUserData 的性能问题你先看一下现有实现，目标是减少 RPC 调用。"},
+        {"from": "陈昊", "text": "已分析。当前 `getUserData` 每次渲染组件都会触发一次 `/api/users/:id`，在列表页会产生 N+1。建议改成批量接口 `/api/users/batch`。"},
+        {"from": "me", "text": "可以。注意保持现有类型契约，别破坏前端调用。"},
+        {"from": "陈昊", "text": "已用 Codex 生成第一版实现。修改了 `api/users.ts` 和 `lib/db/queries.ts`，测试 127/127 通过。但缓存策略有两个方向需要你确认。"}
+      ],
+      "candidate": {
+        "type": "diff",
+        "filesChanged": 3,
+        "additions": 84,
+        "deletions": 31,
+        "summary": "把 getUserData 改为批量加载；新增 getUserDataBatch；前端调用点兼容 fallback",
+        "files": [
+          {"path": "backend/api/users.ts", "status": "modified", "lines": "+45 -12"},
+          {"path": "backend/lib/db/queries.ts", "status": "modified", "lines": "+31 -14"},
+          {"path": "frontend/src/services/user.ts", "status": "modified", "lines": "+8 -5"}
+        ],
+        "testResult": {"passed": 127, "failed": 0, "total": 127, "command": "pnpm test:unit"}
+      },
+      "decision": {
+        "title": "缓存策略选择",
+        "reason": "两种方案都不破坏现有契约，但会影响后续扩展",
+        "options": [
+          {"label": "A. 服务端内存缓存", "pros": "实现简单，短期效果最好", "cons": "多实例部署时不共享，需要后续迁移到 Redis"},
+          {"label": "B. 查询结果去重 + 批量合并", "pros": "无外部依赖，适合本地自用", "cons": "复杂度高，需要新增请求合并层"}
+        ],
+        "recommendation": "A",
+        "recommendationReason": "当前 Curis Desktop 是单机本地自用，内存缓存足够；若未来上云再迁 Redis。"
+      },
+      "utilityTabs": ["Diff", "Source", "Test", "Build", "PR"],
+      "activeUtility": "Diff",
+      "nextActions": ["选择缓存策略", "让陈昊继续", "查看 Diff", "查看测试"]
+    }
+  },
+  "writing": {
+    "project": {
+      "name": "《长夜》",
+      "type": "长篇小说",
+      "stage": "第三卷",
+      "chaptersTotal": 80,
+      "chaptersAccepted": 42,
+      "wordCount": "18.6万",
+      "goal": "完成第三卷转折段",
+      "currentChapter": 43,
+      "manuscriptStatus": "第42章 Accepted · 第43章 Working · 第44章 Planned",
+      "needsCeo": true,
+      "nextCheck": "第43章方向选择 — 林舟身份揭露时机"
+    },
+    "storyState": {
+      "outline": "第三卷：身份揭露前夜",
+      "characters": ["林舟", "沈默", "老周", "陈晚"],
+      "canon": ["林舟真实身份是卧底", "沈默已发现钥匙线索", "老周知道但未说"],
+      "foreshadowing": ["钥匙在第二章出现", "老周三次欲言又止"],
+      "world": "2010 年深秋，南方小城，雨夜频发",
+      "timeline": "第43章发生在第42章 6 小时后"
+    },
+    "employees": [
+      {"id": "E-W01", "name": "林墨", "role": "长篇写作编辑 AI", "color": "#806BE5", "status": "working", "workId": "CW-43", "workTitle": "完成第43章候选正文"},
+      {"id": "E-W02", "name": "苏青", "role": "Continuity 检查员", "color": "#0e8f7e", "status": "review", "workId": "CW-43", "workTitle": "检查第43章与Canon一致性"},
+      {"id": "E-W03", "name": "阿衡", "role": "角色声纹顾问", "color": "#be185d", "status": "waiting", "workId": "CW-43", "workTitle": "润色林舟对话声纹"},
+      {"id": "E-W04", "name": "叶知秋", "role": "结构编辑", "color": "#d97706", "status": "completed", "workId": "CW-42", "workTitle": "第42章结构收束"}
+    ],
+    "works": [
+      {"id": "CW-43", "title": "完成第43章候选正文", "owner": "林墨", "status": "working", "statusLabel": "执行中", "stage": "Candidate A 生成中", "artifact": "第43章 Candidate A", "next": "生成后等待作者方向选择"},
+      {"id": "CW-43-CHECK", "title": "检查第43章与Canon一致性", "owner": "苏青", "status": "review", "statusLabel": "Review", "stage": "预检查完成", "artifact": "Continuity Report", "next": "等待作者选择方向后复验"},
+      {"id": "CW-43-VOICE", "title": "润色林舟对话声纹", "owner": "阿衡", "status": "waiting", "statusLabel": "等待中", "stage": "等待方向确定", "artifact": "—", "next": "方向确定后启动"},
+      {"id": "CW-42", "title": "第42章结构收束", "owner": "叶知秋", "status": "completed", "statusLabel": "已完成", "stage": "已Accepted", "artifact": "第42章 Accepted", "next": "—"},
+      {"id": "CW-44", "title": "第44章大纲与伏笔铺设", "owner": "林墨", "status": "planned", "statusLabel": "Planned", "stage": "待第43章确定", "artifact": "—", "next": "第43章 Accepted 后启动"}
+    ],
+    "currentWork": {
+      "id": "CW-43",
+      "title": "完成第43章候选正文",
+      "owner": "林墨",
+      "role": "长篇写作编辑 AI",
+      "ownerColor": "#806BE5",
+      "status": "working",
+      "statusLabel": "执行中",
+      "goal": "生成第43章候选正文，为作者提供可判断的写作方向",
+      "chapter": 43,
+      "scene": "林舟与沈默在修车厂对峙",
+      "progress": 65,
+      "conversation": [
+        {"from": "me", "text": "林墨，第43章我想让林舟和沈默在修车厂有一次真正对峙，但不要急着亮底牌。"},
+        {"from": "林墨", "text": "明白。我基于第42章结尾的钥匙线索，准备了两版方向。在生成正文前，想先请你判断：你希望林舟身份在本章揭露，还是继续压到第45章？"},
+        {"from": "me", "text": "两种都不违反Canon，对吗？"},
+        {"from": "林墨", "text": "对。两种都不违反当前Canon，但会改变第三卷节奏。A 方向提前揭露会加速主线；B 方向保留信息差，读者悬念更久，但需要你为45章准备更强反转。"}
+      ],
+      "candidate": {
+        "type": "manuscript",
+        "title": "第43章 Candidate A",
+        "status": "preview",
+        "preview": [
+          {"sec": "开头", "text": "修车厂的灯是坏的，只有沈默手里的手机亮着。他把光对准林舟的脸，像是要从那张脸上找出一道裂缝。"},
+          {"sec": "中段", "text": "“你钥匙上的编号，”沈默说，“和我父亲当年那把一样。”林舟没有立刻回答。他低头看着地上那滩机油，像是在看很多年前的一个雨夜。"},
+          {"sec": "接近结尾", "text": "“沈默，”他终于开口，“有些门打开了，就再也关不上。”话音未落，修车厂外传来老周的咳嗽声。"}
+        ],
+        "meta": [
+          {"k": "字数", "v": "约 2,400 字"},
+          {"k": "视角", "v": "第三人称限知 · 沈默"},
+          {"k": "情绪", "v": "压抑 · 逐渐收紧"},
+          {"k": "Canon Check", "v": "通过 4/4"}
+        ]
+      },
+      "decision": {
+        "title": "第43章方向选择",
+        "reason": "两种方向都符合Canon，但改变第三卷节奏",
+        "options": [
+          {"label": "A. 本章提前揭露林舟身份", "impact": "主线加速，第44章可直接进入行动线", "risk": "需要为后续章节准备更强反转，否则悬疑张力下降"},
+          {"label": "B. 保留信息差到第45章", "impact": "悬念延续，本章以威胁与暗示收尾", "risk": "第43章可能显得“原地踏步”，需要足够的情感推进"}
+        ],
+        "recommendation": "B",
+        "recommendationReason": "第三卷目前节奏偏快，保留一章的情感蓄力会让45章的揭露更有重量。"
+      },
+      "context": {
+        "chapterGoal": "修车厂对峙，推动林舟/沈默关系质变",
+        "relevantCanon": ["林舟卧底身份", "钥匙编号线索", "老周知情未说"],
+        "characters": ["林舟", "沈默", "老周"],
+        "recentStory": "第42章沈默发现钥匙编号与父亲遗物一致",
+        "worldRule": "2010 年南方小城，雨夜与修车厂是重要意象",
+        "style": "克制、短句、对话少而重"
+      },
+      "utilityTabs": ["Manuscript", "Outline", "Characters", "Canon", "Timeline", "Evidence"],
+      "activeUtility": "Manuscript",
+      "nextActions": ["选择方向 A", "选择方向 B", "让林墨按 B 继续", "要求生成 Candidate B", "查看 Canon"]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+sequenceDiagram
+    autonumber
+    actor Engineer
+    participant Src as sources/ (离线 .md)
+    participant Ada as AgencyMarkdownAdapter
+    participant San as Sanitizer
+    participant Sec as SecurityScanner
+    participant Spec as CanonicalAgentSpec[]
+    participant Map as SeedMapper
+    participant DB as database.py _seed_agent_conversion_pilot_b
+    participant DT as department_types
+    participant PT as persona_templates
+    participant ET as employee_templates
+    participant SK as skill_templates
+    participant TL as tool_templates
+
+    Engineer->>Src: git clone / WebFetch 12 目标 slug .md
+    Engineer->>Ada: discover(sources/)
+    Ada->>Src: 枚举 5 division 目标文件
+    Ada-->>Spec: SourceEntry[]
+    loop 每个 target slug (12)
+        Engineer->>Ada: fetch(entry)
+        Ada->>Src: 读 .md 原始文本
+        Ada->>Ada: parse(raw, entry)
+        Ada->>San: clean_emoji / clean_color / strip_invisible
+        San-->>Ada: 清洗后 identity.emoji/color
+        Ada->>Sec: scan_credential / scan_prompt_injection / scan_overclaim
+        Sec-->>Ada: security_scan 三段结果
+        Ada->>Ada: extract_capabilities(spec)
+        Ada-->>Spec: CanonicalAgentSpec (含 capability_candidates)
+    end
+    Engineer->>Map: 由 12 Spec 生成候选行
+    Map->>Spec: 读取 specs
+    Map-->>Map: pt_* / et_* / skl_* / tl_* / wt_* / dt_* 行
+    Engineer->>DB: seed_agent_conversion_pilot_b(connection) [opt-in]
+    DB->>DT: INSERT OR IGNORE 5 business.* type_key
+    DB->>PT: INSERT OR IGNORE 12 pt_* (image_ref_json 真实三键+theme_color)
+    DB->>ET: INSERT OR IGNORE 12 et_* (status=candidate/draft, department_type=business.*)
+    DB->>SK: INSERT OR IGNORE skl_* candidate (命中52则跳过新建)
+    DB->>TL: INSERT OR IGNORE tl_* candidate (命中115则跳过新建)
+    DB-->>Engineer: 回滚清单 (DELETE by id 范围)
+    Engineer->>DB: initialize() 默认路径 (不调用 pilot B)
+    DB-->>ET: 仍仅 6 active et_* (既有 test 不破)

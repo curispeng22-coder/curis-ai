@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant EX as 执行器/运行时(接线点)
+    participant EV as GateEvaluator.evaluate
+    participant RP as render_gate_prompt
+    participant U as 小白用户
+    participant EL as EvolutionEventLog
+
+    EX->>EV: evaluate(action_context)
+    EV->>EV: check_autonomy_boundary()? 全满足→放行
+    alt 自治白名单内（六条件全满足）
+        EV-->>EX: GateDecision(needs_gate=False)
+        EX->>EX: 直接执行 + 审计（无感）
+    else 高影响动作（命中 G1-G8 且闸 enabled）
+        EV->>RP: render_gate_prompt(category, ctx)
+        RP->>RP: 取 G1-G8 模板填参 + 禁词扫描
+        alt 含禁词
+            RP-->>EV: 回退 GatePrompt(B模拟+C取消)
+        else 合规
+            RP-->>EV: GatePrompt(业务风险+2-N方案+推荐)
+        end
+        EV-->>EX: GateDecision(needs_gate=True, gate)
+        EX->>U: 大白话业务风险 + A继续/B模拟/C取消/(D换做法)
+        U->>EX: 选 A / B / C / D
+        alt A 继续
+            EX->>EL: record(b.governance.gate=allowed)
+            EX->>EX: 执行动作
+        else B 先模拟
+            EX->>EX: 沙箱模拟，回填效果给用户看
+            EX->>U: 展示模拟结果 → 二次拍板
+        else C 取消
+            EX->>EL: record(b.governance.gate=cancelled)
+            EX->>EX: 不执行（fail-closed）
+        else D 换个做法
+            EX->>EX: 走更稳妥替代业务动作
+        end
+    end

@@ -1,0 +1,130 @@
+- complementary:
+  - generic: Curis · 一人公司
+  - generic: Content Growth
+  - generic: Professional Workspace
+  - navigation:
+    - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）":
+      - generic: 经营
+      - generic "待 CEO 决策：等待 CEO 批准的决策项数量（不是全部决策）": "2"
+    - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量":
+      - generic: 研究与选题
+      - generic "在办研究 / 选题：本单位未完成的研究与选题 Work 数量": "3"
+    - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）":
+      - generic: 内容制作
+      - generic "待推进 Work：制作 Work 中「尚未可发布、也未完成」的数量（可发布与已完成不计入）": "7"
+    - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）":
+      - generic: 发布
+      - generic "待处理发布事项：发布事实中处于需人工 / 未知 / 阻塞 / 执行中的数量（已成功与已排期未到点不计入）": "4"
+    - generic "连接异常账号：绑定状态不是 ok 的账号数量":
+      - generic: 账号
+      - generic "连接异常账号：绑定状态不是 ok 的账号数量": "2"
+    - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）":
+      - generic: 复盘
+      - generic "待补数据项：复盘待补数据中仍为 open 的数量（不等于判断或实验数量）": "3"
+    - generic "待准备资产：尚未就绪的素材 / 授权请求数量":
+      - generic: 素材
+      - generic "待准备资产：尚未就绪的素材 / 授权请求数量": "2"
+  - generic: 经营进行中
+  - generic: 下一检查 09-18 10:00
+  - generic: 你
+  - generic: CEO 视角
+- banner:
+  - button "←"
+  - generic: Content Growth
+  - generic: /
+  - generic: 素材
+  - generic: 经营边界
+  - generic: 团队持续经营中
+- generic: 素材
+- button "添加素材"
+- generic "找 江雪 交流":
+  - generic: 江
+  - generic: 江雪
+  - emphasis: 素材 负责人（含数字人资产）
+- generic: "2"
+- generic: 相关工作
+- generic: 1 进行中
+- generic "创始人授权照片 2 张（AR-1）": 1 阻塞
+- button "责任与团队"
+- textbox "直接说素材需求，例如：创始人 IP 还缺哪张授权照片？"
+- button "交给团队"
+- generic: 想指定某个人：点左侧员工名
+- generic: 素材画廊
+- generic: 品牌表达
+- generic: 数字人
+- generic: 授权 · 版本 · 缺失 · 请求
+- textbox "搜索素材 / 授权 / 用途"
+- generic: 拖入本地文件，或点击「添加素材」
+- generic: 本地导入 · 1 项
+- generic: 保存在当前浏览器，不上传云端
+- table:
+  - rowgroup:
+    - row "素材 类型 大小 授权 / 可用性":
+      - columnheader "素材"
+      - columnheader "类型"
+      - columnheader "大小"
+      - columnheader "授权 / 可用性"
+  - rowgroup:
+    - row "素材导入测试.txt 文件 1 KB 授权待核验":
+      - cell "素材导入测试.txt":
+        - button "素材导入测试.txt"
+      - cell "文件"
+      - cell "1 KB"
+      - cell "授权待核验"
+- generic: 视图
+- generic: 紧凑列表（默认）
+- generic: 大图网格
+- generic: 4 项 · 点条目看大图与授权、版本、引用关系
+- button "选择素材用于制作"
+- generic: 素材
+- generic: 4 项（3 可用 · 1 缺失/受限）· 同屏可扫描
+- img "产品截图 9 月版":
+  - generic: 资产
+  - generic: 素材 · 自有产品
+  - generic: 产品截图 9 月版
+  - generic: v2 · 9 张
+- generic: 产品截图 9 月版
+- generic: 可用
+- generic: 素材
+- generic: v2 · 授权 自有产品
+- generic: 被引用 2
+- generic: 小红书｜品牌号 · 长图文《AI 时代的职场效率清单》 · 公众号｜品牌官方号 · 长文章《一人公司如何搭建内容系统》
+- button "用于制作" [active]
+- img "轻量电子（60s）":
+  - generic: 音频
+  - generic: 素材 · 背景音乐
+  - generic: 轻量电子（60s）
+  - generic: 已购商用授权
+- generic: 背景音乐：轻量电子（60s）
+- generic: 可用
+- generic: 素材
+- generic: v1 · 授权 已购商用授权 · 至 2027-03
+- generic: 被引用 2
+- generic: 抖音｜创始人IP · 口播短视频《AI 会不会取代你的岗位》 · 抖音｜品牌号 · 短视频《上周热点：AI 职场报告》
+- button "用于制作"
+- img "创始人真人照片":
+  - generic: 资产
+  - generic: 素材 · 缺授权
+  - generic: 创始人真人照片
+  - generic: 待 CEO 提供
+- generic: 创始人真人照片
+- generic: 缺失
+- generic: 素材
+- generic: — · 授权 缺授权
+- generic: 被引用 0
+- generic: 暂未被引用
+- button "用于制作"
+- img "REF-1 拆解片段（3 段）":
+  - generic: 资产
+  - generic: 素材 · 拆解片段
+  - generic: REF-1 拆解片段（3
+  - generic: 段）
+  - generic: v1 · 引用分析
+- generic: REF-1 拆解片段（3 段）
+- generic: 可用
+- generic: 拆解片段
+- generic: v1 · 授权 引用分析 · 不复制原稿
+- generic: 被引用 1
+- generic: 抖音｜创始人IP · 口播短视频《AI 会不会取代你的岗位》
+- button "用于制作"
+- generic: 素材按「被哪些内容引用」组织：一个素材被多条内容使用时，不复制成多份。

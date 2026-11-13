@@ -1,0 +1,534 @@
+{
+  "at": "2026-09-21T18:13:18.284Z",
+  "steps": [
+    {
+      "path": "P0",
+      "name": "应用启动、状态为当前 schema",
+      "ok": true,
+      "detail": "VERSION=w4"
+    },
+    {
+      "path": "P1",
+      "name": "D06 默认主区给出当前故事与定位摘要",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "默认主区不铺成 24 组勾选墙",
+      "ok": true,
+      "detail": "tagopt=0"
+    },
+    {
+      "path": "P1",
+      "name": "提供「调整创作方向」入口与「和编辑一起想」",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "点击后打开有界选择弹框",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "弹框含分组导航与已选摘要面板",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "弹框不一次展开全部 24 组（按组展示）",
+      "ok": true,
+      "detail": "可见选项=51"
+    },
+    {
+      "path": "P1",
+      "name": "搜索能找到不在首屏的选项",
+      "ok": true,
+      "detail": "命中=都市生活,行业职场,家庭群像,商战创业,校园成长,太空探索,赛博朋克,人工智能,时间旅行,末日生存,探案解谜,社会悬疑,密室推理,东方玄幻,西方奇幻,修真成长,江湖侠义,古代言情,现代言情,电竞,体育竞技,待定"
+    },
+    {
+      "path": "P1",
+      "name": "可选（含搜索后再选）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "可取消（再点一次取消选择）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "已选摘要反映跨组已选项（L04 + L23）",
+      "ok": true,
+      "detail": "已选摘要（24 组）· 每项都可改写成你的要求 作品形态 长篇小说 清除这一项 读者分区 不限定 清除这一项 主要题材 都市、悬疑 清除这一"
+    },
+    {
+      "path": "P1",
+      "name": "保存后落到本书定位（L04 含赛博朋克）",
+      "ok": true,
+      "detail": "{\"sel\":[\"探案解谜\",\"社会悬疑\",\"赛博朋克\"],\"custom\":\"\",\"note\":\"\",\"req\":\"本书的赛博是低技术密度：只残留旧终端与纸质档案。\",\"undecided\":false}"
+    },
+    {
+      "path": "P1",
+      "name": "保存后 L23 进入本次任务要求（组合维度落在分组键）",
+      "ok": true,
+      "detail": "{\"sel\":[],\"custom\":\"\",\"note\":\"\",\"req\":\"【修改任务要求】压缩。（本次写作要遵守；可直接改写这句。）\",\"undecided\":false,\"L23a\":[\"压缩\"]}"
+    },
+    {
+      "path": "P1",
+      "name": "作者自改的写作要求被保留（不是每次自动重写）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "选择被转成定位字段（同一份事实，非第二套真源）",
+      "ok": true,
+      "detail": "style=冷硬简练、简洁直接；基调 冷峻、紧张"
+    },
+    {
+      "path": "P1",
+      "name": "保存后可重开且选择保留",
+      "ok": true,
+      "detail": "长篇小说,不限定,都市,悬疑,赛博朋克,探案解谜,社会悬疑"
+    },
+    {
+      "path": "P1",
+      "name": "重开后作者改写的写作要求仍可编辑",
+      "ok": true,
+      "detail": "本书的赛博是低技术密度：只残留旧终端与纸质档案。"
+    },
+    {
+      "path": "P1",
+      "name": "取消不生效（L03 未被本次草稿改动）",
+      "ok": true,
+      "detail": "都市,悬疑"
+    },
+    {
+      "path": "P1",
+      "name": "可清除单项（L18 留空，作为待补缺口）",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "path": "P1",
+      "name": "「和编辑一起想」给出带理由的方向建议",
+      "ok": true,
+      "detail": "建议数=3"
+    },
+    {
+      "path": "P1",
+      "name": "采用建议后真正补上空缺（不只回一句）",
+      "ok": true,
+      "detail": "L18=[\"谜底揭晓\",\"伏笔兑现\"]"
+    },
+    {
+      "path": "P1",
+      "name": "已手选项不被推荐静默替换（L04 保留）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "采用建议不自动新增人物、不改正文",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "正文页展示「本次写作依据」（继承来源可读）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P1",
+      "name": "从本章进入时作用范围默认=本章",
+      "ok": true,
+      "detail": "scope=chapter"
+    },
+    {
+      "path": "P1",
+      "name": "本章临时要求已保存（ch44 有覆盖）",
+      "ok": true,
+      "detail": "{\"sel\":[\"冷峻\",\"紧张\"],\"note\":\"\",\"req\":\"【整体基调】冷峻、紧张。（本次写作要遵守；可直接改写这句。）\",\"custom\":\"\"}"
+    },
+    {
+      "path": "P1",
+      "name": "章级修改不污染全书（全书 L15 未变）",
+      "ok": true,
+      "detail": "全书=[\"冷峻\",\"紧张\"] 之前=[\"冷峻\",\"紧张\"]"
+    },
+    {
+      "path": "P1",
+      "name": "正文页同时显示继承与本章临时两态",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P2",
+      "name": "左 Context 默认在、右 Utility 默认收起",
+      "ok": true,
+      "detail": "rail=true aside=false"
+    },
+    {
+      "path": "P2",
+      "name": "左栏可收起（真实布局宽度归零，不是只加了个 class）",
+      "ok": true,
+      "detail": "rail 宽=0px"
+    },
+    {
+      "path": "P2",
+      "name": "收起后 Main 仍有当前书/章/页面名（保底信息条）",
+      "ok": true,
+      "detail": "mainText=1280 字"
+    },
+    {
+      "path": "P2",
+      "name": "收起后仍能重开左栏与打开创作选择",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P2",
+      "name": "左栏可重开（宽度恢复）",
+      "ok": true,
+      "detail": "rail 宽=216px"
+    },
+    {
+      "path": "P2",
+      "name": "右栏可展开",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P2",
+      "name": "正文未被挤成不可读窄条（Main 宽度仍充足）",
+      "ok": true,
+      "detail": "main=849px aside=304px"
+    },
+    {
+      "path": "P2",
+      "name": "右栏可拖宽（真实拖动生效）",
+      "ok": true,
+      "detail": "before=304 after=374"
+    },
+    {
+      "path": "P2",
+      "name": "没有新增永久第四/第五工作栏",
+      "ok": true,
+      "detail": "#viewport 直属子元素=3（main / 把手 / aside）"
+    },
+    {
+      "path": "P2",
+      "name": "右栏有限编辑带草稿保护（切对象/收起前不静默丢弃）",
+      "ok": true,
+      "detail": "带 data-draft 的编辑框=0（无则说明当前对象没有长编辑）"
+    },
+    {
+      "path": "P3",
+      "name": "讨论进入 Main 的 Shared Work Area（不是右栏、不是抽屉）",
+      "ok": true,
+      "detail": "sharedArea=true drawerOpen=false"
+    },
+    {
+      "path": "P3",
+      "name": "提出要求后有具体回复（不是预制同一段）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P3",
+      "name": "产生可编辑提案（逐项可采纳/拒绝）",
+      "ok": true,
+      "detail": "提案项=1"
+    },
+    {
+      "path": "P3",
+      "name": "对话随上下文带 Book / Chapter / 对象 / 版本",
+      "ok": true,
+      "detail": "上下文：书 B-01"
+    },
+    {
+      "path": "P3",
+      "name": "采纳后原对象真实更新",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P3",
+      "name": "采纳只落到该对象（正式稿/线上稿未被连带改）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P3",
+      "name": "协作可收起且明确「没有停工」",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P3",
+      "name": "大纲节点有真实讨论入口（不只是展示字段）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P3",
+      "name": "大纲讨论产生候选（有落点）",
+      "ok": true,
+      "detail": "提案项=1"
+    },
+    {
+      "path": "P3",
+      "name": "大纲采纳后原对象更新（同一条数据，不是复制）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "正文段落可点选（选区上下文）",
+      "ok": true,
+      "detail": "段数=14"
+    },
+    {
+      "path": "P4",
+      "name": "选中段落后出现「对这一段讨论」",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "选区上下文正确（带章与选区，不需重述是哪本书）",
+      "ok": true,
+      "detail": "对话对象：沈知远 · 责任编辑（创作内核）（代行经营计划（Leader）） 他负责的范围：第 43 章《对面》的正文与候选 当前对象：第 43 章 · 草稿 r2｜正式 v2｜线上 v2 · 第 1 段 · 草稿 14 "
+    },
+    {
+      "path": "P4",
+      "name": "同一负责人（本章编辑）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "第二轮必须再提一句要求才继续（不自动重放）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "两轮讨论都进入同一议题（提案累积）",
+      "ok": true,
+      "detail": "r1=1 r2=2"
+    },
+    {
+      "path": "P4",
+      "name": "可只采纳一部分（未采纳项不进入正文）",
+      "ok": true,
+      "detail": "段数 14 → 14"
+    },
+    {
+      "path": "P4",
+      "name": "采纳不误改整章（其余段落逐字不变）",
+      "ok": true,
+      "detail": "未变段=13/13"
+    },
+    {
+      "path": "P4",
+      "name": "部分采纳不改正式稿与线上稿（草稿≠正式≠发布）",
+      "ok": true,
+      "detail": "formal=v2 published=v2"
+    },
+    {
+      "path": "P4",
+      "name": "能回到原段落位置继续阅读",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "拒绝项不混进正文",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P4",
+      "name": "收右栏/收左栏不丢未保存的手写草稿缓冲",
+      "ok": true,
+      "detail": "键入后 532 字 → 收栏后 532 字"
+    },
+    {
+      "path": "P5",
+      "name": "审稿主区包含问题定位（不是只有评分）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P5",
+      "name": "右栏给问题来源/证据/检查范围",
+      "ok": true,
+      "detail": "责任人 沈 沈知远 审校责任可由同一编辑调用独立方法承担，不强制每项一个员工。 本书检查记录（0） 尚无检查记录。 边界 · 审校 Result ≠ 作者决定 "
+    },
+    {
+      "path": "P5",
+      "name": "关闭证据栏后能回原审稿位置（主区未变）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P6",
+      "name": "D19 主区保留趋势/时间窗/指标切换/对比/明细",
+      "ok": true,
+      "detail": "主区字数=1985"
+    },
+    {
+      "path": "P6",
+      "name": "趋势图仍在 Main（不是概览卡墙）",
+      "ok": true,
+      "detail": "svg=1"
+    },
+    {
+      "path": "P6",
+      "name": "可切换指标（筛选状态写入主区工具条）",
+      "ok": true,
+      "detail": "null → 在读"
+    },
+    {
+      "path": "P6",
+      "name": "右栏展示来源/口径/订正历史/单条补录入口",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P6",
+      "name": "Unknown 保留（不填 0、不合并平台）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P6",
+      "name": "关闭右栏后原筛选保留",
+      "ok": true,
+      "detail": "metric=在读"
+    },
+    {
+      "path": "P7",
+      "name": "刷新后创作选择与章级覆盖保持",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P7",
+      "name": "刷新后回到正确书（不串书）",
+      "ok": true,
+      "detail": "B-01"
+    },
+    {
+      "path": "P7",
+      "name": "旧演示 Book（B-02）仍可打开且有自己的选择",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P7",
+      "name": "切到另一本书后标签与章节各自独立",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "① 市场 → 方向入口在",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "① 市场方向页可读（含裁决/采用入口）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "① 方向 → 作品库链路可走",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "② 发布队列区分未核验/已排期（未知 ≠ 失败）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "③ 反馈 → 归因可回正文",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P8",
+      "name": "④ 经验库可用（回下一章）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "path": "P9",
+      "name": "单文件构建物存在",
+      "ok": true,
+      "detail": "index.single.html"
+    },
+    {
+      "path": "P9",
+      "name": "构建物不比任何源文件旧（防止过期构建）",
+      "ok": true,
+      "detail": "全部源文件早于构建物"
+    },
+    {
+      "path": "P9",
+      "name": "构建物无外部 js/css 引用残留",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "path": "P9",
+      "name": "单文件版可启动且为当前 schema",
+      "ok": true,
+      "detail": "VERSION=w4"
+    },
+    {
+      "path": "P9",
+      "name": "单文件版 D06 默认给定位摘要+调整入口（非勾选墙）",
+      "ok": true,
+      "detail": "tagopt=0"
+    },
+    {
+      "path": "P9",
+      "name": "单文件版可打开本轮标签选择器（本轮特征已进入构建物）",
+      "ok": true,
+      "detail": "分组=5"
+    },
+    {
+      "path": "N",
+      "name": "1280 宽下 Main 仍可读（≥520px）",
+      "ok": true,
+      "detail": "main=1028px"
+    },
+    {
+      "path": "N",
+      "name": "1280 宽下开右栏不把正文挤成窄条（浮层）",
+      "ok": true,
+      "detail": "main=619px"
+    },
+    {
+      "path": "N",
+      "name": "1280 宽下正文段落仍可阅读（非极窄）",
+      "ok": true,
+      "detail": "段落宽=519px"
+    }
+  ],
+  "errors": []
+}

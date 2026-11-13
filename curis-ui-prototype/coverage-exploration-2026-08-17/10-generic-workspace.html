@@ -1,0 +1,295 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · Generic Workspace（通用经营办公室）· 首版视觉定义
+  DESIGN FIXTURE：宠物寄养工作空间
+  结构：Shared Workspace Shell + Generic Primary Work Surface(当前工作) + Shared Team Operating + Shared Employee Work Area
+  约束：无行业专属字段假设 / 无 Dashboard / 无专业 Domain Surface / CEO Decision Slot 默认不显示
+  复用：_system/tokens.css · _system/shell.css · 与 09-xhs / 08-rd 同构的 ws-shell / team-op / emp-row 组件样式
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宠物寄养 · 工作空间 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.section-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.chip { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-3); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); color: var(--ui-text); font-size: var(--ui-fs-2); cursor: pointer; }
+.chip:hover { background: var(--ui-bg); }
+.helper { font-size: var(--ui-fs-1); line-height: 1.45; font-weight: 400; color: var(--ui-text-2); }
+.emp-list { display: flex; flex-direction: column; }
+.emp-row { border-bottom: 1px solid var(--ui-line); } .emp-row:last-child { border-bottom: 0; }
+.emp-row-head { display: grid; grid-template-columns: 36px 1fr auto auto; grid-template-rows: auto auto; align-items: center; gap: 0 var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-2); cursor: pointer; }
+.emp-row-head:hover { background: var(--ui-surface); }
+.emp-avatar { grid-row: 1 / 3; width: 36px; height: 36px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: var(--ui-fs-2); cursor: pointer; }
+.emp-id { grid-column: 2; grid-row: 1; display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.emp-name { font-weight: 600; cursor: pointer; } .emp-role { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.emp-duty { grid-column: 2; grid-row: 2; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.emp-status { grid-column: 3; grid-row: 1 / 3; } .emp-chevron { grid-column: 4; grid-row: 1 / 3; color: var(--ui-text-2); transition: transform 150ms ease; }
+.emp-row.is-open .emp-chevron { transform: rotate(90deg); }
+.emp-body { display: none; padding: 0 var(--ui-sp-2) var(--ui-sp-4) calc(36px + var(--ui-sp-3) + var(--ui-sp-2)); }
+.emp-row.is-open .emp-body { display: block; }
+.av-1 { background: #4a6fa5; } .av-2 { background: #5b8c6e; } .av-3 { background: #9a7b4e; } .av-4 { background: #7a5b8c; } .av-5 { background: #a05b6b; } .av-6 { background: #4e8c8c; }
+.leader-scope-line { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+
+/* Shared Workspace Shell（与 09-xhs / 08-rd 同构） */
+.ws-shell { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-4); }
+.ws-shell-leader { display: flex; align-items: center; gap: var(--ui-sp-3); }
+.ws-shell-info { display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.ws-shell-name { font-weight: 600; }
+.ws-shell-role { color: var(--ui-accent); font-size: var(--ui-fs-2); }
+.ws-shell-status { margin-left: auto; }
+.ws-shell-field { display: flex; gap: var(--ui-sp-3); font-size: var(--ui-fs-2); }
+.ws-shell-field .k { color: var(--ui-text-2); min-width: 80px; }
+.ws-shell-field .v.is-actionable { cursor: pointer; color: var(--ui-text); }
+.ws-shell-field .v.is-actionable:hover { color: var(--ui-accent); }
+.ws-shell-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); margin-bottom: var(--ui-sp-4); }
+.ws-shell-op .op-title { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+.op-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ui-sp-2) var(--ui-sp-4); font-size: var(--ui-fs-2); }
+.op-grid > div { display: flex; gap: var(--ui-sp-2); }
+.op-grid .l { color: var(--ui-text-2); }
+
+/* Frame D · Generic Primary Work Surface —— 页面绝对主体（最大）· 去 Card 化，连续 Operating Rows */
+.generic-surface { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-6); margin-bottom: var(--ui-sp-6); }
+.gs-head { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-4); padding-bottom: var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); }
+.gs-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.gs-hint { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.gw-list { display: flex; flex-direction: column; }
+.gw-obj { padding: var(--ui-sp-3) 0; border-bottom: 1px solid var(--ui-line); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.gw-obj:last-child { border-bottom: 0; padding-bottom: 0; }
+.gw-obj-title { font-size: var(--ui-fs-4); font-weight: 600; color: var(--ui-text); }
+.gw-obj-line { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.gw-obj-result { font-size: var(--ui-fs-2); color: var(--ui-text); }
+.gw-need { display: flex; align-items: flex-start; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-warning); }
+.gw-need-ico { font-weight: 700; }
+
+/* Shared Team Operating（与 09-xhs / 08-rd 同构，本 Fixture 仅默认流程） */
+.team-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); margin-top: var(--ui-sp-4); }
+.team-op-row { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; font-size: var(--ui-fs-2); }
+.team-op-title { font-weight: 600; }
+.team-op-default { color: var(--ui-text-2); margin-right: var(--ui-sp-2); }
+.team-op-edit { margin-left: auto; }
+.team-op-pane { margin-top: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.team-op-foot { display: flex; gap: var(--ui-sp-2); justify-content: flex-end; }
+.emp-row.is-leader { background: linear-gradient(90deg, var(--ui-surface-2) 0%, transparent 40%); }
+.emp-row.is-leader .emp-avatar { box-shadow: 0 0 0 2px var(--ui-accent); }
+.emp-row.is-leader .emp-role { color: var(--ui-accent); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>Curis 研发</span></a>
+          <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>AI 科技 · 小红书运营</span></a>
+          <a class="nav-item active" href="10-generic-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V5a2 2 0 0 1 2-2h9l5 5v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/></svg></span><span>宠物寄养工作空间</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <div class="crumbs"><a href="../department-business-work-surface-2026-08-18/CURIS_DEPARTMENT_BUSINESS_WORK_SURFACE_UX_EXPLORATION.html#state-7">宠物寄养</a></div>
+      <div class="spacer"></div>
+    </header>
+    <div class="pane-content">
+      <div class="page-head">
+        <h1>宠物寄养工作空间</h1>
+        <div class="sub">通用经营办公室 · 当前工作 · 团队运转 · 工作区（尚未形成专业 Domain Surface）</div>
+      </div>
+
+      <!-- Shared Workspace Shell · 宠物寄养 instance（轻量） -->
+      <div class="ws-shell">
+        <div class="ws-shell-field"><span class="k">负责人</span><span class="v is-actionable" data-leader-jump>周璐 · 工作空间负责人 ›</span></div>
+        <div class="ws-shell-field"><span class="k">目标</span><span class="v is-actionable">待完善 ›</span></div>
+        <div class="ws-shell-field"><span class="k">规则与配置</span><span class="v is-actionable">待完善 ›</span></div>
+      </div>
+
+      <!-- Current Operating Summary（极简 · 通用经营语言 · 无 KPI 百分比 / 无 Dashboard） -->
+      <div class="ws-shell-op">
+        <div class="op-title">当前经营</div>
+        <div class="op-grid">
+          <div><span class="l">经营状态</span><span class="v">筹备中</span></div>
+          <div><span class="l">本轮重点</span><span class="v">完善首轮服务方案并验证需求</span></div>
+          <div><span class="l">最新判断</span><span class="v">服务范围已形成初步方案</span></div>
+          <div><span class="l">下一步</span><span class="v">完成规则确认并进入首轮执行</span></div>
+          <div><span class="l">需要关注</span><span class="v">团队与专业工作面仍待完善</span></div>
+        </div>
+      </div>
+
+      <!-- Generic Primary Work Surface · 当前工作（页面绝对主体 · 去 Card 化连续 Operating Rows · Work-centered，非 Task Manager / Kanban / Issue Tracker） -->
+      <div class="generic-surface">
+        <div class="gs-head">
+          <h2 class="gs-title">当前工作</h2>
+          <span class="gs-hint">团队正在推进的经营事项 · 非个人任务清单</span>
+        </div>
+        <div class="gw-list">
+
+          <div class="gw-obj">
+            <div class="gw-obj-title">建立首轮服务方案</div>
+            <div class="gw-obj-line">周璐 · <span class="status ontrack">进行中</span></div>
+            <div class="gw-obj-result">最近结果：已形成服务范围草案</div>
+          </div>
+
+          <div class="gw-obj">
+            <div class="gw-obj-title">明确目标与规则</div>
+            <div class="gw-obj-line">周璐 · <span class="status attention">待确认</span></div>
+            <div class="gw-need"><span class="gw-need-ico">!</span><span>需要：CEO 确认 2 项规则</span></div>
+          </div>
+
+          <div class="gw-obj">
+            <div class="gw-obj-title">完善团队分工</div>
+            <div class="gw-obj-line">周璐 · <span class="status neutral">准备中</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Shared Team Operating（轻量 · 本 Fixture 仅默认流程，不硬造固定岗位） -->
+      <div class="team-op">
+        <div class="team-op-row">
+          <span class="team-op-title">团队运转</span>
+          <span class="team-op-default">默认流程尚待完善</span>
+          <button class="chip team-op-edit" data-team-op-edit>+ 编辑</button>
+        </div>
+        <div class="team-op-pane" data-team-op-pane hidden>
+          <div class="helper">还没有定义默认流程。</div>
+          <div class="team-op-foot">
+            <button class="chip" data-team-op-add>+ 添加岗位</button>
+            <button class="btn btn-primary" data-team-op-done>完成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工作区 · 默认全部收起 · Leader 固定第一工位（真实 Workstation，与顶部摘要语义不同） -->
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">工作区</h2><span class="section-sub">默认收起 · 点击行展开 Workstation · Leader 固定第一工位</span></div>
+        <div class="emp-list">
+          <div class="emp-row is-leader" data-emp-row>
+            <div class="emp-row-head">
+              <div class="emp-avatar av-1" data-open-util>周</div>
+              <div class="emp-id"><span class="emp-name" data-open-util>周璐</span><span class="emp-role">工作空间负责人</span></div>
+              <div class="emp-duty">当前职责：统筹宠物寄养工作空间目标、规则、团队与首轮服务方案</div>
+              <span class="emp-status"><span class="status success">工作中 · 经营</span></span>
+              <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </div>
+            <div class="emp-body">
+              <div class="leader-scope-line">Assignment · Employee = <b>周璐</b> · Role = <b>工作空间负责人</b> · Scope = <b>宠物寄养工作空间</b></div>
+              <div class="leader-conv" style="margin-top:var(--ui-sp-3);border:1px solid var(--ui-line);border-radius:var(--ui-r-md);background:var(--ui-surface-2);padding:var(--ui-sp-3);display:flex;flex-direction:column;gap:var(--ui-sp-3)">
+                <div style="display:flex;gap:var(--ui-sp-2);align-items:flex-start">
+                  <div style="flex:0 0 auto;font-weight:600;color:var(--ui-text-2);font-size:var(--ui-fs-2);min-width:40px">CEO</div>
+                  <div style="background:var(--ui-surface);border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-2) var(--ui-sp-3);color:var(--ui-text);font-size:var(--ui-fs-3);line-height:1.5">现在还是筹备中，离真正接单还差什么？</div>
+                </div>
+                <div style="display:flex;gap:var(--ui-sp-2);align-items:flex-start">
+                  <div style="flex:0 0 auto;font-weight:600;color:var(--ui-accent);font-size:var(--ui-fs-2);min-width:40px">周璐</div>
+                  <div style="background:var(--ui-surface);border:1px solid var(--ui-accent);border-radius:var(--ui-r-md);padding:var(--ui-sp-2) var(--ui-sp-3);color:var(--ui-text);font-size:var(--ui-fs-3);line-height:1.5">服务范围已经有了初步方案（家庭寄养 · 常出差中等收入家庭），但目标与规则还没和你确认。确认后我就进首轮执行，团队和专业工作面也会一并补上。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('.emp-row', function () {
+    var row = this;
+    row.querySelector('.emp-row-head').addEventListener('click', function (e) {
+      if (e.target.closest('[data-open-util]')) return;
+      row.classList.toggle('is-open');
+    });
+    row.querySelectorAll('[data-open-util]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.stopPropagation(); });
+    });
+  });
+  on('[data-leader-jump]', function () {
+    var leader = document.querySelector('.emp-row.is-leader');
+    if (!leader) return;
+    leader.classList.add('is-open');
+    leader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  on('[data-team-op-edit]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (!target) return;
+    target.hidden = !target.hidden;
+    this.textContent = target.hidden ? '+ 编辑' : '收起';
+  });
+  on('[data-team-op-done]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (target) target.hidden = true;
+    var edit = wrap.querySelector('[data-team-op-edit]');
+    if (edit) edit.textContent = '+ 编辑';
+  });
+})();
+</script>
+</body>
+</html>

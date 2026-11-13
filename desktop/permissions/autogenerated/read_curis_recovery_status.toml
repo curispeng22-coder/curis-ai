@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-curis-recovery-status"
+description = "Enables the read_curis_recovery_status command without any pre-configured scope."
+commands.allow = ["read_curis_recovery_status"]
+
+[[permission]]
+identifier = "deny-read-curis-recovery-status"
+description = "Denies the read_curis_recovery_status command without any pre-configured scope."
+commands.deny = ["read_curis_recovery_status"]

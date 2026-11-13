@@ -1,0 +1,2532 @@
+FILE js/app.js
+1: /* ============================================================
+2:    Curis Full Product HTML Design Prototype — app.js
+3:    Router / Four-Pane 管理 / 搜索 / 通知 / Floating CEO Assistant
+4:    / State Switcher（设计测试工具）/ 事件委托
+5:    ============================================================ */
+6: (function () {
+7:   const $ = s => document.querySelector(s);
+8:   const app = $('#app');
+9: 
+10:   /* ---------- conversation demo state ---------- */
+11:   const convState = {}; // routeKey -> messages appended at runtime
+12: 
+13:   /* ---------- router ---------- */
+14:   const ROUTES = [
+15:     [/^#?\/?$/, () => ({ page: 'ceo' })],
+16:     [/^#\/ceo$/, () => ({ page: 'ceo' })],
+17:     [/^#\/business$/, () => ({ page: 'business' })],
+18:     [/^#\/business\/([\w-]+)$/, m => ({ page: 'businessDetail', id: m[1] })],
+19:     [/^#\/activate$/, () => ({ page: 'activate' })],
+20:     [/^#\/workspace\/([\w-]+)$/, m => ({ page: 'workspace', id: m[1] })],
+21:     [/^#\/workspace\/([\w-]+)\/([\w-]+)$/, m => ({ page: 'workspace', id: m[1], surface: m[2] })],
+22:     [/^#\/org(?:\/(\w+))?$/, m => ({ page: 'org', tab: m[1] || 'map' })],
+23:     [/^#\/employee\/([\w-]+)$/, m => ({ page: 'employee', id: m[1] })],
+24:     [/^#\/employee\/([\w-]+)\/(\w+)$/, m => ({ page: 'employee', id: m[1], sec: m[2] })],
+25:     [/^#\/talent$/, () => ({ page: 'talent' })],
+26:     [/^#\/talent\/(\w+)$/, m => ({ page: 'talent', tab: m[1] })],
+27:     [/^#\/skill\/([\w-]+)$/, m => ({ page: 'skill', id: m[1] })],
+28:     [/^#\/insights$/, () => ({ page: 'insights' })],
+29:     [/^#\/knowledge$/, () => ({ page: 'knowledge' })],
+30:     [/^#\/knowledge\/([\w-]+)$/, m => ({ page: 'knowledge', id: m[1] })],
+31:     [/^#\/meeting$/, () => ({ page: 'meeting' })],
+32:     [/^#\/meeting\/([\w-]+)$/, m => ({ page: 'meeting', id: m[1] })],
+33:     [/^#\/settings(?:\/(\w+))?$/, m => ({ page: 'settings', sec: m[1] || 'personal' })],
+34:     [/^#\/models$/, () => ({ page: 'models' })],
+35:     [/^#\/work\/([\w-]+)$/, m => ({ page: 'work', id: m[1] })],
+36:     [/^#\/decision\/([\w-]+)$/, m => ({ page: 'decision', id: m[1] })],
+37:     [/^#\/result\/([\w-]+)$/, m => ({ page: 'result', id: m[1] })],
+38:     [/^#\/results$/, () => ({ page: 'results' })],
+39:     [/^#\/conversation\/([\w-]+)$/, m => ({ page: 'conversation', emp: m[1] })],
+40:   ];
+41:   function parse() {
+42:     const raw = location.hash || '#/ceo';
+43:     const [path, query] = raw.split('?');
+44:     const q = {}; (query || '').split('&').filter(Boolean).forEach(kv => { const [k, v] = kv.split('='); q[k] = decodeURIComponent(v || ''); });
+45:     for (const [re, fn] of ROUTES) { const m = path.match(re); if (m) { const r = fn(m); r.q = q; return r; } }
+46:     return { page: 'ceo', q };
+47:   }
+48: 
+49:   /* ---------- nav ---------- */
+50:   function renderNav(route) {
+51:     const items = [
+52:       ['ceo', 'CEO 工作台', C.I.home, '#/ceo'],
+53:       ['business', '业务空间', C.I.briefcase, '#/business'],
+54:       ['org', '组织中心', C.I.org, '#/org'],
+55:       ['talent', '人才与能力', C.I.users, '#/talent'],
+56:       ['insights', '经营洞察', C.I.chart, '#/insights'],
+57:       ['knowledge', '资料库', C.I.book, '#/knowledge'],
+58:       ['meeting', '会议', C.I.video, '#/meeting'],
+59:     ];
+60:     /* Conversation Quick Access：与员工的直接对话常驻侧栏（不因离开页面而消失） */
+61:     const convKeys = Object.keys(RT.S.threads).filter(k => k.startsWith('emp:'));
+62:     const convIds = [...new Set(convKeys.map(k => k.slice(4)))];
+63:     let html = '';
+64:     for (const [id, t, ic, go] of items) {
+65:       const active = route.page === id || (id === 'business' && ['businessDetail', 'workspace', 'activate', 'work', 'decision', 'result', 'results', 'conversation'].includes(route.page));
+66:       html += `<button class="nav-item ${active ? 'active' : ''}" data-action="go" data-arg="${go}"><span class="ico" style="display:grid;place-items:center">${C.ico(ic, 18)}</span>${t}</button>`;
+67:       if (id === 'business' && active) {
+68:         html += `<div class="nav-children">` + Object.values(FX.businesses).map(b =>
+69:           `<button class="nav-item ${route.id === b.id || (route.page === 'workspace' && FX.ws(route.id) && FX.ws(route.id).business === b.id) ? 'active' : ''}" data-action="go" data-arg="#/business/${b.id}">${b.name}</button>`).join('') + `</div>`;
+70:       }
+71:     }
+72:     /* Quick Access：始终展示有对话的员工 + 各工作空间负责人（conversation-first 宿主） */
+73:     const quick = [];
+74:     for (const id of convIds) { const e = FX.emp(id); if (e) quick.push(e); }
+75:     if (route.page === 'workspace' || quick.length === 0) {
+76:       ['ws-cg', 'ws-rd'].forEach(wid => { const w = FX.ws(wid); if (w) quick.push(FX.emp(w.leader)); });
+77:     }
+78:     const seen = new Set();
+79:     const quickList = quick.filter(e => e && !seen.has(e.id) && seen.add(e.id)).slice(0, 6);
+80:     if (quickList.length) {
+81:       html += `<div class="nav-group" style="margin-top:14px">对话 · Quick Access</div>`;
+82:       html += quickList.map(e => {
+83:         const st = e.status === 'working' ? 'run' : e.status === 'blocked' ? 'err' : 'idle';
+84:         return `<button class="nav-item ${route.page === 'employee' && route.id === e.id ? 'active' : ''}" data-action="go" data-arg="#/employee/${e.id}/conv"><span class="dot ${st}" style="margin:0 2px"></span><span style="overflow:hidden;text-overflow:ellipsis">${e.name}</span><span class="faint" style="font-size:10.5px;margin-left:auto">${e.role.split(' / ')[0]}</span></button>`;
+85:       }).join('');
+86:     }
+87:     html += `<div class="nav-spacer"></div>
+88:       <div class="nav-user">
+89:         <button class="nav-item" data-action="avatar-menu" style="gap:10px">
+90:           ${C.avatar({ name: 'C', av: 7 }, 'sm')}
+91:           <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.25">
+92:             <b style="font-size:12.5px">CEO</b>
+93:             <span class="faint" style="font-size:10.5px">${FX.org.company}</span>
+94:           </span>
+95:         </button>
+96:       </div>`;
+97:     $('#nav-content').innerHTML = html;
+98:   }
+99: 
+100:   /* ---------- render ---------- */
+101:   const stateStore = {};
+102:   const utilState = {};
+103:   function render() {
+104:     try { renderInner(); } catch (err) {
+105:       console.error(err);
+106:       $('#nav-content').innerHTML = '';
+107:       $('#main-content').innerHTML = `<div class="error-banner"><div class="eb-title">原型渲染错误（DESIGN PROTOTYPE）</div>
+108:         <div class="eb-body">${err.message}</div><pre class="mono" style="font-size:11px;white-space:pre-wrap">${(err.stack || '').split('\n').slice(0, 4).join('\n')}</pre></div>`;
+109:     }
+110:   }
+111:   function renderInner() {
+112:     const route = parse();
+113:     if (route.q.util === '1') sessionStorage.setItem('util-open', '1');
+114:     if (route.q.util === '0') sessionStorage.setItem('util-open', '0');
+115:     const view = V[route.page](route);
+116:     const key = location.hash || '#/ceo';
+117:     const state = stateStore[key] || 'normal';
+118:     renderNav(route);
+119:     $('#main-crumbs').innerHTML = view.crumbs || '';
+120:     const html = typeof view.html === 'function' ? view.html(view.states?.[state] || {}) : view.html;
+121:     $('#main-content').innerHTML = html;
+122:     $('#main-content').scrollTop = 0;
+123:     /* context pane */
+124:     const ctxOpen = !!view.ctxHtml && !sessionStorage.getItem('ctx-closed');
+125:     $('#pane-context').classList.toggle('hidden', !ctxOpen);
+126:     app.classList.toggle('has-context', ctxOpen);
+127:     if (ctxOpen) { $('#ctx-crumbs').textContent = view.ctxTitle || '上下文'; $('#ctx-content').innerHTML = view.ctxHtml; }
+128:     $('#btn-ctx-show').style.display = view.ctxHtml && !ctxOpen ? '' : 'none';
+129:     /* utility pane */
+130:     const utilOpen = (!!view.util && sessionStorage.getItem('util-open') === '1');
+131:     $('#pane-utility').classList.toggle('hidden', !utilOpen);
+132:     app.classList.toggle('has-utility', utilOpen);
+133:     if (utilOpen && view.util) {
+134:       const ustate = utilState[location.hash || '#/ceo'] || {};
+135:       const tabs = view.util.tabs || ['面板'];
+136:       const active = ustate.tab || view.util.active || tabs[0];
+137:       const content = (view.util.content && view.util.content[active]) || view.util.html || '';
+138:       $('#util-tabs').innerHTML = tabs.map(t =>
+139:         `<button class="util-tab ${t === active ? 'active' : ''}" data-action="util-tab" data-arg="${t}">${t}</button>`).join('')
+140:         + `<span class="faint" style="margin-left:6px;font-size:11px">${view.util.title || ''}</span>
+141:            <button class="iconbtn" data-action="util-max" title="最大化（Esc 还原）">${C.ico(C.I.spark, 14)}</button>`;
+142:       $('#util-content').innerHTML = content;
+143:     }
+144:     $('#btn-util').textContent = utilOpen ? '收 Utility' : 'Utility';
+145:     /* state switcher */
+146:     const ss = $('#ss-select');
+147:     const states = Object.keys(view.states || {});
+148:     if (states.length) {
+149:       $('#state-switcher').style.display = '';
+150:       ss.innerHTML = states.map(s => `<option value="${s}" ${s === state ? 'selected' : ''}>${s}</option>`).join('');
+151:     } else { $('#state-switcher').style.display = 'none'; }
+152:     renderAssistant();
+153:     $('#global-status').innerHTML = state === 'error'
+154:       ? '<span class="dot err"></span><span style="font-size:11px">同步失败</span>'
+155:       : '<span class="dot ok"></span><span style="font-size:11px">已同步</span>';
+156:   }
+157: 
+158:   /* ---------- search ---------- */
+159:   function searchIndex() {
+160:     const idx = [];
+161:     FX.employees.forEach(e => idx.push({ type: '员工', t: e.name + ' · ' + e.role, go: '#/employee/' + e.id, m: e.dept, obj: { prev: [['部门', e.dept], ['状态', C.stFull(e)], ['当前责任', e.responsibility.current], ['能力', e.capability.join(' · ')]] } }));
+162:     Object.values(FX.businesses).forEach(b => idx.push({ type: '业务', t: b.name, go: '#/business/' + b.id, m: b.dept }));
+163:     Object.values(FX.workspaces).forEach(w => idx.push({ type: '空间', t: w.name, go: '#/workspace/' + w.id, m: w.domain }));
+164:     FX.works.forEach(w => idx.push({ type: '工作', t: w.title, go: '#/work/' + w.id, m: C.statusMeta(w.status)[1], obj: { prev: [['谁在做', FX.emp(w.employee).name + ' · ' + FX.emp(w.employee).role], ['当前动作', w.current], ['进度', w.plan.filter(p => p.done).length + '/' + w.plan.length], ['用时 / 成本', w.elapsed + ' · ' + w.cost]] } }));
+165:     FX.results.forEach(r => idx.push({ type: '结果', t: r.title, go: '#/result/' + r.id, m: r.evidence.length + ' 条证据', obj: { prev: [['负责人', FX.emp(r.employee).name], ['证据', r.evidence.length + ' 条'], ['被引用', r.usedBy.join(' · ')]] } }));
+166:     FX.knowledge.forEach(k => idx.push({ type: '资料', t: k.title, go: '#/knowledge/' + k.id, m: k.scope }));
+167:     FX.skills.forEach(s => idx.push({ type: '技能', t: s.name, go: '#/skill/' + s.id, m: s.publisher, obj: { prev: [['来源', s.publisher], ['类型', s.type], ['使用范围', s.perm], ['绑定', s.bound.length + ' 名员工']] } }));
+168:     FX.meetings.forEach(m => idx.push({ type: '会议', t: m.title, go: '#/meeting/' + m.id, m: m.when }));
+169:     FX.decisions.forEach(d => idx.push({ type: '决定', t: d.title, go: '#/decision/' + d.id, m: '待 CEO' }));
+170:     return idx;
+171:   }
+172:   let searchSel = 0; let searchRows = [];
+173:   const TYPE_ICON = { '员工': C.I.users, '业务': C.I.briefcase, '空间': C.I.org, '工作': C.I.spark, '结果': C.I.doc, '资料': C.I.book, '技能': C.I.gear, '会议': C.I.video, '决定': C.I.check };
+174:   function openSearch() {
+175:     const p = $('#search-panel');
+176:     p.classList.remove('hidden');
+177:     $('#overlay').classList.add('open');
+178:     p.innerHTML = `
+179:       <div class="sp-input">${C.ico(C.I.search, 18)}<input id="sp-q" placeholder="搜索员工、业务、工作、结果、资料…（⌘K）" autofocus></div>
+180:       <div class="sp-filters">
+181:         ${['全部', '员工', '业务', '空间', '工作', '结果', '资料'].map((f, i) => `<span class="chip ${i === 0 ? 'active' : ''} sp-f" data-f="${f}">${f}</span>`).join('')}
+182:       </div>
+183:       <div class="search-body"><div class="search-results" id="sp-results"></div><div class="search-preview" id="sp-preview"><span class="faint" style="font-size:12px">选择一个对象查看预览</span></div></div>`;
+184:     const q = $('#sp-q');
+185:     q.addEventListener('input', () => renderSearch(q.value, '全部'));
+186:     p.querySelectorAll('.sp-f').forEach(c => c.addEventListener('click', () => {
+187:       p.querySelectorAll('.sp-f').forEach(x => x.classList.remove('active')); c.classList.add('active');
+188:       renderSearch(q.value, c.dataset.f);
+189:     }));
+190:     renderSearch('', '全部');
+191:     q.focus();
+192:   }
+193:   function renderSearch(q, filter) {
+194:     q = (q || '').toLowerCase();
+195:     let rows = searchIndex().filter(r => !q || r.t.toLowerCase().includes(q) || r.m.toLowerCase().includes(q));
+196:     if (filter !== '全部') rows = rows.filter(r => r.type === filter);
+197:     searchRows = rows.slice(0, 24); searchSel = 0;
+198:     $('#sp-results').innerHTML = searchRows.map((r, i) => `
+199:       <div class="sp-row ${i === 0 ? 'sel' : ''}" data-go="${r.go}" data-i="${i}"><span class="type">${r.type}</span><span class="t">${r.t}</span><span class="m">${r.m}</span></div>`).join('') || '<span class="faint" style="padding:12px;font-size:12px">没有匹配结果</span>';
+200:     $('#sp-results').querySelectorAll('.sp-row').forEach(el => {
+201:       el.addEventListener('click', () => { location.hash = el.dataset.go; closeSearch(); });
+202:       el.addEventListener('mouseenter', () => { searchSel = +el.dataset.i; markSel(); previewRow(searchRows[searchSel]); });
+203:     });
+204:     if (searchRows[0]) previewRow(searchRows[0]);
+205:   }
+206:   function markSel() {
+207:     $('#sp-results').querySelectorAll('.sp-row').forEach(el => el.classList.toggle('sel', +el.dataset.i === searchSel));
+208:     const sel = $('#sp-results').querySelector('.sp-row.sel');
+209:     if (sel) sel.scrollIntoView({ block: 'nearest' });
+210:   }
+211:   function previewRow(r) {
+212:     const obj = r && r.obj ? r.obj : null;
+213:     const rows = obj ? obj.prev : [['类型', r.type], ['负责人 / 来源', r.m], ['状态', '见对象']];
+214:     $('#sp-preview').innerHTML = `<div style="font-weight:650;margin-bottom:8px">${r.t}</div>
+215:       ${rows.map(x => `<div class="dl-row" style="padding:6px 0"><span class="k" style="flex:0 0 84px">${x[0]}</span><span>${x[1]}</span></div>`).join('')}
+216:       <div class="faint" style="margin-top:8px;font-size:11px">↑↓ 选择 · Enter 打开 · Esc 关闭</div>`;
+217:   }
+218:   function closeSearch() { $('#search-panel').classList.add('hidden'); $('#overlay').classList.remove('open'); }
+219: 
+220:   /* ---------- notifications ---------- */
+221:   function toggleNotifications() {
+222:     const p = $('#notif-panel');
+223:     if (!p.classList.contains('hidden')) { p.classList.add('hidden'); $('#overlay').classList.remove('open'); return; }
+224:     p.classList.remove('hidden'); $('#overlay').classList.add('open');
+225:     const kindName = { result: '结果', decision: '需决定', blocked: '阻塞', meeting: '会议' };
+226:     p.innerHTML = `<div style="padding:12px 14px;border-bottom:1px solid var(--ui-line);font-weight:650">通知</div>` +
+227:       FX.notifications.map(n => `<div class="notif-item" data-action="go" data-arg="${n.go}" style="cursor:pointer">
+228:         <span class="dot ${n.kind === 'result' ? 'ok' : n.kind === 'decision' ? 'warn' : n.kind === 'blocked' ? 'err' : 'idle'}" style="margin-top:5px"></span>
+229:         <span><div class="n-title">${n.title}</div><div class="n-body">${n.body}</div></span><span class="n-time">${n.time}</span></div>`).join('');
+230:   }
+231: 
+232:   /* ---------- floating CEO assistant ---------- */
+233:   const asStates = ['collapsed', 'expanded', 'working', 'result-ready'];
+234:   let asState = 'collapsed';
+235:   function renderAssistant() {
+236:     const a = $('#assistant');
+237:     a.dataset.state = asState;
+238:     a.className = 'assistant ' + (asState === 'collapsed' ? 'collapsed' : 'expanded');
+239:     if (asState === 'collapsed') {
+240:       a.innerHTML = `<button class="as-pill" data-action="as-expand"><span class="dot run"></span>CEO 助理 · 1 件需要你</button>`;
+241:       return;
+242:     }
+243:     const cst = RT.S.composers['assistant'] || { status: 'idle' };
+244:     const msgs = RT.renderThread('assistant');
+245:     a.innerHTML = `
+246:       <div class="as-head" id="as-drag">${C.avatar({ name: 'C', av: 7 }, 'sm')}
+247:         <div><div class="as-name">CEO 助理</div><div class="as-sub">公司级 · 同一 canonical 身份 · 跨区可用</div></div>
+248:         <span class="spacer"></span>
+249:         ${cst.status === 'running' ? '<span class="status"><span class="dot run"></span>整理中…</span>' : ''}
+250:         <button class="iconbtn" data-action="as-min" title="收起">${C.ico(C.I.minus, 14)}</button>
+251:       </div>
+252:       <div class="as-body">${msgs || C.emptyState('问我任何公司的事', '我会整理事实、风险和下一步；涉及执行或验收的，仍由你在业务现场确认。', [])}
+253:       ${asState === 'working' ? '<div class="as-msg ai"><span class="skeleton" style="display:block;width:80%"></span><span class="skeleton" style="display:block;width:60%;margin-top:6px"></span></div>' : ''}
+254:       ${asState === 'result-ready' ? `<div class="as-msg ai">登录模块 v1.3 已联调通过（附 3 条证据）。要现在查看，还是等 16:00 复盘会？<div style="margin-top:8px"><span class="result-ref" data-action="open-result" data-arg="r-login">查看结果</span></div></div>` : ''}</div>
+255:       ${asState !== 'working' ? `<div class="as-suggest">${['把今天的阻塞列出来', '定位调整你建议选哪个？'].map(t => `<button data-rt="as-suggest-text" data-arg="${t}">${t}</button>`).join('')}</div>` : ''}
+256:       <div class="as-composer">${RT.composer('assistant', { thread: 'assistant', placeholder: '问我任何公司的事…', exec: '执行 · CEO 助理' })}</div>`;
+257:     a.querySelector('.as-body').scrollTop = 1e6;
+258:   }
+259:   function cycleAssistant(next) {
+260:     asState = next || asStates[(asStates.indexOf(asState) + 1) % asStates.length];
+261:     renderAssistant();
+262:   }
+263:   /* drag */
+264:   (function enableDrag() {
+265:     document.addEventListener('pointerdown', ev => {
+266:       const head = ev.target.closest && ev.target.closest('#as-drag');
+267:       if (!head) return;
+268:       const a = $('#assistant');
+269:       const r = a.getBoundingClientRect(), ox = ev.clientX - r.left, oy = ev.clientY - r.top;
+270:       const move = e2 => {
+271:         a.style.right = 'auto'; a.style.bottom = 'auto';
+272:         a.style.left = Math.max(8, e2.clientX - ox) + 'px';
+273:         a.style.top = Math.max(8, e2.clientY - oy) + 'px';
+274:       };
+275:       const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
+276:       document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+277:     });
+278:   })();
+279: 
+280:   /* legacy composer interactions superseded by rt.js (handlers removed) */
+281:   function composerSend(composerEl) {
+282:     composerEl.dataset.running = '1';
+283:     const bar = composerEl.querySelector('.cx-bar');
+284:     bar.innerHTML = `<span class="status"><span class="dot run"></span>工作中 · 已排队</span><span class="spacer"></span><button class="cx-send stop" data-action="cx-stop" title="停止">${C.ico(C.I.stop, 14)}</button>`;
+285:     setTimeout(() => {
+286:       if (!composerEl.isConnected) return;
+287:       composerEl.dataset.running = '';
+288:       bar.innerHTML = `<span class="status"><span class="dot ok"></span>已发送 · 员工已开始（原型演示）</span>`;
+289:       setTimeout(() => { if (composerEl.isConnected) render(); }, 1500);
+290:     }, 2200);
+291:   }
+292: 
+293:   /* ---------- event delegation ---------- */
+294:   document.addEventListener('click', ev => {
+295:     const rtEl = ev.target.closest('[data-rt="as-suggest-text"]');
+296:     if (rtEl) {
+297:       const st = RT.S.composers['assistant']; if (st) st.text = rtEl.dataset.arg;
+298:       asState = 'expanded'; renderAssistant();
+299:       const ta = document.querySelector('#assistant .cx-input'); if (ta) { ta.focus(); ta.selectionStart = ta.value.length; }
+300:       return;
+301:     }
+302:     const el = ev.target.closest('[data-action]');
+303:     if (!el) return;
+304:     const act = el.dataset.action, arg = el.dataset.arg;
+305:     const composerEl = el.closest('.composer');
+306:     switch (act) {
+307:       case 'go': location.hash = arg; break;
+308:       case 'noop': break;
+309:       case 'open-employee': location.hash = '#/employee/' + arg; break;
+310:       case 'toggle-emp-conv': { const row = el.closest('.emp-row'); const conv = row && row.querySelector('.emp-conv');
+311:         if (conv) { conv.classList.toggle('hidden'); row.classList.toggle('open'); const ta = conv.querySelector('.cx-input'); if (ta && !conv.classList.contains('hidden')) ta.focus(); }
+312:         break; }
+313:       case 'emp-util': { sessionStorage.setItem('util-open', '1');
+314:         const route = parse(); const e = FX.emp(arg); route.id = arg; route.page = 'employee'; route.empId = arg;
+315:         const v = V.employee(route);
+316:         $('#util-tabs').innerHTML = `<span class="faint" style="font-size:11px">员工档案 · ${e.name}</span><button class="iconbtn" data-action="close-utility">${C.ico(C.I.x, 14)}</button>`;
+317:         $('#util-content').innerHTML = EMP_PROFILE(e);
+318:         $('#pane-utility').classList.remove('hidden'); app.classList.add('has-utility');
+319:         $('#btn-util').textContent = '收 Utility'; break; }
+320:       case 'open-work': location.hash = '#/work/' + arg; break;
+321:       case 'open-result': location.hash = '#/result/' + arg; break;
+322:       case 'open-decision': location.hash = '#/decision/' + arg; break;
+323:       case 'open-meeting': location.hash = '#/meeting/' + arg; break;
+324:       case 'open-skill': location.hash = '#/skill/' + arg; break;
+325:       case 'open-utility-result': sessionStorage.setItem('util-open', '1'); render(); break;
+326:       case 'emp-tab': location.hash = location.hash.replace(/(\/employee\/[\w-]+).*$/, '$1/' + arg); break;
+327:       case 'talent-tab': location.hash = '#/talent/' + arg; break;
+328:       case 'talent-cat': { const [base] = location.hash.split('?'); location.hash = base + '?cat=' + encodeURIComponent(arg); break; }
+329:       case 'talent-search': break;
+330:       case 'talent-refresh': render(); break;
+331:       case 'org-expand': { const list = document.querySelector('.org-members-' + arg); if (list) list.classList.toggle('hidden'); break; }
+332:       case 'avatar-menu': { document.querySelectorAll('.menu-pop.nav').forEach(x => x.remove());
+333:         const pop = document.createElement('div'); pop.className = 'menu-pop nav'; pop.style.cssText = 'position:fixed;left:12px;bottom:64px;z-index:96';
+334:         pop.innerHTML = `<button class="mi" data-nav="models">${C.ico(C.I.spark,14)} 模型配置 / AI 能力设置</button>
+335:           <button class="mi" data-nav="#/settings/personal">个人设置</button>
+336:           <button class="mi" data-nav="#/settings/company">公司设置</button>`;
+337:         document.body.appendChild(pop);
+338:         pop.querySelectorAll('.mi').forEach(mi => mi.addEventListener('click', () => { location.hash = mi.dataset.nav === 'models' ? '#/models' : mi.dataset.nav; pop.remove(); }));
+339:         setTimeout(() => document.addEventListener('click', function close(e){ if(!pop.contains(e.target)){pop.remove();document.removeEventListener('click',close);} }),0); break; }
+340:       case 'install-skill': { const s = FX.skill(arg); s.installed = !s.installed; render(); break; }
+341:       case 'ws-surface': location.hash = '#/workspace/' + parse().id + '/' + arg; break;
+342:       case 'toggle-context': sessionStorage.setItem('ctx-closed', '1'); render(); break;
+343:       case 'toggle-context-show': sessionStorage.removeItem('ctx-closed'); render(); break;
+344:       case 'toggle-utility': sessionStorage.setItem('util-open', sessionStorage.getItem('util-open') === '1' ? '0' : '1'); render(); break;
+345:       case 'close-utility': sessionStorage.setItem('util-open', '0'); render(); break;
+346:       case 'util-tab': utilState[location.hash || '#/ceo'] = { tab: arg }; render(); break;
+347:       case 'util-max': document.getElementById('pane-utility').classList.toggle('maximized'); break;
+348:       case 'ws-view': { const [base] = location.hash.split('?'); location.hash = base + '?view=' + arg; break; }
+349:       case 'settings-save': { el.textContent = '已保存 ✓（原型内存）'; el.disabled = true; setTimeout(() => { el.textContent = '保存'; el.disabled = false; }, 1400); break; }
+350:       case 'toggle-search': openSearch(); break;
+351:       case 'toggle-notifications': toggleNotifications(); break;
+352:       case 'toggle-theme': { const cur = document.documentElement.dataset.theme; document.documentElement.dataset.theme = cur === 'dark' ? 'light' : 'dark'; break; }
+353:       case 'set-theme': document.documentElement.dataset.theme = arg; break;
+354:       case 'as-expand': cycleAssistant('expanded'); break;
+355:       case 'as-live': break;
+356:       case 'as-min': cycleAssistant('collapsed'); break;
+357:       case 'as-suggest': cycleAssistant('working'); setTimeout(() => cycleAssistant('result-ready'), 1600); break;
+358:       case 'cx-ref': { const input = composerEl.querySelector('.cx-input'); input.value += ' @'; input.focus(); break; }
+359:       case 'focus-conv': { const t = $('#emp-conv') ? null : null; const c = document.querySelector('#main-content .composer .cx-input'); if (c) { c.focus(); } break; }
+360:       case 'decide': { el.closest('.decision-banner').querySelectorAll('button').forEach(b => { b.classList.remove('primary'); b.disabled = true; });
+361:         el.classList.add('primary'); el.textContent += ' · 已确认（原型）';
+362:         setTimeout(() => { stateStore[location.hash] = 'normal'; render(); }, 900); break; }
+363:     }
+364:   });
+365:   document.addEventListener('change', ev => {
+366:     if (ev.target.id === 'ss-select') { stateStore[location.hash || '#/ceo'] = ev.target.value; render(); }
+367:   });
+368:   document.addEventListener('keydown', ev => {
+369:     if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'k') { ev.preventDefault(); $('#search-panel').classList.contains('hidden') ? openSearch() : closeSearch(); }
+370:     if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'j') { ev.preventDefault(); cycleAssistant(); }
+371:     if (!$('#search-panel').classList.contains('hidden')) {
+372:       if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+373:         ev.preventDefault();
+374:         searchSel = Math.min(searchRows.length - 1, Math.max(0, searchSel + (ev.key === 'ArrowDown' ? 1 : -1)));
+375:         markSel(); previewRow(searchRows[searchSel]); return;
+376:       }
+377:       if (ev.key === 'Enter' && searchRows[searchSel]) { ev.preventDefault(); location.hash = searchRows[searchSel].go; closeSearch(); return; }
+378:     }
+379:     if (ev.key === 'Escape') { closeSearch(); $('#notif-panel').classList.add('hidden'); $('#overlay').classList.remove('open'); document.getElementById('pane-utility').classList.remove('maximized'); }
+380:   });
+381:   $('#overlay').addEventListener('click', () => { closeSearch(); $('#notif-panel').classList.add('hidden'); });
+382:   window.addEventListener('hashchange', () => { sessionStorage.removeItem('util-open'); render(); });
+383: 
+384:   /* ---------- utility divider resize（min 300 · localStorage 记忆） ---------- */
+385:   document.addEventListener('pointerdown', ev => {
+386:     if (ev.target.id !== 'util-resize') return;
+387:     ev.preventDefault();
+388:     const handle = ev.target; handle.classList.add('active');
+389:     const move = e2 => {
+390:       let w = window.innerWidth - e2.clientX - (document.getElementById('app').classList.contains('has-context') ? 256 : 0);
+391:       w = Math.max(300, Math.min(560, w));
+392:       document.getElementById('app').style.setProperty('--util-w', w + 'px');
+393:     };
+394:     const up = () => { handle.classList.remove('active'); localStorage.setItem('curis.utilw', document.getElementById('app').style.getPropertyValue('--util-w')); document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
+395:     document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+396:   });
+397:   try { const uw = localStorage.getItem('curis.utilw'); if (uw) document.getElementById('app').style.setProperty('--util-w', uw); } catch (e) {}
+398: 
+399:   /* ---------- boot ---------- */
+400:   renderAssistant();
+401:   render();
+402:   const bootQ = parse().q || {};
+403:   if (bootQ.state) { stateStore[location.hash || '#/ceo'] = bootQ.state; }
+404:   if (bootQ.util === '1' && bootQ.tab) { utilState[location.hash || '#/ceo'] = { tab: bootQ.tab }; }
+405:   renderAssistant();
+406:   render();
+407:   if (bootQ.search === '1') setTimeout(openSearch, 50);
+408:   if (bootQ.assistant) { cycleAssistant(bootQ.assistant === '1' ? 'expanded' : bootQ.assistant); }
+409:   if (bootQ.demo) setTimeout(() => {
+410:     const first = document.querySelector('#main-content .composer');
+411:     const cid = first && first.id;
+412:     const st = cid && RT.S.composers[cid];
+413:     if (!st) return;
+414:     if (bootQ.demo === 'attach') { st.attachments.push(RT.FILES[0]); st.refs.push(RT.REFS[2]); }
+415:     if (bootQ.demo === 'running') { st.status = 'running'; st.queue = 1;
+416:       const tk = st.opt.thread; RT.appendMsg(tk, { role: 'user', text: '先把对比分析发我，选题今天要出。' });
+417:       RT.appendMsg(tk, { role: 'ai', emp: tk.startsWith('emp:') ? tk.slice(4) : undefined, text: '正在对比 5 个对标账号的互动结构，已完成 3/5；预计 6 分钟后给出结论与 3 个选题候选。', steps: [{ t: '评论样本聚类', done: true }, { t: '对标结构对比 3/5', done: false }], model: 'DeepSeek-V4.1' }); }
+418:     if (bootQ.demo === 'perm') { st.perm = '完全访问'; st.permNote = 'requested：完全访问 · configured：已启用 · effective：本会话生效（写操作仍留审计）。档位 ≠ 沙箱生效，详见 设置 → 权限与数据。'; }
+419:     PROTO.render();
+420:     const mc = document.querySelector('#main-content'); if (mc) mc.scrollTop = mc.scrollHeight;
+421:     if (bootQ.demo === 'focus') { const ta = document.querySelector('#main-content .composer .cx-input'); if (ta) ta.focus(); }
+422:   }, 120);
+423:   window.PROTO = { render, parse, cycleAssistant, openSearch };
+424: })();
+
+FILE js/rt.js
+1: /* ============================================================
+2:    rt.js — HIFI 共享运行时（Prototype 内存态，不接 Runtime）
+3:    消费：Frozen Shell §3.5 Shared Composer 语义槽位
+4:         （Input / +Add / 访问权限▾ requested≠configured≠effective /
+5:           工作模式▾ / 已选资源 / 执行选择 Model≠Agent▾ / Send）
+6:         + Final Decisions Z044–Z075、EV04/EV06/EV07
+7:    ============================================================ */
+8: window.RT = (function () {
+9:   const FILES = [
+10:     { name: '竞品选题结构周报 8/12–8/19.xlsx', meta: '表格 · 38 KB · 公司资料库' },
+11:     { name: '品牌表达手册 v2.pdf', meta: 'PDF · 1.2 MB · 公司资料库' },
+12:     { name: 'auth.service.ts', meta: '代码 · product-platform/src/auth' },
+13:     { name: '损坏文件.docx', meta: '无法读取 · 上传将失败' },
+14:   ];
+15:   const REFS = [
+16:     { kind: 'emp', label: '@林月', sub: '调研 / 文案' },
+17:     { kind: 'emp', label: '@周岚', sub: '开发工程师' },
+18:     { kind: 'file', label: '#登录模块验收口径', sub: '资料库' },
+19:     { kind: 'result', label: '#登录模块 v1.3 联调结果', sub: 'Result' },
+20:   ];
+21: 
+22:   const S = {
+23:     composers: {},   // cid -> state
+24:     threads: {},     // threadKey -> [msg]
+25:     threadSeeded: {},
+26:     asstText: '',
+27:   };
+28: 
+29:   function composer(cid, opt = {}) {
+30:     const st = S.composers[cid] || (S.composers[cid] = {
+31:       text: '', attachments: [], refs: [],
+32:       model: opt.model || 'GLM-5.3', exec: opt.exec || '执行 · 自动选择',
+33:       perm: '最小权限', permNote: '', mode: '对话',
+34:       status: 'idle', runNote: '', queue: 0,
+35:     });
+36:     if (opt.model && st.model === 'GLM-5.3') st.model = opt.model;
+37:     if (opt.exec && st.exec === '执行 · 自动选择') st.exec = opt.exec;
+38:     st.opt = opt;
+39:     const canSend = st.text.trim().length > 0 && (st.status === 'idle' || st.status === 'stopped');
+40:     const running = st.status === 'running' || st.status === 'sending';
+41:     const chip = (label, act, cls) => `<button class="chip clickable ${cls || ''}" data-rt="${act}" data-cid="${cid}">${label}</button>`;
+42:     return `<div class="composer cx-anchor" id="${cid}" data-running="${running ? 1 : 0}">
+43:       ${(st.attachments.length || st.refs.length) ? `<div class="attach-strip">
+44:         ${st.attachments.map((a, i) => `<span class="chip attach">${a.failed ? '<span class="dot err"></span>' : a.uploading ? '<span class="dot idle"></span>' : C.ico(C.I.doc, 12)} ${a.name}${a.uploading ? ' <span class="faint">上传中…</span>' : ''}${a.failed ? ' <span class="faint" style="color:var(--ui-danger)">失败</span>' : ''}${(!a.uploading && !a.failed) ? `<span class="chip-x" data-rt="rm-attach" data-cid="${cid}" data-i="${i}">×</span>` : ''}</span>`).join('')}
+45:         ${st.refs.map((r, i) => `<span class="chip attach ref">${r.label}<span class="chip-x" data-rt="rm-ref" data-cid="${cid}" data-i="${i}">×</span></span>`).join('')}
+46:       </div>` : ''}
+47:       <textarea class="cx-input" rows="${st.text.split('\n').length > 2 || opt.rows ? (opt.rows || 3) : 1}" data-rt="input" data-cid="${cid}"
+48:         placeholder="${opt.placeholder || '给 TA 一句指令，或 @ 员工 / # 引用文件与结果'}">${st.text}</textarea>
+49:       <div class="cx-bar">
+50:         <button class="iconbtn" data-rt="menu-add" data-cid="${cid}" title="添加附件">${C.ico(C.I.clip, 16)}</button>
+51:         <button class="iconbtn" data-rt="menu-ref" data-cid="${cid}" title="引用 @员工 / #文件 / #结果">${C.ico(C.I.at, 16)}</button>
+52:         ${chip(`${C.ico(C.I.gear, 12)} ${st.perm}`, 'cycle-perm', st.perm === '完全访问' ? 'warn' : '')}
+53:         ${chip(`${C.ico(C.I.spark, 12)} ${st.mode}`, 'menu-mode')}
+54:         <span class="spacer"></span>
+55:         ${chip(`${C.ico(C.I.users, 12)} ${st.exec}`, 'menu-exec')}
+56:         ${chip(`${st.model} ${C.ico(C.I.down, 11)}`, 'menu-model', 'cx-model')}
+57:         ${running
+58:           ? `<button class="cx-send stop" data-rt="stop" data-cid="${cid}" title="停止（保留未完成输出）">${C.ico(C.I.stop, 14)}</button>`
+59:           : `<button class="cx-send" data-rt="send" data-cid="${cid}" title="发送" ${canSend ? '' : 'disabled'}>${C.ico(C.I.send, 14)}</button>`}
+60:       </div>
+61:       ${st.status === 'running' ? `<div class="costline"><span class="dot run"></span>运行中${st.queue ? ` · 队列中还有 ${st.queue} 条输入` : ''} · 发送将排队（Steering）</div>` : ''}
+62:       ${st.status === 'stopped' ? `<div class="costline"><span class="dot warn"></span>已停止 · 未完成输出已保留（可继续）</div>` : ''}
+63:       ${st.status === 'queued' ? `<div class="costline"><span class="dot idle"></span>已排队 · 等待当前运行结束</div>` : ''}
+64:       ${st.permNote ? `<div class="costline">${st.permNote}</div>` : ''}
+65:     </div>`;
+66:   }
+67: 
+68:   function threadSeed(key) {
+69:     if (S.threadSeeded[key]) return S.threads[key] || (S.threads[key] = []);
+70:     S.threadSeeded[key] = true;
+71:     if (key.startsWith('emp:')) S.threads[key] = CONV.forEmployee(key.slice(4)).slice();
+72:     else if (key === 'assistant') S.threads[key] = FX.assistantThread.map(m => ({ role: m.role, text: m.text }));
+73:     else S.threads[key] = [];
+74:     return S.threads[key];
+75:   }
+76: 
+77:   function renderThread(key, opt = {}) {
+78:     const msgs = threadSeed(key);
+79:     if (!msgs.length) return C.emptyState(opt.emptyTitle || '开始这段对话', opt.emptySub || '发送第一条消息；对话锚定当前工作，不形成独立聊天世界。', []);
+80:     return msgs.map(m => C.msg(m)).join('');
+81:   }
+82: 
+83:   function appendMsg(key, m) { threadSeed(key).push(m); }
+84: 
+85:   /* 员工模拟回复（Prototype 演示；不接 Runtime） */
+86:   function employeeReply(key, empId, userText, onDone) {
+87:     const e = FX.emp(empId);
+88:     setTimeout(() => {
+89:       appendMsg(key, {
+90:         role: 'ai', emp: empId,
+91:         text: `收到：「${(userText || '').slice(0, 24)}${userText.length > 24 ? '…' : ''}」。${e ? `我当前责任是「${e.responsibility.current}」，我先从这个口径推进，完成后把 Result 引用发回这里。` : ''}`,
+92:         model: e ? e.model : 'GLM-5.3', cost: '◇ 0.3',
+93:         tools: [{ n: '读取工作上下文', d: '当前 Work / 责任范围 / 相关资料（Prototype 演示）' }],
+94:       });
+95:       if (onDone) onDone();
+96:     }, 1400);
+97:   }
+98: 
+99:   /* 事件处理：返回 true 表示已消费 */
+100:   function handle(act, el) {
+101:     const cid = el.dataset.cid;
+102:     const st = cid ? S.composers[cid] : null;
+103:     const key = st && st.opt ? st.opt.thread : null;
+104:     const rerender = () => { if (st && st.opt && st.opt.onChange) st.opt.onChange(); else PROTO.render(); };
+105:     switch (act) {
+106:       case 'input': {
+107:         st.text = el.value; el.style.height = 'auto';
+108:         el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+109:         const send = el.closest('.composer').querySelector('.cx-send');
+110:         if (send && !el.closest('.composer').dataset.running) send.disabled = !st.text.trim();
+111:         return true;
+112:       }
+113:       case 'menu-add': {
+114:         openMenu(el, FILES.map(f => f.name), null, name => {
+115:           const f = Object.assign({}, FILES.find(x => x.name === name));
+116:           f.failed = name.indexOf('损坏') === 0; f.uploading = !f.failed;
+117:           st.attachments.push(f); rerender();
+118:           if (f.uploading) setTimeout(function(){ f.uploading = false; rerender(); }, 900);
+119:         }); return true;
+120:       }
+121:       case 'menu-ref': {
+122:         openMenu(el, REFS.map(r => r.label), null, label => {
+123:           st.refs.push(REFS.find(r => r.label === label)); rerender();
+124:         }); return true;
+125:       }
+126:       case 'rm-attach': st.attachments.splice(+el.dataset.i, 1); rerender(); return true;
+127:       case 'msg-copy': if (navigator.clipboard) navigator.clipboard.writeText(el.dataset.text || ''); el.title = '已复制'; return true;
+128:       case 'msg-regen': return true;
+129:       case 'msg-more': openMenu(el, ['复制全文', '引用到新指令', '升级给我（CEO）', '标记问题'], null, function () {}); return true;
+130:       case 'rm-ref': st.refs.splice(+el.dataset.i, 1); rerender(); return true;
+131:       case 'menu-model': {
+132:         const models = ['GLM-5.3', 'DeepSeek-V4.1', 'GPT（未配置 · 去模型配置）'];
+133:         openMenu(el, models, st.model, v => {
+134:           if (v.includes('未配置')) { st.permNote = '该模型未配置：需在 左下头像菜单 → 模型配置 输入 Key 后可用（unavailable 应解释并禁用）。'; rerender(); return; }
+135:           st.model = v; st.permNote = ''; rerender();
+136:         }); return true;
+137:       }
+138:       case 'menu-exec': {
+139:         const execs = ['执行 · 自动选择', '执行 · 负责人', '执行 · 指定员工…', '仅讨论，不执行'];
+140:         openMenu(el, execs, st.exec, v => { st.exec = v; rerender(); }); return true;
+141:       }
+142:       case 'menu-mode': {
+143:         const modes = ['对话', '派工作', '研究', '审查'];
+144:         openMenu(el, modes, st.mode, v => { st.mode = v; rerender(); }); return true;
+145:       }
+146:       case 'cycle-perm': {
+147:         const perms = ['最小权限', '白名单放行', '完全访问'];
+148:         const i = perms.indexOf(st.perm); st.perm = perms[(i + 1) % perms.length];
+149:         st.permNote = st.perm === '完全访问'
+150:           ? 'requested：完全访问 · configured：已启用 · effective：本会话生效（写操作仍留审计）。档位 ≠ 沙箱生效，详见 设置 → 权限与数据。'
+151:           : st.perm === '白名单放行'
+152:           ? 'requested：白名单放行 · effective：仅「只读外部检索」在白名单内生效。'
+153:           : '';
+154:         rerender(); return true;
+155:       }
+156:       case 'send': {
+157:         if (!st.text.trim() || st.status === 'running' || st.status === 'sending') return true;
+158:         const text = st.text; st.text = '';
+159:         const userMsg = { role: 'user', text, atts: st.attachments.map(a => a.name), refs: st.refs.map(r => r.label) };
+160:         if (st.status === 'stopped' && key) appendMsg(key, { role: 'ai', emp: key.startsWith('emp:') ? key.slice(4) : undefined, text: '（继续上一次中断的任务：已保留的未完成输出如下，不会丢弃。）', model: st.model, cost: '◇ 0' });
+161:         if (key) appendMsg(key, userMsg);
+162:         st.attachments = []; st.refs = [];
+163:         if (key === 'assistant') {
+164:           st.status = 'running'; st.runNote = '整理中…'; rerender();
+165:           setTimeout(() => {
+166:             appendMsg(key, { role: 'ai', text: `已处理：「${text.slice(0, 30)}」。当前公司 3 个工作运行中、1 项待你决定（AI 工具测评定位调整）。需要我展开哪一项？`, model: st.model, cost: '◇ 0.2' });
+167:             st.status = 'idle'; rerender();
+168:           }, 1600);
+169:         } else {
+170:           const empId = key && key.startsWith('emp:') ? key.slice(4) : null;
+171:           st.status = 'running'; rerender();
+172:           if (key) appendMsg(key, { role: 'sys', text: '已发送 · Employee 开始处理', model: st.model });
+173:           employeeReply(key, empId, text, () => { st.status = 'idle'; rerender(); });
+174:         }
+175:         rerender(); return true;
+176:       }
+177:       case 'stop': {
+178:         st.status = 'stopped';
+179:         if (key && key.startsWith('emp:')) appendMsg(key, { role: 'sys', text: '已停止 · 未完成输出已保留（Curis 不丢弃未完成输出 — EvoFlow 反例已避免）' });
+180:         rerender(); return true;
+181:       }
+182:     }
+183:     return false;
+184:   }
+185: 
+186:   /* 就近锚定菜单（Claude Model Selector 局部 L4 目标：右侧锚定、当前项 check） */
+187:   function openMenu(anchor, items, current, onPick) {
+188:     document.querySelectorAll('.menu-pop').forEach(x => x.remove());
+189:     const pop = document.createElement('div');
+190:     pop.className = 'menu-pop';
+191:     pop.innerHTML = items.map(it => `<button class="mi ${it === current ? 'sel' : ''}">${it === current ? C.ico(C.I.check, 13) + ' ' : ''}${it}</button>`).join('');
+192:     anchor.closest('.composer, .pane-header, .msg-actions, body').appendChild(pop);
+193:     const ar = anchor.getBoundingClientRect(), pr = pop.getBoundingClientRect();
+194:     pop.style.position = 'fixed';
+195:     pop.style.top = Math.max(8, ar.top - pr.height - 6) + 'px';
+196:     pop.style.left = Math.max(8, Math.min(ar.left, window.innerWidth - pr.width - 8)) + 'px';
+197:     pop.querySelectorAll('.mi').forEach((el, i) => el.addEventListener('click', () => { onPick(items[i]); pop.remove(); }));
+198:     setTimeout(() => document.addEventListener('click', function close(e) { if (!pop.contains(e.target)) { pop.remove(); document.removeEventListener('click', close); } }), 0);
+199:   }
+200: 
+201:   /* 全局事件委托（data-rt） */
+202:   document.addEventListener('click', ev => {
+203:     const el = ev.target.closest('[data-rt]');
+204:     if (!el) return false;
+205:     ev.stopPropagation();
+206:     if (el.dataset.rt === 'input') return false;
+207:     return handle(el.dataset.rt, el);
+208:   });
+209:   document.addEventListener('input', ev => {
+210:     const el = ev.target.closest('[data-rt="input"]');
+211:     if (el) handle('input', el);
+212:   });
+213:   document.addEventListener('input', ev => {
+214:     const el = ev.target.closest('[data-action="settings-search"]');
+215:     if (el) { const base = location.hash.split('?')[0]; const sec = base.indexOf('/settings/') > -1 ? base.split('/settings/')[1] : 'personal'; clearTimeout(window.__ssT); window.__ssT = setTimeout(function () { location.hash = '#/settings/' + (sec || 'personal') + '?q=' + encodeURIComponent(el.value); }, 250); }
+216:   });
+217:   document.addEventListener('keydown', ev => {
+218:     if (ev.key === 'Enter' && !ev.shiftKey) {
+219:       const el = ev.target.closest('[data-rt="input"]');
+220:       if (el) { ev.preventDefault(); const cid = el.dataset.cid; handle('send', { dataset: { cid } }); }
+221:     }
+222:   });
+223: 
+224:   return { S, composer, threadSeed, renderThread, appendMsg, handle, openMenu, FILES, REFS };
+225: })();
+
+FILE js/views-core.js
+1: /* ============================================================
+2:    Curis Full Product HTML Design Prototype — views-core.js
+3:    P2 CEO 工作台 / P5 组织中心 / P6 Employee Detail / P7 人才与能力
+4:    P11 经营洞察 / P9 资料库 / P10 会议 / P12 Settings
+5:    页面返回 { crumbs, html, ctxTitle?, ctxHtml?, states? }
+6:    ============================================================ */
+7: window.V = window.V || {};
+8: (function () {
+9:   const { I, ico } = C;
+10: 
+11:   /* ---------- P2 CEO 工作台（去后台化：今日简报→待决定→正在运行→最新结果） ---------- */
+12:   V.ceo = function () {
+13:     const b = FX.ceoBrief;
+14:     const kindIcon = { decision: I.gear, result: I.doc, progress: I.spark, meeting: I.cal };
+15:     const kindName = { decision: '需要决定', result: '结果', progress: '进行中', meeting: '会议' };
+16:     const briefRows = b.items.map(it => `
+17:       <div class="row" data-action="${it.kind === 'decision' ? 'open-decision' : it.kind === 'result' ? 'open-result' : it.kind === 'progress' ? 'open-work' : 'open-meeting'}" data-arg="${it.go.split('/').pop()}">
+18:         <span class="tag" style="min-width:56px;justify-content:center">${kindName[it.kind]}</span>
+19:         <span class="grow"><div class="title">${it.title}</div><div class="meta">${it.who} · ${it.why}</div></span>
+20:         <span class="end">${ico(I.chev, 14)}</span>
+21:       </div>`).join('');
+22:     const running = b.running.map(r => C.workCard(FX.work(r.w))).join('');
+23:     const latest = FX.results.slice(0, 3).map(C.resultCard).join('');
+24:     const states = {
+25:       normal: { brief: briefRows },
+26:       emptyFirst: {
+27:         brief: '', empty: C.emptyState('这里是你的 CEO 工作台', '完成公司创建后，简报、需要你决定的事项和最新结果会出现在这里。',
+28:           [{ t: '创建第一个业务', action: 'go', arg: '#/business' }, { t: '把意图交给空间工程部', action: 'go', arg: '#/business/biz-new' }],
+29:           '<button class="btn primary" data-action="go" data-arg="#/business">开始创建公司</button>'),
+30:       },
+31:       needsCEO: { brief: briefRows, banner: C.decisionBanner(FX.decisions[0]) },
+32:       error: { brief: briefRows, error: true },
+33:     };
+34:     return {
+35:       crumbs: C.crumbs([{ t: 'Curis' }, { t: 'CEO 工作台' }]),
+36:       states,
+37:       html: (s) => `
+38:         <div class="page-head"><h1>今日经营</h1><div class="sub">${b.date} · 简报只呈现需要你注意的事，全部有事实来源</div></div>
+39:         ${s.error ? `<div class="error-banner" style="margin-bottom:16px"><div class="eb-title">简报同步失败</div><div class="eb-body">无法获取最新运行数据（网络原因）。其余区域数据为本机缓存。</div><div class="decision-actions"><button class="btn sm primary">重试</button><button class="btn sm ghost">使用缓存</button></div></div>` : ''}
+40:         ${s.banner || ''}
+41:         <div class="section"><div class="section-head"><h2 class="section-title">今日简报</h2><span class="section-more">按影响排序 · 4 项</span></div>
+42:           ${s.empty ? s.empty : `<div class="rowlist">${s.brief}</div>`}</div>
+43:         <div class="section"><div class="section-head"><h2 class="section-title">正在运行</h2><span class="section-more">3 个工作 · 2 位员工</span></div>
+44:           <div class="grid c2">${running}</div></div>
+45:         <div class="section"><div class="section-head"><h2 class="section-title">最新结果</h2><a class="section-more" href="#/results">成果库 →</a></div>
+46:           <div class="rowlist">${latest}</div></div>
+47:         <div class="section"><div class="section-head"><h2 class="section-title">公司脉搏</h2><span class="section-more">次级信息 · 点击展开</span></div>
+48:           <div class="rowlist">
+49:             ${[['价值','两条主线：内容获客（增长验证中）、产品交付（v1.4 联调）'],['执行','3 个工作运行中 · 1 个阻塞待你'],['供给','模型用量 54% / 预算 · 连接器 2 个待授权'],['风险','825 选题合规边界（今日内）'],['方向','行业洞察新业务激活建议将在下午提交'],['连续性','周报已归档 · 上周决议 2 项已闭环']].map(r => `
+50:               <div class="row"><span style="flex:0 0 56px;font-weight:600">${r[0]}</span><span class="grow muted" style="font-size:13px">${r[1]}</span></div>`).join('')}
+51:           </div></div>`,
+52:     };
+53:   };
+54: 
+55:   /* ---------- P5 组织中心 ---------- */
+56:   V.org = function (params) {
+57:     const tab = params.tab || 'map';
+58:     const empRowFull = e => C.empRow(e, { openAction: 'open-employee' });
+59:     /* Variant A · Department Container：Department 是容器，Business 是主要经营节点，人员渐进展开 */
+60:     const mapHtml = FX.org.departments.map(d => {
+61:       const members = FX.employees.filter(e => e.dept === d.name);
+62:       const leader = FX.emp(d.leader);
+63:       const bizs = (d.businesses || []).map(id => FX.biz(id)).filter(Boolean);
+64:       const bizRows = bizs.length ? bizs.map(b => `
+65:         <div class="row" data-action="go" data-arg="#/business/${b.id}">
+66:           <span class="fc-ico">${ico(C.I.briefcase, 14)}</span>
+67:           <span class="grow"><div class="title">${b.name}</div>
+68:             <div class="meta">Business 负责人 ${FX.emp(b.leader).name} · ${(b.workspaces||[]).length} 个 Workspace · ${b.stage}</div></span>
+69:           <span class="end">${ico(C.I.chev, 14)}</span></div>`).join('')
+70:         : `<div class="row"><span class="grow muted" style="font-size:13px">${d.builtin ? '原装能力部门 · 不经营自有 Business；按需承接经营意图（如宠物寄养激活）' : '暂无 Business'}</span></div>`;
+71:       return `<div class="section"><div class="section-head"><h2 class="section-title">${d.name}${d.builtin ? ' <span class="tag">原装</span>' : ''}</h2>
+72:         <span class="section-more">Department Leader：${leader ? leader.name : '空缺'} · ${members.length} 名员工 · <a href="#" data-action="org-expand" data-arg="${d.id}">展开人员</a></span></div>
+73:         <div class="rowlist">${bizRows}${d.id === 'dept-data' ? `<div class="row" data-action="go" data-arg="#/insights"><span class="fc-ico">${ico(C.I.chart, 14)}</span><span class="grow"><div class="title">经营洞察（司衡工作位）</div><div class="meta">公司级分析 · Decision support</div></span><span class="end">${ico(C.I.chev, 14)}</span></div>` : ''}</div>
+74:         <div class="rowlist ${'org-members-' + d.id} hidden" style="margin-top:8px">${members.map(empRowFull).join('')}</div></div>`;
+75:     }).join('');
+76:     const dirHtml = `<div class="rowlist">${FX.employees.map(empRowFull).join('')}</div>`;
+77:     return {
+78:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '组织中心' }]),
+79:       html: `
+80:         <div class="page-head" style="display:flex;align-items:flex-end;gap:16px">
+81:           <div><h1>组织中心</h1><div class="sub">公司版图与员工目录 · 结构与行政视图（工作在业务空间内进行）</div></div>
+82:           <span class="spacer"></span>
+83:           <div class="segmented">
+84:             <button class="${tab === 'map' ? 'active' : ''}" data-action="go" data-arg="#/org/map">公司版图</button>
+85:             <button class="${tab === 'dir' ? 'active' : ''}" data-action="go" data-arg="#/org/dir">员工目录</button>
+86:           </div>
+87:         </div>
+88:         ${tab === 'map' ? mapHtml : dirHtml}`,
+89:     };
+90:   };
+91: 
+92:   /* ---------- P6 Employee Workstation（Conversation-first；Detail 在 Utility） ---------- */
+93:   window.EMP_PROFILE = function (e) {
+94:     const myWorks = FX.works.filter(w => w.employee === e.id);
+95:     const myResults = FX.results.filter(r => r.employee === e.id);
+96:     return `
+97:       <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">${C.avatar(e, 'lg')}
+98:         <div><div style="font-weight:650">${e.name}</div><div class="muted" style="font-size:12px">${e.role} · ${e.dept}${e.leader ? ' · Leader' : ''}</div></div></div>
+99:       <div class="dl-row"><span class="k">身份</span><span>Company Employee（canonical，非 Agent 配置）</span></div>
+100:       <div class="dl-row"><span class="k">部门 / 角色</span><span>${e.dept} · ${e.role}</span></div>
+101:       <div class="dl-row"><span class="k">长期责任</span><span>${e.responsibility.longTerm}</span></div>
+102:       <div class="dl-row"><span class="k">当前责任</span><span>${e.responsibility.current}</span></div>
+103:       <div class="dl-row"><span class="k">责任范围</span><span>${e.responsibility.scope}</span></div>
+104:       <div class="dl-row"><span class="k">能力</span><span>${e.capability.map(c => `<span class="tag">${c}</span>`).join(' ')}</span></div>
+105:       <div class="dl-row"><span class="k">Skill 绑定</span><span>${e.skills.map(sid => FX.skill(sid).name).join(' · ')}</span></div>
+106:       <div class="dl-row"><span class="k">默认模型</span><span>${e.model}</span></div>
+107:       <div class="dl-row"><span class="k">当前工作</span><span>${myWorks.filter(w => w.status === 'working').map(w => w.title).join('；') || '无运行中工作'}</span></div>
+108:       <div class="dl-row"><span class="k">最近结果</span><span>${myResults.map(r => `<span class="result-ref" data-action="open-result" data-arg="${r.id}">${r.title}</span>`).join(' ') || '—'}</span></div>`;
+109:   };
+110:   V.employee = function (params) {
+111:     const e = FX.emp(params.id) || FX.emp('e-zhen');
+112:     const myWorks = FX.works.filter(w => w.employee === e.id);
+113:     const myResults = FX.results.filter(r => r.employee === e.id);
+114:     const section = params.sec || 'conv';
+115:     const threadKey = 'emp:' + e.id;
+116:     const tabs = [['conv', '对话'], ['work', '当前工作'], ['resp', '责任'], ['cap', '能力'], ['result', '结果'], ['set', '设置']];
+117:     let body = '';
+118:     if (section === 'conv') body = `
+119:       <div class="conversation" id="emp-conv">${RT.renderThread(threadKey, { emptyTitle: `与 ${e.name} 开始协作`, emptySub: '对话锚定当前责任与工作；发送即进入处理，完成后 Result 引用会回到这里。' })}</div>
+120:       ${RT.composer('c-' + threadKey, { thread: threadKey, placeholder: `与 ${e.name} 对话，或直接交代一件事…`, exec: `执行 · ${e.name}`, model: e.model })}`;
+121:     if (section === 'work') body = myWorks.length
+122:       ? `<div class="grid c2">${myWorks.map(w => C.workCard(w)).join('')}</div>`
+123:       : C.emptyState('当前没有运行中的工作', '可以派一件新工作，或从对话里直接交代。', [], '<button class="btn primary" data-action="go" data-arg="#/employee/' + e.id + '/conv">去对话交代</button>');
+124:     if (section === 'resp') body = `
+125:       <div class="card"><div class="dl-row"><span class="k">长期责任</span><span class="grow">${e.responsibility.longTerm}</span></div>
+126:       <div class="dl-row"><span class="k">当前责任</span><span class="grow">${e.responsibility.current}</span></div>
+127:       <div class="dl-row"><span class="k">责任范围（Scope）</span><span>${e.responsibility.scope}</span></div></div>`;
+128:     if (section === 'cap') body = `
+129:       <div class="card" style="margin-bottom:12px"><div class="section-title" style="margin-bottom:8px">能力（用户语言）</div>
+130:         ${e.capability.map(c => `<span class="tag" style="margin:0 6px 6px 0">${c}</span>`).join('')}</div>
+131:       <div class="section-title" style="margin:0 0 8px">Skill 绑定</div>
+132:       <div class="rowlist">${e.skills.map(sid => { const sk = FX.skill(sid); return `<div class="row"><span class="grow"><div class="title">${sk.name}</div><div class="meta">${sk.publisher} · ${sk.type} · ${sk.perm}</div></span><span class="end"><a href="#/skill/${sk.id}">详情</a></span></div>`; }).join('')}</div>
+133:       <div class="hr"></div>
+134:       <div class="dl-row"><span class="k">默认模型</span><span>${e.model}</span><button class="btn sm" data-action="go" data-arg="#/models">在模型配置中管理</button></div>`;
+135:     if (section === 'result') body = myResults.length
+136:       ? `<div class="rowlist">${myResults.map(r => `<div class="row" data-action="open-result" data-arg="${r.id}"><span class="grow"><div class="title">${r.title}</div><div class="meta">证据 ${r.evidence.length} 条 · 被引用 ${r.usedBy.length} 处</div></span><span class="end">${C.statusMeta(r.status)[1]}</span></div>`).join('')}</div>`
+137:       : C.emptyState('还没有产出结果', '结果会在工作完成后出现在这里，并附证据链。');
+138:     if (section === 'set') body = `
+139:       <div class="card"><div class="dl-row"><span class="k">默认模型</span><span>${e.model}</span><span class="switch on"><i></i></span></div>
+140:       <div class="dl-row"><span class="k">执行授权</span><span>最小权限（写操作需 CEO 确认）</span><button class="btn sm" data-action="go" data-arg="#/settings/permissions">调整</button></div>
+141:       <div class="dl-row"><span class="k">完成通知</span><span class="switch on"><i></i></span></div>
+142:       <div class="dl-row"><span class="k">阻塞升级</span><span class="switch on"><i></i></span></div></div>`;
+143:     return {
+144:       crumbs: C.crumbs([{ t: '组织中心', go: '/org/dir' }, { t: e.dept }, { t: e.name }]),
+145:       ctxTitle: '工作范围',
+146:       /* Context 只承载 bounded navigation，不放完整档案（完整档案在 Utility） */
+147:       ctxHtml: `<div class="nav-group">当前工作范围</div>
+148:         ${myWorks.map(w => `<button class="nav-item ${w.status === 'working' ? 'active' : ''}" data-action="open-work" data-arg="${w.id}">${w.title}</button>`).join('') || `<div class="faint" style="padding:4px 8px;font-size:12px">暂无运行中工作</div>`}
+149:         <div class="nav-group">相关结果</div>
+150:         ${myResults.slice(0, 3).map(r => `<button class="nav-item" data-action="open-result" data-arg="${r.id}">${r.title}</button>`).join('')}
+151:         <div class="nav-group">完整档案</div>
+152:         <button class="nav-item" data-action="emp-util" data-arg="${e.id}">打开员工档案（Utility）</button>`,
+153:       util: { title: '员工档案', tabs: ['档案'], active: '档案', html: EMP_PROFILE(e) },
+154:       html: `
+155:         <div class="page-head" style="display:flex;gap:14px;align-items:center">
+156:           ${C.avatar(e, 'lg')}
+157:           <div><h1>${e.name}</h1><div class="sub">${e.role} · ${e.dept} ${e.leader ? '· <b style="color:var(--ui-accent)">Leader</b>' : ''} · ${C.stFull(e)}</div></div>
+158:           <span class="spacer"></span>
+159:           <button class="btn" data-action="emp-util" data-arg="${e.id}">完整档案</button>
+160:           <button class="btn primary" data-action="go" data-arg="#/employee/${e.id}/conv">进入对话</button>
+161:         </div>
+162:         <div class="tabs" style="margin-bottom:16px">${tabs.map(t => `<button class="tab ${section === t[0] ? 'active' : ''}" data-action="emp-tab" data-arg="${t[0]}">${t[1]}</button>`).join('')}</div>
+163:         ${body}`,
+164:     };
+165:   };
+166: 
+167:   /* ---------- P7 人才与能力（人才市场：发现和扩展公司外部能力） ---------- */
+168:   const EXPERTS = [
+169:     { id:'x-growth', name:'增长运营专家', src:'curis', tag:'Curis-ready', desc:'Curis 官方 EmployeeTemplate：内容获客节奏与转化复盘。', caps:['内容策略','增长判断'], ver:'v1.0 · 官方' },
+170:     { id:'x-data', name:'数据分析师', src:'curis', tag:'Curis-ready', desc:'Curis 官方 EmployeeTemplate：经营数据清洗、看板与周报。', caps:['数据分析','报表'], ver:'v1.2 · 官方' },
+171:     { id:'x-doc', name:'长文写作专家', src:'curis', tag:'Curis-ready', desc:'Curis 官方 EmployeeTemplate：长结构文档撰写与改稿。', caps:['写作','编辑'], ver:'v1.0 · 官方' },
+172:     { id:'x-seo', name:'SEO 内容专家', src:'ext', tag:'外部 Candidate', desc:'来源：agency-agents-zh · 固定版本 + 文件摘要校验后可招募。', caps:['SEO','关键词'], ver:'r4 · 外部' },
+173:     { id:'x-ops', name:'电商运营专家', src:'ext', tag:'外部 Candidate', desc:'来源：外部 Candidate 包 · 待安装验证（不可直接执行）。', caps:['电商','选品'], ver:'r7 · 外部' },
+174:     { id:'x-qa', name:'测试工程师', src:'ext', tag:'外部 Candidate', desc:'来源：外部 Candidate 包 · 许可证复核中。', caps:['测试','用例'], ver:'r2 · 外部' },
+175:   ];
+176:   V.talent = function (params) {
+177:     const tab = params.tab || 'exp';
+178:     const q = (typeof params.q === 'string' ? params.q : (params.q && params.q.q) || '').toLowerCase();
+179:     const cat = params.cat || (params.q && params.q.cat) || '全部';
+180:     let items, cardFn, cats, featured;
+181:     if (tab === 'skill') {
+182:       cats = ['全部', '方法', '工具', '能力', '社区精选'];
+183:       items = FX.skills.filter(s => (cat === '全部' || s.type === cat || (cat === '社区精选' && s.source === 'community')) && (!q || s.name.toLowerCase().includes(q) || s.desc.includes(q)));
+184:       cardFn = s => `
+185:         <div class="sk-card">
+186:           <div class="sk-head"><span class="sk-ico ${s.installed ? 'av-2' : 'av-7'}">${s.type === '工具' ? 'T' : s.type === '方法' ? 'M' : 'C'}</span>
+187:             <div class="sk-name">${s.name}</div><span class="spacer"></span>
+188:             <button class="btn sm ${s.installed ? '' : 'primary'}" data-action="install-skill" data-arg="${s.id}">${s.installed ? '已安装' : '+ 安装'}</button></div>
+189:           <div class="sk-desc">${s.desc}</div>
+190:           <div class="sk-meta">${s.publisher} · ${s.perm} · 绑定 ${s.bound.length} 人</div>
+191:         </div>`;
+192:       featured = FX.skills.filter(s => s.source === 'official').slice(0, 3);
+193:     } else if (tab === 'conn') {
+194:       cats = ['全部', '已连接', '需授权', '未连接'];
+195:       items = FX.connectors;
+196:       cardFn = c => `
+197:         <div class="card talent-card">
+198:           <div class="tc-head"><span class="avatar sm ${c.status === 'connected' ? 'av-2' : c.status === 'needs-auth' ? 'av-3' : 'av-7'}">${c.name[0]}</span>
+199:             <div style="min-width:0"><div class="tc-name">${c.name}</div><div class="tc-sub">${c.status === 'connected' ? '已连接' : c.status === 'needs-auth' ? '需要授权' : '未连接'}</div></div>
+200:             <span class="spacer"></span>
+201:             <button class="btn sm ${c.status === 'connected' ? '' : 'primary'}" data-action="noop">${c.status === 'connected' ? '管理' : c.status === 'needs-auth' ? '去授权' : '连接'}</button></div>
+202:           <div class="tc-desc">${c.desc}</div>
+203:           <div class="tc-foot"><span class="tag">范围：${c.scope}</span></div>
+204:         </div>`;
+205:       featured = [];
+206:     } else {
+207:       cats = ['全部', 'Curis-ready', '外部 Candidate'];
+208:       items = EXPERTS.filter(x => (cat === '全部' || x.tag === cat) && (!q || x.name.includes(q) || x.desc.includes(q) || x.caps.join().includes(q)));
+209:       cardFn = x => `
+210:         <div class="xb-card" data-action="noop">
+211:           <div class="xb-head"><span class="xb-av ${x.src === 'curis' ? 'av-2' : 'av-3'}">${x.name[0]}</span>
+212:             <div class="xb-id"><div class="xb-name">${x.name}</div><div class="xb-sub">${x.src === 'curis' ? 'Curis 官方' : '外部来源'}</div></div></div>
+213:           <div class="xb-desc">${x.desc}</div>
+214:           <div class="xb-tags">${x.caps.slice(0, 3).map(c => `<span class="tag">${c}</span>`).join('')}</div>
+215:           <div class="xb-foot"><span class="xb-ver">${x.ver}</span><span class="spacer"></span>
+216:             <button class="btn sm ${x.src === 'curis' ? 'primary' : ''}" data-action="noop">${x.src === 'curis' ? '招募装配' : '安装验证'}</button></div>
+217:         </div>`;
+218:       featured = EXPERTS.filter(x => x.src === 'curis');
+219:     }
+220:     const featuredTitle = tab === 'exp' ? 'Curis-ready（官方模板，可直接招募装配）' : '精选';
+221:     const featuredHtml = featured.length && cat === '全部' && !q ? `
+222:       <div class="section"><div class="section-head"><h2 class="section-title">${featuredTitle}</h2>
+223:         <button class="section-more" data-action="talent-refresh">换一换</button></div>
+224:         <div class="grid c4">${featured.map(cardFn).join('')}</div></div>` : '';
+225:     return {
+226:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '人才与能力' }]),
+227:       html: `
+228:         <div class="page-head" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+229:           <div><h1>人才与能力</h1><div class="sub">发现和扩展公司外部能力：专家招募 · 技能安装 · 连接器（公司内部员工在 组织中心 → 员工目录）</div></div>
+230:           <span class="spacer"></span>
+231:           <div class="segmented">
+232:             <button class="${tab === 'exp' ? 'active' : ''}" data-action="talent-tab" data-arg="exp">专家</button>
+233:             <button class="${tab === 'skill' ? 'active' : ''}" data-action="talent-tab" data-arg="skill">技能</button>
+234:             <button class="${tab === 'conn' ? 'active' : ''}" data-action="talent-tab" data-arg="conn">连接器</button>
+235:           </div>
+236:           <input class="input" style="width:220px" placeholder="搜索专家 / 技能 / 连接器" value="${typeof params.q === 'string' ? params.q : ''}" data-action="talent-search">
+237:         </div>
+238:         ${featuredHtml}
+239:         <div class="section">
+240:           <div class="section-head"><div class="chip-row">
+241:             <span class="chip active">${cat}</span>
+242:             ${cats.filter(c => c !== cat).map(c => `<span class="chip clickable" data-action="talent-cat" data-arg="${c}">${c}</span>`).join('')}
+243:           </div><span class="spacer"></span>
+244:             <div class="segmented"><button class="active">综合</button><button>最热</button><button>最新</button></div></div>
+245:           <div class="grid c3" style="margin-top:12px">${(() => {
+246:               const featIds = (featured.length && cat === '全部' && !q) ? featured.map(x => x.id || x.name) : [];
+247:               const visible = items.filter(x => !featIds.includes(x.id || x.name));
+248:               return visible.map(cardFn).join('') || (items.length ? '<div class="faint" style="padding:12px;font-size:12px">以上即全部条目</div>' : C.emptyState('没有匹配项', '换一个筛选条件，或清空搜索。'));
+249:             })()}</div>
+250:         </div>
+251:         <div class="faint" style="font-size:11px;margin-top:8px">外部 Candidate 需固定版本、文件摘要与逐项安装验证后才可转为可招募（TALENT_MARKET 边界）；安装连接器后去设置完成授权。</div>`,
+252:     };
+253:   };
+254: 
+255:   V.skill = function (params) {
+256:     const s = FX.skill(params.id) || FX.skills[0];
+257:     return {
+258:       crumbs: C.crumbs([{ t: '人才与能力', go: '/talent/skill' }, { t: '技能' }, { t: s.name }]),
+259:       util: { title: '绑定员工', html: `<div class="rowlist">${s.bound.map(id => { const e = FX.emp(id); return `<div class="row" data-action="open-employee" data-arg="${id}">${C.avatar(e, 'sm')}<span class="grow"><div class="title">${e.name}</div><div class="meta">${e.role}</div></span><span class="end">${C.ico(C.I.chev, 14)}</span></div>`; }).join('')}</div>` },
+260:       html: `
+261:         <div class="page-head" style="display:flex;gap:14px;align-items:center">
+262:           <span class="avatar lg ${s.installed ? 'av-2' : 'av-7'}">${s.name[0]}</span>
+263:           <div><h1>${s.name}</h1><div class="sub">${s.publisher} · ${s.type} · ${s.source === 'community' ? '社区来源' : '官方'} · ${s.perm}</div></div>
+264:           <span class="spacer"></span>
+265:           <button class="btn ${s.installed ? '' : 'primary'}" data-action="install-skill" data-arg="${s.id}">${s.installed ? '已安装 · 管理' : '安装'}</button>
+266:         </div>
+267:         <div class="section"><div class="section-title" style="margin-bottom:6px">它会做什么（用户语言）</div>
+268:           <div class="card" style="font-size:14px;color:var(--ui-text-2)">${s.desc}</div></div>
+269:         <div class="section"><div class="section-title" style="margin-bottom:6px">什么时候会被用到（触发方式）</div>
+270:           <div class="card" style="font-size:14px;color:var(--ui-text-2)">当工作内容与「${s.type}」相关时，绑定员工可在执行中调用；对话中也可用 /${s.name} 显式调用。</div></div>
+271:         <div class="section"><div class="section-title" style="margin-bottom:6px">权限</div>
+272:           <div class="card"><div class="dl-row"><span class="k">使用范围</span><span>${s.perm}</span></div>
+273:           <div class="dl-row"><span class="k">数据边界</span><span>只读公司资料 · 不外发</span></div></div></div>
+274:         <div class="section"><div class="section-title" style="margin-bottom:6px">已绑定员工（${s.bound.length}）</div>
+275:           <div class="rowlist">${s.bound.map(id => { const e = FX.emp(id); return `<div class="row" data-action="open-employee" data-arg="${id}">${C.avatar(e, 'sm')}<span class="grow"><div class="title">${e.name}</div><div class="meta">${e.role} · ${e.dept}</div></span><button class="btn sm ghost">解绑</button></div>`; }).join('')}</div></div>`,
+276:     };
+277:   };
+278: 
+279:   /* ---------- P11 经营洞察 ---------- */
+280:   V.insights = function () {
+281:     return {
+282:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '经营洞察' }]),
+283:       util: { title: '报告 · 九月第二周', html: `<div class="doc-preview"><h3>经营周报（摘要）</h3><p>内容获客：关注转化验证中，825 图文今日发布。</p><p>产品交付：登录模块 v1.3 联调通过；v1.4 进入回归。</p><p>建议：批准 825 语气方案 A，以保证今日发布。</p><div class="hr"></div><span class="result-ref" data-action="open-result" data-arg="r-weekly">查看完整报告（附证据）</span></div>` },
+284:       html: `
+285:         <div class="page-head"><h1>经营洞察</h1><div class="sub">司衡 · 公司经营分析师 · 消费唯一经营数据，不产生第二套 Truth</div></div>
+286:         ${C.decisionBanner({ id: 'd-weekly', title: '周报建议：批准 825 教程向发布', body: '教程向互动中位数高 34%（EST）；建议本篇教程向、9/19 复测后固化规则。', options: ['采纳并转给陈真', '我再想想'] })}
+287:         <div class="section"><div class="section-head"><h2 class="section-title">互动趋势（7 天 · EST）</h2><span class="section-more">数据含 provenance · Connector 对账前为估算</span></div>
+288:           <div class="card">${C.lineChart([{k:'9/6',v:1200},{k:'9/7',v:1500},{k:'9/8',v:1350},{k:'9/9',v:1800},{k:'9/10',v:2400},{k:'9/11',v:2100},{k:'9/12',v:2650}])}</div></div>
+289:         <div class="section"><div class="section-head"><h2 class="section-title">渠道贡献（近 7 天互动）</h2></div>
+290:           <div class="card">${C.bars([['AI 科技',1100,'1.1k'],['抖音',180,'180 · 无回执'],['公众号',0,'未连接']])}</div></div>
+291:         <div class="section"><div class="section-head"><h2 class="section-title">分析师洞察</h2><span class="section-more">每条附证据引用</span></div>
+292:           <div class="rowlist">
+293:             <div class="row"><span class="grow"><div class="title">「教程 + 工具清单」组合互动中位数高 34%</div><div class="meta">证据：竞品选题结构周报（8/12–8/19）· 120 篇样本</div></span><button class="btn sm" data-action="go" data-arg="#/knowledge/k-2">来源</button></div>
+294:             <div class="row"><span class="grow"><div class="title">抖音渠道无回执：连接器需授权，当前为人工填报（EST）</div><div class="meta">证据：连接器状态 · 授权记录缺失</div></span><button class="btn sm" data-action="open-decision" data-arg="d-connector">去授权</button></div>
+295:           </div></div>
+296:         <div class="section"><div class="section-head"><h2 class="section-title">关键指标（7 天 · 同口径对比上周）</h2></div>
+297:           <div class="kpi-row" style="margin-bottom:12px">
+298:             <div class="kpi"><div class="n">3 篇</div><div class="l">本周发布 · +1</div></div>
+299:             <div class="kpi"><div class="n">1,842</div><div class="l">评论抽样分析</div></div>
+300:             <div class="kpi"><div class="n">v1.3</div><div class="l">研发联调基线</div></div>
+301:             <div class="kpi"><div class="n">54%</div><div class="l">模型预算已用</div></div>
+302:           </div>
+303:           <div class="rowlist">
+304:             <div class="row"><span class="grow"><div class="title">内容获客线：关注转化验证中</div><div class="meta">证据：3 篇已发布内容数据 · 李然/林月研究简报</div></span><span class="end">增长验证中</span></div>
+305:             <div class="row"><span class="grow"><div class="title">产品交付线：v1.4 回归准备</div><div class="meta">证据：登录模块 v1.3 联调记录 · 单测 22/24</div></span><span class="end">正常</span></div>
+306:           </div></div>`,
+307:     };
+308:   };
+309: 
+310:   /* ---------- P9 资料库 ---------- */  /* ---------- P9 资料库 ---------- */
+311:   V.knowledge = function (params) {
+312:     const id = params.id;
+313:     if (id) {
+314:       const k = FX.knowledge.find(x => x.id === id) || FX.knowledge[0];
+315:       return {
+316:         crumbs: C.crumbs([{ t: '资料库', go: '/knowledge' }, { t: k.title }]),
+317:         util: { title: '被引用', html: `<div class="rowlist">${k.usedBy.map(u => `<div class="row"><span class="grow"><div class="title">${u}</div><div class="meta">Work / Result 引用</div></span></div>`).join('')}</div>` },
+318:         html: `
+319:           <div class="page-head"><h1>${k.title}</h1><div class="sub">${k.scope} · 更新 ${k.updated} · 来源：${k.source}</div></div>
+320:           <div class="doc-preview"><h3>内容摘要</h3><p>（阅读视图）本资料为 ${k.scope} 引用来源。AI 只能引用有来源、权限范围内的资料；引用会保留来源与版本。</p>
+321:           <p>资料更新后，旧产出不会被静默改写；下一次运行会标注版本变化并请求复核。</p></div>
+322:           <div class="section" style="margin-top:16px"><div class="section-title" style="margin-bottom:6px">使用方式</div>
+323:           <div class="card muted" style="font-size:13px">在业务空间的对话或工作中选择知识范围 → 引用会带入当前步骤，并保留原始链接。</div></div>`,
+324:       };
+325:     }
+326:     return {
+327:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '资料库' }]),
+328:       html: `
+329:         <div class="page-head" style="display:flex;align-items:center"><div><h1>资料库</h1><div class="sub">公司引用空间 · AI 只引用有来源、权限范围内的资料</div></div>
+330:           <span class="spacer"></span><button class="btn">导入资料</button><button class="btn primary">连接外部来源</button></div>
+331:         <div class="section"><div class="chip-row">
+332:           <span class="chip active">全部</span><span class="chip clickable">公司级</span><span class="chip clickable">业务范围</span><span class="chip clickable">文档</span><span class="chip clickable">表格</span>
+333:         </div></div>
+334:         <div class="rowlist">
+335:           ${FX.knowledge.map(k => `<div class="row" data-action="go" data-arg="#/knowledge/${k.id}">
+336:             <span class="fc-ico">${k.type === 'doc' ? 'DOC' : 'XLSX'}</span>
+337:             <span class="grow"><div class="title">${k.title}</div><div class="meta">${k.scope} · 更新 ${k.updated} · 被 ${k.usedBy.length} 处引用</div></span>
+338:             <span class="end">${k.source}</span></div>`).join('')}
+339:         </div>`,
+340:     };
+341:   };
+342: 
+343:   /* ---------- P10 会议（Meeting Room：参与者/讨论/证据/Proposal→决议） ---------- */
+344:   V.meeting = function (params) {
+345:     const id = params.id;
+346:     if (id) {
+347:       const m = FX.meetings.find(x => x.id === id) || FX.meetings[0];
+348:       const tk = 'meeting:' + m.id;
+349:       if (!RT.S.threadSeeded[tk]) {
+350:         RT.threadSeed(tk);
+351:         RT.appendMsg(tk, { role: 'ai', emp: m.participants[0], text: '议程三项已就绪：①定位调整证据门槛 ②下周排期 ③归因结论确认。何川的归因数据已附在证据区。', model: 'GLM-5.3', cost: '◇ 0.6' });
+352:         RT.appendMsg(tk, { role: 'user', text: '先看第一项。教程向的数据够不够下结论？' });
+353:         RT.appendMsg(tk, { role: 'ai', emp: m.participants[3], text: '归因：教程向互动中位数高 34%（EST，样本 120 篇 + 1,842 条评论）。单看本周够方向性；建议本周教程向、下周复测一次再固化规则。', citations: ['选题研究简报', '竞品选题结构周报'], model: 'DeepSeek-V4.1', cost: '◇ 0.9' });
+354:         RT.appendMsg(tk, { role: 'ai', emp: m.participants[0], text: 'Proposal：本篇按教程向发布，9/19 复盘后再定长期规则。请 CEO 确认。', model: 'GLM-5.3', cost: '◇ 0.4' });
+355:       }
+356:       return {
+357:         crumbs: C.crumbs([{ t: '会议', go: '/meeting' }, { t: m.title }]),
+358:         ctxTitle: '会议材料',
+359:         ctxHtml: `<div class="nav-group">证据（会议引用）</div>
+360:           ${['选题研究简报', '竞品选题结构周报', '上周发布数据'].map(k => `<button class="nav-item" data-action="go" data-arg="#/knowledge/k-2">${k}</button>`).join('')}
+361:           <div class="nav-group">相关对象</div>
+362:           ${m.related.map(r => { const w2 = FX.work(r); return w2 ? `<button class="nav-item" data-action="open-work" data-arg="${r}">${w2.title}</button>` : `<button class="nav-item" data-action="open-decision" data-arg="${r}">定位调整 Decision</button>`; }).join('')}`,
+363:         util: { title: '决议与去向', tabs: ['决议'], active: '决议', html: `
+364:           <div class="card" style="margin-bottom:10px"><div class="section-title" style="font-size:13px;margin-bottom:6px">Proposal（待 CEO 确认）</div>
+365:             <div style="font-size:12.5px;color:var(--ui-text-2)">本篇按教程向发布；9/19 复盘后再定长期规则。</div>
+366:             <div class="decision-actions" style="margin-top:8px"><button class="btn sm primary" data-action="noop">确认 Proposal</button><button class="btn sm" data-action="noop">修改</button></div></div>
+367:           <div class="dl-row"><span class="k">决议→Work</span><span>确认后转 排期发布</span></div>
+368:           <div class="dl-row"><span class="k">决议→资料</span><span>规则确认后沉淀公司记忆</span></div>` },
+369:         html: `
+370:           <div class="page-head" style="display:flex;align-items:center"><div><h1>${m.title}</h1>
+371:             <div class="sub">${m.when} · ${m.status === 'done' ? '已结束' : '进行中'} · 议程 ${m.agenda.length} 项</div></div>
+372:             <span class="spacer"></span><span class="chip">${m.participants.length} 人</span></div>
+373:           <div class="section"><div class="section-head"><h2 class="section-title">参与者</h2></div>
+374:             <div class="rowlist">${m.participants.map(p => { const pe = FX.emp(p); return `<div class="row" data-action="open-employee" data-arg="${p}">${C.avatar(pe, 'sm')}<span class="grow"><div class="title">${pe.name}</div><div class="meta">${pe.role} · ${C.stFull(pe)}</div></span></div>`; }).join('')}</div></div>
+375:           <div class="section"><div class="section-head"><h2 class="section-title">讨论</h2><span class="section-more">员工准备背景与事实 · CEO 确认承诺与决议</span></div>
+376:             <div class="conversation" style="margin:0">${RT.renderThread(tk)}</div>
+377:             ${RT.composer('c-' + tk, { thread: tk, placeholder: '在会议中发言或追问…', exec: '执行 · 会议', model: 'GLM-5.3' })}</div>`,
+378:       };
+379:     }
+380:     return {
+381:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '会议' }]),
+382:       html: `
+383:         <div class="page-head" style="display:flex;align-items:center"><div><h1>会议</h1><div class="sub">把必须讨论的事留在一圈有边界的对话里：员工准备背景与事实，CEO 确认承诺与决议</div></div>
+384:         <span class="spacer"></span><button class="btn primary" data-action="noop">发起会议</button></div>
+385:         <div class="rowlist">
+386:           ${FX.meetings.map(m => `<div class="row" data-action="go" data-arg="#/meeting/${m.id}">
+387:             ${C.st(m.status)}
+388:             <span class="grow"><div class="title">${m.title}</div><div class="meta">${m.when} · ${m.participants.length} 人 · 议程 ${m.agenda.length} 项</div></span>
+389:             <span class="end">${ico(C.I.chev, 14)}</span></div>`).join('')}
+390:         </div>`,
+391:     };
+392:   };
+393: 
+394:   /* ---------- P12 Settings ---------- */
+395:   V.settings = function (params) {
+396:     const sec = params.sec || 'personal';
+397:     const nav = [
+398:       ['personal', '个人偏好'], ['company', '公司设置'], ['models', '模型'], ['providers', 'Provider 与凭据'],
+399:       ['skills', '技能'], ['mcp', 'MCP'], ['connectors', '连接器'], ['permissions', '权限与数据'],
+400:       ['memory', '记忆'], ['usage', '运行与成本'], ['notifications', '通知'], ['appearance', '外观'],
+401:       ['shortcuts', '快捷键'], ['about', '关于'],
+402:     ];
+403:     let body = '';
+404:     const dl = rows => `<div class="card">${rows.map(r => `<div class="dl-row"><span class="k">${r[0]}</span><span class="grow">${r[1]}</span>${r[2] || ''}</div>`).join('')}</div>`;
+405:     if (sec === 'personal') body = `
+406:       <div class="card" style="max-width:520px">
+407:         <div class="field"><span class="f-label">显示名</span><input class="input" value="CEO"></div>
+408:         <div class="field"><span class="f-label">语言</span><input class="input" value="简体中文"></div>
+409:         <div class="field"><span class="f-label">启动页</span><input class="input" value="CEO 工作台"></div>
+410:         <button class="btn primary sm" data-action="settings-save">保存</button><span class="faint" style="margin-left:8px;font-size:11px">DESIGN FIXTURE · 本地草稿态</span>
+411:       </div>`;
+412:     if (sec === 'company') body = dl([['公司名称', FX.org.company], ['行业', '空间设计 / AI 服务'], ['品牌主题', '跟随系统'], ['管理员', 'CEO（你）']]);
+413:     if (sec === 'models') body = `
+414:       <div class="rowlist">${[['GLM-5.3', '已连接 · 默认 · 视觉/推理', true], ['DeepSeek-V4.1', '已连接 · 员工默认可切换', true], ['GPT 系列', '未配置 Endpoint', false]].map(m => `
+415:         <div class="row"><span class="grow"><div class="title">${m[0]}</div><div class="meta">${m[1]}</div></span>
+416:         <span class="switch ${m[2] ? 'on' : ''}"><i></i></span></div>`).join('')}</div>
+417:       <div class="faint" style="margin-top:8px;font-size:11px">每员工默认模型在 员工详情 → 能力 中设置。</div>`;
+418:     if (sec === 'providers') body = dl([
+419:       ['内置网关', '已连接 · 健康检查通过 · Keychain 保管'],
+420:       ['自定义 Provider', 'DeepSeek · Endpoint https://api.deepseek.com · <span class="dot ok"></span> 已连接'],
+421:       ['新增 Provider', '<button class="btn sm">添加 Endpoint</button>'],
+422:     ]);
+423:     if (sec === 'skills') body = `<div class="rowlist">${FX.skills.map(s => `<div class="row"><span class="grow"><div class="title">${s.name}</div><div class="meta">${s.publisher} · ${s.type} · 绑定 ${s.bound.length} 人</div></span><a class="end" href="#/skill/${s.id}">详情</a></div>`).join('')}</div>`;
+424:     if (sec === 'mcp') body = dl([
+425:       ['company-docs (HTTP)', 'https://mcp.internal/docs · 已连接 · 工具 6 个'],
+426:       ['fs-local (stdio)', '本地文件索引 · 已连接 · 工具 3 个'],
+427:       ['添加 MCP Server', '<button class="btn sm">URL 或命令</button>'],
+428:     ]);
+429:     if (sec === 'connectors') body = `<div class="rowlist">${FX.connectors.map(c => `<div class="row"><span class="grow"><div class="title">${c.name}</div><div class="meta">${c.desc} · 范围：${c.scope}</div></span>${C.st(c.status === 'connected' ? 'done' : c.status === 'needs-auth' ? 'review' : 'idle')}</div>`).join('')}</div>`;
+430:     if (sec === 'permissions') body = `
+431:       <div class="card" style="margin-bottom:12px"><div class="section-title" style="margin-bottom:6px">执行授权档位（全员默认）</div>
+432:         <div class="rowlist" style="border:0">
+433:           <div class="row"><span class="grow"><div class="title">最小权限（当前）</div><div class="meta">读公司资料可用；写操作与外发需 CEO 确认</div></span><span class="dot ok"></span></div>
+434:           <div class="row"><span class="grow"><div class="title">按白名单放行</div><div class="meta">自然语言规则：如「允许只读外部网页检索」</div></span><span class="dot idle"></span></div>
+435:           <div class="row"><span class="grow"><div class="title">完全访问</div><div class="meta">不推荐：所有工具自动放行并留审计</div></span><span class="dot idle"></span></div>
+436:         </div></div>
+437:       ${dl([['高危动作阈值', '批量删除 > 50 条需 CEO 批准'], ['升级规则', '超出责任范围 → 通知 CEO（含 IM 渠道）'], ['审计', '所有放行/拦截留痕，可导出'], ['数据隔离', 'Company / Department / Business / Workspace 四层 Scope 隔离（Curis 唯一 Usage Ledger 同源）']])}`;
+438:     if (sec === 'memory') body = `
+439:       <div class="card" style="margin-bottom:12px"><div class="section-title" style="margin-bottom:6px">公司记忆（可逐条查看与编辑）</div>
+440:         <div class="rowlist" style="border:0">
+441:           <div class="row"><span class="grow"><div class="title">品牌语气：克制、事实先于观点</div><div class="meta">来源：品牌表达手册 v2 · 9/02 更新</div></span><button class="btn sm ghost">编辑</button></div>
+442:           <div class="row"><span class="grow"><div class="title">发布节奏：每周三 / 五</div><div class="meta">来源：沈书言 · 8/29 会议决议</div></span><button class="btn sm ghost">编辑</button></div>
+443:           <div class="row"><span class="grow"><div class="title">研发发布窗口：周五</div><div class="meta">来源：825 会议（昨天）</div></span><button class="btn sm ghost">编辑</button></div>
+444:         </div></div>
+445:       ${dl([['记忆开关', '<span class="switch on"><i></i></span>'], ['敏感主题', '需逐条 opt-in，保存时通知你'], ['导出', '<button class="btn sm">导出全部记忆</button>']])}`;
+446:     if (sec === 'usage') body = `
+447:       <div class="kpi-row" style="margin-bottom:16px"><div class="kpi"><div class="n">${FX.usage.total}</div><div class="l">${FX.usage.month} 总消耗</div></div>
+448:         <div class="kpi"><div class="n">${FX.usage.delta}</div><div class="l">对比上月同期</div></div>
+449:         <div class="kpi"><div class="n">54%</div><div class="l">${FX.usage.budget}</div></div></div>
+450:       <div class="section-title" style="margin-bottom:6px">按员工</div>
+451:       <div class="rowlist" style="margin-bottom:16px">${FX.usage.byEmployee.map(r => `<div class="row" data-action="open-employee" data-arg="${FX.emp(r[0]) ? FX.emp(r[0]).id : ''}"><span class="grow"><div class="title">${r[0]}</div><div class="meta">${r[2]}</div></span><span class="end mono">${r[1]}</span></div>`).join('')}</div>
+452:       <div class="section-title" style="margin-bottom:6px">按模型</div>
+453:       <div class="rowlist">${FX.usage.byModel.map(r => `<div class="row"><span class="grow"><div class="title">${r[0]}</div></span><span class="end mono">${r[1]}</span></div>`).join('')}</div>`;
+454:     if (sec === 'notifications') body = dl([
+455:       ['结果就绪', '<span class="switch on"><i></i></span>'], ['需要我决定', '<span class="switch on"><i></i></span>'],
+456:       ['员工阻塞', '<span class="switch on"><i></i></span>'], ['会议开始前 10 分钟', '<span class="switch on"><i></i></span>'],
+457:       ['升级渠道', '系统通知 + IM（飞书 Webhook，DESIGN FIXTURE）'],
+458:     ]);
+459:     if (sec === 'appearance') body = dl([
+460:       ['主题', '<div class="segmented"><button data-action="set-theme" data-arg="light">浅色</button><button data-action="set-theme" data-arg="dark">深色</button><button data-action="set-theme" data-arg="system">跟随系统</button></div>'],
+461:       ['信息密度', '安静高密度（Frozen 纪律）'], ['字号下限', '12px'],
+462:     ]);
+463:     if (sec === 'shortcuts') body = dl([['全局搜索', '⌘ K'], ['全局助理', '⌘ J'], ['会话内搜索', '⌘ F'], ['收起/展开 Context', '⌘ \\']]);
+464:     if (sec === 'about') body = dl([['版本', 'Prototype 0.1 · DESIGN FIXTURE'], ['更新渠道', '无（原型）'], ['原型说明', '本页为设计原型，不接 Runtime、不写任何真实数据']]);
+465:     return {
+466:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '设置' }, { t: nav.find(n => n[0] === sec)[1] }]),
+467:       html: `
+468:         <div class="page-head"><h1>设置</h1><div class="sub">个人偏好 / 公司 / AI 与能力 / 权限与数据 / 运行与成本 分开管理</div></div>
+469:         <div class="settings-wrap">
+470:           <div>
+471:             <input class="input" style="margin-bottom:8px" placeholder="搜索设置…" value="${params.q || ''}" data-action="settings-search">
+472:             <div class="settings-nav">${nav.filter(n => !params.q || n[1].includes(params.q)).map(n => `<button class="nav-item ${sec === n[0] ? 'active' : ''}" data-action="go" data-arg="#/settings/${n[0]}">${n[1]}</button>`).join('')}</div>
+473:           </div>
+474:           <div style="min-width:0">${body}</div>
+475:         </div>`,
+476:     };
+477:   };
+478: })();
+479: 
+480:   /* ---------- 模型配置（左下 CEO 头像菜单 → 模型配置 / AI 能力设置）---------- */
+481:   const PROVIDERS = [
+482:     ['OpenAI', 'api.openai.com', 'sk-…'], ['Anthropic', 'api.anthropic.com', 'sk-ant-…'],
+483:     ['Gemini', 'generativelanguage.googleapis.com', 'AIza…'], ['DeepSeek', 'api.deepseek.com', 'sk-…（已连接）'],
+484:     ['通义 Qwen', 'dashscope.aliyuncs.com', 'sk-…'], ['豆包', 'ark.cn-beijing.volces.com', '…'],
+485:     ['智谱 GLM', 'open.bigmodel.cn', '…（已连接）'], ['MiniMax', 'api.minimaxi.com', '…'],
+486:     ['Kimi', 'api.moonshot.cn', '…'], ['Mistral', 'api.mistral.ai', '…'],
+487:     ['xAI', 'api.x.ai', '…'], ['Groq', 'api.groq.com', '…'], ['硅基流动', 'api.siliconflow.cn', '…'],
+488:   ];
+489:   V.models = function () {
+490:     return {
+491:       crumbs: C.crumbs([{ t: '模型配置 / AI 能力设置' }]),
+492:       html: `
+493:         <div class="page-head"><h1>模型配置</h1><div class="sub">主流厂商与模型已内置，填入 API Key 保存即可用（Key 存本机 Keychain）· 入口：左下角头像菜单</div></div>
+494:         <div class="grid c3">
+495:           ${PROVIDERS.map(p => {
+496:             const ok = p[2].includes('已连接');
+497:             return `<div class="card talent-card">
+498:               <div class="tc-head"><span class="avatar sm ${ok ? 'av-2' : 'av-7'}">${p[0][0]}</span>
+499:                 <div style="min-width:0"><div class="tc-name">${p[0]}</div><div class="tc-sub">${p[1]}</div></div>
+500:                 <span class="spacer"></span>${ok ? '<span class="dot ok"></span>' : ''}</div>
+501:               <div class="field" style="margin:8px 0 0"><input class="input" placeholder="API Key" value="${ok ? '••••••••（已保存）' : ''}"></div>
+502:               <div class="tc-foot"><button class="btn sm ${ok ? '' : 'primary'}" data-action="noop">${ok ? '测试连接' : '保存并测试'}</button>
+503:                 <span class="faint" style="font-size:11px">${ok ? '启用 · 模型自动发现' : '未配置'}</span></div>
+504:             </div>`; }).join('')}
+505:         </div>
+506:         <div class="section" style="margin-top:16px"><div class="section-title" style="margin-bottom:6px">高级 / 本地</div>
+507:           <div class="rowlist">
+508:             <div class="row"><span class="grow"><div class="title">聚合网关（OpenRouter / New API / OpenAI Compatible）</div><div class="meta">自定义 Base URL + Key</div></span><button class="btn sm" data-action="noop">添加</button></div>
+509:             <div class="row"><span class="grow"><div class="title">本地模型（Ollama · 127.0.0.1:11434）</div><div class="meta">已发现 3 个模型</div></span><span class="switch on"><i></i></span></div>
+510:           </div></div>
+511:         <div class="faint" style="font-size:11px">模型在对话内随时切换（Composer 模型选择器）；创建 Employee 不要求逐个绑定模型。措辞消费 MODEL_PROVIDER_REGISTRY / EMPLOYEE_CONVERSATION_MODEL_EXPERIENCE_CONTRACT。</div>`,
+512:     };
+513:   };
+
+FILE js/views-business.js
+1: /* ============================================================
+2:    Curis Full Product HTML Design Prototype — views-business.js
+3:    P3 业务空间 / Workspace 工作面（Content Growth · RD · Generic）
+4:    Work（Agent Progress）/ Decision / Result·Utility / 成果库 / Conversation
+5:    结构消费：BUSINESS_WORK_SURFACE_PAGE_CONTRACT（四部分）+ 08/09 D 代 anatomy
+6:            + CURIS_MULTI_SURFACE_PROFESSIONAL_WORKSPACE_UX_REVIEW（六 Surface 作 Domain Navigation）
+7:    ============================================================ */
+8: window.V = window.V || {};
+9: window.CONV = (function () {
+10:   const threads = {
+11:     'e-zhen': [
+12:       { role:'ai', emp:'e-zhen', text:'本周 AI 科技的重点是把「教程 + 工具清单」结构跑通。林月的调研快出结果了，我建议等她 3 个选题落地后再排下期。', model:'GLM-5.3', cost:'◇ 1.1' },
+13:       { role:'user', text:'定位调整的事你怎么看？' },
+14:       { role:'ai', emp:'e-zhen', text:'这是 Leader 职权边缘的判断：何川的归因（EST）支持教程向，但我们连续测评向做了 3 篇。我按规则升级给 CEO 了，建议是本篇教程向、下两篇回测评。', citations:['选题研究简报','竞品选题结构周报'], model:'GLM-5.3', cost:'◇ 0.8' },
+15:     ],
+16:     'e-linan': [
+17:       { role:'ai', emp:'e-linan', text:'调研进入对比分析：5 个对标账号里「教程 + 工具清单」组合互动中位数高 34%（EST，样本 120 篇）。预计 30 分钟后给出 3 个选题。', steps:[{t:'评论样本收集',done:true},{t:'对标内容结构对比',done:true},{t:'输出选题（3 个）',done:false}], model:'DeepSeek-V4.1', cost:'◇ 2.2' },
+18:       { role:'user', text:'好，选题出来先给陈真过目。' },
+19:       { role:'ai', emp:'e-linan', text:'收到，会走「交接至 内容运营」的默认交接，附研究简报引用。', model:'DeepSeek-V4.1', cost:'◇ 0.4' },
+20:     ],
+21:     'e-zlan': [
+22:       { role:'ai', emp:'e-zlan', text:'v1.4 联调：错误码 4012 的前端映射已对齐，单测 22/22。还差异常分支（限流触发）的真实环境验证。', tools:[{n:'编辑 auth.service.ts',d:'validatePassword() 增加错误码 4012'},{n:'运行单测',d:'auth 22 passed / 0 failed'}], model:'DeepSeek-V4.1', cost:'◇ 3.4' },
+23:       { role:'user', text:'联调完成后直接交接给赵敏做回归。' },
+24:       { role:'ai', emp:'e-zlan', text:'收到。交接会带 Diff 与单测证据，赵敏那边等这个信号就可以开始。', result:'r-login', model:'DeepSeek-V4.1', cost:'◇ 0.3' },
+25:     ],
+26:   };
+27:   const generic = e => [
+28:     { role:'ai', emp:e.id, text:`这里是与 ${e.name} 的工作对话。当前责任：${e.responsibility.current}。`, model:e.model, cost:'◇ 0.2' },
+29:   ];
+30:   return { forEmployee(id){ return threads[id] || generic(FX.emp(id) || { id:'e-shen', name:'员工', responsibility:{current:'—'}, model:'GLM-5.3' }); } };
+31: })();
+32: 
+33: (function () {
+34:   const { I, ico } = C;
+35: 
+36:   /* ---------- P3 业务空间：Business 列表 ---------- */
+37:   V.business = function () {
+38:     const rows = Object.values(FX.businesses).map(b => {
+39:       const d = FX.org.departments.find(x => x.name === b.dept);
+40:       return `<div class="row" data-action="go" data-arg="#/business/${b.id}">
+41:         ${C.st(b.activating ? 'activating' : 'running')}
+42:         <span class="grow"><div class="title">${b.name}</div>
+43:           <div class="meta">${d ? d.name : ''} · Leader ${FX.emp(b.leader).name} · ${b.workspaces.length} 个 Workspace · ${b.desc}</div></span>
+44:         <span class="end">${ico(I.chev, 14)}</span></div>`;
+45:     }).join('');
+46:     return {
+47:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '业务空间' }]),
+48:       html: `
+49:         <div class="page-head" style="display:flex;align-items:center"><div><h1>业务空间</h1><div class="sub">每个 Business 是一条持续经营的业务线，归属部门，至少拥有一个 Workspace</div></div>
+50:           <span class="spacer"></span><button class="btn primary" data-action="go" data-arg="#/activate">提出新业务意图</button></div>
+51:         <div class="rowlist">${rows}</div>
+52:         <div class="faint" style="margin-top:10px;font-size:11px">经营在 Workspace 内进行；Business 页只做目录、聚合与进入（BUSINESS_WORK_SURFACE_PAGE_CONTRACT）。</div>`,
+53:     };
+54:   };
+55: 
+56:   /* ---------- Business 详情（四部分合同）---------- */
+57:   V.businessDetail = function (params) {
+58:     const b = FX.biz(params.id) || FX.biz('biz-cg');
+59:     const d = FX.org.departments.find(x => x.name === b.dept);
+60:     const wss = b.workspaces.map(id => FX.ws(id));
+61:     const team = [...new Set(wss.flatMap(w => w.team))];
+62:     const activation = b.activating ? `
+63:       <div class="section"><div class="section-head"><h2 class="section-title">激活进度（CEO intent → Business → Workspace → Operating）</h2></div>
+64:         <div class="rowlist">
+65:           ${[['CEO 意图捕获', true, '「我想在小区周边做宠物寄养」'],
+66:              ['空间工程部承接（可委托，非唯一入口）', true, '沈砚承接 · 组合研究/设计/实施/质量'],
+67:              ['行业研究（顾行）', true, '宠物寄养市场与定价 · 竞品结构（进行中）'],
+68:              ['Workspace 设计（苏格）', false, '首个 Workspace 结构设计中'],
+69:              ['激活建议 → CEO Gate', false, '稍后提交：Business 定义 + 团队 + 首个 Workspace'],
+70:              ['开始经营', false, '待你批准激活建议']].map(r => `
+71:             <div class="row"><span class="dot ${r[1] ? 'ok' : 'idle'}"></span>
+72:               <span class="grow"><div class="title" style="${r[1] ? '' : 'color:var(--ui-text-2)'}">${r[0]}</div><div class="meta">${r[2]}</div></span></div>`).join('')}
+73:         </div></div>` : '';
+74:     return {
+75:       crumbs: C.crumbs([{ t: '业务空间', go: '/business' }, { t: b.dept }, { t: b.name }]),
+76:       html: `
+77:         <div class="page-head" style="display:flex;align-items:center"><div><h1>${b.name}</h1>
+78:           <div class="sub">${d.name} · 业务负责人 ${FX.emp(b.leader).name} · ${b.stage} · ${b.desc}</div></div>
+79:           <span class="spacer"></span><button class="btn" data-action="go" data-arg="#/conversation/${b.leader}">和负责人对话</button></div>
+80:         <div class="section"><div class="section-head"><h2 class="section-title">当前经营状态</h2></div>
+81:           <div class="card">${b.brief}</div></div>
+82:         ${activation}
+83:         <div class="section"><div class="section-head"><h2 class="section-title">Workspace 目录</h2></div>
+84:           <div class="rowlist">${wss.map(w => `<div class="row" data-action="go" data-arg="#/workspace/${w.id}">
+85:             <span class="tag">${w.type === 'professional' ? '专业' : '通用'}</span>
+86:             <span class="grow"><div class="title">${w.name}</div><div class="meta">负责人 ${FX.emp(w.leader).name} · ${w.surfaces.length} 个 Surface · ${w.domain}</div></span>
+87:             <span class="end">进入 ${ico(I.chev, 14)}</span></div>`).join('')}
+88:             <div class="row" data-action="noop"><span class="grow faint" style="font-size:13px">+ 新建 Workspace（设计原型入口）</span></div></div></div>
+89:         <div class="section"><div class="section-head"><h2 class="section-title">业务团队</h2><span class="section-more">团队在 Workspace 内运转；此处为聚合视图</span></div>
+90:           <div class="rowlist">${team.map(id => C.empRow(FX.emp(id), { openAction: 'open-employee' })).join('')}</div></div>`,
+91:     };
+92:   };
+93: 
+94:   /* ---------- 新业务激活（FLOW C）---------- */
+95:   V.activate = function () {
+96:     return {
+97:       crumbs: C.crumbs([{ t: '业务空间', go: '/business' }, { t: '提出新业务意图' }]),
+98:       html: `
+99:         <div class="page-head"><h1>告诉 Curis，你想开始做什么</h1><div class="sub">默认入口是对话：CEO 只需说意图；Curis 负责 复用→组合→研究→建议→激活（CREATE_BUSINESS_FLOW_CONTRACT）</div></div>
+100:         <div style="max-width:680px">
+101:           ${RT.composer('c-activate', { thread: 'activate', placeholder: '例如：我想在小区周边做宠物寄养生意…' }).replace('<textarea class="cx-input" rows="1"', '<textarea class="cx-input" rows="2"')}
+102:           <div class="card" style="margin-top:16px"><div class="section-title" style="margin-bottom:8px">Curis 的理解（进行中）</div>
+103:             <div class="rowlist" style="border:0">
+104:               ${[['理解意图', true, '宠物寄养 · 本地服务 · 小规模起步'],
+105:                  ['查找可复用的 Business / Workspace', true, '无既有业务可复用 → 走研究路径'],
+106:                  ['研究与能力发现', true, '顾行：行业研究进行中（宠物寄养市场与定价）'],
+107:                  ['经营建议（Operating Proposal）', false, '待研究完成后由空间工程部提交'],
+108:                  ['CEO Gate：批准激活', false, '批准后 → 归属部门 → 首个 Workspace → 团队责任 → 开始经营']].map(r => `
+109:                 <div class="row"><span class="dot ${r[1] ? 'ok' : 'idle'}"></span>
+110:                   <span class="grow"><div class="title">${r[0]}</div><div class="meta">${r[2]}</div></span></div>`).join('')}
+111:             </div></div>
+112:           <div class="faint" style="margin-top:8px;font-size:11px">DESIGN FIXTURE · 流程措辞消费 Structure Baseline §5 / CREATE_BUSINESS_FLOW_CONTRACT / Shared Authority §9.5</div>
+113:         </div>`,
+114:     };
+115:   };
+116: 
+117:   /* ---------- Workspace 工作面（Four-Pane）---------- */
+118:   V.workspace = function (params) {
+119:     const w = FX.ws(params.id) || FX.ws('ws-cg');
+120:     const surf = w.surfaces.find(s => s.id === params.surface) || w.surfaces[0];
+121:     const b = FX.biz(w.business);
+122:     const myWorks = FX.works.filter(x => x.ws === w.id);
+123:     const ctxHtml = `
+124:       <div class="nav-group">Surface（Domain Navigation）</div>
+125:       ${w.surfaces.map(s => `<button class="nav-item ${s.id === surf.id ? 'active' : ''}" data-action="ws-surface" data-arg="${s.id}">${s.name}</button>`).join('')}
+126:       <div class="nav-group">共享工作区</div>
+127:       <button class="nav-item ${surf.id === 'overview' ? 'hidden' : ''}" data-action="ws-surface" data-arg="overview">员工工作区（谁在做什么）</button>
+128:       <div class="nav-group">${w.domain === '产品研发' ? '代码与责任' : '选题库'}</div>
+129:       ${w.id === 'ws-rd' ? `
+130:         <div class="ctx-item mono" style="padding:6px 8px;font-size:12px;color:var(--ui-text-2)">▸ product-platform/src</div>
+131:         <div class="ctx-item mono" style="padding:6px 8px 6px 20px;font-size:12px;color:var(--ui-text-2)">▸ auth/</div>
+132:         <div class="ctx-item mono active" style="padding:6px 8px 6px 32px;font-size:12px">login.ts</div>
+133:         <div class="ctx-item mono" style="padding:6px 8px 6px 32px;font-size:12px;color:var(--ui-text-2)">session.ts</div>
+134:         <div class="hr" style="margin:8px 0"></div>
+135:         <div style="padding:4px 8px;font-size:12px;color:var(--ui-text-2)">责任：登录模块重构 · 接口联调</div>
+136:         <div style="padding:4px 8px;font-size:12px;color:var(--ui-text-2)">Recent：login.ts · 34-93<br>联调结果 v1.3</div>`
+137:       : `
+138:         <div style="padding:4px 8px;font-size:12px;color:var(--ui-text-2)">信号：AI 工具类搜索量上升 · 竞品爆文 ×2</div>
+139:         <div style="padding:4px 8px;font-size:12px;color:var(--ui-text-2)">素材：实拍图 ×12 · 用户证言 ×3</div>
+140:         <div style="padding:4px 8px;font-size:12px;color:var(--ui-text-2)">内容日历：9 月第 3 周 · 3 篇排期</div>`}`;
+141:     const op5 = `
+142:       <div class="grid c2" style="margin-bottom:16px">
+143:         <div class="card"><div class="faint" style="font-size:11px;margin-bottom:4px">经营状态</div><div style="font-weight:600">${b.stage} · ${b.brief.split('；')[0]}</div></div>
+144:         <div class="card"><div class="faint" style="font-size:11px;margin-bottom:4px">本轮重点</div><div>${w.domain === '产品研发' ? '登录模块 v1.4：联调收口 → 回归 → 灰度' : '验证「教程 + 工具清单」结构的关注转化'}</div></div>
+145:         <div class="card"><div class="faint" style="font-size:11px;margin-bottom:4px">最新判断</div><div>${w.domain === '产品研发' ? 'v1.3 可作回归基线；灰度方案已升级 CEO' : '教程向互动中位数高 34%（EST，何川归因）'}</div></div>
+146:         <div class="card"><div class="faint" style="font-size:11px;margin-bottom:4px">下一步</div><div>${w.domain === '产品研发' ? '回归全绿后灰度 5%（待 CEO 批准）' : '周五复盘会确认定位调整'}</div></div>
+147:       </div>`;
+148:     const teamOp = `
+149:       <div class="section"><div class="section-head"><h2 class="section-title">团队运转</h2><span class="section-more">默认流程 · A→B 只表示默认下一责任，不是强制 DAG</span></div>
+150:         <div class="card"><div class="chip-row">${w.flow.map((f, i) => `<span class="chip ${i === 0 ? 'active' : ''}">${f}</span>${i < w.flow.length - 1 ? '<span class="faint">→</span>' : ''}`).join('')}</div></div></div>`;
+151:     const workarea = `
+152:       <div class="section"><div class="section-head"><h2 class="section-title">工作区</h2><span class="section-more">点击员工展开对话 · 点击姓名进员工详情</span></div>
+153:         <div class="rowlist">${w.team.map(id => {
+154:           const e = FX.emp(id);
+155:           const ew = myWorks.find(x => x.employee === id);
+156:           const tk = 'emp:' + id;
+157:           return C.empRow(e, {
+158:             openAction: 'toggle-emp-conv', utilAction: 'emp-util',
+159:             body: `<div style="margin-bottom:8px">${ew ? C.todoList(ew.plan).replace('class="todo"', 'class="todo" style="font-size:12px"') : `当前责任：${e.responsibility.current}`}</div>
+160:               <div class="emp-conv hidden" data-empconv="${id}" style="margin-bottom:8px">
+161:                 <div class="conversation" style="max-width:none;padding:0">${RT.renderThread(tk)}</div>
+162:                 ${RT.composer('c-ws-' + id, { thread: tk, placeholder: `与 ${e.name} 对话，或直接交代一件事…`, exec: `执行 · ${e.name}`, model: e.model })}
+163:               </div>`,
+164:           });
+165:         }).join('')}</div></div>`;
+166:     /* Surface-specific Main 内容 */
+167:     let surfaceMain = '';
+168:     if (w.id === 'ws-cg') {
+169:       if (surf.id === 'overview') surfaceMain = op5;
+170:       if (surf.id === 'research') surfaceMain = `
+171:         <div class="section"><div class="section-head"><h2 class="section-title">研究对象</h2><span class="section-more">3 个对象 · 2 个进行中</span></div>
+172:           <div class="grid c3">
+173:             ${[['趋势 · 8/18','AI 工具实测内容的机会','证据：近 7 天 120 篇笔记评论抽样','w-research'],
+174:                ['竞品 · 8/19','同类账号选题结构对比','证据：5 个对标账号 30 天内容结构','w-research'],
+175:                ['受众 · 8/15','AI 科技受众兴趣分层','证据：问卷 200 份 + 评论区意图标注','w-research']].map(r => `
+176:             <div class="card"><div class="faint" style="font-size:11px;margin-bottom:6px">${r[0]}</div>
+177:               <div style="font-weight:600;margin-bottom:4px">${r[1]}</div>
+178:               <div class="muted" style="font-size:12px;margin-bottom:8px">${r[2]}</div>
+179:               <div style="display:flex;gap:6px;align-items:center"><span class="chip">${ico(C.I.hand, 12)} 交接至 内容运营</span><span class="spacer"></span>${C.avatarById('e-linan','sm')}</div></div>`).join('')}
+180:           </div></div>`;
+181:       if (surf.id === 'content') { const cg = FX.cgChain; const view = params.q.view || 'list'; surfaceMain = `
+182:         <div class="section"><div class="section-head"><h2 class="section-title">内容对象</h2>
+183:           <div class="seg-pill"><button class="${view === 'list' ? 'active' : ''}" data-action="ws-view" data-arg="list">列表</button><button class="${view === 'cal' ? 'active' : ''}" data-action="ws-view" data-arg="cal">日历</button></div></div></div>
+184:         <div class="section"><div class="section-head"><h2 class="section-title" style="font-size:14px">① Opportunity（信号）</h2></div>
+185:           <div class="rowlist"><div class="row"><span class="grow"><div class="title">${cg.opportunity.title}</div><div class="meta">来源：${cg.opportunity.source} · 评分 ${cg.opportunity.score} · ${cg.opportunity.date}</div></span></div></div></div>
+186:         <div class="section"><div class="section-head"><h2 class="section-title" style="font-size:14px">② Intent（WHY / WHAT / GOAL）</h2></div>
+187:           <div class="rowlist"><div class="row"><span class="grow"><div class="title">${cg.intent.title}</div><div class="meta">${cg.intent.note}</div></span></div></div></div>
+188:         <div class="section"><div class="section-head"><h2 class="section-title" style="font-size:14px">③ Target Account Set（Target ≠ Eligibility）</h2></div>
+189:           <div class="rowlist">${cg.targetAccounts.map(t => `<div class="row">
+190:             <span class="grow"><div class="title">${t.n}</div><div class="meta">${t.eligible ? t.receipt : t.note}</div></span>
+191:             ${t.eligible ? '<span class="tag" style="color:var(--ui-success)">具备资格</span>' : '<span class="tag" style="color:var(--ui-warning)">不具备资格</span>'}${C.st(t.st === '已连接' ? 'done' : t.st === '需授权' ? 'review' : 'idle')}</div>`).join('')}</div></div>
+192:         <div class="section"><div class="section-head"><h2 class="section-title" style="font-size:14px">④ Content Variant（按账号复用）</h2></div>
+193:           ${cg.variants.map(v => `<div class="card" style="margin-bottom:10px"><div style="font-weight:600;margin-bottom:2px">${v.v}</div>
+194:             <div class="faint" style="font-size:11px;margin-bottom:6px">${v.reuse}</div>
+195:             <div class="rowlist" style="border:0">${v.per.map(pp => `<div class="row"><span style="flex:0 0 170px" class="muted">${pp[0]}</span><span class="grow">${pp[1]}</span><span class="end">${pp[2]}</span></div>`).join('')}</div></div>`).join('')}</div>
+196:         <div class="section"><div class="section-head"><h2 class="section-title" style="font-size:14px">⑤ Publication（逐账号 · 回执只能来自 Connector）</h2></div>
+197:           <div class="rowlist">${cg.publications.map(pp => `<div class="row">
+198:             <span class="grow"><div class="title">${pp.acc}</div><div class="meta">${pp.receipt}</div></span>
+199:             <span class="end">${pp.st}</span></div>`).join('')}
+200:           </div>
+201:           <div class="faint" style="font-size:11px;margin-top:6px">聚合"已发布"不替代逐账号状态；断连账号保留历史目标，仅当前不具备发布资格。</div></div>`; }
+202:       if (surf.id === 'content' && (params.q.view || 'list') === 'cal') { surfaceMain = `
+203:         <div class="section"><div class="section-head"><h2 class="section-title">内容排期 · 本周（9/15–9/19）</h2><span class="section-more">Channel Account：小红书 · AI 科技（唯一具备发布资格）</span></div>
+204:           <div class="cal">
+205:             ${[['周一 9/15',[['选题确认（林月→陈真）','done'],['《效能工具上手指南》数据回收','done']]],
+206:                ['周二 9/16',[['测评稿完稿（林月）','']]],
+207:                ['周三 9/17',[['封面与排版（苏晴）',''],['平台规则复审','warn']]],
+208:                ['周四 9/18',[['CEO 发布检查（陈真）','warn'],['排期发布 · AI 科技账号','']]],
+209:                ['周五 9/19',[['复盘会输入准备（何川）','']]]].map(d => `
+210:             <div class="day"><h4>${d[0]}</h4>${d[1].map(e => `<div class="ev ${e[1]}">${e[0]}</div>`).join('')}</div>`).join('')}
+211:           </div></div>`; }
+212:       if (surf.id === 'growth') surfaceMain = `
+213:         <div class="section"><div class="section-head"><h2 class="section-title">增长与评估</h2><span class="section-more">数据标注 EST · 回执只能来自 Connector</span></div>
+214:           <div class="kpi-row" style="margin-bottom:12px"><div class="kpi"><div class="n">2.4w</div><div class="l">近 7 天阅读 · EST</div></div>
+215:             <div class="kpi"><div class="n">1.1k</div><div class="l">互动 · EST</div></div><div class="kpi"><div class="n">3.8%</div><div class="l">转化 · EST</div></div></div>
+216:           <div class="rowlist"><div class="row"><span class="grow"><div class="title">归因任务：上周 3 篇的互动来源</div><div class="meta">何川 · 进行中 · 引用选题研究简报</div></span>${C.st('working')}</div>
+217:           <div class="row"><span class="grow"><div class="title">连接器未授权提醒</div><div class="meta">自动数据回收需要小红书开放平台只读授权</div></span><button class="btn sm" data-action="open-decision" data-arg="d-connector">去授权</button></div></div></div>`;
+218:       if (surf.id === 'feedback') surfaceMain = `<div class="section">${C.emptyState('反馈回流', '评论区与私信信号会在发布后回流到这里（需连接器授权后自动收集）。', [])}</div>`;
+219:       if (surf.id === 'commercial') surfaceMain = `<div class="section">${C.emptyState('商业化（Optional Surface）', '线索与转化承接。此 Surface 按需启用。', [])}</div>`;
+220:     } else if (w.id === 'ws-rd') {
+221:       if (surf.id === 'overview') surfaceMain = `
+222:         <div class="decision-banner">
+223:           <div class="db-title">CEO Decision · Layer 0 · 灰度发布：登录模块 v1.4 首批 5% 用户</div>
+224:           <div class="db-body">发生了什么：v1.4 联调进行中（Adapter 80%）、回归被联调阻塞。为何升级：生产发布不可逆（高风险），前置条件（回归全绿）未满足。员工推荐：孙浩的灰度方案（5% · 观察 24 小时错误率）已就绪。<b>本层只能：查看方案 / 暂缓。批准入口在回归全绿后的 Decision Layer 1。</b></div>
+225:           <div class="decision-actions"><button class="btn" data-action="noop">查看发布方案</button><button class="btn" data-action="noop">暂缓</button><span class="faint" style="align-self:center;font-size:11px">Approve / Reject / Choice → Layer 1（P7 决策分层）</span></div>
+226:         </div>
+227:         <div class="section"><div class="section-head"><h2 class="section-title">当前研发</h2></div>
+228:           <div class="rowlist">
+229:             ${[['产品 / 需求','已确认（王琳）','done'],['架构','已确认（林涛）','done'],['Runtime','已完成','done'],['Frontend Adapter','80% · 联调中（周岚）','working'],['Test','回归等待联调（赵敏 · waiting）','blocked'],['Review / 发布门禁','待回归（孙浩）','idle']].map(r => `
+230:             <div class="row"><span style="flex:0 0 140px" class="muted">${r[0]}</span><span class="grow">${r[1]}</span>${C.st(r[2])}</div>`).join('')}
+231:           </div></div>
+232:         <div class="section"><div class="section-head"><h2 class="section-title">当前 Blocker 与需要你</h2></div>
+233:           <div class="rowlist"><div class="row" data-action="open-work" data-arg="w-test"><span class="grow"><div class="title">回归测试被联调阻塞（waiting ≠ idle）</div><div class="meta">赵敏 · Curis 研发</div></span>${C.st('blocked')}</div></div></div>`;
+234:       if (surf.id === 'dev') surfaceMain = myWorks.filter(x => x.surface === 'dev').map(x => C.workCard(x)).join('<div style="height:12px"></div>') || op5;
+235:       if (surf.id === 'test') surfaceMain = myWorks.filter(x => x.surface === 'test').map(x => C.workCard(x)).join('<div style="height:12px"></div>') || `<div class="section">${C.emptyState('暂无测试工作','回归用例已就绪，等待联调完成。',[])}</div>`;
+236:       if (surf.id === 'review' || surf.id === 'release') surfaceMain = `<div class="section"><div class="section-head"><h2 class="section-title">${surf.name}</h2></div>
+237:         <div class="rowlist"><div class="row"><span class="grow"><div class="title">登录模块 v1.4 · 发布门禁检查</div><div class="meta">孙浩 · 灰度方案已升级 CEO（不可逆操作）</div></span>${C.st('review')}</div></div></div>`;
+238:     } else {
+239:       surfaceMain = surf.id === 'overview' ? `
+240:         <div class="section"><div class="section-head"><h2 class="section-title">当前工作</h2></div>
+241:           <div class="grid c2">${myWorks.map(x => C.workCard(x)).join('')}</div></div>` : '';
+242:     }
+243:     return {
+244:       crumbs: C.crumbs([{ t: '业务空间', go: '/business' }, { t: b.name, go: '/business/' + b.id }, { t: w.name }, { t: surf.name }]),
+245:       ctxTitle: w.name,
+246:       ctxHtml,
+247:       states: { normal: {}, emptyFirst: { emptyFirst: true }, working: {}, error: {} },
+248:       html: (s) => s.emptyFirst ? `
+249:         <div class="page-head"><h1>${w.name}</h1><div class="sub">${w.type === 'professional' ? '专业工作空间' : '通用工作空间'} · ${w.domain}</div></div>
+250:         ${C.emptyState('工作空间已创建，还没有开始工作', `把第一件事交给 ${FX.emp(w.leader).name}（负责人），或从下面的建议开始。`,
+251:           [{ t: '派一件工作给负责人', action: 'focus-conv' }, { t: '先看团队与责任', action: 'noop' }])}`
+252:       : `
+253:         <div class="page-head" style="display:flex;align-items:center"><div><h1>${w.name}</h1>
+254:           <div class="sub">${w.type === 'professional' ? '专业工作空间' : '通用工作空间'} · ${w.domain} · 负责人 ${FX.emp(w.leader).name} · 目标：${b.brief}</div></div>
+255:           <span class="spacer"></span><button class="btn" data-action="open-employee" data-arg="${w.leader}">负责人</button></div>
+256:         ${surf.id === 'overview' ? '' : `<div class="crumbs" style="margin-bottom:12px">当前 Surface：<b>${surf.name}</b> · ${surf.desc}</div>`}
+257:         ${surfaceMain}
+258:         ${surf.id === 'overview' ? (teamOp + workarea) : ''}`,
+259:       util: UTIL.forWorkspace(w, surf),
+260:     };
+261:   };
+262: 
+263:   /* Utility 内容：CG=图文预览/审核/数据 · RD=Diff/Source/Preview · 通用=Employee Quick Panel */
+264:   window.UTIL = window.UTIL || {};
+265:   UTIL.forWorkspace = function (w, surf) {
+266:     const emp = FX.emp(w.team[0]);
+267:     if (w.id === 'ws-rd') return { title: '登录模块 · 变更', tabs: ['Diff', 'Source', 'Preview'], active: 'Diff', html: `
+268:       <div class="muted" style="font-size:12px;margin-bottom:8px">变更归属责任：登录模块重构 · 接口联调（周岚）</div>
+269:       <div class="doc-preview mono" style="font-size:12px;line-height:1.6">
+270:         <div style="color:var(--ui-danger)">- if (pwd.length < 8) return err('PWD_SHORT')</div>
+271:         <div style="color:var(--ui-success)">+ if (pwd.length < 8) return err(4012, 'PWD_SHORT')</div>
+272:         <div style="color:var(--ui-success)">+ if (rateLimit.hit(ip)) return err(4029, 'TOO_MANY')</div>
+273:       </div>
+274:       <div class="muted" style="font-size:11px;margin:8px 0">+34 / −93 · declared-file change · 证据已入 Result</div>
+275:       <div style="display:flex;gap:8px"><button class="btn sm primary">提交变更</button><button class="btn sm">请求协审</button></div>` };
+276:     if (w.id === 'ws-cg') return { title: '《AI 工具测评》', tabs: ['图文预览', '审核', '数据'], active: '图文预览', html: `
+277:       <div class="doc-preview"><h3>AI 工具测评 · 极简风</h3><p>（封面占位）极简封面：工具截图 + 一句利益点。</p>
+278:         <p>正文结构：痛点引入 → 工具演示 → 行动建议。标签：#AI工具 #效率 #教程</p>
+279:         <p class="faint" style="font-size:11px">排版检查：通过（sk-xhs）· 敏感词：0</p></div>
+280:       <div class="hr"></div><div class="faint" style="font-size:11px">发布后：数据 tab 显示 EST；回执来自 Connector。</div>` };
+281:     return { title: '快速协作', tabs: ['面板'], active: '面板', html: `
+282:       ${C.avatar(emp)}<div style="font-weight:650;margin-top:8px">${emp.name}</div>
+283:       <div class="muted" style="font-size:12px">${emp.role} · ${C.stFull(emp)}</div>
+284:       <div class="hr"></div>
+285:       <div style="font-size:12px;color:var(--ui-text-2);line-height:1.7">当前责任：${emp.responsibility.current}<br>最近成果：${(FX.results.find(r => r.employee === emp.id) || {}).title || '—'}</div>
+286:       <div class="hr"></div>${RT.composer('c-qk-' + emp.id, { thread: 'emp:' + emp.id, placeholder: '直接对话…', exec: `执行 · ${emp.name}`, model: emp.model })}` };
+287:   };
+288: 
+289:   /* ---------- Work（Agent Progress 专题页）---------- */
+290:   V.work = function (params) {
+291:     const w = FX.work(params.id) || FX.work('w-login');
+292:     const e = FX.emp(w.employee);
+293:     const done = w.plan.filter(p => p.done).length;
+294:     return {
+295:       crumbs: C.crumbs([{ t: w.ws ? FX.ws(w.ws).name : '公司级', go: w.ws ? '/workspace/' + w.ws : '/ceo' }, { t: '工作' }, { t: w.title }]),
+296:       ctxTitle: '工作概览（首层）',
+297:       ctxHtml: `<div style="padding:8px 4px;font-size:12px;line-height:1.8">
+298:         <div><b>谁在做</b>：${e.name}（${e.role}）${w.holder ? `<br><b>Holder</b>：${FX.emp(w.holder).name}${w.holder !== w.employee ? '（Executor：' + e.name + '）' : ''}` : ''}</div>
+299:         <div style="margin-top:6px"><b>做什么</b>：${w.title}</div>
+300:         <div style="margin-top:6px"><b>当前动作</b>：${w.current}</div>
+301:         <div style="margin-top:6px"><b>等什么</b>：${w.status === 'blocked' ? '被「' + FX.work(w.blockedBy).title + '」阻塞' : w.status === 'working' ? '执行中，不等待' : '—'}</div>
+302:         <div style="margin-top:6px"><b>做到哪里</b>：${w.plan.filter(p => p.done).length}/${w.plan.length} 步 · ${w.elapsed}</div>
+303:         <div style="margin-top:6px"><b>产生什么</b>：${w.result ? FX.result(w.result).title : '完成后产生 Result + Evidence'}</div>
+304:         <div class="hr"></div>
+305:         <div class="faint" style="font-size:11px">次层 Inspector（环境/来源/Git）在 Utility。为什么由 TA 做：责任「${e.responsibility.longTerm.split('，')[0]}」解析到 ${e.name}。</div></div>`,
+306:       util: { title: '工具活动', tabs: ['工具'], active: '工具', html: w.tools.length ? `
+307:         <div class="rowlist">${w.tools.map(t => `<div class="row"><span class="grow"><div class="title">${t.n}</div><div class="meta">${t.d}</div></span>${C.st('done')}</div>`).join('')}</div>
+308:         <div class="faint" style="margin-top:8px;font-size:11px">默认折叠 · 在对话中以摘要行呈现</div>` : '<div class="faint" style="font-size:12px">本工作暂无工具活动。</div>' },
+309:       html: `
+310:         <div class="page-head" style="display:flex;align-items:center">
+311:           ${C.avatar(e)}<div><h1>${w.title}</h1>
+312:           <div class="sub">${e.name} · ${e.role} ${w.ws ? '· ' + FX.ws(w.ws).name : ''} · ${C.st(w.status === 'needs_ceo' ? 'review' : w.status)}</div></div>
+313:           <span class="spacer"></span>
+314:           <span class="chip">${ico(C.I.cal, 12)} ${w.elapsed}</span><span class="chip">${w.cost}</span>
+315:           <button class="btn" data-action="go" data-arg="#/conversation/${e.id}">对话</button>
+316:         </div>
+317:         ${w.status === 'blocked' ? `<div class="error-banner" style="margin-bottom:16px"><div class="eb-title">被阻塞 · 等待 ${FX.work(w.blockedBy).title}</div>
+318:           <div class="eb-body">这是「等待」状态（waiting ≠ idle）：不能推进，也不会被当作空闲分配新工作。</div>
+319:           <div class="decision-actions"><button class="btn sm" data-action="open-work" data-arg="${w.blockedBy}">查看阻塞源</button><button class="btn sm ghost">通知我解除时</button></div></div>` : ''}
+320:         ${w.decision ? C.decisionBanner(w.decision) : ''}
+321:         <div class="section"><div class="section-head"><h2 class="section-title">计划与进度</h2><span class="section-more">${done}/${w.plan.length} 步 · 员工自主维护，可被打断改向</span></div>
+322:           <div class="card">${C.todoList(w.plan)}<div style="margin-top:10px">${C.progressBar(Math.round(done / w.plan.length * 100))}</div></div></div>
+323:         <div class="section"><div class="section-head"><h2 class="section-title">当前动作</h2></div>
+324:           <div class="card"><div style="display:flex;gap:8px;align-items:center"><span class="dot run"></span><span style="font-weight:550">${w.current}</span></div></div></div>
+325:         ${w.collaboration ? `<div class="section"><div class="section-head"><h2 class="section-title">协作</h2></div>
+326:           <div class="rowlist">${w.collaboration.map(id => { const c = FX.emp(id); return `<div class="row" data-action="open-employee" data-arg="${id}">${C.avatar(c, 'sm')}<span class="grow"><div class="title">${c.name}</div><div class="meta">${c.role} · 关注此工作 / 可被咨询</div></span></div>`; }).join('')}</div></div>` : ''}
+327:         ${w.reviewReq ? `<div class="section"><div class="section-head"><h2 class="section-title">Review Request（≠ Handoff）</h2></div>
+328:           <div class="card" style="font-size:13px">${w.reviewReqNote}</div></div>` : ''}
+329:         ${w.handoff ? `<div class="section"><div class="section-head"><h2 class="section-title">交接（Handoff 契约）</h2></div>
+330:           <div class="card" style="display:flex;gap:10px;align-items:center">${ico(C.I.hand, 16)}<span>${w.handoff}</span><span class="spacer"></span>${C.st('idle')}</div></div>` : ''}
+331:         ${w.result ? `<div class="section"><div class="section-head"><h2 class="section-title">结果（自然过渡）</h2></div>
+332:           <div class="rowlist">${C.resultCard(FX.result(w.result))}</div></div>` : ''}`,
+333:     };
+334:   };
+335: 
+336:   /* ---------- Decision ---------- */
+337:   V.decision = function (params) {
+338:     const d = FX.decisions.find(x => x.id === params.id) || FX.decisions[0];
+339:     return {
+340:       crumbs: C.crumbs([{ t: 'CEO 工作台', go: '/ceo' }, { t: '决定' }, { t: d.title }]),
+341:       util: { title: '技术证据', tabs: ['证据'], active: '证据', html: `<div class="muted" style="font-size:12px;margin-bottom:8px">白话 Decision 在此；技术证据在 Result Reference / Utility。</div>
+342:         <div class="rowlist">${(FX.result('r-research') ? [['选题研究简报', 'r-research'], ['竞品选题结构周报', null]] : []).map(r => `<div class="row"><span class="grow"><div class="title">${r[0]}</div></span>${r[1] ? `<button class="btn sm" data-action="open-result" data-arg="${r[1]}">打开</button>` : '<span class="end">资料库</span>'}</div>`).join('')}</div>` },
+343:       html: `
+344:         <div class="page-head"><h1>${d.title}</h1><div class="sub">来自 ${FX.emp(d.from).name} · ${FX.emp(d.from).role} · 升级原因：${d.body}</div></div>
+345:         ${C.decisionBanner(d)}
+346:         <div class="section" style="margin-top:16px"><div class="section-title" style="margin-bottom:6px">背景与选项说明</div>
+347:           <div class="card muted" style="font-size:13px;line-height:1.8">
+348:             你只需要做一件事：选择方向。技术证据、数据与执行细节由员工与 Leader 准备，附在同一 Decision Reference 下。<br>
+349:             决定后：工作自动解除阻塞并继续；本决定进入公司记录（Result → Evidence 溯源）。
+350:           </div></div>`,
+351:     };
+352:   };
+353: 
+354:   /* ---------- Result / Utility ---------- */
+355:   V.result = function (params) {
+356:     const r = FX.result(params.id) || FX.results[0];
+357:     const e = FX.emp(r.employee);
+358:     const isCode = r.type === 'code';
+359:     return {
+360:       crumbs: C.crumbs([{ t: r.ws ? FX.ws(r.ws).name : '公司级', go: r.ws ? '/workspace/' + r.ws : '/ceo' }, { t: '结果' }, { t: r.title }]),
+361:       states: { normal: {}, loading: { loading: true }, error: {} },
+362:       html: (s) => s.loading ? `
+363:         <div class="page-head"><h1>${r.title}</h1><div class="sub">正在加载结果…</div></div>
+364:         ${'<div class="skeleton" style="margin-bottom:10px"></div>'.repeat(6)}`
+365:       : `
+366:         <div class="page-head" style="display:flex;align-items:center">
+367:           <span class="fc-ico" style="width:44px;height:44px;font-size:12px">${isCode ? 'CODE' : 'DOC'}</span>
+368:           <div><h1>${r.title}</h1><div class="sub">${e.name} · ${e.role} · ${C.statusMeta(r.status)[1]} · 被 ${r.usedBy.length} 处引用</div></div>
+369:           <span class="spacer"></span>
+370:           <button class="btn" data-action="open-utility-result" data-arg="${r.id}">在 Utility 中打开</button>
+371:           <button class="btn primary" data-action="go" data-arg="#/conversation/${e.id}">问 TA</button>
+372:         </div>
+373:         <div class="section"><div class="section-head"><h2 class="section-title">证据链（Result → Evidence）</h2><span class="section-more">事实先于观点</span></div>
+374:           <div class="card">${r.evidence.map(ev => `<div class="ev-item"><span class="dot ok" style="margin-top:5px"></span><span>${ev}</span></div>`).join('')}</div></div>
+375:         <div class="section"><div class="section-head"><h2 class="section-title">被引用</h2></div>
+376:           <div class="rowlist">${r.usedBy.map(u => `<div class="row"><span class="grow">${u}</span><span class="end">引用</span></div>`).join('')}</div></div>
+377:         <div class="section"><div class="section-head"><h2 class="section-title">继续</h2></div>
+378:           <div style="display:flex;gap:8px;flex-wrap:wrap">
+379:             <button class="btn" data-action="go" data-arg="#/conversation/${e.id}">基于此结果继续工作</button>
+380:             <button class="btn" data-action="noop">导出</button>
+381:             <button class="btn" data-action="noop">查看历史版本</button>
+382:           </div></div>`,
+383:       util: RESULT_UTIL(r),
+384:     };
+385:   };
+386:   function RESULT_UTIL(r) {
+387:     const isCode = r.type === 'code';
+388:     const emp = FX.emp(r.employee);
+389:     const followup = `<div class="hr"></div>${RT.composer('c-res-' + r.id, { thread: 'emp:' + r.employee, placeholder: '继续追问或派后续工作（携带本结果引用回到对话）…', exec: `执行 · ${emp ? emp.name : ''}` })}`;
+390:     if (isCode) return { title: r.title.slice(0, 14), tabs: ['Preview', 'Source'], active: 'Preview', content: {
+391:       'Preview': `<div class="doc-preview" style="text-align:center;padding:32px"><div class="faint" style="font-size:12px">登录页本地渲染（示例数据）</div>
+392:         <div style="margin:16px auto;max-width:240px;border:1px solid var(--ui-line);border-radius:8px;padding:16px">
+393:           <div class="skeleton" style="margin-bottom:8px"></div><div class="skeleton" style="margin-bottom:8px"></div>
+394:           <div style="height:30px;border-radius:6px;background:var(--ui-accent);opacity:.85;margin-top:8px"></div></div>
+395:         <div class="faint" style="font-size:11px;margin-top:10px">Follow-up 发送后携带本结果引用返回与 ${emp ? emp.name : '员工'} 的对话。</div></div>${followup}`,
+396:       'Source': `<div class="doc-preview mono" style="font-size:12px;line-height:1.7"><div class="faint" style="margin-bottom:6px">product-platform/src/auth/login.ts · 34-93</div>
+397:         <div>export async function login(req: LoginReq) {</div>
+398:         <div style="padding-left:14px">const v = validatePassword(req.password)</div>
+399:         <div style="padding-left:14px">if (v.code === 4012) throw new AuthError(4012, 'PWD_SHORT')</div>
+400:         <div style="padding-left:14px">if (rateLimit.hit(req.ip)) throw new AuthError(4029, 'TOO_MANY')</div>
+401:         <div style="padding-left:14px">return issueSession(req.user)</div>
+402:         <div>}</div>
+403:         <div class="faint" style="margin-top:8px">+34 / −93 · declared-file change · 证据已入 Result</div></div>${followup}` } };
+404:     return { title: r.title.slice(0, 14), tabs: ['阅读'], active: '阅读', html: `<div class="doc-preview"><h3>${r.title}</h3><p>（阅读视图）本结果由真实工作产出，证据见主区证据链；引用保留来源与版本。</p><p class="faint" style="font-size:11px">WorkBuddy 阅读器参考：正文 + 顶部文件动作 + 打开关系。</p></div>${followup}` };
+405:   }
+406: 
+407:   /* ---------- 成果库 ---------- */
+408:   V.results = function () {
+409:     return {
+410:       crumbs: C.crumbs([{ t: 'Curis' }, { t: '成果库' }]),
+411:       html: `
+412:         <div class="page-head"><h1>成果库</h1><div class="sub">全部 Result · 附证据链与被引用关系</div></div>
+413:         <div class="rowlist">${FX.results.map(r => {
+414:           const e = FX.emp(r.employee);
+415:           return `<div class="row" data-action="open-result" data-arg="${r.id}">
+416:             <span class="fc-ico">${r.type === 'doc' ? 'DOC' : r.type === 'code' ? 'CODE' : 'XLSX'}</span>
+417:             <span class="grow"><div class="title">${r.title}</div><div class="meta">${e.name} · ${r.ws ? FX.ws(r.ws).name : '公司级'} · 证据 ${r.evidence.length} 条 · 被 ${r.usedBy.length} 处引用</div></span>
+418:             <span class="end">${C.statusMeta(r.status)[1]}</span></div>`; }).join('')}
+419:         </div>`,
+420:     };
+421:   };
+422: 
+423:   /* ---------- 独立对话页（CEO → 员工）---------- */
+424:   V.conversation = function (params) {
+425:     const e = FX.emp(params.emp) || FX.emp('e-zhen');
+426:     return {
+427:       crumbs: C.crumbs([{ t: '对话' }, { t: e.name }]),
+428:       html: `
+429:         <div class="page-head" style="display:flex;align-items:center;gap:12px">${C.avatar(e)}
+430:           <div><h1>${e.name}</h1><div class="sub">${e.role} · ${e.dept} · ${C.stFull(e)}</div></div>
+431:           <span class="spacer"></span><button class="btn ghost" data-action="open-employee" data-arg="${e.id}">员工详情 →</button></div>
+432:         <div class="conversation">${RT.renderThread('emp:' + e.id)}</div>
+433:         <div style="position:sticky;bottom:0;background:var(--ui-bg);padding:8px 0 4px">
+434:           ${RT.composer('c-conv-' + e.id, { thread: 'emp:' + e.id, placeholder: `与 ${e.name} 对话，或直接交代一件事…`, exec: `执行 · ${e.name}`, model: e.model })}
+435:         </div>`,
+436:     };
+437:   };
+438: })();
+
+FILE js/components.js
+1: /* ============================================================
+2:    Curis Full Product HTML Design Prototype — components.js
+3:    渲染辅助组件（纯字符串模板；事件用 data-action 委托）
+4:    ============================================================ */
+5: window.C = (function () {
+6:   const ico = (path, size) => `<svg class="ico" ${size ? `style="width:${size}px;height:${size}px;flex-basis:${size}px"` : ''} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+7:   const I = {
+8:     home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+9:     briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+10:     org: '<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>',
+11:     users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 14.4a6.5 6.5 0 0 1 4 5.6"/>',
+12:     chart: '<path d="M4 20V10M10 20V4m6 16v-7"/><path d="M2 20h20"/>',
+13:     book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+14:     video: '<rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/>',
+15:     plus: '<path d="M12 5v14M5 12h14"/>',
+16:     check: '<path d="m5 12 5 5L20 7"/>',
+17:     chev: '<path d="m9 6 6 6-6 6"/>',
+18:     down: '<path d="m6 9 6 6 6-6"/>',
+19:     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+20:     dot: '<circle cx="12" cy="12" r="4"/>',
+21:     send: '<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+22:     stop: '<rect x="7" y="7" width="10" height="10" rx="1.5"/>',
+23:     clip: '<path d="m21 12-8.5 8.5a5 5 0 0 1-7-7L14 5a3.3 3.3 0 0 1 4.7 4.7L10 18.4a1.7 1.7 0 0 1-2.4-2.4L16 7.7"/>',
+24:     at: '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6-1 10 10 0 1 0-4 8"/>',
+25:     doc: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+26:     sheet: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/>',
+27:     code: '<path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-10-2 12"/>',
+28:     gear: '<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.6 2.6a7 7 0 0 0-2 1.2l-2.3-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.6-2.6a7 7 0 0 0 2-1.2l2.3 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/>',
+29:     bell: '<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+30:     spark: '<path d="M12 3v4m0 10v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8M5.6 18.4l2.8-2.8m7.2-7.2 2.8-2.8"/>',
+31:     file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+32:     refresh: '<path d="M21 12a9 9 0 1 1-2.6-6.3M21 4v5h-5"/>',
+33:     share: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.3 10.8 7.4-3.6m-7.4 6 7.4 3.6"/>',
+34:     hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12m0-1.5v-6a1.5 1.5 0 0 1 3 0V12m0-1a1.5 1.5 0 0 1 3 0v5a6 6 0 0 1-6 6h-.8a6 6 0 0 1-4.6-2.1L3.5 16.6a1.6 1.6 0 0 1 2.4-2.1L8 16.5"/>',
+35:     x: '<path d="M18 6 6 18M6 6l12 12"/>',
+36:     minus: '<path d="M5 12h14"/>',
+37:     msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+38:     cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+39:   };
+40: 
+41:   const statusMeta = s => ({ working:['run','工作中'], idle:['idle','空闲'], blocked:['err','阻塞'], done:['ok','已完成'], review:['warn','待确认'], scheduled:['idle','已排期'], needs_ceo:['warn','需要 CEO'], activating:['warn','激活中'], running:['run','运行中'] }[s] || ['idle', s]);
+42:   const st = s => { const [c, t] = statusMeta(s); return `<span class="status"><span class="dot ${c}"></span>${t}</span>`; };
+43:   const stFull = e => e.status === 'working' ? `<span class="status"><span class="dot run"></span>工作中 · ${e.statusDesc}</span>`
+44:     : e.status === 'blocked' ? `<span class="status"><span class="dot err"></span>阻塞 · ${e.statusDesc}</span>`
+45:     : e.status === 'done' ? `<span class="status"><span class="dot ok"></span>已完成 · ${e.statusDesc}</span>`
+46:     : `<span class="status"><span class="dot idle"></span>空闲</span>`;
+47: 
+48:   const avatar = (e, cls) => `<span class="avatar ${cls || ''} av-${e.av}">${e.name[0]}</span>`;
+49:   const avatarById = (id, cls) => { const e = FX.emp(id); return e ? avatar(e, cls) : `<span class="avatar ${cls || ''} av-7">?</span>`; };
+50: 
+51:   const empRow = (e, opt = {}) => `
+52:     <div class="emp-row ${opt.open ? 'open' : ''} ${opt.selected ? 'selected' : ''}" data-emp="${e.id}">
+53:       <div class="emp-row-head" data-action="${opt.openAction || 'open-employee'}" data-arg="${e.id}">
+54:         <span data-action="${opt.utilAction || opt.openAction || 'open-employee'}" data-arg="${e.id}" style="display:contents">${avatar(e)}</span>
+55:         <span class="emp-id"><span data-action="${opt.utilAction || opt.openAction || 'open-employee'}" data-arg="${e.id}" style="display:contents"><span class="emp-name" style="${opt.utilAction ? 'cursor:pointer;text-decoration:underline dotted var(--ui-text-3);text-underline-offset:3px' : ''}">${e.name}</span></span><span class="emp-role">${e.role}${e.leader ? ' · <b style="color:var(--ui-accent)">Leader</b>' : ''}</span></span>
+56:         <span class="emp-status">${stFull(e)}</span>
+57:         <span class="emp-chevron">${ico(I.chev, 14)}</span>
+58:         <span class="emp-duty">${e.duty}</span>
+59:       </div>
+60:       <div class="emp-body">${opt.body || `当前责任：${e.responsibility.current}<br>能力：${e.capability.map(c => `<span class="tag">${c}</span>`).join(' ')}`}</div>
+61:     </div>`;
+62: 
+63:   const todoList = plan => `<div class="todo">${plan.map(p => `
+64:     <div class="ti ${p.current ? 'current' : ''} ${p.done ? 'done' : ''}">
+65:       <span class="tbox ${p.done ? 'done' : ''} ${p.current ? 'current' : ''}">${p.done ? '✓' : ''}</span>${p.t}
+66:     </div>`).join('')}</div>`;
+67: 
+68:   const progressBar = pct => `<div class="progressbar"><i style="width:${pct}%"></i></div>`;
+69: 
+70:   const workCard = (w, opt = {}) => {
+71:     const done = w.plan.filter(p => p.done).length;
+72:     const pct = Math.round(done / w.plan.length * 100);
+73:     const e = FX.emp(w.employee);
+74:     return `<div class="work-card" data-work="${w.id}">
+75:       <div class="wk-head">${st(w.status)}<span class="wk-title">${w.title}</span>
+76:         <span class="spacer"></span>
+77:         ${opt.link !== false ? `<button class="btn sm ghost" data-action="open-work" data-arg="${w.id}">查看工作</button>` : ''}
+78:       </div>
+79:       <div class="status">${avatarById(w.employee, 'sm')} ${e.name} · ${e.role} ${w.ws ? '· ' + FX.ws(w.ws).name : ''}</div>
+80:       ${todoList(w.plan)}
+81:       ${progressBar(pct)}
+82:       <div class="status faint" style="font-size:12px">${w.status === 'working' ? `当前：${w.current}` : w.status === 'blocked' ? `阻塞：${w.current}` : '已完成'} · ${w.elapsed} · ${w.cost}</div>
+83:       ${w.tools && w.tools.length ? `<details class="tool-block"><summary>工具活动（${w.tools.length}）· 默认折叠</summary><div class="tool-body">${w.tools.map(t => `▸ ${t.n} — ${t.d}`).join('\n')}</div></details>` : ''}
+84:       ${w.handoff ? `<div class="step-line">${ico(I.hand, 14)} ${w.handoff}</div>` : ''}
+85:       ${w.result ? `<div style="margin-top:6px"><span class="result-ref" data-action="open-result" data-arg="${w.result}">${ico(I.doc, 13)} 查看结果 · ${FX.result(w.result).title}</span></div>` : ''}
+86:     </div>`;
+87:   };
+88: 
+89:   const msg = m => {
+90:     if (m.role === 'sys') return `<div class="step-line" style="justify-content:center">${m.text}</div>`;
+91:     if (m.role === 'user') return `<div class="msg user"><div class="bubble">${m.text}${(m.atts && m.atts.length) ? `<div class="filecard-grid">${m.atts.map(a => `<div class="filecard"><span class="fc-ico">${a.endsWith('.xlsx') ? 'XLSX' : a.endsWith('.ts') ? 'TS' : 'DOC'}</span><span><span class="fc-name">${a}</span><br><span class="fc-meta">引用 · 点击在 Utility 打开</span></span></div>`).join('')}</div>` : ''}${(m.refs && m.refs.length) ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${m.refs.map(r => `<span class="chip">${r}</span>`).join('')}</div>` : ''}</div></div>`;
+92:     const e = m.emp ? FX.emp(m.emp) : null;
+93:     return `<div class="msg">${e ? avatar(e, 'sm') : ''}<div style="min-width:0">
+94:       ${e ? `<div class="who">${e.name} · ${e.role} ${stFull(e)}</div>` : ''}
+95:       <div class="bubble" style="max-width:100%">${m.text}</div>
+96:       ${m.fileCards ? `<div class="filecard-grid">${m.fileCards.map(f => `
+97:         <div class="filecard" data-action="open-result" data-arg="${f.result || ''}"><span class="fc-ico">${f.ext}</span>
+98:           <span><span class="fc-name">${f.name}</span><br><span class="fc-meta">${f.meta}</span></span>
+99:           <span class="spacer"></span><span class="iconbtn">${ico(I.share, 14)}</span></div>`).join('')}</div>` : ''}
+100:       ${m.citations ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${m.citations.map(c => `<span class="chip">来源 · ${c}</span>`).join('')}</div>` : ''}
+101:       ${m.result ? `<div style="margin-top:8px"><span class="result-ref" data-action="open-result" data-arg="${m.result}">${ico(I.doc, 13)} ${FX.result(m.result).title}</span></div>` : ''}
+102:       ${m.tools ? `<details class="tool-block"><summary>工具活动（${m.tools.length}）</summary><div class="tool-body">${m.tools.map(t => `▸ ${t.n} — ${t.d}`).join('\n')}</div></details>` : ''}
+103:       ${m.thinking ? `<details class="tool-block"><summary>思考过程</summary><div class="tool-body">${m.thinking}</div></details>` : ''}
+104:       ${m.steps ? m.steps.map(s => `<div class="step-line">${s.done ? '<span class="dot ok"></span>' : '<span class="dot idle"></span>'} ${s.t}</div>`).join('') : ''}
+105:       ${m.error ? `<div class="error-banner" style="margin-top:8px"><div class="eb-title">出错了 · ${m.error}</div><div class="eb-body">内容没有变化，可以直接重试；也可以换个说法。</div>
+106:         <div class="decision-actions"><button class="btn sm">重新生成</button><button class="btn sm ghost">换个说法</button></div></div>` : ''}
+107:       ${m.actions !== false ? `<div class="msg-actions">
+108:         <button class="iconbtn" title="复制全文" data-rt="msg-copy" data-text="${(m.text || '').replace(/"/g, '&quot;')}">${ico(I.doc, 13)}</button>
+109:         <button class="iconbtn" title="引用">${ico(I.at, 13)}</button>
+110:         <button class="iconbtn" title="重新生成">${ico(I.refresh, 13)}</button>
+111:         <button class="iconbtn" title="分享">${ico(I.share, 13)}</button>
+112:         <button class="iconbtn" title="更多" data-rt="msg-more">${ico(I.down, 13)}</button>
+113:         <span class="costline" style="margin:0">${m.cost ? `共消耗 ${m.cost}` : ''}${m.model ? ` · ${m.model}` : ''}</span>
+114:       </div>` : ''}
+115:     </div></div>`;
+116:   };
+117: 
+118:   /* Composer — Frozen X10 semantic slots: 输入/添加/访问权限/工作模式/执行者/发送 */
+119:   const composer = (opt = {}) => `
+120:     <div class="composer cx-anchor" id="${opt.id || 'composer'}" data-running="${opt.running ? '1' : ''}">
+121:       ${opt.attach ? `<div class="attach-strip"><span class="chip">${ico(I.doc, 12)} ${opt.attach}</span></div>` : ''}
+122:       <textarea class="cx-input" rows="${opt.rows || 1}" placeholder="${opt.placeholder || '给 TA 一句指令，或 @ 员工 / 资料 / 结果'}">${opt.value || ''}</textarea>
+123:       <div class="cx-bar">
+124:         <button class="iconbtn" data-action="cx-attach" title="添加附件">${ico(I.clip, 16)}</button>
+125:         <button class="iconbtn" data-action="cx-ref" title="@ 引用">@</button>
+126:         <span class="chip warn clickable" data-action="cx-perm">${ico(I.gear, 12)} ${opt.perm || '最小权限'}</span>
+127:         <span class="chip clickable" data-action="cx-mode">${ico(I.spark, 12)} ${opt.mode || '对话'}</span>
+128:         <span class="spacer"></span>
+129:         <span class="chip clickable" data-action="cx-exec">${ico(I.users, 12)} ${opt.exec || '执行 · 自动选择'}</span>
+130:         <span class="chip clickable cx-model" data-action="cx-model">${opt.model || 'GLM-5.3'} ${ico(I.down, 11)}</span>
+131:         ${opt.running
+132:           ? `<button class="cx-send stop" data-action="cx-stop" title="停止">${ico(I.stop, 14)}</button>`
+133:           : `<button class="cx-send" data-action="cx-send" title="发送" ${opt.disabled ? 'disabled' : ''}>${ico(I.send, 14)}</button>`}
+134:       </div>
+135:       ${opt.status ? `<div class="costline">${opt.status}</div>` : ''}
+136:     </div>`;
+137: 
+138:   const resultCard = r => {
+139:     const e = FX.emp(r.employee);
+140:     return `<div class="filecard" style="padding:12px" data-action="open-result" data-arg="${r.id}">
+141:       <span class="fc-ico">${r.type === 'doc' ? 'DOC' : r.type === 'code' ? 'CODE' : 'XLSX'}</span>
+142:       <span class="grow"><span class="fc-name">${r.title}</span><br>
+143:         <span class="fc-meta">${e ? e.name + ' · ' : ''}${r.status === 'done' ? '已完成' : '待确认'} · 证据 ${r.evidence.length} 条 · 被 ${r.usedBy.length} 处引用</span></span>
+144:       <span class="iconbtn">${ico(I.chev, 14)}</span></div>`;
+145:   };
+146: 
+147:   const decisionBanner = d => `
+148:     <div class="decision-banner" id="decision-${d.id}">
+149:       <div class="db-title">需要 CEO 决定 · ${d.title}</div>
+150:       <div class="db-body">${d.body}</div>
+151:       <div class="decision-actions">${d.options.map((o, i) => `<button class="btn sm ${i === 0 ? 'primary' : ''}" data-action="decide" data-arg="${d.id}" data-opt="${i}">${o}</button>`).join('')}</div>
+152:     </div>`;
+153: 
+154:   const emptyState = (title, sub, ideas = [], primary) => `
+155:     <div class="empty">
+156:       <div class="e-title">${title}</div>
+157:       <div class="e-sub">${sub}</div>
+158:       ${primary ? `<div style="margin-top:4px">${primary}</div>` : ''}
+159:       ${ideas.length ? `<div class="e-ideas">${ideas.map(x => `<button data-action="${x.action || 'noop'}" data-arg="${x.arg || ''}">${ico(I.spark, 14)} ${x.t}</button>`).join('')}</div>` : ''}
+160:     </div>`;
+161: 
+162:   const crumbs = parts => parts.map((p, i) => i === parts.length - 1 ? `<b>${p.t}</b>` : `<a href="#${p.go || ''}">${p.t}</a>`).join('<span class="sep">/</span>');
+163: 
+164:   return { I, ico, st, stFull, avatar, avatarById, empRow, todoList, progressBar, workCard, msg, composer, resultCard, decisionBanner, emptyState, crumbs, statusMeta };
+165: })();
+166: 
+167: /* SVG 折线图与条形（Operating Intelligence；安静无装饰） */
+168: C.lineChart = function (series, opt) {
+169:   opt = opt || {};
+170:   const w = opt.w || 560, h = opt.h || 140, max = Math.max.apply(null, series.map(function (x) { return x.v; })) * 1.15;
+171:   const pts = series.map(function (s2, i) { return [24 + i * ((w - 40) / (series.length - 1)), h - 24 - (s2.v / max) * (h - 40)]; });
+172:   const path = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+173:   const area = path + ' L' + pts[pts.length - 1][0] + ',' + (h - 24) + ' L' + pts[0][0] + ',' + (h - 24) + ' Z';
+174:   return '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block">' +
+175:     '<path d="' + area + '" fill="var(--ui-accent-soft)"/>' +
+176:     '<path d="' + path + '" fill="none" stroke="var(--ui-accent)" stroke-width="2" stroke-linejoin="round"/>' +
+177:     pts.map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.5" fill="var(--ui-accent)"/>'; }).join('') +
+178:     series.map(function (s2, i) { return i % 2 ? '' : '<text x="' + (24 + i * ((w - 40) / (series.length - 1))) + '" y="' + (h - 6) + '" font-size="10" fill="var(--ui-text-3)" text-anchor="middle">' + s2.k + '</text>'; }).join('') +
+179:     '</svg>';
+180: };
+181: C.bars = function (items) {
+182:   const max = Math.max.apply(null, items.map(function (i) { return i[1]; }));
+183:   return '<div style="display:flex;flex-direction:column;gap:8px">' + items.map(function (i) {
+184:     return '<div style="display:flex;align-items:center;gap:10px;font-size:12px">' +
+185:       '<span style="flex:0 0 72px;color:var(--ui-text-2)">' + i[0] + '</span>' +
+186:       '<span style="flex:1;height:8px;border-radius:999px;background:var(--ui-surface-2);overflow:hidden"><i style="display:block;height:100%;width:' + (i[1] / max * 100).toFixed(1) + '%;background:var(--ui-accent);opacity:.8;border-radius:999px"></i></span>' +
+187:       '<span class="mono" style="flex:0 0 54px;text-align:right;color:var(--ui-text-2)">' + (i[2] || i[1]) + '</span></div>';
+188:   }).join('') + '</div>';
+189: };
+
+FILE css/curis.css
+1: /* ============================================================
+2:    Curis Full Product HTML Design Prototype — curis.css
+3:    Layer 2: V1 accent arbitration + prototype components
+4:    (Layer 1 = frozen tokens.css / shell.css copied from
+5:     curis-ui-prototype/_system — D-generation, contract-compliant)
+6:    VISUAL AUTHORITY REVIEW REQUIRED:
+7:    Frozen CURIS_VISUAL_STANDARD_V1 (Direction D) accent = #806BE5.
+8:    The copied legacy tokens carry #32f08c (old UI Frozen Spec,
+9:    superseded per PRODUCT_DOCUMENT_POINTER #4). This prototype
+10:    follows the CURRENT authority (#806BE5, used sparingly:
+11:    focus/active/links/small indicators only). Conflict recorded
+12:    in CURIS_FULL_PRODUCT_HTML_PROTOTYPE_REVIEW.md — CEO to close.
+13:    ============================================================ */
+14: 
+15: :root, [data-theme="light"] {
+16:   --ui-accent: #806BE5;
+17:   --ui-accent-soft: rgba(128, 107, 229, .12);
+18:   --ui-accent-strong: #6a55d0;
+19: }
+20: [data-theme="dark"] {
+21:   --ui-accent: #9B88EC;
+22:   --ui-accent-soft: rgba(155, 136, 236, .16);
+23:   --ui-accent-strong: #b3a4f2;
+24: }
+25: 
+26: /* ---------- base ---------- */
+27: html, body { height: 100%; }
+28: body { overflow: hidden; }
+29: button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+30: input, textarea, select { font: inherit; color: inherit; }
+31: a { color: inherit; }
+32: ::placeholder { color: var(--ui-text-3); }
+33: :focus-visible { outline: 2px solid var(--ui-focus-color); outline-offset: 1px; }
+34: svg.ico { width: 18px; height: 18px; flex: 0 0 18px; }
+35: 
+36: /* ---------- app layout (Four-Pane, Frozen) ---------- */
+37: #app { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr); height: 100vh; }
+38: #app.has-context { grid-template-columns: var(--ui-sidebar-w) 256px minmax(0,1fr); }
+39: #app.has-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr) 360px; }
+40: #app.has-context.has-utility { grid-template-columns: var(--ui-sidebar-w) 256px minmax(0,1fr) 360px; }
+41: @media (max-width: 1180px) {
+42:   #app.has-context { grid-template-columns: var(--ui-sidebar-w) 220px minmax(0,1fr); }
+43:   #app.has-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr) 320px; }
+44:   #app.has-context.has-utility { grid-template-columns: var(--ui-sidebar-w) 220px minmax(0,1fr) 320px; }
+45: }
+46: @media (max-width: 1040px) {
+47:   /* 1024: context auto-collapses; utility overlays main */
+48:   #app.has-context, #app.has-context.has-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr); }
+49:   #app.has-context #pane-context { display: none; }
+50:   #app.has-utility #pane-utility, #app.has-context.has-utility #pane-utility {
+51:     position: fixed; right: 0; top: 0; bottom: 0; width: min(400px, 90vw); z-index: 60;
+52:     box-shadow: var(--ui-shadow-drawer, -8px 0 24px rgba(0,0,0,.18));
+53:   }
+54: }
+55: .pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+56: .pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: 8px; padding: 0 12px; border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+57: .pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+58: #pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+59: #pane-nav > .pane-content { padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+60: #pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+61: #pane-context > .pane-content { padding: 8px; }
+62: #pane-main { background: var(--ui-bg); }
+63: #pane-main > .pane-content.pad { padding: 28px 32px 48px; max-width: 1280px; }
+64: #pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+65: #pane-utility > .pane-content { padding: 16px; }
+66: .brand { display: flex; align-items: center; gap: 8px; padding: 6px 8px 12px; font-weight: 650; }
+67: .brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; background: var(--ui-accent); color: #fff; font-weight: 700; font-size: 12px; }
+68: .nav-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 8px; border-radius: var(--ui-r-sm); color: var(--ui-text-2); min-height: 32px; }
+69: .nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+70: .nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; box-shadow: inset 2px 0 0 var(--ui-accent); }
+71: .nav-group { font-size: 11px; color: var(--ui-text-3); text-transform: uppercase; letter-spacing: .04em; padding: 12px 8px 4px; }
+72: .nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: 16px; border-left: 1px solid var(--ui-line); margin-left: 12px; }
+73: .nav-children .nav-item { min-height: 28px; font-size: var(--ui-fs-2); }
+74: .nav-count { margin-left: auto; font-size: 11px; color: var(--ui-text-3); background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: 999px; padding: 0 6px; }
+75: .nav-spacer { flex: 1 1 auto; min-height: 16px; }
+76: .nav-user { border-top: 1px solid var(--ui-line); padding-top: 8px; display: flex; flex-direction: column; gap: 2px; }
+77: 
+78: .crumbs { display: flex; align-items: center; gap: 6px; font-size: var(--ui-fs-2); color: var(--ui-text-2); white-space: nowrap; overflow: hidden; }
+79: .crumbs .sep { opacity: .5; }
+80: .crumbs b { color: var(--ui-text); font-weight: 600; }
+81: .spacer { flex: 1; }
+82: 
+83: /* ---------- primitives ---------- */
+84: .btn { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: var(--ui-ctl-h); padding: 0 12px; border-radius: var(--ui-r-sm); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text); font-size: var(--ui-fs-2); transition: background var(--ui-t-fast), border-color var(--ui-t-fast); }
+85: .btn:hover { background: var(--ui-bg); }
+86: .btn.primary { background: var(--ui-action-primary-bg); border-color: transparent; color: var(--ui-action-primary-fg); font-weight: 600; }
+87: .btn.primary:hover { background: var(--ui-action-primary-hover); }
+88: .btn.accent { background: var(--ui-accent); border-color: transparent; color: #fff; font-weight: 600; }
+89: .btn.accent:hover { background: var(--ui-accent-strong); }
+90: .btn.sm { height: var(--ui-ctl-h-sm); padding: 0 8px; font-size: var(--ui-fs-1); }
+91: .btn.ghost { border-color: transparent; background: transparent; color: var(--ui-text-2); }
+92: .btn.ghost:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+93: .btn:disabled { opacity: .45; cursor: not-allowed; }
+94: .chip { display: inline-flex; align-items: center; gap: 4px; border: 0; background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: 6px; padding: 2px 8px; font-size: 11.5px; white-space: nowrap; }
+95: .chip.clickable:hover { color: var(--ui-text); background: var(--ui-line); }
+96: .chip.active { background: var(--ui-accent-soft); color: var(--ui-accent-strong); font-weight: 550; }
+97: .chip.warn { color: var(--ui-warning); background: color-mix(in srgb, var(--ui-warning) 12%, transparent); }
+98: .tag { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 5px; font-size: 11px; background: var(--ui-surface-2); color: var(--ui-text-2); }
+99: .dot { width: 7px; height: 7px; border-radius: 999px; display: inline-block; flex: 0 0 7px; }
+100: .dot.ok { background: var(--ui-success); } .dot.run { background: var(--ui-accent); animation: pulse 1.6s ease-in-out infinite; }
+101: .dot.warn { background: var(--ui-warning); } .dot.err { background: var(--ui-danger); } .dot.idle { background: var(--ui-text-3); }
+102: @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+103: .avatar { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; flex: 0 0 36px; }
+104: .avatar.sm { width: 24px; height: 24px; font-size: 11px; flex-basis: 24px; }
+105: .avatar.lg { width: 56px; height: 56px; font-size: 20px; flex-basis: 56px; }
+106: .av-1 { background:#4a6fa5; } .av-2 { background:#5b8c6e; } .av-3 { background:#9a7b4e; } .av-4 { background:#7a5b8c; } .av-5 { background:#a05b6b; } .av-6 { background:#4e8c8c; } .av-7 { background:#57606a; }
+107: .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ui-text-2); white-space: nowrap; }
+108: .segmented { display: inline-flex; background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 2px; gap: 2px; }
+109: .segmented button { height: 26px; padding: 0 10px; border-radius: 6px; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+110: .segmented button:hover { color: var(--ui-text); }
+111: .segmented button.active { background: var(--ui-surface); color: var(--ui-text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+112: .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--ui-line); }
+113: .tab { padding: 8px 12px; font-size: var(--ui-fs-3); color: var(--ui-text-2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+114: .tab:hover { color: var(--ui-text); }
+115: .tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+116: .chip-row { display: flex; gap: 6px; align-items: center; overflow-x: auto; scrollbar-width: none; }
+117: .chip-row::-webkit-scrollbar { display: none; }
+118: 
+119: .page-head { margin-bottom: 26px; }
+120: .page-head h1 { font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 4px; }
+121: .page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+122: .section { margin-bottom: 30px; }
+123: .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+124: .section-title { font-size: 15px; font-weight: 650; margin: 0; letter-spacing: -0.005em; }
+125: .section-more { font-size: 12px; color: var(--ui-text-3); }
+126: .section-more:hover { color: var(--ui-text); }
+127: 
+128: .rowlist { display: flex; flex-direction: column; background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: 10px; overflow: hidden; }
+129: .row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--ui-line); min-height: 46px; font-size: 13px; }
+130: .row:last-child { border-bottom: 0; }
+131: .row:hover { background: var(--ui-surface-2); }
+132: .row.selected { background: var(--ui-accent-soft); }
+133: .row .grow { flex: 1; min-width: 0; }
+134: .row .title { font-weight: 560; color: var(--ui-text); }
+135: .row .meta { font-size: 12px; color: var(--ui-text-3); margin-top: 2px; }
+136: .row .end { color: var(--ui-text-3); font-size: 12px; white-space: nowrap; }
+137: .iconbtn { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: var(--ui-r-sm); color: var(--ui-text-2); }
+138: .iconbtn:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+139: 
+140: /* ---------- employee row (Frozen two-line) ---------- */
+141: .emp-row { border-bottom: 1px solid var(--ui-line); }
+142: .emp-row:last-child { border-bottom: 0; }
+143: .emp-row-head { display: grid; grid-template-columns: 36px 1fr auto auto; grid-template-rows: auto auto; align-items: center; gap: 0 12px; padding: 10px 10px; cursor: pointer; }
+144: .emp-row-head:hover { background: var(--ui-surface); }
+145: .emp-row.selected .emp-row-head { background: var(--ui-accent-soft); }
+146: .emp-avatar { grid-row: 1 / 3; }
+147: .emp-id { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+148: .emp-name { font-weight: 600; }
+149: .emp-role { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+150: .emp-duty { grid-column: 2; font-size: var(--ui-fs-2); color: var(--ui-text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+151: .emp-status { grid-column: 3; grid-row: 1 / 3; }
+152: .emp-chevron { grid-column: 4; grid-row: 1 / 3; color: var(--ui-text-3); transition: transform 150ms ease; }
+153: .emp-row.open .emp-chevron { transform: rotate(90deg); }
+154: .emp-body { display: none; padding: 0 10px 14px 58px; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+155: .emp-row.open .emp-body { display: block; }
+156: 
+157: /* ---------- cards (used sparingly) ---------- */
+158: .card { border: 1px solid var(--ui-line); border-radius: 10px; background: var(--ui-surface); padding: 16px; }
+159: .card.click { cursor: pointer; } .card.click:hover { border-color: var(--ui-text-3); }
+160: .grid { display: grid; gap: 14px; }
+161: .grid.c2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+162: .grid.c3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+163: .grid.c4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+164: @media (max-width: 1180px) { .grid.c4 { grid-template-columns: repeat(2, minmax(0,1fr)); } .grid.c3 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+165: @media (max-width: 1040px) { .grid.c2, .grid.c3, .grid.c4 { grid-template-columns: 1fr; } }
+166: 
+167: .talent-card { display: flex; flex-direction: column; gap: 8px; }
+168: .talent-card .tc-head { display: flex; align-items: center; gap: 10px; }
+169: .talent-card .tc-name { font-weight: 600; font-size: var(--ui-fs-3); }
+170: .talent-card .tc-sub { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+171: .talent-card .tc-desc { font-size: var(--ui-fs-2); color: var(--ui-text-2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+172: .talent-card .tc-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+173: .talent-card .tc-foot { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+174: 
+175: /* ---------- decision banner ---------- */
+176: .decision-banner { border: 1px solid var(--ui-line); border-left: 3px solid var(--ui-warning); background: var(--ui-surface); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+177: .decision-banner .db-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ui-warning); }
+178: .decision-banner .db-body { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+179: .decision-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+180: 
+181: /* ---------- conversation ---------- */
+182: .conversation { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; padding: 8px 0 28px; }
+183: .msg { display: flex; gap: 10px; }
+184: .msg.user { flex-direction: row-reverse; }
+185: .msg .bubble { background: var(--ui-surface); border: 0; border-radius: 10px; padding: 12px 14px; max-width: 86%; font-size: 13.5px; line-height: 1.65; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+186: .msg.user .bubble { background: var(--ui-accent-soft); }
+187: .msg .who { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ui-text-3); margin-bottom: 5px; }
+188: .msg-actions { display: flex; gap: 10px; margin-top: 6px; color: var(--ui-text-3); }
+189: .msg-actions .iconbtn { width: 22px; height: 22px; }
+190: .tool-block { border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-bg); margin-top: 8px; font-size: var(--ui-fs-2); }
+191: .tool-block summary { display: flex; align-items: center; gap: 6px; padding: 6px 10px; color: var(--ui-text-2); cursor: pointer; list-style: none; }
+192: .tool-block summary::-webkit-details-marker { display: none; }
+193: .tool-block .tool-body { padding: 0 10px 8px; color: var(--ui-text-3); font-family: var(--ui-mono, monospace); font-size: var(--ui-fs-1); white-space: pre-wrap; }
+194: .result-ref { display: inline-flex; align-items: center; gap: 4px; color: var(--ui-accent); font-size: var(--ui-fs-2); border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: 3px 8px; border-radius: var(--ui-r-sm); }
+195: .result-ref:hover { border-color: var(--ui-accent); }
+196: .filecard-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: 8px; }
+197: .filecard { display: flex; align-items: center; gap: 10px; border: 1px solid var(--ui-line); border-radius: 10px; background: var(--ui-surface-2); padding: 10px; cursor: pointer; }
+198: .filecard:hover { border-color: var(--ui-text-3); }
+199: .filecard .fc-ico { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: var(--ui-surface); border: 1px solid var(--ui-line); color: var(--ui-text-2); font-size: 10px; font-weight: 700; }
+200: .filecard .fc-name { font-size: var(--ui-fs-2); font-weight: 550; }
+201: .filecard .fc-meta { font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+202: .step-line { display: flex; align-items: center; gap: 8px; font-size: var(--ui-fs-2); color: var(--ui-text-3); margin-top: 6px; }
+203: .costline { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+204: 
+205: /* ---------- composer ---------- */
+206: .composer { border: 1px solid var(--ui-line); border-radius: 14px; background: var(--ui-surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.05); transition: border-color .15s ease, box-shadow .15s ease; }
+207: .composer:focus-within { border-color: var(--ui-accent); box-shadow: 0 0 0 3px var(--ui-accent-soft); }
+208: .composer .cx-input { width: 100%; min-height: 40px; max-height: 160px; resize: none; background: transparent; border: 0; font-size: var(--ui-fs-3); line-height: 1.5; }
+209: .composer .cx-input:focus { outline: none; }
+210: .composer .cx-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+211: .composer .cx-send { margin-left: auto; width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); }
+212: .composer .cx-send:hover { background: var(--ui-action-primary-hover); }
+213: .composer .cx-send:disabled { background: var(--ui-surface-2); color: var(--ui-text-3); border: 1px solid var(--ui-line); }
+214: .composer .cx-send.stop { background: var(--ui-danger); color: #fff; }
+215: .composer .attach-strip { display: flex; gap: 6px; flex-wrap: wrap; }
+216: .menu-pop { position: absolute; bottom: calc(100% + 6px); left: 0; min-width: 220px; background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); box-shadow: var(--ui-shadow-pop, 0 8px 24px rgba(0,0,0,.14)); padding: 4px; z-index: 80; }
+217: .menu-pop .mi { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 7px 10px; border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); }
+218: .menu-pop .mi:hover { background: var(--ui-surface-2); }
+219: .menu-pop .mi.sel { background: var(--ui-accent-soft); font-weight: 600; }
+220: .menu-pop .mi .m-sub { margin-left: auto; font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+221: .cx-anchor { position: relative; }
+222: 
+223: /* ---------- agent work / progress ---------- */
+224: .work-card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+225: .work-card .wk-head { display: flex; align-items: center; gap: 8px; }
+226: .work-card .wk-title { font-weight: 600; }
+227: .todo { display: flex; flex-direction: column; gap: 6px; font-size: var(--ui-fs-2); }
+228: .todo .ti { display: flex; align-items: center; gap: 8px; color: var(--ui-text-2); }
+229: .todo .ti.current { color: var(--ui-text); font-weight: 550; }
+230: .todo .ti.done { color: var(--ui-text-3); text-decoration: line-through; text-decoration-color: var(--ui-line); }
+231: .tbox { width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--ui-text-3); display: inline-grid; place-items: center; flex: 0 0 14px; }
+232: .tbox.done { background: var(--ui-success); border-color: var(--ui-success); color: #fff; font-size: 10px; }
+233: .tbox.current { border-color: var(--ui-accent); box-shadow: 0 0 0 3px var(--ui-accent-soft); }
+234: .progressbar { height: 4px; border-radius: 999px; background: var(--ui-surface-2); overflow: hidden; }
+235: .progressbar i { display: block; height: 100%; background: var(--ui-accent); border-radius: 999px; transition: width .3s ease; }
+236: 
+237: /* ---------- result / utility ---------- */
+238: .util-tabs { display: flex; align-items: center; gap: 4px; }
+239: .util-tab { padding: 4px 10px; border-radius: var(--ui-r-sm); font-size: var(--ui-fs-2); color: var(--ui-text-2); border: 1px solid transparent; }
+240: .util-tab:hover { color: var(--ui-text); }
+241: .util-tab.active { background: var(--ui-surface); border-color: var(--ui-line); color: var(--ui-text); font-weight: 550; }
+242: .doc-preview { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 16px; font-size: var(--ui-fs-3); line-height: 1.7; }
+243: .doc-preview h3 { font-size: var(--ui-fs-5); margin: 0 0 8px; }
+244: .doc-preview p { color: var(--ui-text-2); margin: 0 0 8px; }
+245: .seg-pill { display: inline-flex; background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: 999px; padding: 2px; }
+246: .seg-pill button { height: 24px; padding: 0 10px; border-radius: 999px; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+247: .seg-pill button.active { background: var(--ui-surface); color: var(--ui-text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+248: .ev-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+249: .ev-item:last-child { border-bottom: 0; }
+250: 
+251: /* ---------- overlays ---------- */
+252: .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 90; display: none; }
+253: .overlay.open { display: block; }
+254: .search-panel { position: fixed; top: 12vh; left: 50%; transform: translateX(-50%); width: min(680px, 92vw); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-lg); box-shadow: 0 24px 64px rgba(0,0,0,.28); z-index: 95; overflow: hidden; }
+255: .search-panel .sp-input { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--ui-line); }
+256: .search-panel .sp-input input { flex: 1; border: 0; background: transparent; font-size: 16px; }
+257: .search-panel .sp-input input:focus { outline: none; }
+258: .search-body { display: grid; grid-template-columns: 1fr 300px; min-height: 320px; max-height: 60vh; }
+259: .search-results { overflow-y: auto; padding: 8px; border-right: 1px solid var(--ui-line); }
+260: .search-preview { padding: 16px; overflow-y: auto; background: var(--ui-surface-2); }
+261: .sp-filters { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--ui-line); }
+262: .sp-group { font-size: 11px; color: var(--ui-text-3); padding: 10px 10px 4px; text-transform: uppercase; letter-spacing: .04em; }
+263: .sp-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--ui-r-sm); min-height: 36px; }
+264: .sp-row:hover, .sp-row.sel { background: var(--ui-surface-2); }
+265: .sp-row .type { width: 52px; flex: 0 0 52px; font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+266: .sp-row .t { font-size: var(--ui-fs-2); font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+267: .sp-row .m { margin-left: auto; font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+268: 
+269: .notif-panel { position: fixed; top: 44px; right: 12px; width: 360px; max-height: 70vh; overflow-y: auto; background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-lg); box-shadow: 0 16px 48px rgba(0,0,0,.2); z-index: 95; }
+270: .notif-item { display: flex; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--ui-line); }
+271: .notif-item:last-child { border-bottom: 0; }
+272: .notif-item .n-title { font-size: var(--ui-fs-2); font-weight: 550; }
+273: .notif-item .n-body { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-top: 2px; }
+274: .notif-item .n-time { margin-left: auto; font-size: var(--ui-fs-1); color: var(--ui-text-3); white-space: nowrap; }
+275: 
+276: /* ---------- floating CEO assistant ---------- */
+277: .assistant { position: fixed; z-index: 85; }
+278: .assistant.collapsed { right: 24px; bottom: 24px; }
+279: .assistant.collapsed .as-pill { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,.16); cursor: pointer; font-size: var(--ui-fs-2); }
+280: .assistant.collapsed .as-pill:hover { border-color: var(--ui-text-3); }
+281: .assistant.expanded { right: 24px; bottom: 24px; width: 380px; height: 520px; display: flex; flex-direction: column; background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-lg); box-shadow: 0 24px 64px rgba(0,0,0,.24); overflow: hidden; }
+282: .as-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--ui-line); }
+283: .as-head .as-name { font-weight: 600; font-size: var(--ui-fs-2); }
+284: .as-head .as-sub { font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+285: .as-body { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+286: .as-msg { font-size: var(--ui-fs-2); line-height: 1.6; }
+287: .as-msg.ai { background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: 10px; padding: 10px; }
+288: .as-msg.user { align-self: flex-end; background: var(--ui-accent-soft); border-radius: 10px; padding: 8px 10px; max-width: 85%; }
+289: .as-suggest { display: flex; flex-direction: column; gap: 6px; padding: 0 12px 8px; }
+290: .as-suggest button { text-align: left; font-size: var(--ui-fs-2); color: var(--ui-text-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 6px 10px; background: var(--ui-surface-2); }
+291: .as-suggest button:hover { color: var(--ui-text); border-color: var(--ui-text-3); }
+292: .as-composer { border-top: 1px solid var(--ui-line); padding: 10px; }
+293: 
+294: /* ---------- state switcher (DESIGN TOOL) ---------- */
+295: .state-switcher { position: fixed; left: 12px; bottom: 12px; z-index: 100; display: flex; align-items: center; gap: 6px; background: var(--ui-surface); border: 1px dashed var(--ui-warning); border-radius: var(--ui-r-md); padding: 6px 8px; font-size: 11px; }
+296: .state-switcher .ss-label { color: var(--ui-warning); font-weight: 700; letter-spacing: .04em; }
+297: .state-switcher select { background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: 6px; font-size: 11px; padding: 2px 6px; }
+298: 
+299: /* ---------- settings ---------- */
+300: .settings-wrap { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 24px; }
+301: @media (max-width: 1040px) { .settings-wrap { grid-template-columns: 1fr; } }
+302: .settings-nav { display: flex; flex-direction: column; gap: 2px; }
+303: .settings-nav .nav-item { min-height: 32px; }
+304: .dl-row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+305: .dl-row:last-child { border-bottom: 0; }
+306: .dl-row .k { color: var(--ui-text-2); flex: 0 0 180px; }
+307: .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+308: .field .f-label { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+309: .input { height: var(--ui-ctl-h); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); background: var(--ui-surface); padding: 0 10px; font-size: var(--ui-fs-2); width: 100%; }
+310: .input:focus { outline: none; border-color: var(--ui-accent); }
+311: .switch { width: 34px; height: 20px; border-radius: 999px; background: var(--ui-surface-2); border: 1px solid var(--ui-line); position: relative; cursor: pointer; flex: 0 0 34px; }
+312: .switch i { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 999px; background: var(--ui-text-3); transition: all .15s ease; }
+313: .switch.on { background: var(--ui-accent); border-color: var(--ui-accent); }
+314: .switch.on i { left: 16px; background: #fff; }
+315: 
+316: /* ---------- empty / loading / error ---------- */
+317: .empty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 40px 8px; }
+318: .empty .e-title { font-size: var(--ui-fs-5); font-weight: 650; }
+319: .empty .e-sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); max-width: 420px; }
+320: .empty .e-ideas { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+321: .empty .e-ideas button { display: flex; align-items: center; gap: 8px; font-size: var(--ui-fs-2); color: var(--ui-text-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 8px 12px; background: var(--ui-surface); }
+322: .empty .e-ideas button:hover { color: var(--ui-text); border-color: var(--ui-text-3); }
+323: .skeleton { border-radius: var(--ui-r-sm); background: linear-gradient(90deg, var(--ui-surface-2), var(--ui-surface), var(--ui-surface-2)); background-size: 200% 100%; animation: shimmer 1.4s infinite; height: 14px; }
+324: @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+325: .error-banner { border: 1px solid var(--ui-danger); border-left-width: 3px; background: var(--ui-surface); border-radius: var(--ui-r-md); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+326: .error-banner .eb-title { font-weight: 600; color: var(--ui-danger); display: flex; gap: 8px; align-items: center; }
+327: .error-banner .eb-body { font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+328: 
+329: /* KPI (used sparingly, never as zero-dashboards) */
+330: .kpi-row { display: flex; gap: 24px; }
+331: .kpi .n { font-size: var(--ui-fs-7); font-weight: 650; line-height: 1.1; }
+332: .kpi .l { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+333: .kpi .d { font-size: var(--ui-fs-1); }
+334: 
+335: /* misc */
+336: .muted { color: var(--ui-text-2); } .faint { color: var(--ui-text-3); }
+337: .mono { font-family: var(--ui-mono, ui-monospace, monospace); }
+338: .hr { border-top: 1px solid var(--ui-line); margin: 16px 0; }
+339: .badge { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--ui-accent-soft); color: var(--ui-accent-strong); }
+340: .hidden { display: none !important; }
+341: 
+342: /* ---------- Talent L4：WorkBuddy Expert Card（M1）与 Skill Card（M2）---------- */
+343: .xb-card { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--ui-line); border-radius: 12px; background: var(--ui-surface); padding: 12px; min-height: 128px; }
+344: .xb-head { display: flex; align-items: center; gap: 8px; }
+345: .xb-av { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; flex: 0 0 32px; }
+346: .xb-id { min-width: 0; }
+347: .xb-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+348: .xb-sub { font-size: 11px; color: var(--ui-text-3); }
+349: .xb-desc { font-size: 12px; color: var(--ui-text-2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+350: .xb-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+351: .xb-tags .tag { font-size: 11px; padding: 1px 6px; }
+352: .xb-foot { display: flex; align-items: center; gap: 6px; margin-top: auto; }
+353: .xb-ver { font-size: 11px; color: var(--ui-text-3); }
+354: .xb-card:hover { border-color: var(--ui-text-3); }
+355: .sk-card { display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--ui-line); border-radius: 12px; background: var(--ui-surface); padding: 10px 12px; min-height: 91px; }
+356: .sk-head { display: flex; align-items: center; gap: 8px; }
+357: .sk-ico { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 11px; flex: 0 0 24px; }
+358: .sk-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+359: .sk-desc { font-size: 12px; color: var(--ui-text-2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+360: .sk-meta { font-size: 11px; color: var(--ui-text-3); margin-top: auto; }
+361: .sk-card:hover { border-color: var(--ui-text-3); }
+362: /* Utility maximize */
+363: #pane-utility.maximized { position: fixed; left: var(--ui-sidebar-w); right: 0; top: 0; bottom: 0; width: auto !important; z-index: 70; box-shadow: -12px 0 32px rgba(0,0,0,.2); }
+364: 
+365: /* Pane divider resize（宽度用户控制 + scope 记忆） */
+366: #app { --util-w: 360px; }
+367: #app.has-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr) var(--util-w); }
+368: #app.has-context.has-utility { grid-template-columns: var(--ui-sidebar-w) 256px minmax(0,1fr) var(--util-w); }
+369: @media (max-width: 1180px) { #app.has-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0,1fr) var(--util-w); } #app.has-context.has-utility { grid-template-columns: var(--ui-sidebar-w) 220px minmax(0,1fr) var(--util-w); } }
+370: #pane-utility { position: relative; }
+371: .pane-resize { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 5; }
+372: .pane-resize:hover, .pane-resize.active { background: var(--ui-accent-soft); }
+373: /* CG Calendar 周视图 */
+374: .cal { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 8px; }
+375: .cal .day { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: 8px; min-height: 150px; padding: 8px; }
+376: .cal .day h4 { margin: 0 0 6px; font-size: 11px; color: var(--ui-text-3); font-weight: 600; }
+377: .cal .ev { font-size: 11.5px; border-left: 2px solid var(--ui-accent); padding: 2px 6px; margin-bottom: 6px; color: var(--ui-text-2); background: var(--ui-surface-2); border-radius: 4px; }
+378: .cal .ev.done { border-left-color: var(--ui-success); }
+379: .cal .ev.warn { border-left-color: var(--ui-warning); }
+
+FILE css/tokens.css
+1: /* ============================================================
+2:    Curis Design Tokens — Frozen (Curis_Design_System.md)
+3:    Single source of truth. Replaces ALL page-private palettes.
+4:    Light = gray canvas (#f5f5f7) + white cards (#ffffff);
+5:    Dark = #1a1c1f surface (never pure black).
+6:    ============================================================ */
+7: 
+8: /* Font stack leads with system-ui so there is ZERO remote dependency.
+9:    If "Inter" is installed locally it is still preferred; otherwise the
+10:    OS UI font is used. No @import — never render-blocks on the network. */
+11: :root,
+12: [data-theme="dark"] {
+13:   color-scheme: dark;
+14: 
+15:   /* Surfaces */
+16:   --ui-bg: #1a1c1f;
+17:   --ui-surface: #222529;
+18:   --ui-surface-2: #2b2f34;
+19: 
+20:   /* Lines & text */
+21:   --ui-line: #343940;
+22:   --ui-text: #f3f4f6;
+23:   --ui-text-2: #a7adb6;
+24:   --ui-text-3: #a3aab4;
+25: 
+26:   /* Primary action (dark theme: brand green) */
+27:   --ui-action-primary-bg: #32f08c;
+28:   --ui-action-primary-hover: #0fdc78;
+29:   --ui-action-primary-fg: #0c0c0d;
+30: 
+31:   /* Accent (active AI state / focus / brand signal) */
+32:   --ui-accent: #32f08c;
+33: 
+34:   /* Semantic (small text / icon / label / indicator line ONLY) */
+35:   --ui-success: #3fcf86;
+36:   --ui-warning: #d89a3a;
+37:   --ui-danger: #e57373;
+38: 
+39:   /* Shell metrics */
+40:   --ui-sidebar-w: 220px;
+41:   --ui-topbar-h: 52px;
+42: 
+43:   /* Radius & elevation (calm, low-contrast) */
+44:   --ui-radius: 12px;
+45:   --ui-radius-sm: 8px;
+46:   --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+47:   --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+48:   --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+49: 
+50:   /* Type */
+51:   --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+52:   --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+53: 
+54:   /* ── 字阶：唯一真源，7 档，下限 12px ──────────────────────────
+55:      P1-2：此前 20 个页面各自内联 9 档 --text-* 私有标度，实测渲染出
+56:      22 个字号档位、1369 个节点小于 12px。字号标度与颜色一样只能有一
+57:      个真源，且 CEO 长时间阅读的界面不允许出现 8–11px 的正文。 */
+58:   --ui-fs-1: 12px;   /* 说明文字、元信息、徽标 */
+59:   --ui-fs-2: 13px;   /* 次要正文、表格、标签 */
+60:   --ui-fs-3: 14px;   /* 正文默认 */
+61:   --ui-fs-4: 16px;   /* 卡片标题、导语 */
+62:   --ui-fs-5: 20px;   /* 区块标题 */
+63:   --ui-fs-6: 24px;   /* 页面标题 */
+64:   --ui-fs-7: 28px;   /* 大数字、展示位 */
+65: 
+66:   /* 旧页面私有别名 → 一律收敛到上面 7 档，保持 var(--text-*) 调用可用 */
+67:   --text-xs: var(--ui-fs-1);
+68:   --text-sm: var(--ui-fs-1);
+69:   --text-md: var(--ui-fs-1);
+70:   --text-base: var(--ui-fs-2);
+71:   --text-lg: var(--ui-fs-3);
+72:   --text-xl: var(--ui-fs-4);
+73:   --text-2xl: var(--ui-fs-5);
+74:   --text-3xl: var(--ui-fs-6);
+75:   --text-4xl: var(--ui-fs-7);
+76: }
+77: 
+78: /* 兜底：浏览器默认字号（h1 2em=32px、small 0.8em=12.8px 等）会绕开标度，
+79:    这里把所有文本容器钉死在 7 档内，杜绝派生出档外字号。 */
+80: html { font-size: 16px; }
+81: body { font-size: var(--ui-fs-3); }
+82: h1 { font-size: var(--ui-fs-6); }
+83: h2 { font-size: var(--ui-fs-5); }
+84: h3 { font-size: var(--ui-fs-4); }
+85: h4, h5, h6 { font-size: var(--ui-fs-3); }
+86: small, sub, sup, figcaption { font-size: var(--ui-fs-1); }
+87: sub, sup { line-height: 0; }
+88: /* 表单控件不继承 body 字号，浏览器默认给 13.333px —— 会凭空派生出档外字号 */
+89: button, input, select, textarea, optgroup { font-size: var(--ui-fs-2); font-family: inherit; }
+90: 
+91: [data-theme="light"] {
+92:   color-scheme: light;
+93: 
+94:   /* Stronger surface contrast than the original spec table: gray canvas,
+95:      white cards, subtle secondary surface. Prevents cards from disappearing
+96:      into the page background. */
+97:   --ui-bg: #f5f5f7;
+98:   --ui-surface: #ffffff;
+99:   --ui-surface-2: #f7f8fa;
+100: 
+101:   --ui-line: #e5e7eb;
+102:   --ui-text: #1a1c1f;
+103:   --ui-text-2: #4b5563;
+104:   --ui-text-3: #626b76;
+105: 
+106:   /* Light theme: primary action = dark solid (never large green) */
+107:   --ui-action-primary-bg: #30333a;
+108:   --ui-action-primary-hover: #17181a;
+109:   --ui-action-primary-fg: #ffffff;
+110: 
+111:   --ui-accent: #1a1c1f;
+112: 
+113:   --ui-success: #21895d;
+114:   --ui-warning: #b87922;
+115:   --ui-danger: #c43f3f;
+116: 
+117:   --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+118:   --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+119:   --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+120: }
+121: 
+122: /* System mode follows OS. Applies when html has data-theme="system".
+123:    Dark is the Frozen default, so :root / [data-theme="dark"] above already
+124:    cover the OS-dark case; this block overrides to light when OS is light. */
+125: @media (prefers-color-scheme: light) {
+126:   html[data-theme="system"] {
+127:     color-scheme: light;
+128: 
+129:     /* Stronger surface contrast than the original spec table: gray canvas,
+130:        white cards, subtle secondary surface. Prevents cards from disappearing
+131:        into the page background. */
+132:     --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+133:     --ui-line: #e5e7eb;
+134:     --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+135: 
+136:     /* Light theme: primary action = dark solid (never large green) */
+137:     --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+138: 
+139:     --ui-accent: #1a1c1f;
+140: 
+141:     --ui-success: #21895d;
+142:     --ui-warning: #b87922;
+143:     --ui-danger: #c43f3f;
+144: 
+145:     --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+146:     --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+147:     --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+148:   }
+149: }
+150: 
+151: /* ============================================================
+152:    FROZEN LAYER 2 — 主题无关的结构令牌
+153:    ------------------------------------------------------------
+154:    立此层的原因（2026-08-04 全站实测）：
+155:      · 间距 gap 渲染出 18 个档位（1,2,3,4,5,6,7,8,9,10,12,13,14,16,18,20,22,24）
+156:        padding 单页最多 18 档 —— 等于完全没有间距系统。
+157:      · 圆角渲染出 13 个档位（3,4,5,6,7,8,9,10,12,14,50,999,9999）。
+158:      · 层级、动效、焦点环、控件高度令牌为 0，各页自行硬编码。
+159:    这些令牌与主题无关，放在独立 :root 里，light / dark 都继承。
+160:    ============================================================ */
+161: :root {
+162:   /* ── 间距标度：8 档，4px 基数 ─────────────────────────────
+163:      用法：内边距 / 外边距 / gap 一律从这 8 档取值，不得写字面量。
+164:      1–2 用于组件内元素贴合，3–4 用于组件内分区，5–6 用于卡片内边距，
+165:      7–8 用于区块之间。超过 48px 的留白用 sp-8 叠加，不新增档位。
+166:      ≤3px 的光学微调（1px 对齐、2px 视觉补偿）不入标度，保留字面量。 */
+167:   --ui-sp-1: 4px;    /* 图标与文字、徽标内边距 */
+168:   --ui-sp-2: 8px;    /* 紧凑控件内边距、行内元素间距 */
+169:   --ui-sp-3: 12px;   /* 列表项间距、按钮横向内边距 */
+170:   --ui-sp-4: 16px;   /* 卡片内边距（紧凑）、表单行间距 */
+171:   --ui-sp-5: 20px;   /* 卡片内边距（默认） */
+172:   --ui-sp-6: 24px;   /* 区块内边距、栅格列间距 */
+173:   --ui-sp-7: 32px;   /* 区块之间 */
+174:   --ui-sp-8: 48px;   /* 页面主区上下留白、空态图文垂直留白 */
+175: 
+176:   /* ── 圆角标度：5 档 ───────────────────────────────────── */
+177:   --ui-r-xs: 4px;     /* 徽标、色块、进度条 */
+178:   --ui-r-sm: 8px;     /* 按钮、输入框、下拉 */
+179:   --ui-r-md: 12px;    /* 卡片、面板 */
+180:   --ui-r-lg: 16px;    /* 抽屉、模态、大容器 */
+181:   --ui-r-pill: 999px; /* 胶囊标签、圆形头像/图标钮 */
+182: 
+183:   /* ── 层级：6 档，杜绝 z-index: 99999 军备竞赛 ───────────── */
+184:   --ui-z-base: 0;
+185:   --ui-z-sticky: 100;    /* 顶栏、侧栏、表头吸顶 */
+186:   --ui-z-dropdown: 200;  /* 下拉、气泡、tooltip */
+187:   --ui-z-drawer: 300;    /* 抽屉及其遮罩 */
+188:   --ui-z-modal: 400;     /* 模态对话框 */
+189:   --ui-z-toast: 500;     /* 全局提示 */
+190:   --ui-z-devmode: 9000;  /* Dev Mode 标注层（永远在最上） */
+191: 
+192:   /* ── 动效：3 档时长 + 3 条缓动 ─────────────────────────── */
+193:   --ui-dur-1: 120ms;  /* 即时反馈：hover、按下 */
+194:   --ui-dur-2: 200ms;  /* 标准过渡：展开、淡入 */
+195:   --ui-dur-3: 320ms;  /* 大位移：抽屉、模态 */
+196:   --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);  /* 默认 */
+197:   --ui-ease-decel: cubic-bezier(0, 0, 0, 1);       /* 入场 */
+198:   --ui-ease-accel: cubic-bezier(0.3, 0, 1, 1);     /* 离场 */
+199: 
+200:   /* ── 焦点环：键盘可达性的唯一样式来源 ───────────────────── */
+201:   --ui-focus-w: 2px;
+202:   --ui-focus-offset: 2px;
+203:   --ui-focus-color: var(--ui-accent);
+204: 
+205:   /* ── 控件高度：触达目标的下限在这里定死 ─────────────────
+206:      WCAG 2.5.8 (AA) 要求最小 24×24 CSS px；本系统取 32px 作为
+207:      桌面端下限，主操作 40px。图标按钮同样吃这套高度并保持等宽。 */
+208:   --ui-ctl-h-sm: 32px;   /* 次级 / 紧凑控件下限 */
+209:   --ui-ctl-h: 36px;      /* 默认控件 */
+210:   --ui-ctl-h-lg: 40px;   /* 主操作、表单主输入 */
+211:   --ui-tap-min: 32px;    /* 任何可点击元素的最小命中边长 */
+212: 
+213:   /* ── 行高 ─────────────────────────────────────────────── */
+214:   --ui-lh-tight: 1.25;  /* 标题、大数字 */
+215:   --ui-lh: 1.5;         /* 正文 */
+216:   --ui-lh-loose: 1.7;   /* 长段落说明 */
+217: }
+218: 
+219: /* ── 触达目标基线 ────────────────────────────────────────
+220:    2026-08-04 实测：全站 124 处可点击元素高度 < 32px（主题切换 27px、
+221:    次级按钮 26px、关闭按钮 28px；runtime 四页各 12–20 处）。
+222:    这里用 min-height/min-width 兜底：CSS 规范中 min-* 优先于 height，
+223:    因此页面写死的 height:26px 会被自动抬到 32px，无需逐页改。
+224:    确需更小的纯装饰元素请加 data-tap="none" 显式豁免并写明理由。 */
+225: button,
+226: select,
+227: summary,
+228: [role="button"],
+229: input[type="button"],
+230: input[type="submit"],
+231: input[type="reset"] {
+232:   min-height: var(--ui-tap-min);
+233:   min-width: var(--ui-tap-min);
+234: }
+235: /* 语义等同按钮的链接（独立 CTA、面包屑、导航项）同样吃触达下限。
+236:    句子中间的行内文字链接不在此列 —— WCAG 2.5.8 对 inline target 有明确
+237:    豁免，把它们撑到 32px 反而会破坏段落行距。 */
+238: a[data-cta],
+239: .crumbs a,
+240: .sidebar-nav a,
+241: .nav a {
+242:   min-height: var(--ui-tap-min);
+243:   display: inline-flex;
+244:   align-items: center;
+245: }
+246: [data-tap="none"] {
+247:   min-height: 0;
+248:   min-width: 0;
+249:   display: revert;
+250: }
+251: 
+252: /* 焦点可见性：全站统一，不允许任何页面 outline: none 而不给替代 */
+253: :where(a, button, select, input, textarea, summary, [tabindex]):focus-visible {
+254:   outline: var(--ui-focus-w) solid var(--ui-focus-color);
+255:   outline-offset: var(--ui-focus-offset);
+256:   border-radius: var(--ui-r-xs);
+257: }
+258: 
+259: /* 尊重系统「减少动态效果」偏好 */
+260: @media (prefers-reduced-motion: reduce) {
+261:   :root {
+262:     --ui-dur-1: 0ms;
+263:     --ui-dur-2: 0ms;
+264:     --ui-dur-3: 0ms;
+265:   }
+266:   *, *::before, *::after {
+267:     animation-duration: 0.01ms !important;
+268:     animation-iteration-count: 1 !important;
+269:     transition-duration: 0.01ms !important;
+270:     scroll-behavior: auto !important;
+271:   }
+272: }
+
+FILE index.html
+1: <!doctype html>
+2: <!--
+3:   Curis Full Product HTML Design Prototype — 单入口可点击原型
+4:   Authority: 消费 Frozen Product Structure Baseline + Page Reference Blueprint P1–P14
+5:              + Pixel Reference Matrix（组件级 Reference 见 CURIS_FULL_PRODUCT_HTML_PROTOTYPE_REVIEW.md）
+6:   性质: DESIGN PROTOTYPE / DESIGN FIXTURE — 不是 Frontend 实现、不接 Runtime、不是 Product Truth
+7: -->
+8: <html lang="zh-CN" data-theme="light">
+9: <head>
+10: <meta charset="UTF-8">
+11: <meta name="viewport" content="width=device-width, initial-scale=1.0">
+12: <title>Curis — Full Product Design Prototype</title>
+13: <link rel="stylesheet" href="css/tokens.css">
+14: <link rel="stylesheet" href="css/curis.css">
+15: <script>try{var __t=new URLSearchParams(location.search).get("theme");localStorage.setItem("curis-theme",__t||"light")}catch(e){}</script>
+16: <script src="js/theme.js"></script>
+17: </head>
+18: <body>
+19: <div id="app">
+20:   <nav class="pane" id="pane-nav">
+21:     <div class="pane-header">
+22:       <div class="brand"><span class="brand-mark">C</span><span>Curis</span>
+23:         <span class="spacer"></span>
+24:         <button class="iconbtn" data-action="toggle-search" title="全局搜索 ⌘K">
+25:           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+26:         </button>
+27:       </div>
+28:     </div>
+29:     <div class="pane-content" id="nav-content"></div>
+30:   </nav>
+31:   <section class="pane hidden" id="pane-context">
+32:     <div class="pane-header"><span class="crumbs" id="ctx-crumbs">上下文</span>
+33:       <span class="spacer"></span>
+34:       <button class="iconbtn" data-action="toggle-context" title="收起 Context"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+35:     </div>
+36:     <div class="pane-content" id="ctx-content"></div>
+37:   </section>
+38:   <main class="pane" id="pane-main">
+39:     <div class="pane-header">
+40:       <button class="iconbtn" data-action="toggle-context-show" title="展开 Context" id="btn-ctx-show"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+41:       <span class="crumbs" id="main-crumbs"></span>
+42:       <span class="spacer"></span>
+43:       <span class="status" id="global-status"></span>
+44:       <button class="iconbtn" data-action="toggle-notifications" title="通知">
+45:         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+46:       </button>
+47:       <button class="iconbtn" data-action="toggle-theme" title="主题"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+48:       <button class="btn sm" data-action="toggle-utility" id="btn-util">Utility</button>
+49:     </div>
+50:     <div class="pane-content pad" id="main-content"></div>
+51:   </main>
+52:   <aside class="pane hidden" id="pane-utility"><div class="pane-resize" id="util-resize" title="拖拽调整宽度"></div>
+53:     <div class="pane-header"><span class="util-tabs" id="util-tabs"></span>
+54:       <span class="spacer"></span>
+55:       <button class="iconbtn" data-action="close-utility" title="关闭 Utility"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+56:     </div>
+57:     <div class="pane-content" id="util-content"></div>
+58:   </aside>
+59: </div>
+60: 
+61: <div class="assistant collapsed" id="assistant" data-state="collapsed"></div>
+62: <div class="overlay" id="overlay"></div>
+63: <div class="search-panel hidden" id="search-panel"></div>
+64: <div class="notif-panel hidden" id="notif-panel"></div>
+65: <div class="state-switcher" id="state-switcher" title="设计测试工具 — 非产品 UI">
+66:   <span class="ss-label">STATE · DESIGN TOOL</span>
+67:   <select id="ss-select"></select>
+68: </div>
+69: 
+70: <script src="js/fixtures.js"></script>
+71: <script src="js/components.js"></script>
+72: <script src="js/rt.js"></script>
+73: <script src="js/views-core.js"></script>
+74: <script src="js/views-business.js"></script>
+75: <script src="js/app.js"></script>
+76: </body>
+77: </html>

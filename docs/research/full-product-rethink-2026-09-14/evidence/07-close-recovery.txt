@@ -1,0 +1,233 @@
+- region "Notifications alt+T"
+- link:
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button:
+- complementary:
+  - link:
+    - /url: /
+  - navigation:
+    - link:
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link:
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link:
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link:
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link:
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link:
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link:
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link:
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link:
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link:
+      - /url: /pricing
+      - generic: 产品定价
+  - button:
+    - generic: 我的频道
+  - button:
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button:
+  - link:
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link:
+    - /url: /developer/api-keys
+  - button:
+    - generic: U
+    - generic: user_FBVvPDQC
+- main:
+  - heading [level=1]: 发布
+  - button:
+    - generic: 新建作品
+  - button:
+    - generic: 添加频道
+  - button:
+    - generic: 全部频道
+  - button:
+  - button:
+  - generic: 9月12日 - 18日, 2026
+  - button [pressed]: 公历节日
+  - button [pressed]: 节气
+  - button:
+  - button:
+  - button: 今天
+  - button:
+    - generic: 星期六
+    - generic: "12"
+    - generic: 八月初二
+  - button: 世界急救日
+  - generic: 星期日
+  - generic: "13"
+  - generic: 八月初三
+  - generic: 星期一
+  - generic: "14"
+  - generic: 八月初四
+  - button:
+    - generic: 星期二
+    - generic: "15"
+    - generic: 八月初五
+  - button: 国际民主日
+  - button:
+    - generic: 星期三
+    - generic: "16"
+    - generic: 八月初六
+  - button: 国际臭氧层保护日
+  - text: ·
+  - button: 中国脑健康日
+  - generic: 星期四
+  - generic: "17"
+  - generic: 八月初七
+  - button:
+    - generic: 星期五
+    - generic: "18"
+    - generic: 八月初八
+  - button: 中国国耻日
+  - text: ·
+  - button: 九一八事变纪念日
+  - generic: 00:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 02:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 04:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 06:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 08:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 10:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 12:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 14:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 16:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 18:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 20:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+  - generic: 22:00
+  - button:
+  - button:
+  - button:
+  - button:
+  - button:
+- alert: AiToEarn - 矩阵发布工具 - 一键发布到15+社交网络
+- dialog:
+  - heading [level=2]: 发布作品
+  - paragraph: 发布作品
+  - banner:
+    - heading [level=2]: 发布作品
+    - button [pressed]:
+      - generic: 内容管理
+  - button:
+  - generic: 请选择要发布的账户
+  - complementary:
+    - button: CURIS-RESEARCH-TEST-2026-09-14
+    - button: Default
+    - button:
+      - generic: 更多
+    - button:
+      - generic: 新建
+    - button:
+    - textbox:
+      - paragraph
+    - generic: 最多上传 10 段视频素材，视频总时长不超过 30 秒；最多上传 10 个音频素材，音频总时长不超过 30 秒；最多上传 30 张图片素材。在提示词输入 '@' 引用上传的媒体资源；输入“#”引用真人素材
+    - button:
+    - button:
+    - generic: Ai内容制作
+    - button:
+      - generic: 生成视频
+    - button:
+    - button:
+    - button:
+      - generic: Seedance 2.5
+    - button:
+      - generic: 9:16
+      - generic: 720p
+      - generic: "1"
+    - button:
+      - generic: 8s
+    - button:
+      - generic: 真人素材
+    - generic: "164.16"
+    - button:
+    - tablist:
+      - tab [selected]: 全部
+      - tab: 草稿
+      - tab: 视频
+      - tab: 图片
+    - heading [level=3]: 全部
+    - button:
+      - text: 生成记录
+    - tabpanel:
+      - paragraph: 暂无媒体资源
+      - paragraph: 该分组暂无媒体资源
+  - button:
+    - generic: 立即发布
+  - button: 发布
+  - button [disabled]:
+    - text: 内容安全检测
+  - button:
+    - generic: 关闭发布弹框
+- dialog "确认关闭":
+  - heading "确认关闭" [level=2]:
+    - text: 确认关闭
+  - generic: 关闭后，已填写的内容将被保存，您下次打开可以恢复，是否确认关闭？
+  - button "取消" [active]
+  - button "确定"

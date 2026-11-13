@@ -1,0 +1,3 @@
+2c5da7b000e1ce085eaf957b2971b8368b6afc64f742115e2825262d2071f164  /Users/yy/Documents/Curis AI Workspace/WRITING_BUSINESS_HTML_EXPLORATION/views-book.js
+960e372aa528647c2be51a597e53754e769ec24b77a94a2ab30511f2aebdece9  /Users/yy/Documents/Curis AI Workspace/WRITING_BUSINESS_HTML_EXPLORATION/views-craft.js
+90ec1defcb922f7fe2375ccc1cf700b1ff58abc46dfea86ecfd60fa89065d940  /Users/yy/Documents/Curis AI Workspace/WRITING_BUSINESS_HTML_EXPLORATION/app.js

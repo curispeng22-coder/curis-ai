@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant EX as 接线点(_governance_* helper)
+    participant PS as PendingDecisionSink
+    participant ST as PendingDecisionStore(sqlite)
+    participant R as 外部 resolver(未来 UI/CLI/API)
+    participant ENG as 引擎(恢复执行)
+
+    EX->>EX: evaluate(action) → needs_gate=True
+    EX->>PS: ask(gate, correlation_id, gate_label)
+    PS->>ST: create(gate 快照, status=pending, expires_at)
+    ST-->>PS: pending_id
+    PS-->>EX: pending_id
+    EX->>EX: 记录 b.governance.gate=pending
+    EX-->>R: 返回 PendingDecisionRaised(pending_id)  // 上层编排暂存，动作未执行
+    Note over R: 未来 UI/CLI/API 轮询/推送拿到 pending_id 并呈现给用户
+    R->>ST: resolve_decision(pending_id, "A")  // resolver 函数
+    ST-->>R: record=resolved, decision="A"
+    ENG->>ST: get_letter(pending_id)  // fail-closed 单一真源
+    ST-->>ENG: "A"（resolved→A；pending/expired/缺失→"C"）
+    ENG->>ENG: 映射 outcome=allowed → 执行动作 / 落 b.governance.gate=allowed

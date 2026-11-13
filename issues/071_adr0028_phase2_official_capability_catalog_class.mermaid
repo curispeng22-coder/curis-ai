@@ -1,0 +1,50 @@
+classDiagram
+    class OfficialCapability {
+        +model_key: str  PK  %% 物理主键，对外别名 capability_key
+        +type: str  %% enum model|tool|connector
+        +name: str  %% 能力名（模型=model_key）
+        +provider_id: str
+        +display_name: str
+        +source: str  %% 固定 'official'
+        +gateway_ref: str  %% 仅 model 关联 newapi 网关（逻辑引用键）
+        +auth_type: str  %% none|oauth|apikey 形状
+        +supported_models: list~str~  %% JSON，仅 model 用
+        +status: str  %% active|inactive
+        +created_at: str
+        +updated_at: str
+    }
+    class GatewayConfig {
+        +gateway_id: str  PK
+        +type: str  %% enum newapi
+        +name: str
+        +base_url: str
+        +status: str
+        +credential_ref: str | None  %% 仅 scheme:reference 占位，零密钥值列
+        +default_model: str | None
+        +created_at: str
+    }
+    class CapabilityCatalog {
+        +create(capability_key, type, name, provider_id, display_name, auth_type, gateway_ref, supported_models, status) dict
+        +set_status(capability_key, status) dict
+        +get(capability_key) dict
+        +list(type_filter, include_inactive) list
+    }
+    class Database {
+        +initialize() void
+        +save_official_model(..., type, name) void
+        +get_official_model(key) dict|None
+        +list_capabilities(type_filter, include_inactive) list
+        +list_catalog_capabilities() list  %% 白名单列，无凭证/引用
+        +set_official_model_status(key, status) void
+        +get_model_gateway(id) dict|None
+        +list_catalog_gateways() list  %% 不含 credential_ref
+    }
+    class EvolutionEventLog {
+        +record(correlation_id, event_type, payload, tenant_id, idempotency_key) dict
+        +list_usage_events(tenant_id) list  %% 纯计量，R-04 复用
+    }
+    CapabilityCatalog --> Database : 读写（official_models additive）
+    CapabilityCatalog --> EvolutionEventLog : 写 capability.* 审计(append-only)
+    OfficialCapability ..> GatewayConfig : gateway_ref 逻辑引用(仅 model，写路径校验存在性)
+    note for OfficialCapability "零密钥值列；source=official；auth_type 仅形状；type 区分 model/tool/connector"
+    note for GatewayConfig "credential_ref 仅 scheme:reference 不透明串；DB 零密钥值列"

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curis 研发 · 结构性对照检查</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/shell.css">
+</head>
+<body data-page="rdcheck">
+  <div class="prototype-frame">
+    <div class="prototype-controls">
+      <button data-dom-id="theme-toggle" class="icon-btn" title="切换主题" aria-label="切换主题">🌗</button>
+      <span>页面:</span>
+      <button data-page="overview">Overview</button>
+      <button data-page="research">Research</button>
+      <button data-page="content">Content</button>
+      <button data-page="calendar">Calendar</button>
+      <button data-page="growth">Growth</button>
+      <button data-page="feedback">Feedback</button>
+      <button data-page="commercial">Commercial</button>
+      <button data-page="team">Team</button>
+      <button data-page="handoff">Handoff</button>
+      <button data-page="utility">Utility</button>
+      <button data-page="assistant">Assistant</button>
+      <button data-page="collapsed">Collapsed</button>
+      <button data-page="1280">1280</button>
+      <button data-page="rdcheck" class="active">RD Check</button>
+    </div>
+    <div class="window-chrome">
+      <div class="ms-shell with-context with-utility" style="--win-w:1440px; --win-h:900px;">
+        <aside class="ms-pane ms-pane-nav">
+          <header class="ms-pane-header ms-nav-head">
+            <div class="win-dots"><span></span><span></span><span></span></div>
+            <div class="pane-title">Curis</div>
+            <button class="icon-btn nav-toggle" data-dom-id="nav-toggle" aria-label="切换导航">≡</button>
+            <button class="icon-btn t1-restore" data-dom-id="nav-restore" aria-label="展开导航">»</button>
+          </header>
+          <nav class="nav-scroll">
+            <div class="nav-group">工作区</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⌂</span>CEO 工作台</a>
+            <a href="#" class="nav-item active"><span class="ni-ico">◈</span>业务空间</a>
+            <div class="nav-sub">
+              <a href="#" class="nav-item active">AI 科技</a>
+            </div>
+            <div class="nav-group">组织与运营</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⊞</span>组织中心</a>
+            <a href="#" class="nav-item"><span class="ni-ico">♟</span>人才与能力</a>
+            <a href="#" class="nav-item"><span class="ni-ico">📊</span>经营洞察</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗂</span>资料库</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗒</span>会议</a>
+          </nav>
+          <footer class="nav-foot">
+            <div class="nav-user-ava">林</div>
+            <div>
+              <div class="station-name">林薇</div>
+              <div class="station-work">内容增长部负责人</div>
+            </div>
+          </footer>
+        </aside>
+
+        <aside class="ms-pane ms-pane-ctx resize-h">
+          <header class="ms-pane-header ms-ctx-head">
+            <div class="pane-title">AI 科技</div>
+            <button class="pane-toggle" data-action="toggle-context" aria-label="切换上下文" title="切换上下文">◀</button>
+          </header>
+          <div class="ctx-content">
+            <div class="ctx-section">Surface</div>
+            <div class="ctx-nav">
+              <a href="overview.html" class="ctx-nav-item active">经营总览</a>
+              <a href="research.html" class="ctx-nav-item">研究与洞察</a>
+              <a href="content.html" class="ctx-nav-item">内容运营</a>
+              <a href="growth.html" class="ctx-nav-item">增长与评估</a>
+              <a href="feedback.html" class="ctx-nav-item">反馈</a>
+              <a href="commercial.html" class="ctx-nav-item">商业化</a>
+            </div>
+
+          </div>
+        </aside>
+
+        <main class="ms-pane ms-pane-main">
+          <header class="ms-pane-header ms-main-head">
+            <button class="icon-btn" data-action="toggle-context" aria-label="切换上下文">☰</button>
+            <nav class="crumbs" aria-label="面包屑">
+              <a href="#">业务空间</a><span>/</span><a href="#">内容增长部</a><span>/</span><span class="cur">结构性对照检查</span>
+            </nav>
+
+            <div class="main-head-right">
+              <button class="icon-btn" data-action="toggle-assistant" aria-label="CEO 助理" title="CEO 助理">🞋</button>
+              <button class="icon-btn" data-action="toggle-utility" aria-label="切换工具" title="切换工具">◧</button>
+              
+            </div>
+          </header>
+
+          <div class="ms-scroll">
+            <div class="ms-header">
+              <h1 class="ms-title">Curis 研发</h1>
+              <div class="ms-meta">Curis 产品研发 · 研发部</div>
+              <div class="ms-statusbar"><span class="dot"></span>当前阶段：产品验证中 · 下一节点：successor control / two-cycle proof</div>
+            </div>
+
+            <div class="operating-context">
+              <div class="oc-col"><span class="oc-label">经营状态</span><span class="oc-value">产品验证中</span></div>
+              <div class="oc-col"><span class="oc-label">本轮重点</span><span class="oc-value">Autonomous Operating V1</span></div>
+              <div class="oc-col"><span class="oc-label">最新判断</span><span class="oc-value">单周期执行与经营判断链已经成立</span></div>
+              <div class="oc-col"><span class="oc-label">下一步</span><span class="oc-value">完成 successor control / two-cycle proof</span></div>
+            </div>
+
+            <div class="value-strip"><strong>本轮价值：</strong>Autonomous Operating V1 进入可验证阶段，单周期经营判断链成立。</div>
+
+            <section class="surface-section">
+              <div class="section-head"><span class="section-title">员工工作站</span><span class="section-action">同一模型可服务 RD 场景</span></div>
+              <div class="stations">
+                <article class="station collapsed">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-accent);">R1</div>
+                    <div class="station-id"><div class="station-name">R1 · 后端工程师</div><div class="station-work">用户校验逻辑 · 降低注册漏洞风险</div></div>
+                    <span class="tag tag-working">进行中</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body">
+                    <div class="conversation">
+                      <div class="msg">R1 正在为 createUser 增加 email 格式校验和密码强度校验，并在返回前做 sanitize。</div>
+                      <div class="ref">引用：api/users.ts 变更 Diff（见 Utility）</div>
+                    </div>
+                  </div>
+                </article>
+                <article class="station collapsed">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-warning);color:var(--ui-action-primary-fg);">R2</div>
+                    <div class="station-id"><div class="station-name">R2 · 算法工程师</div><div class="station-work">DB migration · 确认停机窗口与回滚策略</div></div>
+                    <span class="tag tag-needs">需要你处理</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body"><div class="conversation"><div class="msg">R2 已评估两种迁移路径，倾向于停机窗口方案。</div><div class="decision-ref">CEO 决策：确认是否接受 30 分钟停机窗口</div></div></div>
+                </article>
+                <article class="station collapsed">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-text-2);">R3</div>
+                    <div class="station-id"><div class="station-name">R3 · 测试工程师</div><div class="station-work">接口测试 · 等待 R1 契约稳定</div></div>
+                    <span class="tag">等待联调</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body"><div class="conversation"><div class="msg">R3 已准备测试用例草稿，待 R1 接口稳定后执行。</div><div class="handoff">下一轮交接：R3 → R1 · 接口契约</div></div></div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <div class="ms-assistant-drawer collapsed">
+            <header class="assistant-head">
+              <div class="assistant-ava">AI</div>
+              <div><div class="assistant-title">CEO 助理</div><div class="assistant-role">战略决策支持</div></div>
+              <button class="icon-btn" data-action="close-assistant" aria-label="关闭助理">✕</button>
+            </header>
+            <div class="assistant-body">
+              <div class="assistant-context">当前位置：Curis 研发 · 研发总览</div>
+              <div class="assistant-msg">CEO 助理 aware of Curis 研发，R2 的 DB migration 决策需要你确认。</div>
+            </div>
+            <footer class="assistant-foot">
+              <input type="text" placeholder="向 CEO 助理提问...">
+              <button class="btn-secondary btn-sm">发送</button>
+            </footer>
+          </div>
+
+        </main>
+        <aside class="ms-pane ms-pane-util resize-h">
+          <header class="ms-pane-header ms-util-head">
+            <div class="pane-title">api/users.ts</div>
+            <button class="pane-toggle" data-action="toggle-utility" aria-label="切换工具区" title="切换工具区">▶</button>
+          </header>
+          <div class="util-content">
+            <div class="composer-bar" style="margin-bottom:var(--ui-sp-2);"><button class="btn-secondary btn-sm active">Diff</button><button class="btn-ghost btn-sm">Source</button><button class="btn-ghost btn-sm">Preview</button></div>
+            <pre class="diff-pre"><code><div class="diff-line"><span class="ln">12</span><span class="sign"> </span> <span class="kw">export</span> <span class="kw">async function</span> createUser(payload: UserPayload) {'{'}</div>
+<div class="diff-line add"><span class="ln">13</span><span class="sign">+</span>   <span class="kw">await</span> validateEmail(payload.email);</div>
+<div class="diff-line add"><span class="ln">14</span><span class="sign">+</span>   <span class="kw">await</span> validatePasswordStrength(payload.password);</div>
+<div class="diff-line"><span class="ln">15</span><span class="sign"> </span>   <span class="kw">const</span> user = <span class="kw">await</span> db.users.create({'{'} data: payload {'}'});</div>
+<div class="diff-line del"><span class="ln">16</span><span class="sign">-</span>   <span class="kw">return</span> user;</div>
+<div class="diff-line add"><span class="ln">17</span><span class="sign">+</span>   <span class="kw">return</span> sanitizeUser(user);</div>
+<div class="diff-line"><span class="ln">18</span><span class="sign"> </span> {'}'}</div>
+<div class="diff-line"><span class="ln">19</span><span class="sign"> </span></div>
+<div class="diff-line"><span class="ln">20</span><span class="sign"> </span> <span class="cm">// TODO: 与 R3 对齐测试覆盖范围</span></div></code></pre>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+  <script>window.__CURIS_PAGE__ = "rdcheck";</script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

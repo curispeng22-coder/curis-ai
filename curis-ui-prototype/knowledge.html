@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <script src="_system/theme.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>知识库 · Curis</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;--bg:var(--ui-bg);--panel:var(--ui-surface);--panel2:var(--ui-surface-2);--text:var(--ui-text);--muted:var(--ui-text-2);--faint:var(--ui-text-3);--line:var(--ui-line);--accent:var(--ui-action-primary-bg);--accentText:var(--ui-action-primary-fg);--ok:var(--ui-success);--warn:var(--ui-warning);--primary:var(--ui-action-primary-bg);--primaryText:var(--ui-action-primary-fg);--bg-base-default:var(--ui-bg)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}.shell{display:flex;min-height:100vh}.sidebar{width:220px;flex:0 0 220px;padding:var(--ui-sp-5) var(--ui-sp-3);background:var(--panel2);border-right:1px solid var(--line)}.brand{display:flex;align-items:center;gap:var(--ui-sp-2);padding:0 var(--ui-sp-2) var(--ui-sp-6);font-size: var(--ui-fs-3);font-weight:650}.brand-mark{display:grid;place-items:center;width:22px;height:22px;border-radius:var(--ui-r-xs);color:var(--accentText);background:var(--accent);font-size: var(--ui-fs-1);font-weight:800}.nav-label{margin:0 var(--ui-sp-2) var(--ui-sp-2);color:var(--faint);font-size: var(--ui-fs-1)}.nav{display:grid;gap:3px}.nav-item{display:flex;align-items:center;gap:var(--ui-sp-2);padding:var(--ui-sp-2) var(--ui-sp-2);color:var(--muted);border-radius:var(--ui-r-sm);font-size: var(--ui-fs-1);text-decoration:none}.nav-item:hover,.nav-item.active{color:var(--text);background:rgba(25,28,34,.06)}.nav-icon{width:14px;color:var(--faint);text-align:center}.main{min-width:0;flex:1}.topbar{display:flex;align-items:center;justify-content:space-between;height:var(--ui-topbar-h);padding:0 var(--ui-sp-7);border-bottom:1px solid var(--line);color:var(--muted);font-size: var(--ui-fs-1)}.content{max-width:1240px;margin:0 auto;padding:var(--ui-sp-7)}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ui-sp-4);margin-bottom:var(--ui-sp-5)}.eyebrow{margin:0 0 var(--ui-sp-2);color:var(--muted);font-size: var(--ui-fs-1);letter-spacing:.08em}h1{margin:0;font-size: var(--ui-fs-6);font-weight:620;letter-spacing:-.02em}.subtitle{max-width:760px;margin:var(--ui-sp-2) 0 0;color:var(--muted);font-size: var(--ui-fs-1);line-height:1.6}.actions{display:flex;gap:var(--ui-sp-2);flex-wrap:wrap}button{padding:var(--ui-sp-2) var(--ui-sp-2);color:var(--text);background:transparent;border:1px solid var(--line);border-radius:var(--ui-r-sm);cursor:pointer;font:inherit;font-size: var(--ui-fs-1)}button.btn-primary{font-weight:600}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--ui-sp-2);margin-bottom:var(--ui-sp-4)}.metric,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--ui-r-sm)}.metric{padding:var(--ui-sp-3)}.metric span{display:block;color:var(--faint);font-size: var(--ui-fs-1)}.metric strong{display:block;margin-top:var(--ui-sp-1);font-size: var(--ui-fs-5);font-weight:600}.metric small{display:block;margin-top:var(--ui-sp-1);color:var(--muted);font-size: var(--ui-fs-1)}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:var(--ui-sp-4)}.card{padding:var(--ui-sp-4)}.card h2{margin:0;font-size: var(--ui-fs-3)}.note{margin:var(--ui-sp-2) 0 var(--ui-sp-3);color:var(--faint);font-size: var(--ui-fs-1);line-height:1.45}.search{display:flex;gap:var(--ui-sp-2);margin-bottom:var(--ui-sp-3)}.search input{min-width:0;flex:1;padding:var(--ui-sp-2) var(--ui-sp-2);color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:var(--ui-r-sm);font:inherit;font-size: var(--ui-fs-1)}.filters{display:flex;gap:var(--ui-sp-1);flex-wrap:wrap;margin-bottom:var(--ui-sp-3)}.filters button.active{color:var(--text);background:var(--panel2);border-color:rgba(25,28,34,.22)}.knowledge-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ui-sp-3);padding:var(--ui-sp-3) 0;border-top:1px solid var(--line)}.knowledge-row:first-child{border-top:0}.knowledge-main{min-width:0}.knowledge-type{display:inline-flex;padding:3px var(--ui-sp-1);color:var(--muted);background:var(--panel2);border-radius:var(--ui-r-pill);font-size: var(--ui-fs-1)}.knowledge-main h3{margin:var(--ui-sp-1) 0 0;font-size: var(--ui-fs-1)}.knowledge-main p{margin:var(--ui-sp-1) 0 0;color:var(--muted);font-size: var(--ui-fs-1);line-height:1.45}.knowledge-actions{display:flex;gap:var(--ui-sp-1);flex:0 0 auto}.source{display:grid;gap:var(--ui-sp-2)}.source-item{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-sp-2);padding:var(--ui-sp-3) 0;border-top:1px solid var(--line)}.source-item:first-child{border-top:0}.source-item strong{display:block;font-size: var(--ui-fs-1)}.source-item span{display:block;margin-top:var(--ui-sp-1);color:var(--muted);font-size: var(--ui-fs-1)}.status{display:inline-flex;align-items:center;gap:var(--ui-sp-1);color:var(--ok);font-size: var(--ui-fs-1);white-space:nowrap}.status::before{content:"";width:6px;height:6px;border-radius:var(--ui-r-pill);background:currentColor}.status.warn{color:var(--warn)}.callout{margin-top:var(--ui-sp-4);padding:var(--ui-sp-3) var(--ui-sp-4);color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:var(--ui-r-sm);font-size: var(--ui-fs-1);line-height:1.5}.callout strong{color:var(--text)}@media(max-width:900px){.grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.sidebar{width:64px;flex-basis:64px;padding:var(--ui-sp-4) var(--ui-sp-2)}.brand span,.nav-label,.nav-item span:not(.nav-icon){display:none}.nav-item{justify-content:center}.topbar,.content{padding-left:var(--ui-sp-4);padding-right:var(--ui-sp-4)}.header{flex-direction:column}}
+  </style>
+</head>
+<body data-curis-neutral>
+  <div class="shell">  <aside class="sidebar" role="navigation" aria-label="主导航">
+    <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+    <nav class="nav">
+      <p class="nav-label">公司</p>
+      <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+      <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+      <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+      <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+      <p class="nav-label">工作空间</p>
+      <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+      <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+      <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+      <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+      <p class="nav-label">经营工具</p>
+      <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+      <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+      <p class="nav-label">公司资源</p>
+      <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+      <a class="nav-item active" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+      <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+      <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+    </nav>
+    <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+  </aside><div class="main"><header class="topbar"><span>Curis / 公司知识库</span><span>知识会进入每个工作空间，但不会绕过来源和权限</span></header><main class="content" data-knowledge-page><header class="header"><div><p class="eyebrow">公司上下文 · 可检索 · 可引用</p><h1>知识库</h1><p class="subtitle">把 CEO 日常搜集的竞品信息、平台规则、视频、文案、图片和研发资料放进公司上下文。AI 只能引用有来源、在权限范围内的资料。</p></div><div class="actions"><button type="button" data-knowledge-action="import">导入资料</button><button type="button" class="btn btn-primary" data-knowledge-action="connect">连接外部知识库</button></div></header><section class="summary"><div class="metric"><span>可引用资料</span><strong data-knowledge-count>126</strong><small>文档、链接、图片、视频</small></div><div class="metric"><span>最近更新</span><strong>14</strong><small>过去 7 天</small></div><div class="metric"><span>已连接来源</span><strong data-knowledge-source-count>3</strong><small>本地文件库 · Notion · 网页收藏</small></div><div class="metric"><span>待确认来源</span><strong data-knowledge-pending>2</strong><small>权限或引用范围未确认</small></div></section><div class="grid"><section class="card"><h2>公司资料</h2><p class="note">搜索后可查看原始来源、更新时间、使用范围和被哪些业务引用。</p><div class="search"><input type="search" aria-label="搜索公司资料" placeholder="搜索竞品、平台规则、文案、研发资料…" data-knowledge-search /><button type="button" data-knowledge-action="search">搜索</button></div><div class="filters"><button type="button" class="active" data-knowledge-filter="全部">全部</button><button type="button" data-knowledge-filter="竞品">竞品</button><button type="button" data-knowledge-filter="平台规则">平台规则</button><button type="button" data-knowledge-filter="内容素材">内容素材</button><button type="button" data-knowledge-filter="研发">研发</button></div><div data-knowledge-list></div></section><section class="card"><h2>外部来源</h2><p class="note">连接只是读取入口，AI 使用前仍会显示来源和权限。</p><div class="source"><div class="source-item"><div><strong>本地文件库</strong><span>文档、图片、视频 · CEO 私有</span></div><span class="status">已连接</span></div><div class="source-item"><div><strong>Notion 工作区</strong><span>竞品研究、内容规则 · 只读</span></div><span class="status">已连接</span></div><div class="source-item"><div><strong>网页收藏</strong><span>浏览器收藏夹 · 最近同步 2 小时前</span></div><span class="status">已连接</span></div><div class="source-item"><div><strong>视频素材盘</strong><span>等待 CEO 确认读取范围</span></div><span class="status warn">待确认</span></div></div></section></div><div class="callout"><strong>使用方式：</strong>在工作空间的“能力组合”里选择知识范围，AI 会把引用资料和原始链接带入当前步骤。资料更新后，旧产出不会被静默改写；下一次运行会标记版本变化并请求复核。</div></main></div></div><script src="_system/canonical-nav.js"></script><script src="curis-prototype.js"></script>  <style id="curis-frozen-patch">
+  /* Frozen alignment patch (Palette-B) — single source = _system/tokens.css (--ui-*) */
+  /* root vars merged into head single source (--ui-*) */
+  .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+  .theme-btn {
+    border: 1px solid var(--ui-line); background: var(--ui-surface-2);
+    color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2);
+    font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease;
+  }
+  .theme-btn:hover { color: var(--ui-text); }
+  .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+  .sidebar, .topbar { background: var(--ui-surface); }
+  .sidebar { border-right-color: var(--ui-line); }
+  .topbar { border-bottom-color: var(--ui-line); }
+  </style>
+  <script>
+  (function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'theme-btn';
+      b.setAttribute('data-curis-theme', t);
+      b.textContent = labels[t];
+      sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar') || document.querySelector('.sidebar');
+    if (host) host.appendChild(sw);
+  })();
+  </script>
+</body></html>

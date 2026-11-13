@@ -1,0 +1,77 @@
+<!doctype html>
+<!--
+  Curis Full Product HTML Design Prototype — 单入口可点击原型
+  Authority: 消费 Frozen Product Structure Baseline + Page Reference Blueprint P1–P14
+             + Pixel Reference Matrix（组件级 Reference 见 CURIS_FULL_PRODUCT_HTML_PROTOTYPE_REVIEW.md）
+  性质: DESIGN PROTOTYPE / DESIGN FIXTURE — 不是 Frontend 实现、不接 Runtime、不是 Product Truth
+-->
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis — Full Product Design Prototype</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/curis.css">
+<script>try{var __t=new URLSearchParams(location.search).get("theme");localStorage.setItem("curis-theme",__t||"light")}catch(e){}</script>
+<script src="js/theme.js"></script>
+</head>
+<body>
+<div id="app">
+  <nav class="pane" id="pane-nav">
+    <div class="pane-header">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span>
+        <span class="spacer"></span>
+        <button class="iconbtn" data-action="toggle-search" title="全局搜索 ⌘K">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="pane-content" id="nav-content"></div>
+  </nav>
+  <section class="pane hidden" id="pane-context">
+    <div class="pane-header"><span class="crumbs" id="ctx-crumbs">上下文</span>
+      <span class="spacer"></span>
+      <button class="iconbtn" data-action="toggle-context" title="收起 Context"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    </div>
+    <div class="pane-content" id="ctx-content"></div>
+  </section>
+  <main class="pane" id="pane-main">
+    <div class="pane-header">
+      <button class="iconbtn" data-action="toggle-context-show" title="展开 Context" id="btn-ctx-show"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+      <span class="crumbs" id="main-crumbs"></span>
+      <span class="spacer"></span>
+      <span class="status" id="global-status"></span>
+      <button class="iconbtn" data-action="toggle-notifications" title="通知">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+      <button class="iconbtn" data-action="toggle-theme" title="主题"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="btn sm" data-action="toggle-utility" id="btn-util">Utility</button>
+    </div>
+    <div class="pane-content pad" id="main-content"></div>
+  </main>
+  <aside class="pane hidden" id="pane-utility"><div class="pane-resize" id="util-resize" title="拖拽调整宽度"></div>
+    <div class="pane-header"><span class="util-tabs" id="util-tabs"></span>
+      <span class="spacer"></span>
+      <button class="iconbtn" data-action="close-utility" title="关闭 Utility"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="pane-content" id="util-content"></div>
+  </aside>
+</div>
+
+<div class="assistant collapsed" id="assistant" data-state="collapsed"></div>
+<div class="overlay" id="overlay"></div>
+<div class="search-panel hidden" id="search-panel"></div>
+<div class="notif-panel hidden" id="notif-panel"></div>
+<div class="state-switcher" id="state-switcher" title="设计测试工具 — 非产品 UI">
+  <span class="ss-label">STATE · DESIGN TOOL</span>
+  <select id="ss-select"></select>
+</div>
+
+<script src="js/fixtures.js"></script>
+<script src="js/components.js"></script>
+<script src="js/rt.js"></script>
+<script src="js/views-core.js"></script>
+<script src="js/views-business.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

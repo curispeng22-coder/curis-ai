@@ -1,0 +1,60 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://docs.aitoearn.ai/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 短剧/小说分成规则
+
+> 短剧与小说平台的 CPS 分成比例。
+
+<Warning>
+  下方比例仅用于帮助理解短剧和小说任务的 CPS 计算口径，不构成具体任务的结算承诺。接任务前请以任务详情页显示的最新比例、适用平台、报备条件和结算说明为准。
+</Warning>
+
+<Note>
+  结算可能涉及应用商店等渠道费用。下方 CPS 按任务定义的实际收入计算，最终以任务页面的结算数据为准。
+</Note>
+
+## 短剧
+
+| 平台          | CPS |
+| ----------- | --- |
+| DramaBox    | 60% |
+| FlareFlow   | 58% |
+| ShortMax    | 60% |
+| FlickReels  | 60% |
+| ReelShort   | 45% |
+| GoodShort   | 65% |
+| StardustTV  | 58% |
+| MoboReels   | 45% |
+| KalosTV     | 45% |
+| TouchShort  | 55% |
+| DreameShort | 70% |
+| HoneyReels  | 54% |
+| Pancake     | 48% |
+| StarShort   | 58% |
+| Sereal+     | 60% |
+| Playlet     | 60% |
+| TopShort    | 58% |
+
+## 小说
+
+| 平台          | CPS |
+| ----------- | --- |
+| NovelShort  | 50% |
+| NovelMaster | 55% |
+| GoodNovel   | 70% |
+| MotoNovel   | 60% |
+| NovelLia    | 55% |
+| SnackShort  | 46% |
+| WebNovel    | 60% |
+| PlotNovel   | 60% |
+| Rocnovel    | 55% |
+| MoboReader  | 46% |
+| MegaNovel   | 70% |
+| sky story   | 55% |
+| Limeread    | 46% |
+| Novelix     | 54% |
+
+<Note>
+  分成比例、报备要求、适用剧集和统计口径可能调整。发布后请按任务要求保留内容和数据，等待任务页面的最终统计与结算结果。
+</Note>

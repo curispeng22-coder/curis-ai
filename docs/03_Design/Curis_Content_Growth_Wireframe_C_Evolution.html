@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Content Growth · 场景C 策略提案 / 最近学到了什么（中保真结构稿）</title>
+<style>
+  :root{
+    --surface-1:#ffffff; --surface-2:#f3f4f5; --bg:#eef0f1;
+    --border:#e0e3e5; --text-1:#1c2126; --text-2:#4a525a; --text-3:#8a929a;
+    --accent:#1f7a4d; --accent-soft:#e6f3ec; --warn:#b4642a; --warn-soft:#fbeede; --danger:#b23b3b;
+    --r2:8px; --r3:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text-1);font-family:system-ui,-apple-system,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.5}
+  .topbar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface-1);border-bottom:1px solid var(--border)}
+  .lights{display:flex;gap:6px}.lights i{width:10px;height:10px;border-radius:50%;background:#d3d7da;display:inline-block}
+  .nav{display:flex;gap:14px;color:var(--text-2);font-size:12px}.nav b{color:var(--text-1)}
+  .shell{display:grid;grid-template-columns:200px 1fr 240px;gap:10px;padding:10px;align-items:start}
+  .pane{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:10px;min-height:320px}
+  .ph{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .main{grid-column:2}
+  .card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:12px;margin-bottom:10px}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .t{font-weight:600;margin:0}
+  .d{color:var(--text-2);margin:4px 0 0}
+  .btn{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r2);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text-1)}
+  .btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.sm{padding:3px 8px;font-size:11px}
+  .pill{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+  .pill.green{background:var(--accent-soft);color:var(--accent);border-color:#bfe3cf}
+  .pill.warn{background:var(--warn-soft);color:var(--warn);border-color:#f0d4b0}
+  .pill.danger{background:#fbe6e6;color:var(--danger);border-color:#eec0c0}
+  .mini{font-size:11px;color:var(--text-3)}
+  .hide{display:none}
+  .tagcg{font-size:10px;color:var(--accent);border:1px solid #bfe3cf;background:var(--accent-soft);padding:1px 6px;border-radius:999px}
+  .grp{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;margin:6px 0}
+  .ev{font-size:12px;color:var(--text-2);border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}
+  .legend{font-size:11px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:10px;margin:10px}
+  code{background:#eef1f2;padding:1px 5px;border-radius:5px;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="lights"><i></i><i></i><i></i></div>
+  <div class="nav"><span>业务空间</span> › <b>内容增长</b> › <span>Curis AI 经营方向</span></div>
+</div>
+
+<div class="shell">
+  <div class="pane">
+    <div class="ph">Navigation · SHELL · T1</div>
+    <div class="mini">六区导航固定<br/><br/>· 概览<br/>· <b>内容增长</b><br/>· 任务<br/>· 数据<br/>· 设置<br/>· 帮助</div>
+  </div>
+
+  <div class="pane main">
+    <div class="ph">Main · SHELL（承载 CG 进化 / 学到的体验）</div>
+
+    <!-- 最近学到了什么（轻量，低存在感） -->
+    <div class="grp">最近学到了什么（非普通 Analytics）</div>
+    <div class="card"><div class="t" style="margin:0">💡 教程类内容更容易带来关注</div><div class="d">点击看 Evidence →</div></div>
+    <div class="card hide" id="evBox">
+      <div class="ev">观察：近 4 周教程类播放中等，但关注转化率约为其他类型的 1.8×。<span class="mini">（示例数据，仅用于说明策略学习体验）</span></div>
+      <div class="ev">证据强度：重复（4 周一致）· 相关≠因果提示已附。</div>
+      <div class="ev">防过拟合：样本仅本账号，未跨平台外推。</div>
+    </div>
+
+    <!-- 四类区分 -->
+    <div class="grp">策略状态（避免审批队列）</div>
+
+    <div class="card"><div class="row"><span class="pill green">已自动微调</span><div class="t" style="margin:0">发布时间窗口内微调（授权范围内）</div></div><div class="d">08-14 抖音下午档 12:30→12:00（留痕·可回滚）<span class="mini">（示例数据）</span> — 不需你批准。</div></div>
+
+    <div class="card"><div class="row"><span class="pill">观察中</span><div class="t" style="margin:0">教程类占比建议提高</div></div><div class="d">证据在积累，先观察；不强迫立即决策。</div></div>
+
+    <div class="card"><div class="row"><span class="pill warn">策略建议</span><div class="t" style="margin:0">建议把教程类占比从 30% 提到 45%</div></div><div class="d">观察/证据强度/影响(内容策略)/可回滚 可见。<button class="btn sm accent" style="margin-left:8px">看完整提案</button></div></div>
+
+    <!-- 需要 CEO 决定（仅重大事项 → 顶部 Banner） -->
+    <div class="card" style="border-color:var(--danger);background:#fbe6e6">
+      <div class="row"><span class="pill danger">需要 CEO 决定</span><div class="t" style="margin:0">品牌定位方向变化</div></div>
+      <div class="d">AI 提议将经营方向从「AI 科普」扩展为「AI + 效率工具」——属结构性长期变化，进 Frozen P7 Decision Banner（非普通建议）。</div>
+    </div>
+
+    <!-- AI 自主微调留痕 -->
+    <div class="grp">AI 自主微调留痕（可查看 · 可回滚）</div>
+    <div class="card"><div class="d">· 08-14 抖音下午档 12:30→12:00（依据近 7 日播放）<span class="mini">（示例数据）</span> — <span class="pill green">可回滚</span><br/>· 08-10 「AI 浏览器」活动期临时加源，活动结束自动降频 — <span class="pill green">已结束</span></div></div>
+  </div>
+
+  <div class="pane">
+    <div class="ph">Utility · SHELL · T3（CG 数据 / Evidence · 按需）</div>
+    <div class="mini">点「看 Evidence」→ 右开数据面板：观察窗口 / 同主题历史对照 / 防过拟合标注。</div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>Pane 标注</b>：<code>Navigation (SHELL·T1)</code> · <code>Main (SHELL)</code> 承载 CG 进化/学到的体验 · <code>Utility (SHELL·T3)</code> CG 数据/Evidence。<br/>
+  <b>三类区分</b>：A 自主微调（留痕可回滚，不需批准）/ B 策略提案（轻量先观察，结构性进 P7）/ C CEO 主动改（直接执行，不再建一次 Decision）。<br/>
+  <b>最近学到了什么</b>：轻量低存在感条目（非数据看板），点开是「一条规律 + 为什么这么认为」的 Evidence，非图表堆叠。<br/>
+  <b>提案 ≠ 审批队列</b>：Home 区分 建议/观察中/已自动微调/需要 CEO 决定 四类；仅重大事项上升 P7 Banner。<br/>
+  <b>纪律</b>：Context Isolation 引用正确、无 P8；Platform Facts 四态不写死数字；内部术语全隐藏；套用 Frozen Shell 四 Pane、无 Global Topbar。<br/>
+  <b>示例数据</b>：本结构稿中的所有数字 / 表现（如「关注转化率 1.8×」「近 4 周」「近 7 日播放」）均为 <b>Illustrative / Demo Evidence</b>，仅用于说明策略学习体验；真实产品仅在 Analytics / Platform Evidence 真实可用时显示真实数字，UNAVAILABLE / UNKNOWN 时不伪造 Learning Evidence（「最近学到了什么」不会杜撰规律）。
+</div>
+
+<script>
+  const ev=document.getElementById('evBox');
+  document.querySelector('#evBox').previousElementSibling.querySelector('.d').onclick=()=>ev.classList.toggle('hide');
+</script>
+</body>
+</html>

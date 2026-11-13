@@ -1,0 +1,80 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "内容增长"
+  - button "Curis 产品研发"
+  - button "宠物寄养（激活中）"
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- main:
+  - link "Curis 研发":
+    - /url: "#/workspace/ws-rd"
+  - generic: /
+  - link "结果":
+    - /url: "#"
+  - generic: /
+  - generic: 登录模块重构 v1.3 联调通过
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - generic: CODE
+  - heading "登录模块重构 v1.3 联调通过" [level=1]
+  - generic: 周岚 · 开发工程师 · 已完成 · 被 1 处引用
+  - button "在 Utility 中打开"
+  - button "问 TA"
+  - heading "证据链（Result → Evidence）" [level=2]
+  - generic: 事实先于观点
+  - generic: auth 模块单测 22 passed / 0 failed
+  - generic: Diff +34 / -93（declared-file change）
+  - generic: 登录页本地预览冒烟通过
+  - heading "被引用" [level=2]
+  - generic: v1.4 回归基线
+  - generic: 引用
+  - heading "继续" [level=2]
+  - button "基于此结果继续工作"
+  - button "导出"
+  - button "查看历史版本"
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你
+- generic "设计测试工具 — 非产品 UI":
+  - generic: STATE · DESIGN TOOL
+  - combobox:
+    - option "normal" [selected]
+    - option "loading"
+    - option "error"

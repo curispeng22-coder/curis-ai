@@ -1,0 +1,46 @@
+# AiToEarn 自托管（Wave 2 · D1）
+# 来源：github.com/yikart/AiToEarn（MIT，v2.4）。Curis 仅取其生成地基（Create / Publish 规划），
+# 作为内部微服务；界面去 AiToEarn 品牌，AI key 用我们自有，**禁用 Relay**。
+#
+# 启动前提：
+#   1) 把上游仓库克隆到 ./aiToEarn（git clone https://github.com/yikart/AiToEarn.git ./aiToEarn）
+#      —— 真实仓库不进提交（见 .gitignore）。
+#   2) 复制 .env.example 为 .env 并填入自有 AI key（占位符，禁止提交真实值）。
+#   3) docker compose up -d
+#
+# 网络边界（零第三方 SaaS / 零 Relay）：
+#   - 仅对内暴露生成/规划 API（默认 8080），不对外网暴露 Web。
+#   - RELAY 相关配置一律留空/禁用（见 .env.example 注释）。
+#   - 自有 AI key 经 .env 注入容器，容器内仅作运行时变量，不写入任何 Curis 代码/DB。
+
+services:
+  aitoearn:
+    build:
+      context: ./aiToEarn
+      dockerfile: Dockerfile
+    container_name: curis-aitoearn
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # 仅内部服务：关闭公网 Web 暴露（由部署侧不映射公网端口保证）。
+      AITOEARN_PUBLIC_WEB: "false"
+      # 禁用 Relay（合规红线，绝不配置任何 Relay/在线服务键）。
+      AITOEARN_RELAY_ENABLED: "false"
+      AITOEARN_RELAY_KEY: ""
+      # 自有 AI key（来自 Vault 解析后注入 .env；此处仅为容器运行时变量）。
+      OPENAI_API_KEY: ${AITOEARN_OPENAI_API_KEY:?set in .env}
+      ANTHROPIC_API_KEY: ${AITOEARN_ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${AITOEARN_GEMINI_API_KEY:-}
+    ports:
+      # 仅暴露内部生成 API（Curis 编排层经内网调用）。
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # 去品牌补丁（见 ./debrand.patch 与 README），只读挂载覆盖前端品牌资源。
+      - ./debrand:/app/debrand:ro
+    profiles:
+      - generate
+
+  # 说明：完整上游为 Nginx+Web+Server+AI+Mongo+Redis+RustFS。本 compose 仅启动
+  # 生成地基所需最小集合；Mongo/Redis 等依赖按上游默认 docker-compose 补齐
+  # （同目录 extend 即可），资源不足时可仅跑 generate 服务（已用 profiles 隔离）。

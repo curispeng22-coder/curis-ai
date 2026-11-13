@@ -1,0 +1,65 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- main:
+  - link "Curis":
+    - /url: "#"
+  - generic: /
+  - link "设置":
+    - /url: "#"
+  - generic: /
+  - generic: 个人偏好
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - heading "设置" [level=1]
+  - generic: 个人偏好 / 公司 / AI 与能力 / 权限与数据 / 运行与成本 分开管理
+  - textbox "搜索设置…": "[object Object]"
+  - generic: 显示名
+  - textbox: CEO
+  - generic: 语言
+  - textbox: 简体中文
+  - generic: 启动页
+  - textbox: CEO 工作台
+  - button "保存"
+  - text: DESIGN FIXTURE · 本地草稿态
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你

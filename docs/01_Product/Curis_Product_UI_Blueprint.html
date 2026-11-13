@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="curis-authority-class" content="CURRENT">
+  <meta name="curis-status" content="FROZEN">
+  <title>Curis UI Blueprint · 产品空间与空间原语</title>
+  <style>
+    :root{--bg:#1a1c1f;--s:#222529;--s2:#2b2f34;--line:#343940;--text:#f3f4f6;--sub:#a7adb6;--mute:#7e8792;--accent:#32f08c;--warn:#d89a3a;--r:12px;--max:1120px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:var(--max);margin:auto;padding:0 28px}.hero{padding:52px 0 42px;border-bottom:1px solid var(--line)}.tag{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--sub);font-size:12px}.tag.review{color:#f1c276;border-color:#745522}.tag.ok{color:#8dd7b1;border-color:#326a4b}h1,h2,h3{letter-spacing:-.02em}h1{max-width:820px;margin:18px 0 12px;font-size:48px;line-height:1.12}h2{margin:0;font-size:28px;line-height:1.2}h3{margin:0 0 6px;font-size:16px}.lead{max-width:820px;color:var(--sub);font-size:18px}.nav{position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line);background:rgba(26,28,31,.96);backdrop-filter:blur(12px)}.nav .wrap{display:flex;gap:6px;overflow:auto;padding-top:10px;padding-bottom:10px}.nav a{white-space:nowrap;border-radius:8px;padding:5px 8px;color:var(--sub);text-decoration:none;font-size:12px}.nav a:hover,.nav a:focus-visible{background:var(--s2);color:var(--text);outline:2px solid var(--accent);outline-offset:2px}section{padding:48px 0;border-bottom:1px solid var(--line)}section>header{max-width:800px;margin-bottom:22px}section>header p{margin:7px 0 0;color:var(--sub)}.grid{display:grid;gap:12px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--s)}.card p,.card li{margin:0;color:var(--sub)}.card ul{margin:8px 0 0;padding-left:18px}.callout{padding:15px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--s2)}.callout strong{color:var(--accent)}.callout.warn strong{color:#f1c276}table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--s);font-size:13px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--s2);color:var(--text);font-weight:650}td{color:var(--sub)}tr:last-child td{border-bottom:0}.screen{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:#17191c}.screen pre{min-width:760px;margin:0;padding:18px;color:#dce1e6;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}.check{display:grid;grid-template-columns:22px 1fr;gap:8px;margin:8px 0}.check b{color:var(--accent)}footer{padding:28px 0;color:var(--mute);font-size:12px}@media(max-width:760px){h1{font-size:34px}.wrap{padding:0 18px}.two,.three{grid-template-columns:1fr}section{padding:36px 0}}
+  </style>
+</head>
+<body>
+<section id="shared-employee-interaction-20260923"><div class="wrap">
+<h2>Shared Employee Interaction · CEO Accepted 2026-09-23</h2>
+<p><strong>Status: Frozen · Authority Class: CURRENT / UI CONTRACT EXPANSION。</strong>消费Blueprint与Shell §3.1A，不新增产品模型。默认Professional Object → Lightweight Employee Bar → Professional Main；需要交流才在Bar下、专业Main上插入Conversation＋Shared Composer。收起讨论完整隐藏，Employee仍在；保留消息、输入、选段、对象与目标员工。专业对象内不沿用单一working自动展开或全部员工列表布局。</p>
+<p>Bar仅头像/姓名/责任/必要工作描述/一起讨论；无重要状态不写“空闲·无进行中执行”，不常驻Provider/Model/Tool。Selection带对象/版本/Locator/短摘录与回程，旧基线stale不得偷换latest。真正产物回Main比较、审校、试听、人的选择；引用可在Utility查看Evidence/Provenance并回同一专业对象。Reviewer只在实际贡献中出现，责任不自动转移。</p>
+<p>全局CEO Assistant继续轻量悬浮、身份独立；员工讨论时视觉降权，不出现两个同等级Full Composer。Navigation/Context/Main/Utility职责、独立Full Conversation与Meeting语义不变；不冻结像素或统一三个专业Main。不支持的Composer能力不作假按钮。Writing三态是交互证据，不是最终视觉或Runtime能力验收。</p>
+</div></section>
+<section id="business-activation-20260915"><div class="wrap">
+<h2>Business Activation · Current结构补丁</h2>
+<p><strong>Status: Frozen · CURRENT UI STRUCTURE · CEO ACCEPTED 2026-09-15。</strong>消费<a href="Curis_Product_Blueprint.html#business-activation-20260915">Blueprint</a>、<a href="Curis_Product_Master_Map.md">Master Map A1–A6</a>、<a href="../03_Design/Curis_Company_OS_Shared_Authority.md">Company OS §19</a>。不画UI、不新增导航、不修改Four-Pane；Catalog/Migration只是Target Contract，Content Growth仍未获本轮发布。</p>
+<table><thead><tr><th>Surface / Entry</th><th>产品责任</th><th>状态 / Return</th></tr></thead><tbody>
+<tr><td>Business Space，0/N</td><td>只显示真实Business。Company与原装组织存在、Business=0合法；“新建业务”及Assistant经营意图入口。不得画未启用Content Growth/RD/Writing为用户业务。</td><td>统一Business Creation；成功保First Workspace landing和回目录；取消保原位置。</td></tr>
+<tr><td>Organization → 新建</td><td>区分新建Department / 新建Business；后者进同一Creation，Department建议不是静默新建。</td><td>成功回原Company Map选中新Business，Business Space自动读同一事实。</td></tr>
+<tr><td>Global Assistant</td><td>查已有Business，适合则建议扩Account；否则匹配已发布Package或Generic，进入同一Proposal，不静默建组织/绑Provider/扩大权限。</td><td>同一durable Conversation，成功摘要及真实Business/Workspace链接；不另建Assistant Activation系统。</td></tr>
+<tr><td>Business Creation / Catalog</td><td>Main承载；“可开展的业务”是发布Package发现投影＋“描述其他业务”。不放Popover、小Modal、Utility、Settings，不新增一级Catalog。</td><td>浏览/详情/提案保查询、筛选、滚动、输入与来源；空Catalog/未匹配仍Generic路线。</td></tr>
+<tr><td>Capability Detail</td><td>Main阅读/判断：经营什么、结果、适合/不适合、方法摘要、Curis/User边界、准备、真实支持/限制、Human Handoff、维护/来源、允许启用。版本/验证/迁移高级披露。</td><td>发布Gate通过才“启用具体业务”；Candidate不得画成当前可经营事实；返回同列表/Conversation。</td></tr>
+<tr><td>Activation Proposal</td><td>Guided Main＋Structured Proposal；你的目标、建议怎么开始、准备先做什么、需要确认什么。说明Department/Business/First Workspace、Responsibility建议、组织影响与最终确认，不把所有内部字段平铺成Wizard。</td><td>理解/必要澄清/提案/修改/确认/创建中/失败/恢复为同体验状态，非新Runtime enum。无AI不伪造提案生成，可确定事实允许手工确认。</td></tr>
+<tr><td>Activation Success</td><td>真实Business、所属Department、First Workspace、已落实责任/Assignment或缺口、组织关系、下一步/对话入口。创建不等所有Work可执行。</td><td>原子成功才成功；双击/重开查同一确认结果。不假Holder，不把后续能力不足报成Business不存在。</td></tr>
+<tr><td>Package Update / Migration</td><td>Business/Workspace提示→Main影响/兼容/Proposal→必要Decision→升级状态/恢复；辅助Evidence可Utility。无Migration一级区/Center/Updater后台。</td><td>按真实来源表示待检查/不兼容/准备/升级/验证/待恢复/完成；回同Business。Unknown不假绿，失败动作受恢复条件约束。</td></tr>
+</tbody></table>
+<p><strong>Global AI pool：</strong>Model/External Agent统一Settings配置，主流预置连接＋API Key启用，自定义Model/Agent合法；已启用且当前可用项自动进入所有Employee统一Conversation Composer候选，受真实权限/健康/适用性约束。Employee用途偏好可继承，不强制预绑定固定模型。Business只给经营Context，不重复配置/绑定Model；没有Model不挡合法Business创建。特殊Work能力缺口在原Work提示，修复回原处；Skill/Tool仍依自身授权，不等全员自动拥有。</p>
+<p><strong>UI EXPRESSION DOES NOT OWN BUSINESS DATA TRUTH。</strong>Package升级可改变Surface/Section/Field表达，但须消费实际Version、Compatibility、Business Data Truth与Migration合同。纯布局/颜色/组件通常不迁数据；新UI读仍受支持旧Business数据，不隐藏旧事实、不默认填0/成功、不重建Business/Account/Result。Package版本不等UI版本。</p>
+<p>在途Work不热切输入/方法/能力/权限批准；EFFECT_UNKNOWN先核验。新Provider/权限/费用/重大责任再确认；更新确认不批准所有动作。恢复保护升级后和其他Business新事实；下架不删Business。历史只读仍校验Scope。Catalog不是Talent &amp; Capability第二能力库，Package不拥有员工，七区/Shared Composer完整功能与Four-Pane不变。</p>
+</div></section>
+<section id="consolidation-20260915"><div class="wrap">
+<h2>2026-09-15 · Current UI Product Structure Consolidation</h2>
+<p><strong>Status: Frozen · CURRENT UI STRUCTURE AUTHORITY · CEO ACCEPTED DECISIONS APPLIED。</strong>本节消费<a href="Curis_Product_Blueprint.html#consolidation-20260915">唯一Blueprint</a>、<a href="Curis_Product_Master_Map.md">Master Map Current Consolidated Contract</a>、<a href="../03_Design/Curis_Company_OS_Shared_Authority.md">Company OS Shared §10–18</a>、<a href="../03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md">Frozen Shell</a>和<a href="../03_Design/Curis_Content_Growth_Domain_Authority.md">Content Growth §5.4</a>；不要求设计重读Research。本轮只同步Surface/状态/入口/返回，整包一致性待CEO Review；没有最终视觉批准或UI实现授权。</p>
+<p>七区顺序保持：CEO工作台 → 业务空间 → 组织中心 → 人才与能力 → 经营洞察 → 资料库 → 会议。Browser、Model、Provider、Background、Backup、Recovery及专业工具都不增一级区。原装组织、Business可0、Employee唯一身份、多Assignment及Company/Department合法Work不变。</p>
+<h3>空间职责：同一Four-Pane，不是新的布局</h3>
+<table><thead><tr><th>空间</th><th>Current责任</th><th>禁止混入</th></tr></thead><tbody>
+<tr><td>Navigation</td><td>公司级七区、Conversation Quick Access、合法搜索及CEO/settings入口</td><td>新增工具中心/第八区；Quick Access冒充Assistant</td></tr>
+<tr><td>Left Context</td><td>当前Domain对象集合、局部导航、Context选择</td><td>全公司对象树、完整Conversation或长期工作</td></tr>
+<tr><td>Main</td><td>完整Conversation、真实Work、复杂编辑、专业Workspace、复杂Browser操作、完整Model设置与分析工作</td><td>员工墙取代业务产品、用工具墙取代专业Surface</td></tr>
+<tr><td>Right Utility</td><td>辅助Evidence、Result Detail、Reference、Preview、有限Context/详情编辑；按Shell可放大阅读</td><td>完整Conversation、完整Business Operating、复杂长期工作；放大不改变辅助职责</td></tr>
+<tr><td>Global CEO Assistant</td><td>跨七区、同canonical身份/持久Conversation，可拖动收起的独立浮动层；协调/跟进/升级</td><td>第五Pane、Business Leader替代品、默认行业执行者</td></tr>
+</tbody></table>
+<p>默认Navigation + Main，Context/Utility按需；Pane-local Header与no global topbar保持。Main = selected Professional Surface + Shared Work Area；专业Surface为Workspace最大工作主体，完整Employee Conversation在Main.WorkArea。切换Surface/Scope不复制Employee/Work/Result/Conversation，消息与引用重新校验合法范围。</p>
+<h3>逐Surface信息与回程责任</h3>
+<table><thead><tr><th>Surface</th><th>信息/状态/动作责任</th><th>Entry / Reverse Entry</th></tr></thead><tbody>
+<tr><td>CEO Desk</td><td>Brief/Matters/重要Result；仅真实需要时展示人工接续、效果待核验、后台异常与Business attention。后台正常工作不新增仪表墙；已处理决定降为历史/结果</td><td>点击Matter进入原Work/账号或必要Settings；处理后回Desk同一Matter，报告完成仍需核验</td></tr>
+<tr><td>Business Space</td><td>持续Business方向、整体状态/资源/结果与Workspace目录；不以Account替代Business或嵌入全部专业工具</td><td>进入真实Workspace/Leader Main；从Work/Insights返回原Business范围</td></tr>
+<tr><td>Organization Center</td><td>固定公司版图/员工目录；同Employee跨业务多处引用、目录一人；不猜空岗风险</td><td>Assignment/员工详情→Main Workstation；返回原公司/业务Focus，不复制身份</td></tr>
+<tr><td>Workspace</td><td>专业对象为Main核心；当前经营保持“经营状态/本轮重点/最新判断/下一步”；进展由专业Surface表达；Need/Risk/User Required仅真实存在时显示。Browser/Terminal/Git/Data/Media工作按需进入专业Main，不常驻工具墙</td><td>从当前对象/Work/能力缺口打开；复杂工作Main、Preview/Evidence Utility；回原专业对象与Work</td></tr>
+<tr><td>Employee Workstation</td><td>Employee、Responsibility、Work、实际Capability与Conversation相连；员工仅空闲/工作中·desc/阻塞·cause。User Required/Effect Unknown属于原Work/动作，不增加员工枚举</td><td>从Employee/Assignment/Work进入；能力配置完成返回同Conversation/Work，不能自动重发未知效果动作</td></tr>
+<tr><td>Talent &amp; Capability</td><td>发现/招聘/安装/启用/绑定，展示来源与真实限制；Catalog≠Employee，定义≠可执行；模型完整管理仍Settings</td><td>工作缺口→相关发现/绑定→回原工作核验；连接修复深链同Settings，不复制配置页面真源</td></tr>
+<tr><td>Settings / Connections</td><td>普通：必要连接、用途选择、权限、后台opt-in、备份/恢复；自动事实只读；Advanced才显示支持的软限制/技术配置。复杂Model/Provider管理在Main，不挤Utility。后台Enabled/Disabled与实际Work continues/Paused/Unavailable分开，退出有Stop All &amp; Quit合法动作</td><td>CEO头像或Work定向入口；保留原对象/输入/返回锚点；完成后重新检查可用性，不能自动执行待核验外写</td></tr>
+<tr><td>Content Growth</td><td>Account Goal/Strategy/Cadence/Plan/历史/Analytics/Learning/Next；Intent→Platform Form→Account Context→Variant，逐账号Publication/效果/人工接续。CEO Operating Result为Domain默认selected Surface，不改Main。8状态/4桶不冻结为UI；没有按平台建Workspace</td><td>Account→Variant/Publish→Evidence/Review→原Account/Work；复杂生产Main，回执辅助Utility；scoped Insights可往返</td></tr>
+<tr><td>Operating Intelligence</td><td>趋势/比较/归因/报告/经营评估；真实Analyst身份与Evidence，Cost/Speed/Quality/Failure分开；无数据不补零，不做模型榜/健康分</td><td>Business/Workspace/Employee/Matter scoped进入，Report→原P7/来源→原上下文</td></tr>
+<tr><td>Library / Meeting</td><td>Library为Reading/Reference/Source/Scope/Freshness；Meeting为持续多人Conversation与Evidence/Proposal/Decision/Responsibility/Work/Result。接续问题在原工作关系处理，不建新会话系统</td><td>Work Picker紧凑引用→回Work；Result返回同Meeting；CEO离开不关闭Meeting；Library返回保列表状态</td></tr>
+</tbody></table>
+<h3>Shared Interaction：产品义务，不是新组件设计</h3>
+<ul>
+<li><strong>Human Handoff：</strong>显示AI已完成、需人原因、用户动作、目的地、完成判据、之后继续；“已完成”是报告，有外部事实先核验。保原Work/责任；不强制P7、不自动P5移交。真实决策另消费P7，技术访问遵守ADR-0046。</li>
+<li><strong>Browser：</strong>Search/Reader/Interactive清楚区分；当前站点/账号、有效权限、观察、接管/停止、上传下载范围可知。人工控制与自动执行不争用；重连重验目标/权限/效果，复杂交互留Main。网页正文不是工具授权。</li>
+<li><strong>Model：</strong>Connection≠Model≠Capability；各能力SUPPORTED/UNSUPPORTED/UNKNOWN带来源/时间/测试；Context硬限与Provider limit只读，用户不配置假能力；用途Work explicit→Employee purpose→Company default，fallback变化可追且受权限/数据/预算限制。</li>
+<li><strong>Background：</strong>关闭UI继续仅在显式opt-in且实际可用时；不运行条件、停止全部、保存/在途效果待核验和重开同历史必须可理解。位置属于Settings退出/原Work必要状态，不新增常驻后台Console；G3-V未验不能画成已交付。</li>
+<li><strong>Effect Unknown：</strong>确认已生效/效果未知/需核验/可安全重试/不能重放分别表达；不只给“重试”。Approval快照变化后重批，保原Work/Evidence与返回。</li>
+<li><strong>Backup：</strong>范围/排除/完整性/Preflight/影响/恢复/重连/Resume Check均可追；排除秘密与Browser Profile；恢复后先核验外写，不静默重放。未实现的加密/格式不作可用按钮。</li>
+<li><strong>所有入口：</strong>保留来源Scope、对象、Work/Conversation、未提交输入、筛选/阅读位置；取消与失败也有回程。错误说明原因、Owner、限制和下一动作，不暴露Runtime lease/锁/私密trace。</li>
+<li><strong>Composer：</strong>继续消费Frozen Input / + / 访问权限 / 工作模式 / 已选资源 / Model·Agent / Voice / Send语义槽位，按真实能力显示；不恢复Compact首版第二规则。Runtime状态不强制展开/折叠；唯一初始自动展开规则仍按Shell。</li>
+</ul>
+<p><strong>Target / Current：</strong>Master Map的P/T/C字段责任必须保留：目标合同≠当前可用性。G1-V～G6-V均NOT RUN；Interactive Browser NOT VALIDATED；既有接受链不降级，也不外推新增能力已实现。Unknown/Unavailable/Partial/Manual/Needs verification等按真实来源显示，来源不一致不是Global Conflict enum。</p>
+<p><strong>视觉边界：</strong>Visual Standard继续原Authority；本轮不改颜色/字体/尺寸/卡片。以下旧Figma、RD首版范围及historical composition仅保留适用产品结构/证据；不能反向冻结当前页面。未经正式Interaction Contract接受的Drawer/Modal/Tab/Dropdown/Card选择一律DESIGN OPEN，不将Expression V2全稿升级UI Authority。Final UI Master保持PAUSED，待本轮CEO最终确认后才能进入UI Design Restart。</p>
+</div></section>
+
+<section id="phase-a1-built-in-organization"><div class="wrap">
+<h2>2026-09-09 · Phase A.1 原装公司经营组织</h2>
+<p>Authority Class: CURRENT / FROZEN · CEO CURRENT DECISION。<a href="../reviews/CURIS_CORE_PRODUCT_AUTHORITY_REPAIR.md">Authority Repair Phase A.1</a>限定下文Phase A的旧“仅默认部门/人数全部未定”措辞；不重写其他产品规则。</p>
+<ul>
+<li>空间工程部、数据分析部属于CURIS BUILT-IN COMPANY OPERATING ORGANIZATION / Curis原装公司经营组织；部门正式称Curis原装经营部门，不是用户Business、模板、Package或Demo。Company materialization把定义落实为各Company自己的canonical实例。</li>
+<li>新Company=Company+CEO+same canonical Assistant+两原装部门+对应真实AI Employees+Role/Responsibility/Assignment+合法Work Surface。用户经营Business可0；不得自动种研发/内容增长/示例业务。无Key或模型未配也创建员工，只显示需配置/暂不可执行，不假绑定。</li>
+<li>空间工程六类职责已恢复：Leader、行业/业务研究、经营模型/设计翻译、产品/空间设计、搭建、Quality/Test/Feedback。CEO ROLE DECOMPOSITION现已裁决freshCompany物化6个不同canonical Employee，官方岗位为空间工程负责人、行业研究专家、经营方法专家、空间设计专家、搭建实施专家、质量验证专家；后续可合法编辑/替换Holder/增减人员，责任要求独立持续。原型高建/研真/方法/小录/实施/QA不是官方名单；未恢复“牧人”的可定位定义。</li>
+<li>数据分析部至少1真实Company Analyst / 公司经营分析师，主要工作位为经营洞察。历史产品称谓“司衡”可恢复但可编辑，不能靠姓名或role文字选择员工；UI fixture不证明实例。canonical Role/Responsibility/Assignment证明归属；Business0时说明暂无经营业务/足够数据，不是无负责人。</li>
+<li>Official Employee Definition仅提供岗位/责任/推荐能力来源→Company Employee Instance为真实身份→Assignment选择Current Holder。原装/招聘/用户创建共用同Employee system、Detail/Edit、Conversation与能力机制；不建第二套员工或Definition运行真源。</li>
+<li>按现有支持字段编辑name/avatar/role presentation/skills/capability/model等；不会创建新身份。组织Requirement持续，Holder可合法替换，历史Work/Result不改；缺Holder呈现组织能力缺口。V1不支持替换时记后续，不扩Runtime。</li>
+<li>Organization初始展示两原装团队与空用户业务/启用入口；Talent用于扩充，不把原装员工列为待招聘。空间工程已存在再承接Business intent。Employee Profile是官方示范，解释身份、部门、岗位、职责、scope、工作面、能力、模型状态、工作/结果、Conversation及可编辑项；沿用Main Workstation+Utility detail，不将聊天塞入Utility或创建Built-in专用UI。</li>
+<li>Final UI需覆盖初始组织/无Business、工程Team、分析Team及Insights入口、Official Employee Detail/Edit和User Employee对照。Phase B必须落实组织/official employees/Business activation/Four-Pane/floating Assistant后才恢复Final UI。当前仍PAUSED，发布BLOCKED。</li>
+</ul>
+</div></section>
+<section id="phase-a-authority-repair"><div class="wrap">
+<h2>2026-09-09 · CEO Phase A Current Authority Repair</h2>
+<p>Authority Class: CURRENT / FROZEN · Disposition: ACCEPTED。<a href="../reviews/CURIS_CORE_PRODUCT_AUTHORITY_REPAIR.md">正式裁决登记</a>及同日Shared/Shell修订限定下文冲突旧段适用范围；原文保留为provenance，不代表原解释继续有效。本修订不是Runtime已完成声明。</p>
+<ul>
+<li>新Company必须有Company、CEO identity、同canonical CEO Assistant、空间工程部、数据分析部；用户Business可空，不默认创建研发/内容增长/示例业务。两部门为System-default Company Support Department，人数、固定Workspace和删除/改名政策未定。</li>
+<li>Company → Department → Business → Workspace；Business为持续经营身份，Project不替代Business。Organization/Business Space需提供经营意图启用/选择入口：read Company → reuse/propose → 必要Gate → canonical parent → atomic Business+firstWorkspace → 合法Team/Leader责任 → Operating。CEO可直接创建或委托空间工程部，不配置DAG/Router。</li>
+<li>空间工程部承接理解/研究/Operating Model/空间设计/build/quality/Team交付/演化；Leader不是dispatcher，only-on-exception只限WHO路由。数据分析部承担Company/cross-Business分析，Company Analyst由canonical责任/Assignment证明，不能按岗位文字猜。</li>
+<li>Generic是合法真实可经营环境；Professional是稳定专业方法/工具/语义下的目标形态，不是所有长期Workspace的强制前置。下文同义“长期必须Professional”的普遍解释SUPERSEDED，真实Operating Team/责任要求保留。</li>
+<li>内容增长/研发是用户启用的Business/专业portfolio，不是默认支撑部门。XHS/Douyin/TikTok/YouTube/Bilibili为Channel/capability context，Channel≠Workspace；旧XHS/Shortvideo实现仅兼容专业实例，不等于Current Content Growth整体。</li>
+<li>Conversation可跨Assignment持续且同Employee多topic；每条消息/引用按真实Assignment/Workspace/Work scope校验，历史隔离不强制新Conversation。Sidebar是canonical bounded recent quick access，message activity排序，dismiss不删除，不是Assistant。</li>
+<li>Four-Pane=Navigation/Context/Main/Utility职责，默认Nav+Main，辅助Pane按需。Context只当前domain/work导航和bounded context；Main独立；Utility为Detail/Editor/Evidence/Tool/Result阅读，可maximize，不是固定结果/员工栏。沿用Shell Header/T1–T3/resize。</li>
+<li>Reading=理解资料结果证据；Working=与Employee/Work/Meeting持续工作；Operating=方向责任状态结果问题和下一判断。Business→Operating Main；Workspace→Domain Main；Conversation/Work/Meeting→Working Main；Employee→Main Workstation+Utility detail；Result/Evidence→Utility；Knowledge→Reading Main；Insights→Operating/Report Reading；Decision→P7+Utility Evidence。</li>
+<li>CEO Assistant为跨七区持续、可拖动/收起的global floating layer，同identity/durable conversation，不占Pane、不预留空间。旧drag=Vision仅为历史结论。尺寸/位置/snap/记忆/快捷键/physics留Final UI Master。CEO Desk是Operating Surface，不是Assistant本体或聊天首页。</li>
+<li>Modal/temporary overlay可start/create/config/select/confirmation，高风险需确认；旧“只用于高风险”普遍限制SUPERSEDED。Drawer为bounded detail/edit；Floating为持续layer。</li>
+<li>七区仍是CEO工作台、业务空间、组织中心、人才与能力、经营洞察、资料库、会议；Conversation/Assistant/Model/Settings均utility。Core持有truth/identity/execution/security/reference，Package负责bounded professional composition；不能重建专业monolith。</li>
+<li>下文Knowledge/Meeting/App Entry的旧implementation pending是历史checkpoint，不覆盖accepted implementation；scope仍按Current State。Studio自由business-ref路径为LEGACY/COMPATIBILITY UNTIL RECONCILED。Final UI Master暂停，等待独立 Desktop AI / Agent UX 竞品设计研究；Product Complete与发布状态仍按Current State及Accepted Review读取。</li>
+</ul>
+</div></section>
+<header class="hero"><div class="wrap">
+  <span class="tag">CURIS · 唯一 UI BLUEPRINT</span>
+  <h1>Curis 统一的是空间语言，不是把每个页面塞进同一套四栏模板。</h1>
+  <p class="lead">本文件是唯一 Current UI Blueprint。以 Product Blueprint 5.6 与 Product Master Map 3.2 的 Business × Workspace、Professional Workspace / Multi-Surface、Operating Work Directory、Shared Management Surface 与 Leader Work Surface 决策为产品依据，并以 Frozen Visual Standard（Direction D / Iris <code>#806BE5</code>）为当前视觉语言真源；旧 Design System 仅保留未被取代的实现兼容约束。本文件只消费产品模型，不反向改变它。</p>
+  <p><span class="tag ok">Status: Frozen · CURIS PRODUCT TRUTH — FINAL ACCEPTED</span> <span class="tag review">Product Blueprint 5.6 / Master Map 3.2: current authority</span> <span class="tag">Desktop First</span> <span class="tag">不等同于已交付业务功能</span></p>
+</div></header>
+<nav class="nav" aria-label="文档目录"><div class="wrap">
+  <a href="#authority">依据与边界</a><a href="#principles">总原则</a><a href="#canvas">基础画布</a><a href="#primitives">空间原语</a><a href="#workstations">Workstation</a><a href="#product-surfaces">产品空间合同</a><a href="#rd-scope">研发首版范围</a><a href="#reference-driven">参考方法</a><a href="#ws-auth">Workspace 结构权威</a><a href="#review">Design Gate</a>
+</div></nav>
+<main>
+<section id="authority"><div class="wrap">
+  <header><h2>01 · 依据、单一性与边界</h2><p>这是当前唯一 UI Blueprint，不是 Product Blueprint，也不定义 Runtime、接口、数据库或正式业务代码。Business Work Surface 最终结构修正已同步；本文件只登记信息架构与后续 Visual Delta，不重做专业 Workspace。</p></header>
+  <div class="callout warn" style="margin-top:12px"><strong>Pre-Design-Research Product Structure Baseline：</strong><a href="CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md">CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md</a> 是本 UI Blueprint 进入 Desktop AI / Agent UX 竞品研究前的唯一结构输入。Product structure 为 <strong>RECORDED / CURRENT</strong>；当前 19 张 Figma / Batch 1 仅作 STRUCTURAL / IA REFERENCE，<strong>FINAL UI MASTER: PAUSED — COMPETITIVE DESIGN RESEARCH REQUIRED</strong>，不把视觉组合、像素或动效误写为 Frozen。</div>
+  <div class="grid two"><div class="card"><h3>上位依据</h3><ul><li>唯一 Product Blueprint 5.6：七个一级区域（含经营洞察）、Company → Department → Business → Workspace、Professional Workspace / Multi-Surface、Conversation / Settings 产品空间、Employee Workstation、自动化、会议闭环、Studio、结果与学习。</li><li>Frozen Visual Standard：Direction D、Neutral Foundation、Iris `#806BE5`、中文优先层级与主题边界；旧 Design System 只在未被该标准取代的实现兼容部分参考。</li><li>Company OS Shared Authority §10–18：当前完整能力/模型/人工接续/后台/恢复合同；旧AI Capability UI Contract技术投影留作分层Reference，不整篇冻结。</li></ul></div><div class="card"><h3>Design AI 的专项输入</h3><ul><li>当前必读仅Pointer指定的Blueprint、Master Map、本UI Blueprint及适用Shared/Domain；研发读取RD Instance当前对象与责任部分。</li><li>旧RD Design Brief / Reference Synthesis / UI Reference Map与Gap Audit只作历史研究；首版范围、旧组成不覆盖本轮Current。</li><li>没有正式交互确认的具体组件DESIGN OPEN，不能按旧高保真反推产品。</li></ul></div></div>
+  <div class="callout warn" style="margin-top:12px"><strong>Prototype 状态：</strong><code>Curis_UI_Blueprint_Prototype.html</code> 为 <strong>REFERENCE ONLY / NOT DESIGN AUTHORITY</strong>。它只保留为早期空间验证快照；后续视觉、布局与组件由 Design AI / Figma 按本文件和专项 Design Brief 产出，不再由 Codex 自行推导。</div>
+  <div class="callout" style="margin-top:12px"><strong>App Entry UI Acceptance：</strong>Figma <a href="https://www.figma.com/design/2Fh7DgPPfLgdbvNtnzPnk9/Curis-V1-App-Entry-CEO-Assistant-Experience">Curis V1 — App Entry &amp; CEO Assistant Experience</a>（13 个登记 Core Frames，file key <code>2Fh7DgPPfLgdbvNtnzPnk9</code>）是当前 App Entry UI Design Baseline；Welcome → Create Company / Skip → Empty Curis、CEO Identity、CEO Assistant first presence、Conversation / Composer、Model Management / Selector 与 truthful Empty State 为 <strong>UI ACCEPTED</strong>。旧 App Entry / First Run / Prototype / fixture / Trae 候选仅在冲突处标记 <strong>SUPERSEDED FOR CURRENT UI</strong>。CEO Desk Operating / Matters Present 已另登记 Current Operating Design Baseline：Figma <code>69:3</code>。Frontend、Runtime 与 Schema 的当前状态只由 <code>docs/00_Context/CURRENT_STATE.md</code> 和对应 Accepted Review 登记，本 UI Blueprint 不维护并行 Implementation Truth。</div>
+  <div class="callout" style="margin-top:12px"><strong>Frontend Batch 1 Implementation：</strong><code>CURIS-V1-FRONTEND-BATCH-1</code> 已通过 Browser、packaged <code>Curis.app</code>、restart、no-fake-data 与 DB safety 验收，覆盖 App Shell、七区导航、Welcome / Skip / Empty Curis、CEO Identity、Company / CEO Assistant、Empty Company、Model Management、Business Proposal、canonical General Business + First General Workspace、CEO Desk Operating / Attention Projection 与 packaged mainline。状态为 <strong>IMPLEMENTED / ACCEPTED WITH RECORDED BOUNDARIES</strong>，不等于 V1 / Frontend 完成；Avatar、Conversation、Composer、Model Selector、1024 Assistant layout、General Workspace full operating loop、M3 Keychain 与真实外部 AI execution 仍按接受记录保持 Partial / P1 / Separate Blocker / Not Verified。旧 floating <code>GlobalAssistant</code> 为 <strong>LEGACY / P1 UNIFICATION REQUIRED</strong>，不得当作当前 CEO Assistant。</div>
+  <div class="callout" style="margin-top:12px"><strong>三层经营边界（CEO Accepted）：</strong>UI 只表达 User Surface；Employee Operating Layer 通过 Leader / Employee Workstation 按责任消费能力、方法与资料；System Runtime 不是 UI 页面或固定行业 Workflow。未知业务通过缺口、研究、提案与必要 Gate 表达，不伪装成熟能力；Package 语义为 Domain Operating Capability Package，当前不新增 Playbook UI 或 Runtime。</div>
+  <div class="callout green" style="margin-top:12px"><strong>Professional Workspace Strategy（CEO Accepted）：</strong>UI 消费 Verified Match、Instance Configuration、Derived / Composed、Generic 或 Professional Candidate 的解析结果，不把 Business Configuration 画成 Workspace Builder，也不把 Generated / Official 误标为 Verified。Content Growth 当前是 Professional Workspace Candidate，不是 Verified；其 CEO Operating Result / 经营结果面是默认 selected Professional Surface / projection。Professional UX / Interaction 是 Package 声明的一等资产；受控 Multi-Surface Workspace Package v2 foundation 已有独立 implementation acceptance，但 Surface/UI projection、Professional registry 与完整 Studio UX 仍是产品集成缺口。本轮不新增 UI 面板、Marketplace 或 Package runtime。</div>
+</div></section>
+
+<section id="principles"><div class="wrap">
+  <header><h2>02 · Curis UI 总原则</h2><p>Curis 能力可以丰富，但默认视口只暴露当前任务立即需要的信息和动作。简洁不等于功能少。</p></header>
+  <div class="grid two"><div class="card"><h3>Low Surface Complexity, High Functional Density</h3><p><strong>低表面复杂度，高功能密度。</strong>第一眼简单；开始工作后，正确能力在需要时自然出现。优先使用对象点击、<code>+</code>、<code>···</code>、Popover、Context Menu、Collapse / Expand、Hover Action、按需 Context Sidebar、按需 Utility Surface 与 Focus View。</p></div><div class="card"><h3>反模式</h3><p>不以传统企业工作台方式同时堆叠大量 Button、Card、永久 Tab、固定工具栏和全部能力。每个 Button、Tab、Menu、Pane 必须回答“用户为什么现在需要看到它？”；回答不了就降低层级或删除。</p></div></div>
+  <table style="margin-top:12px"><thead><tr><th>层级</th><th>何时可见</th><th>示例</th></tr></thead><tbody><tr><td>L1 · ALWAYS VISIBLE</td><td>当前工作的核心。</td><td>Workspace 身份、当前责任、Workstation 状态、正在展开的 Conversation、一个 Composer。</td></tr><tr><td>L2 · CONTEXTUAL</td><td>当前对象或当前责任真正需要时。</td><td>Handoff、Needs CEO、轻量 Result 引用、Code / Diff / Preview、错误和恢复说明。</td></tr><tr><td>L3 · ON DEMAND</td><td>用户主动调用。</td><td><code>+</code>、<code>···</code>、Popover、Context Menu、Focus View、Context Sidebar、Utility Surface。</td></tr><tr><td>L4 · ADVANCED / INTERNAL</td><td>普通用户默认不出现。</td><td>完整 Permission、协议、Session History、Git / Worktree、Trace、Runtime 状态机与高级诊断。</td></tr></tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>CEO Review Delta 已应用：</strong>当前 UI 只消费公司版图 / 员工目录、人才与能力 Market / Discover 和 Employee 三态状态语义；不新增导航、不把历史组织模型或旧员工状态带回当前界面。<br><strong>真实状态，不伪装接通：</strong>完整产品可以先定义正确位置，真实能力再接通。Provider / Agent / Connector / 权限必须如实表达：已可用、未连接、未安装、需要授权、需要配置、健康未知、不可用、未来接入、阻塞或未知；不能用示例数据声称已连接、已授权、已完成。</div>
+  <div class="callout" style="margin-top:12px"><strong>Organization Center UI / Implementation Acceptance：</strong>组织中心当前 UI Baseline 为 Figma <code>106:3</code>（公司版图 / Default）、<code>106:230</code>（公司版图 / Business Focus）、<code>106:457</code>（员工目录 / Default），1440 × 900 Light。页面固定为顶部横向 <strong>公司版图 / 员工目录</strong> 两 Tab；公司版图采用 Department Container + Business-first + Role / Staffing 渐进展开，员工目录采用 Employee → Role → Business → Department 反查。状态为 <strong>UI ACCEPTED / IMPLEMENTED / ACCEPTED / CANONICAL ORGANIZATION PROJECTION VERIFIED</strong>；Dark、1024、可访问性、Search / Filter wiring 与 legacy cleanup 仍属 P2。</div>
+</div></section>
+
+<section id="canvas"><div class="wrap">
+  <header><h2>03 · 基础画布</h2><p>永久存在的只有两个东西：一级导航 + 主工作区。搜索、通知与 CEO Assistant 是 Global Capability，不组成 Global Topbar；Workspace 内部继续使用 Frozen Pane-local Header。</p></header>
+  <div class="screen"><pre>┌──────── 一级导航 · 220px ────────┬────────────────────────────── 主工作区 · 自由宽度 ──────────────────────────────┐
+│ Curis                                │ Main Pane Header · 当前对象上下文（按需）                              │
+│                                      │                                                                             │
+│ CEO 工作台                            │ 当前用户的主要工作：                                                       │
+│ 业务空间                              │ CEO 简报、业务关系、公司版图、资料阅读、会议、专业 Workspace……      │
+│ 组织中心                              │                                                                             │
+│ 人才与能力                          │ 不为了填第二栏制造导航；Market / Discover 只在需要时出现。          │
+│ 经营洞察                              │ 公司分析、业务分析、报告与研究在主区展开。                         │
+│ 资料库                                │                                                                             │
+│ 会议                                  │                                                                             │
+│                                      │                                                                             │
+│ 最近工作                              │                                                                             │
+│                                      │                                                                             │
+│ 头像 / 设置                           │                                                                             │
+└──────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────┘</pre></div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>一级导航 · 长期存在</h3><p>只负责“我在哪里”。顺序固定：CEO 工作台、业务空间、组织中心、人才与能力、经营洞察、资料库、会议。最近工作可放下方；头像 / 设置在左下。搜索、通知 / 待处理、CEO Assistant 是全局能力，不占一级导航。</p></div><div class="card"><h3>主工作区 · 长期存在</h3><p>负责“我正在做什么”。它优先拥有足够宽度，能直接承载 Market / Discover、组织关系、员工对话、资料阅读、会议讨论、经营洞察和专业 Workspace。统一性不来自第二栏或右栏。</p></div></div>
+</div></section>
+
+<section id="primitives"><div class="wrap">
+  <header><h2>04 · 按任务调用的空间原语</h2><p>不要先选组件再塞内容。先看任务关系，再选择空间。</p></header>
+  <table><thead><tr><th>空间原语</th><th>何时使用</th><th>正确示例</th><th>不应使用</th></tr></thead><tbody>
+    <tr><td>Context Sidebar</td><td>当前工作天然需要持续浏览目录、层级、集合、Thread、文件或历史。</td><td>资料库的来源 / 文件夹 / 外部库；研发首版的当前 Project / Workspace、Responsibility、相关文件 / 目录、Recent Work / Recent Object。</td><td><strong>员工列表</strong>，以及 CEO 工作台、业务空间总览、组织中心、人才与能力、会议首页为了填栏而出现的二级导航。</td></tr>
+    <tr><td>Flexible Utility Pane</td><td>用户必须保持当前主要工作，同时查看或微调当前选中的辅助对象。</td><td>研发首版：Code / Source、Diff / Changes、Preview / Result；小红书：图文 / 发布预览 / 数据 / 任务；抖音：视频 / 脚本 / 素材 / 字幕 / 封面 / 数据；资料阅读时的来源、权限、引用。</td><td>固定 Inspector、固定成果栏、完整专家介绍、完整员工工作、资料深度阅读、完整会议讨论。</td></tr>
+    <tr><td>Dialog / Focus View</td><td>用户暂时离开浏览状态，集中查看、比较或判断一个对象，关闭后回到原列表。</td><td>人才与能力的 Expert、Skill、Connector；业务与结果的完整介绍。</td><td>两三行状态、快捷筛选或需要持续进行的实际工作。</td></tr>
+    <tr><td>Popover</td><td>轻量状态、快捷操作、简短说明、通知、筛选或上下文菜单。</td><td>待处理提示、通知、筛选、更多操作。</td><td>专家档案、结果来源链、招聘装配、员工对话。</td></tr>
+    <tr><td>Full Workspace</td><td>对象本身已经成为用户当前主要工作。</td><td>员工直接对话、研发项目、会议工作面、内容工作室、资料深度阅读。</td><td>只需快速瞥一眼属性或执行轻量操作的对象。</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>可折叠的正确定义：</strong>需要时出现，不需要时不存在；出现以后允许用户折叠。Context Sidebar 和 Flexible Utility Pane 都不是“默认存在，再让用户收起”的固定布局部分。</div>
+</div></section>
+
+<section id="selection"><div class="wrap">
+  <header><h2>05 · 空间选择顺序</h2><p>任何点击和新页面先经过这个判断，不允许“一律右栏”。</p></header>
+  <div class="grid two"><div class="card"><div class="check"><b>01</b><span><strong>这是当前主要工作吗？</strong><br>是 → Main Workspace / Full Workspace；多个 Employee Workstation 在 Main Workspace 同时存在。</span></div><div class="check"><b>02</b><span><strong>只是临时聚焦查看一个对象吗？</strong><br>是 → Dialog / Focus View。</span></div><div class="check"><b>03</b><span><strong>必须保持当前工作，同时查看或编辑辅助对象吗？</strong><br>是 → Flexible Utility Pane。</span></div></div><div class="card"><div class="check"><b>04</b><span><strong>需要持续浏览目录、层级或集合吗？</strong><br>是 → Context Sidebar（项目、Thread、资料目录、文件、业务对象、历史；不是员工）。</span></div><div class="check"><b>05</b><span><strong>只是非常轻的信息或操作吗？</strong><br>是 → Popover。</span></div><div class="check"><b>06</b><span><strong>没有命中以上条件吗？</strong><br>保持一级导航 + 主工作区，不人为加辅助空间。</span></div></div></div>
+</div></section>
+
+<section id="areas"><div class="wrap">
+  <header><h2>06 · 七个一级区域的空间组合</h2><p>它们共享视觉系统、一级导航、交互语言、返回逻辑和状态表达，但不共享固定的四栏模板。</p></header>
+  <table><thead><tr><th>一级区域</th><th>默认空间</th><th>按需空间与点击规则</th></tr></thead><tbody>
+    <tr><td>CEO 工作台</td><td>一级导航 + 宽主工作区。</td><td>公司简报、今日变化、当前运行、重要结果、待处理直接在主区；轻量提示用 Popover；完整结果或判断用 Focus View；只有需要保持当前现场时才用 Flexible Utility Pane。</td></tr>
+    <tr><td>业务空间</td><td>一级导航 + Operating Work Directory 宽主工作区。</td><td>同一 Company Truth 提供[部门]→Department Work Surface、[业务]→Business Work Surface、[工作空间]→Professional Workspace三个直接入口；不强制按对象层级逐层进入，进入 Workspace 后由专业工作面决定 Context Sidebar 或 Pane。</td></tr>
+    <tr><td>组织中心</td><td>一级导航 + 公司版图 / 员工目录。</td><td>公司版图回答“公司长成什么样、业务扩张到哪里”；默认展示 Department、Business、经营状态、Role / Staffing、风险和重要结果。Organization Center 只负责结构与行政；Leader Workstation / Conversation 属于业务空间的对应 Work Surface。员工目录反查 Role / Business / Department。</td></tr>
+    <tr><td>人才与能力</td><td>一级导航 + Market / Discover 主区。</td><td>专家 / Skill / Connector、搜索、分类、推荐和卡片直接在主区。点专家优先打开大 Focus View，完整展示身份、擅长、能力、案例、来源和招募；点击“招募”后才进入合适的装配空间。</td></tr>
+    <tr><td>经营洞察</td><td>一级导航 + Operating Intelligence 主区。</td><td>公司经营、业务分析、组织与员工、模型与能力、分析报告、专项研究；按当前范围显示趋势、比较、归因、来源 / 新鲜度 / 未知 / 手动回填。分析报告可追问并回到原 Business / Workspace / Employee。</td></tr>
+    <tr><td>资料库</td><td>一级导航 + 资料 Context Sidebar + 主工作区。</td><td>最近、本地、文件夹、外部资料库、公司产生需要持续浏览，故侧栏成立。点资料阅读时进入主区；只看来源 / 权限 / 引用 / 使用关系时才开 Flexible Utility Pane；轻量操作用 Popover。</td></tr>
+    <tr><td>会议</td><td>一级导航 + 宽主工作区。</td><td>即将开始、需要准备、历史会议直接在主区；进入具体会议后成为 Full Workspace。Conversation 拥有完整主区；成员、资料、Proposal 只按需以 Pane / Focus / Popover 出现。</td></tr>
+  </tbody></table>
+</div></section>
+
+<section id="states"><div class="wrap">
+  <header><h2>07 · 对象点击与返回契约</h2><p>空间选择服务于当前任务；关闭或返回必须保留来源和未完成输入。</p></header>
+  <table><thead><tr><th>对象</th><th>默认打开方式</th><th>为何不是统一 Utility Pane</th></tr></thead><tbody>
+    <tr><td>专家</td><td>Focus View；招募时进入装配空间。</td><td>身份、介绍、擅长、能力、案例、来源与招募需要完整阅读和判断。</td></tr>
+    <tr><td>Skill / Connector</td><td>Focus View；安装 / 授权进入专注步骤或设置返回路径。</td><td>用户需要理解能力范围、依赖、来源、授权与可用性，而非只扫属性。</td></tr>
+    <tr><td>员工</td><td>快速查看：Focus View；实际协作：所在 Workspace 的 Employee Workstation / Full Workspace。</td><td>员工自己的持续 Session 位于 Main Workspace，不能退化为组织列表旁的聊天或 Context Sidebar 条目。</td></tr>
+    <tr><td>资料</td><td>阅读：主工作区；属性：Flexible Utility Pane；轻量操作：Popover。</td><td>资料正文与来源属性是两种不同任务。</td></tr>
+    <tr><td>业务 / 结果</td><td>完整理解和判断：Focus View；继续经营：进入业务或 Workspace。</td><td>避免挤压业务空间，也避免把结果当成仅供查看的右栏字段。</td></tr>
+    <tr><td>会议</td><td>会议首页是主区；实际会议进入 Full Workspace；Decision 回到来源 Workspace 与 Employee Workstation。</td><td>讨论、资料和决定是连续工作，不是侧栏详情或中央团队群聊。</td></tr>
+  </tbody></table>
+</div></section>
+
+<section id="workstations"><div class="wrap">
+  <header><h2>08 · Employee Workstation 是 Main Workspace 的工作现场</h2><p>一个 Workspace 允许多个 Employee Workstation 同时存在。员工不是 Context Sidebar 联系人；每个工作位对应员工自己的持续工作 Session。</p></header>
+  <div class="screen"><pre>研发 Workspace / Main Workspace
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ 当前目标：完成 Desktop Shell 交互评审                              [团队] [···]  │
+│ 产品经理 · ChatGPT      架构师 · Claude       开发工程师 · Codex       QA         │
+│ 空闲                    空闲                  工作中 · Shell 适配             空闲                  │
+│ ─────────────────────────────────────────────────────────────────────────────── │
+│ 开发工程师 · Codex / 当前责任 Conversation                                    [收起] │
+│ Conversation 只保留自然输出、工作说明、轻量活动和 Result 引用；CEO 可直接续接上下文 │
+│ [＋] 添加文件/图片/资料/Skill…   [访问权限 ▾] [工作模式 ▾]        [执行选择 Model·Agent ▾] [🎙] [发送] │
+└──────────────────────────────────────────────────────────────────────────────────┘</pre></div>
+  <table style="margin-top:12px"><thead><tr><th>统一外层</th><th>首版仅两种状态</th><th>Provider 原生内层</th></tr></thead><tbody>
+    <tr><td>Employee Identity、Role、Responsibility、Provider / Agent、Status、Current Work、Workspace Context、Handoff、Company Permission、Result Return。</td><td><strong>Collapsed：</strong>身份、岗位、Provider / Agent、状态、当前工作与展开入口。<br><strong>Expanded：</strong>完整 Agent Conversation；可自然拖动边缘调整高度，不设置 Focus / Maximize / 拉宽 / 拉高等窗口按钮。</td><td>Conversation、Composer、Mode、Model、Context、Skill / Tool 与专业执行行为优先继承绑定 Provider 已验证的交互范式。Curis 增加公司组织与自动协作层，不重新开发 Codex / Claude Code。</td></tr>
+    <tr><td>Workspace Thread</td><td>围绕项目、内容或工作对象持续浏览上下文与历史。</td><td>Thread 可进入 Context Sidebar 或主区；它不是把所有员工挤入一个中央群聊，也不要求普通用户管理 Session。</td></tr>
+  </tbody></table>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>Conversation 展开 / 收起（消费 Frozen §3.1）</h3><p><strong>用户控制，不绑定 Runtime 状态</strong>：展开 / 收起是纯 UI 偏好，不随 Employee 的工作结果或目标状态自动强制改变。Frozen Shared Employee UI Status 只允许投影：空闲 / 工作中·&lt;desc&gt; / 阻塞·&lt;cause&gt;；“已完成 / 等待”属于 Goal / Task / Result，不属于 Employee。<br><strong>无「Handoff 后发送方自动收起、接收方自动展开」规则</strong>：Handoff 是责任交接（P5），<em>不改变</em>各 Workstation 的展开 / 收起状态。</p></div><div class="card"><h3>用户布局与连续性</h3><p>用户在当前访问期间手动收起后，系统尊重其布局。Conversation可跨Assignment持续；责任变化更新真实Scope/消息引用与权限，不强制新Conversation。执行Session按真实Provider能力处理；人工接续和恢复回同Work。</p></div></div>
+</div></section>
+
+<section id="product-surfaces"><div class="wrap">
+  <header><h2>09 · 产品空间合同（消费 Product Blueprint 5.6 / Master Map 3.2）</h2><p>本节把产品模型翻译为 UI 信息架构。七个一级导航保持当前产品真源；对话与设置作为可进入、可返回的完整产品空间。Business以持续经营身份/方向聚合相关Workspace，每个长期 Workspace 由 Operating Team responsibility boundary 承载并可拥有多个 Professional Surface；Business 页面只做管理与目录，不嵌入 Workspace 详细工作面。经营洞察当前 1440 × 900 Light UI 基线为 Figma `172:3 / 172:277 / 172:551 / 172:825`；Dark、1024、无障碍、真实数据密度和 Prototype wiring 属于 P2。</p></header>
+  <table><thead><tr><th>产品空间</th><th>默认入口 / 主区</th><th>必须表达</th><th>不应退化为</th></tr></thead><tbody>
+    <tr><td>CEO 工作台</td><td>一级导航 + 宽主区</td><td>Company state、Daily Brief、Activity、Notification、Needs CEO、Risk、Next Decision、真实结果</td><td>数据大屏、任务列表首页</td></tr>
+    <tr><td>业务空间</td><td>一级导航 → Operating Work Directory；[部门] / [业务] / [工作空间]直接进入对应 Work Surface</td><td>Business Work Surface 按 Business Definition → Operating Status → Workspace Directory → Business Team 连续阅读；目录展示 Workspace Name、Leader、轻量状态 / focus / issue、成员摘要、直接进入和新建，不嵌入 Workspace 的详细 Goal、Rules、Progress、Team Operating 或 Employee Workstations</td><td>Overview / Workflow / Standards / Workspaces 四平级 Tab、Business 统一团队运转、把每个外部账号展开为 Business、把一个 Workspace 做成 Account Scope 切换器或统一 Runtime 看板</td></tr>
+    <tr><td>组织中心</td><td>一级导航 + 公司版图 / 员工目录</td><td>只承载 Company→Department→Business→Workspace→Role→Responsibility Assignment→Employee 的结构与行政投影；Leader Workstation、Conversation、Handoff 与日常经营回到业务空间 Work Surface</td><td>传统 HR Org Chart、平级 Agent 卡片或强制部门表单</td></tr>
+    <tr><td>人才与能力</td><td>一级导航 + Expert / Skill / Connector</td><td>Focus View、来源/许可/依赖、职业能力组合、招募/纳入/授权；专家不等于员工</td><td>员工列表或技术设置后台</td></tr>
+    <tr><td>资料库</td><td>一级导航 + 来源 Context Sidebar + 阅读主区</td><td>本地/外部/公司产生资料、索引、搜索、引用、权限、来源追踪、沉淀</td><td>孤立文件仓库</td></tr>
+    <tr><td>会议</td><td>一级导航 + Full Main Conversation</td><td>Problem→Participants→Facts/Opinions/Evidence/Risk→Proposal→Decision→Owner/Checkpoint→Execution/Result</td><td>记录存档或固定右栏讨论</td></tr>
+    <tr><td>对话</td><td>全局搜索/Assistant/Employee/Meeting/Workspace 进入</td><td>同一记录在 Employee Workstation 与 Full Main Conversation 投影；消息、引用、Artifact、下一步</td><td>第二个任务系统或中央群聊</td></tr>
+    <tr><td>设置</td><td>头像菜单 / 上下文缺口入口</td><td>个人与外观、Company Defaults、Models &amp; AI Providers（Model Provider 与 Agent Provider 分开）、Permissions &amp; Security、Application &amp; Data、Account &amp; Help；完成后回原位置</td><td>一级导航或默认技术控制台</td></tr>
+    <tr><td>经营洞察 / Operating Intelligence</td><td>一级导航；CEO Desk / Business / Workspace / Employee Profile / 公司版图 / Assistant → 当前范围</td><td>公司经营、业务分析、组织与员工、模型与能力、分析报告、专项研究；趋势、比较、归因、运行/使用/成本、质量/验收/外部结果关联；显示 source / freshness / verified / manual / unknown / stale / missing / external；完成后回原上下文。Current UI baseline：Figma `172:3 / 172:277 / 172:551 / 172:825`（1440 × 900 Light）。</td><td>CEO 首页 Dashboard、第二套 Truth / Result / Analytics Runtime、第二个聊天系统</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>Shared Management Surface：</strong>Department Work Surface 与 Business Work Surface 共享 Identity、Leader Workstation、Responsibility、Goal、Current Focus、Children、Result / Risk、Team 摘要、Management Actions 与 Escalation 骨架。团队运转不属于共享管理骨架：Department 不提供专业团队运转编辑器，Business 不拥有统一团队运转，Workspace 才拥有自己的团队运转与默认流程。具体 Domain 在其上叠加 Domain-specific Operating Surface；内容增长部、研发部、小红书运营与 Curis 产品研发必须通过后续 UX Exploration 验证差异，不预设同一页面外观。</div>
+  <div class="callout" style="margin-top:12px"><strong>Business / Workspace 目标层级：</strong>Business-level Goal / Strategy 表达整体经营方向；Workspace-level Goal / Positioning / Strategy 表达独立工作空间的具体经营。Workspace 不默认共享彼此的目标与策略，但受所属 Business 整体方向约束；不创建 Default → Override 技术模型。</div>
+  <div class="callout" style="margin-top:12px"><strong>Business Definition 与 Workspace Directory 边界：</strong>Business 只提供业务介绍、Business-level Goal / Direction、通用 Rules / Configuration 与下属 Workspace 的目录 / 聚合投影；Rules / Configuration 以 <code>Title / Name + Content</code> 为最小语义。每个 Workspace 拥有自己的 Goal、Rules、Team Operating、Role / Responsibility Assignment、Operating State 与 Domain Work Surface；Business 不嵌入 Workspace 详细设置或编辑器，点击目录项直接进入专业 Workspace。</div>
+  <div class="callout green" style="margin-top:12px"><strong>Professional Workspace 结构：</strong>Workspace 采用 Shared Workspace Shell + Workspace-local Domain Navigation + one or more Professional Surfaces + Shared Team Operating + Shared Employee Work Area。通用身份、Leader、Goal、Rules 与当前经营摘要保持轻量；Main 显示当前选中的 Professional Surface；团队运转与 Employee Workstations 作为共享工作区按需展开。Workspace 内的用户语言使用“团队运转 / 默认流程”，不把 Workflow、Router、DAG 或 State Machine 作为 CEO 主语义。</div>
+  <div class="callout" style="margin-top:12px"><strong>Conversation-driven Truth：</strong>Goal、Rules、Business Definition 与 Workspace Definition 默认通过 Conversation → Structured Proposal → 必要确认形成；右侧 Panel / Modal 只承担详情查看、精确编辑和纠错。Business 页面保持摘要优先，完整内容按需展开。</div>
+  <div class="callout green" style="margin-top:12px"><strong>Bootstrap 接受不完整意图：</strong>CEO 可从模糊或不完整的一句话开始；不要先要求填写 Positioning、Strategy、Team、Workflow、Workspace Structure 或 Operating Plan。缺失信息由 Curis Research → Situation Understanding → Strategy Proposal 补齐，CEO Gate 只处理 Goal、Strategy Boundary、Risk、Constraint 与 High-impact Decision。不得把 Bootstrap 做成复杂的新建业务配置表单。</div>
+  <div class="callout" style="margin-top:12px"><strong>Workspace Current Operating：</strong>默认轻量显示经营状态、本轮重点、最新判断、下一步。进展优先由当前相关 Professional Surface 表达，当前面无法表达时才补充；需要关注仅在真实 Need / Risk / CEO Gate 存在时出现。不得因 Autonomous Operation 增加经营 Dashboard。</div>
+  <div class="callout" style="margin-top:12px"><strong>Leadership / Responsibility Assignment：</strong>Leader 不是特殊 Employee 或 Admin，而是普通 Employee 的责任范围投影。Department / Business / Workspace Leader 均以真实 Employee × Role × Scope Assignment 进入对应 Work Surface；同一 Employee 可兼任多个 Role / Scope。页面“负责人”必须可回到真实 Assignment，Workflow 节点的 Employee 也必须携带 Role / Scope。</div>
+  <div class="callout" style="margin-top:12px"><strong>Assignment-scoped Conversation：</strong>从 Employee Profile 进入的是 Employee Identity Conversation；从 Business Leader、Workspace Leader 或 Workflow Role 进入的是 Assignment Conversation。两者共享身份但不混合责任上下文或历史，UI 入口应保留当前 Role / Scope。Workflow 完成后的 Result 回到 Workspace Leader / Workspace Truth，驱动 <strong>Next Operating Cycle</strong>、调整或升级，不把完成视作 Workspace 结束。</div>
+  <div class="callout" style="margin-top:12px"><strong>CEO 工作台 vs 经营洞察：</strong>CEO 工作台负责注意力、异常、简报、结果、待处理和下一决定；经营洞察负责深度查看、趋势、比较、归因和经营评估。经营洞察已经确认是第七个一级导航，同时保留所有 scoped 入口并在完成后回到原上下文。</div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>Create Where You Organize</h3><p>Company+→Department；Department+→Business；Business/Team+→Role；Role+或员工目录+→Employee。创建动作先进入对象关系和结构化表面。</p></div><div class="card"><h3>Add Where You Work</h3><p>Workspace 中添加 Employee、Skill、Connector、Knowledge、资料和参与者。可选择已有、创建新的或从人才与能力的 Market / Discover 获取；添加员工只组队，不复制身份。</p></div></div>
+  <div class="callout" style="margin-top:12px"><strong>返回契约：</strong>市场发现不等于授权，专家不等于员工；任何配置、授权或能力缺口都必须从原工作进入设置/人才空间，完成或失败后返回原 Stage，并保留对象、状态和下一步。</div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>经营洞察分析工作区</h3><p>主区先显示当前范围与周期，再显示 Analyst Brief、经营信号、业务报告和可追问的分析结果；内部导航为公司经营、业务分析、组织与员工、模型与能力、分析报告、专项研究。无负责分析师时显示“无负责分析师”，提供临时任务、指派现有员工、建立岗位或从人才与能力招募四条真实入口，不显示匿名 AI。</p></div><div class="card"><h3>报告与 Conversation</h3><p>Report 是 AI Employee 的工作成果，正文分 FACT / INTERPRETATION / UNKNOWN / RECOMMENDATION / EVIDENCE；CEO 的“问分析师”进入既有 Conversation Surface，追问后生成 Analysis Task 和新报告。Second Analyst Review 必须同时具备独立性与相关分析能力。</p></div></div>
+  <table style="margin-top:12px"><thead><tr><th>数据表达</th><th>推荐视图</th><th>切换规则</th></tr></thead><tbody><tr><td>Trend</td><td>Line（推荐）</td><td>只允许 Line / Bar / Table，保持同一 Dataset 与 Metric Truth。</td></tr><tr><td>Model / Agent Comparison</td><td>Sorted Bar + Small Multiples</td><td>可切换 Bar / Scatter / Table；必须显示 Sample Size、Comparability、Evidence，禁止单一最佳排行榜。</td></tr><tr><td>Composition / Workflow / Capacity</td><td>Stacked / Funnel / Capacity-Load</td><td>只在语义兼容视图中切换；数据来源、Freshness、Unknown、Manual 不因图表切换而隐藏。</td></tr></tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>跨日与业务退出的 UI 归属：</strong>CEO Desk 的 Brief / Matters / Handoff / Decision / Exception / Evidence / Learning / Closeout 以跨日摘要与待处理承接 Day N+1；Business Work Surface 的“…”管理动作承载 Pause、Reduce、Transfer、Close、Merge、Split，先显示承诺保护、责任交接和能力释放计划，不创建 Operating Day 或 Exit Center。</div>
+  <h3 style="margin-top:18px">关键 Detail / Focus View</h3>
+  <table><thead><tr><th>Detail</th><th>字段组</th><th>主要动作</th><th>返回</th></tr></thead><tbody>
+    <tr><td>Business Work Surface</td><td>Business Definition（Leader Workstation、简介、Business-level Goal / Direction、Rules / Configuration 摘要）、Operating Status、Workspace Directory、Business Team</td><td>查看 Workspace 目录、创建 Workspace、直接进入专业 Workspace、复制 Business、召开会议；Workspace 详细 Goal / Rules / Team Operating 在 Workspace 内完成</td><td>BI Dashboard、Business 内嵌 Workspace Detail、独立 Workflow Console / 统一 Workflow Builder、完整 Employee Workstation 列表或第二个 Business 页面</td></tr>
+    <tr><td>Workspace（用户语言：工作空间；Office 仅作历史 / implementation / migration provenance）</td><td>Workspace-level Goal / Positioning / Strategy、External Account / Operating Object、Rules / Configuration、团队运转 / 默认流程、Role / Responsibility Assignment、Team、可用 Model/Agent、Skill、Tool、Connector、Knowledge、Schedule、Current Work、Result、Analytics、Risk、History</td><td>进入专业工作面、配置、组队、关联团队资源、复制 Workspace、暂停/恢复、查看结果；Employee 的Skill/Tool等仍依合法能力机制；Model/Agent从全局可用池在Conversation选择，无重复业务绑定</td><td>Business Space / Business Work Surface / 来源 Result / Assistant</td></tr>
+    <tr><td>Business Duplicate</td><td>Copy Preview：复用项、重配项、禁止复制项；新 Business Name / Goal / Positioning</td><td>复制业务、选择沿用合法 Binding / 创建空岗 / 重新 Staffing</td><td>新 Business → Organization Center / Business Space / 新 Workspace</td></tr>
+    <tr><td>Workspace Duplicate</td><td>Copy Preview：复用 Workspace IA / 方法；重配工作空间名称、外部对象、目标、定位、员工、知识、授权、排期</td><td>复制工作空间、重新绑定或创建空岗、进入新 Workspace</td><td>同一 Business → Business Space / 新 Workspace</td></tr>
+    <tr><td>Role Detail</td><td>Identity、Responsibility、Workflow relation、Required Capability、Staffing、Capacity/Load、Employee Binding</td><td>招募、绑定、拆分、组建 Sub-team</td><td>组织中心 / 业务</td></tr>
+    <tr><td>Employee Profile</td><td>Identity、Role Assignment、Capability、Business Work、Result/Artifact/Evidence、Growth/Lessons、Runtime/Cost/Config</td><td>对话、组队、换能力、暂停/恢复</td><td>同一 Employee Conversation / Workstation</td></tr>
+    <tr><td>Expert/Skill/Connector Focus</td><td>职责、来源、许可、能力组合、依赖、权限、健康、使用者</td><td>招募、纳入、授权、撤销</td><td>人才与能力 / 设置 / 原缺口</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>复制边界：</strong>复制 Workspace 与复制 Business 是两个动作。二者都先打开 Copy Preview；复用成熟方法与结构，但不复制员工身份、凭证、会话、执行、结果、外部回执、历史或当前状态。完成后分别回到同一 Business 下的新 Workspace，或新的独立 Business，不把复制动作做成页面 clone 或第二套数据。</div>
+</div></section>
+
+<section id="rd-scope"><div class="wrap">
+  <header><h2>10 · 研发历史首版范围（结构参考，不是当前能力上限）</h2><p>本节保留旧研发Design Brief的DESIGN NOW / RESERVED记录，仅供历史范围追溯。当前研发对象/责任消费RD Instance及Frozen Shell；专业工具目标消费Company OS Shared §16，完整工作Main、辅助预览Utility。旧首版范围不限制本轮接受的目标能力，也不证明已实现；具体新设计DESIGN OPEN。</p></header>
+  <table><thead><tr><th>范围</th><th>研发 UI 规则</th></tr></thead><tbody>
+    <tr><td>DESIGN NOW</td><td>当前研发 Professional Surface（真实研发对象、Version、Build、Test、Review、Blocker）占据主区；Shared Work Area 内再容纳多个纵向 Employee Workstation；身份、岗位、Provider / Agent、状态、当前工作、Collapsed / Expanded；Provider-native Conversation；Shared Composer Shell（固定语义槽位）；自动 Handoff / Needs CEO；最小 Context Sidebar；按需 Utility Surface；Code / Source、Diff / Changes、Preview / Result。</td></tr>
+    <tr><td>RESERVED</td><td>Test、Terminal、Git / Branch / Worktree、Review、External Editor、Session History、详细 Permission、Background Work。Test Result 只有理解当前 Result 确实需要时轻量出现。</td></tr>
+    <tr><td>LATER</td><td>Commit / Push / PR、Debug / Problems、Scheduled Work、Autopilot、多个 Utility Surface 同时显示、Advanced IDE。不得被设计成当前可用；Voice 作为 Composer 语义槽位保留，具体 Provider 能力按实际状态显示。</td></tr>
+    <tr><td>DO NOT COPY</td><td>员工顶部 Tab、员工进入 Context Sidebar、DAG、永久工具墙、所有能力同时展开、Session Manager 首屏、为“专业感”堆按钮、完整 Codex / Cursor / VS Code 克隆。</td></tr>
+  </tbody></table>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>研发 Context Sidebar（首版）</h3><p>只允许：当前 Project / Workspace、当前 Responsibility、相关文件 / 目录、Recent Work / Recent Object。禁止 Employee、Session Manager、Handoff Queue、Permission Center、Result / Review Detail、Tool Catalog、Model、Skill、完整 Git / Worktree 管理。</p></div><div class="card"><h3>Developer Utility Surface（首版）</h3><p>默认关闭，只有当前对象需要时打开；关闭后 Main Workspace 自然扩展，Conversation 与 Session 保持原状态。首版只设计 Code / Source、Diff / Changes、Preview / Result；每个 Utility 显示所属责任并提供回到 Conversation 锚点。</p></div></div>
+  <div class="callout" style="margin-top:12px"><strong>Conversation / Artifact 严格分离：</strong>Conversation 只承载 Agent 自然输出、工作说明、当前状态、轻量活动与轻量 Result 引用，例如“修改 7 个文件 · 查看”。首版完整 Code、Diff、Preview 必须由“查看”打开 Utility Surface，不能塞进 Conversation；Test / Terminal 等 Reserved 面在未来接入时同样遵守此规则。</div>
+</div></section>
+
+<section id="visual"><div class="wrap">
+  <header><h2>11 · Shell 与视觉规格</h2><p>继续复用 Frozen Design System 的 <code>ui-*</code> 令牌，不创建第二套 Design System。</p></header>
+  <table><thead><tr><th>项目</th><th>规格</th></tr></thead><tbody>
+    <tr><td>一级导航</td><td>Desktop 220px；窄 Desktop 76px 图标态；1024px 以下 286px 抽屉。七区顺序固定（CEO 工作台、业务空间、组织中心、人才与能力、经营洞察、资料库、会议），当前态用低对比 selected surface + 3px accent 指示，不使用 emoji 图标。</td></tr>
+    <tr><td>主工作区</td><td>最小宽度 560px；顶部 52px；内容 padding 24px（平板 20px，小窗 16px）。在没有辅助空间时吃满其余宽度。</td></tr>
+    <tr><td>Context Sidebar</td><td>按需 256px，可折叠至 0；只在项目、Thread、资料目录、文件、业务对象、历史等持续浏览任务中实例化；不是员工列表。</td></tr>
+    <tr><td>Flexible Utility Pane</td><td>按需 320–440px 可拖拽，默认关闭；随当前对象显示成果、预览、资料或配置，不固定为 Inspector / 成果栏。研发首版仅 Code / Source、Diff / Changes、Preview / Result；小窗口优先关闭 Pane，再关闭 Context Sidebar。</td></tr>
+    <tr><td>Focus View / Dialog</td><td>Desktop 宽度 720–980px，中央聚焦；关闭回原来源和滚动位置。高影响、不可逆删除或授权使用明确确认 Dialog。</td></tr>
+    <tr><td>状态与动效</td><td>Popover 用于轻量状态；Focus View / Flexible Utility Pane 用 200ms transform + opacity；<code>prefers-reduced-motion</code> 下即时呈现。焦点、hover、selected、disabled、loading、empty、error 都用既有语义令牌与文字说明。</td></tr>
+  </tbody></table>
+</div></section>
+
+<section id="highfi"><div class="wrap">
+  <header><h2>12 · 产品形态边界</h2><p>本节记录已确认的产品空间契约；具体视觉、布局与组件由后续 Design AI / Figma 按本文件和专项 Design Brief 产出。</p></header>
+  <table><thead><tr><th>空间</th><th>正式 UI 形态</th><th>关键点击与返回</th></tr></thead><tbody>
+    <tr><td>First Open / Company 初始化</td><td>PRE-COMPANY 先完成 CEO Display Identity（若不存在）与 Company 创建；Company 成功后区分 CEO Assistant identity、AI Readiness 与 Create Business Flow。Company = 0 时可选择进入真实 Empty Curis Shell。</td><td>AI 未 Ready 时不得假装完成需要模型推理的理解、提案或执行；模型管理从左下 CEO 头像 → 设置 → Models &amp; AI Providers 进入，完成后返回原上下文。Company Ready / No Business 才进入“你想开始做什么业务”。</td></tr>
+    <tr><td>组织中心</td><td><strong>公司版图 / 员工目录</strong>两视图。公司版图回答公司长成什么样、业务扩张到哪里；员工目录从 Employee 反查 Responsibility Assignment / Role / Workspace / Business / Department；协作关系只按需展开。</td><td>点击 Business 进入 Business Work Surface / Business Definition；展开 Workspace 与 Role 后看 Responsibility Assignment / Employee；点员工进入 Profile / Workstation，不把 Leader Conversation 压进组织图旁的 Pane。</td></tr>
+    <tr><td>人才与能力</td><td>Market / Discover 主区：专家 / 技能 / 连接器 Tab、搜索、分类、推荐、专家团、Curis 已验证、外部 Candidate 与已招募状态。</td><td>专家、Skill、Connector 都以大 Focus View 完整阅读；专家招募进入五步 Focus View：专家 → 公司身份 → 业务 / Workspace → 能力 / 资料 / 授权 → Employee。缺模型转设置后回到第 4 步招募现场。</td></tr>
+    <tr><td>员工工作面</td><td>Employee Workstation Conversation：员工自己的持续 Session；Collapsed 只呈现身份（含可选头像）、岗位、Provider / Agent、状态、当前工作与展开；Expanded 才显示完整 Agent Conversation。头像遵循共享 Avatar Pattern，不代表能力或执行状态。Model 是会话使用能力，不是 Employee identity。</td><td>Composer 一律消费 Frozen Shell 语义槽位：Input、<code>+</code>、访问权限、工作模式、已选资源、Model·Agent、Voice、Send。Model Selector 显示当前已启用且该员工允许使用的模型，可在会话内切换；CEO 不需逐 Employee 手工绑定模型。</td></tr>
+    <tr><td>研发 Workspace</td><td>可声明多个研发 Professional Surface；Main 以当前研发对象、Version、Build、Test、Review、Blocker 的所选 Surface 为主区；Context 承载 Domain Navigation 与当前 Project / Workspace、Responsibility、相关文件 / 目录、Recent Work / Recent Object；Shared Employee Work Area 中再容纳多个 Workstation。</td><td>Utility 默认关闭。DESIGN NOW 只允许 Code / Source、Diff / Changes、Preview / Result；Test Result 仅在理解当前结果时轻量出现。Terminal、Git、Branch、Worktree、Review、Session History、Permission Detail 均非首版设计。</td></tr>
+    <tr><td>Content Growth / XHS Channel</td><td>Content Growth Professional Workspace Candidate 的默认 selected Surface 为 CEO Operating Result / 经营结果面；XHS 是 Channel，具体账号是 Channel Account，不是 Workspace identity。经营概览、研究洞察、内容运营、数据增长、用户反馈是候选专业面；Publishing Calendar 只是内容运营 Object View，不是 Workspace Default。</td><td>图文→发布预览，图片→预览/编辑，数据→数据详情，定时任务→执行计划；平台数据区分已连接、人工回填、未知 / 未连接。</td></tr>
+    <tr><td>其他 Channel（Douyin / TikTok / YouTube / Bilibili）</td><td>平台作为 Channel，具体账号作为 Channel Account；Content Growth Workspace 不因平台名称复制或改名。各平台的专业模块与 Surface 需按 Domain evidence 独立验证，不把平台直接当 Workspace。</td><td>视频预览、脚本、素材、字幕、封面、发布状态、数据按对象打开 Pane；不复制 XHS 结构。</td></tr>
+    <tr><td>资料库</td><td>Company Reference Space：Overview、Browse / Search、Reading / Reference Detail、Select Reference From Work、Used By Work / Result；主区承载阅读，不是文件库后台表格。</td><td>以“适用范围 / 使用范围”表达 Company → Business → Workspace；来源、权限、引用、新鲜度和使用关系按需进入 Flexible Pane，完成后返回原 Work / Result 上下文；不建立第二套 RAG / Knowledge Truth。</td></tr>
+    <tr><td>会议室</td><td>Overview → 临时 Start Meeting Overlay → 点击开始后进入持久 Meeting 工作面：顶部名称 / 来源 / 议题 / 参与员工 / 状态，中央多员工 Conversation，底部 Meeting Composer。</td><td>AI 将 Question、Fact、Opinion、Evidence、Conflict、Risk、Proposal 轻量附着在消息。Proposal 按需展开；复用 canonical Decision / P7，形成 Responsibility / Owner / Checkpoint / Work，并返回来源 Workspace 与 Workstation。</td></tr>
+    <tr><td>Workspace Studio</td><td>Business / Workspace 的“··· → 编辑工作空间”进入；展示独立工作空间、专业界面、团队、能力、自动工作、结果，不以技术表单或 DAG 组织。</td><td>创建 / 复制 / 修改 / 扩展 → 影响预览 → 测试这次调整 → 确认启用 → 恢复上一版本；复制 Workspace 与复制 Business 分开呈现。</td></tr>
+    <tr><td>头像与设置</td><td>左下保留 CEO 头像；CEO 与 Employee 均消费共享 Avatar Pattern（可上传、预置卡通头像或 fallback，头像可选）。点击打开 Codex 式账户 Popover（身份、用量、个性化、邀请、设置、帮助、退出）。设置是独立 Workspace，不占七区导航。</td><td>设置含个人、公司、AI 与能力、数据与应用分类；模型页负责 Provider、Base URL / API Key、可用模型、测试、默认模型与状态（管理入口）；Conversation 内 Model Selector 负责当前会话使用模型（使用入口）。</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>资料库 Current Product / UX / UI 登记：</strong>用户语言为“资料库”，内部产品心智为 Company Reference Space。Figma `187:2 / 187:276 / 187:550 / 187:824` 是 1440 × 900 Light Current Design Baseline，覆盖 Overview、Browse / Search、Reading / Reference Detail、Select Reference From Work。Reading-first、Reference Row、显式 Load More 与 Compact Reference Picker 已接受；Company / Business / Workspace 是轻量当前范围选择器，不是固定三级 Tab。实现状态只由 <code>docs/00_Context/CURRENT_STATE.md</code> 与对应 Accepted Review 登记，本 UI Blueprint 不维护并行 Implementation Truth。</div>
+  <div class="callout" style="margin-top:12px"><strong>示例路径公共契约：</strong>返回必须回到触发来源；市场发现不等于授权，专家不等于员工，发布 / 回执 / 指标在没有真实平台连接时必须显示“待连接 / 人工回填 / 未记录”。现有 Prototype 仅为参考快照，不作为 Design AI 设计真源。</div>
+  <div class="screen" style="margin-top:12px"><pre>首次打开（PRE-COMPANY Welcome）
+→ 创建我的 AI 公司 / 开始设置
+→ CEO Display Identity（若不存在）+ Company
+→ CEO Assistant identity + Conversation presence
+→ AI Readiness（需要模型推理时）
+→ Company Ready / No Business
+→ CEO Assistant Conversation → Create Business Flow
+→ Understanding / Proposal / Confirm
+→ First Workspace → 开始经营
+（也可选择：先看看 Curis → Empty Curis Shell；不是固定 Workflow）
+CEO 工作台 → 人才与能力 / Market → 专家 Focus View → 招募装配 → 模型设置 → 返回招募 → Employee
+组织中心 → 公司版图 / 员工目录 → Business / Role / Employee 工作面
+业务空间 → 产品研发工作空间 ｜ 小红书运营工作空间 ｜ 短视频运营工作空间
+资料库 → 主区阅读 + 属性 Flexible Utility Pane       会议 → 多员工讨论 → Decision Proposal → 来源工作空间
+头像 → 账户 Popover → 设置 Workspace → 模型 / Connector → 返回原工作</pre></div>
+</div></section>
+
+<section id="automation"><div class="wrap">
+  <header><h2>13 · 自动化、结果与学习的渐进式表达</h2><p>Organization / Role / Responsibility / Business / Workspace 自动产生协作语义。用户看谁在做什么、为何等待、下一步，不看 Workflow DAG。</p></header>
+  <div class="grid two"><div class="card"><h3>自动工作现场</h3><p><span class="pill">产品经理 · 空闲</span> <span class="pill">架构师 · 空闲</span> <span class="pill good">开发工程师 · 工作中 · Shell 适配</span> <span class="pill warn">QA · 阻塞 · 缺少输入</span></p><p>员工只显示空闲 / 工作中·&lt;desc&gt; / 阻塞·&lt;cause&gt;。刚完成什么、等待什么和是否达成，属于 Goal / Task / Result 的内容，不写入 Employee 状态。支持串行、并行、回退、重新分配、请求帮助和 CEO 介入；自动与人工继续同一 Employee Session。</p></div><div class="card"><h3>不增加独立 Console</h3><p>所有 Workspace 只自然表现：下一次运行、当前运行、负责员工、当前阶段、下一步、等待原因、需要我、失败、恢复。配置从 Studio 或对象 Pane 进入；允许 Workspace 内嵌的轻量 Workflow Editor（Add Role、Delete Role、Reorder、Responsibility、Employee Binding、Input、Output、Next、Return），不创建独立 Workflow / Automation / Scheduler / Runtime Console、自由 DAG 或无限画布。</p></div></div>
+  <table style="margin-top:12px"><thead><tr><th>环节</th><th>界面位置</th><th>正确表达</th></tr></thead><tbody><tr><td>Goal</td><td>CEO 工作台、Business、Workspace。</td><td>当前目标、结果标准、本周期重点；不创建 Goal Center。</td></tr><tr><td>Result / Evidence</td><td>Workspace、Business、Meeting、CEO 工作台。</td><td>结果、来源、可信度、未知、CEO 是否接受；无真实平台连接时显示“待连接 / 人工回填 / 未记录”。</td></tr><tr><td>Review / Learning</td><td>CEO 工作台、相关 Workspace、Meeting、Studio。</td><td>本周期变化、下次 Review、Assistant 建议；可调整 Skill、责任、团队、资料、自动化、Workspace 版本或经营策略，不创建 Learning Center。</td></tr></tbody></table>
+</div></section>
+
+<section id="meeting"><div class="wrap">
+  <header><h2>14 · 结构化会议：自然 Conversation → Decision → 继续工作</h2><p>会议 Conversation 应拥有完整主空间，不能常驻 250px Proposal / Member / Resource 右栏。</p></header>
+  <div class="callout"><strong>Meeting Room UI ACCEPTED（2026-09-02）：</strong>1440 × 900 Light 的 Current Design Baseline 为 Figma <code>214:3</code> Overview、<code>247:2</code> Start Meeting Overlay、<code>214:279</code> Active Conversation、<code>214:555</code> Decision Moment、<code>214:831</code> Responsibility + Result Continuity。Overlay 是临时启动状态，点击开始才创建持久 Meeting；Meeting 生命周期独立于 CEO 页面会话。实现状态只由 <code>docs/00_Context/CURRENT_STATE.md</code> 与对应 Accepted Review 登记，本 UI Blueprint 不维护并行 Implementation Truth。</div>
+  <div class="screen"><pre>会议名称 · 来源 Business / Workspace · 议题 · 参与员工 · 状态
+─────────────────────────────────────────────────────────────────────────────
+持续 Conversation Stream
+  [事实 · 引用 2]  [观点]  [存在分歧]  [证据]  [提案]  ← AI 轻量附着在消息上
+─────────────────────────────────────────────────────────────────────────────
+[＋] [@员工] [引用资料] [附件]  继续讨论、提出异议或确认方案…                 [发送]</pre></div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>AI 自动结构化</h3><p>AI 从讨论中识别 Question、Fact、Opinion、Evidence、Conflict、Risk 与 Proposal；不要求 CEO 手工创建 Fact / Opinion，也不把每种类型拆成独立后台面板。</p></div><div class="card"><h3>Proposal / Decision</h3><p>Proposal 按需打开，包含支持 / 反对观点、Evidence、影响、未知、风险。CEO 可修改、批准、拒绝、延后；Decision 产生 Action、Assignment、Owner、Deadline / Checkpoint，并明确回到 Employee Workstation + 来源 Workspace。</p></div></div>
+</div></section>
+
+<section id="studio"><div class="wrap">
+  <header><h2>15 · Workspace Studio：持续演进的专业工作空间</h2><p>Studio 是 Workspace 的配置与演进空间，不是一级导航、不是一次性创建向导、不是普通用户从零画流程。</p></header>
+  <div class="grid two"><div class="card"><h3>用户看到的工作空间</h3><ul><li>工作空间：做什么、属于哪个 Business、主要 Goal。</li><li>专业界面：研发的项目 / 文件 / 测试 / Review；内容运营的日历 / 内容 / 数据 / 自动化。</li><li>团队：有哪些 Workstation，谁负责什么。</li><li>能力：Skill / Agent / Tool / Connector / Knowledge。</li><li>自动工作：何时开始、何时交接、何时等 CEO、失败如何继续。</li><li>结果：Result、数据回收、Review 与反馈。</li></ul></div><div class="card"><h3>持续演进</h3><p><span class="pill good">当前运行版本</span> 与 <span class="pill warn">待修改版本</span> 并列；当前运行版本不会被直接覆盖。</p><p>创建、复制、修改、扩展、影响预览、测试这次调整、确认启用、恢复上一版本。普通用户不看 Draft Version、Simulation、Rollback 等内部术语。</p></div></div>
+  <table style="margin-top:12px"><thead><tr><th>步骤</th><th>系统需要说明</th></tr></thead><tbody><tr><td>影响预览</td><td>受影响员工、自动化、连接、资料、正在进行的工作与 Result 契约。</td></tr><tr><td>测试这次调整</td><td>哪些场景通过、哪些能力缺口、是否影响已有运行。</td></tr><tr><td>确认启用 / 恢复上一版本</td><td>当前版本、失败原因、未完成工作上下文和可恢复入口。</td></tr></tbody></table>
+</div></section>
+
+<section id="reference-driven"><div class="wrap">
+  <header><h2>16 · Reference-Driven 研究与转译方法</h2><p>“参考竞品”不能只记录功能名。每个重要参考必须说明其对象、空间、交互、功能布局与视觉语言，再转译为 Curis 规则。</p></header>
+  <table><thead><tr><th>研究维度</th><th>必须回答</th></tr></thead><tbody><tr><td>Product Object</td><td>它管理什么对象，用户要完成什么任务。</td></tr><tr><td>Spatial Model</td><td>为什么放在这里；从哪里进入；如何展开、关闭、返回与保持现场。</td></tr><tr><td>Interaction / Functional Layout</td><td>默认显示什么，什么隐藏；菜单里有什么；信息、动作与专业工具如何分层。</td></tr><tr><td>Visual Language</td><td>如何以层级、密度、留白、状态和克制的表面降低复杂度，而不是只摘取功能名。</td></tr></tbody></table>
+  <div class="callout" style="margin-top:12px"><strong>研发参考边界：</strong>Coding Agent Conversation 主要参考 Codex；Context / Editor interaction 由 Cursor / VS Code 补充；Plan / Permission 由 Claude Code 补充；专业开发工具空间由 VS Code 补充；多 Agent Handoff / Needs Human 由 Relevance AI 等补充。Curis 只增加 Employee、Role、Responsibility、Automatic Handoff 与 Company Result；不得机械拼贴竞品，更不得以未证实的 Provider 细节设计页面。</div>
+  <table><thead><tr><th>正式决策</th><th>吸收的成熟模式</th><th>Curis 的边界</th></tr></thead><tbody>
+    <tr><td>稳定 Desktop Shell</td><td>Linear 的稳定一级层级、搜索、最近工作和紧凑当前态；Codex / Notion 的面包屑与按需上下文。</td><td>七个一级区不变；Context Sidebar 是 Shell sibling，只在资料库、研发和其他天然需要项目 / Thread / 文件 / 历史的工作中实例化，<strong>不放员工列表</strong>。折叠后主区自然扩展。</td></tr>
+    <tr><td>四种对话各自归属</td><td>ChatGPT 的公司级起点；Codex / Claude Code 的项目与 Thread 连续性；Coze 的 Agent 直接工作；多人会议的自然讨论流。</td><td>CEO Assistant、Employee Workstation Conversation、Meeting Conversation、Workspace Thread 各有边界。Workspace Thread 是业务对象上下文，不是所有员工的中央群聊；禁止“与团队对话”统一跳入 CEO Assistant。</td></tr>
+    <tr><td>Provider-Native Workstation 与 Composer</td><td>绑定 Provider 已验证的 Conversation / Composer、Mode、Model、Context、Skill / Tool 与专业执行行为；Curis 只统一 Employee 外层。</td><td>Composer 一律消费 Frozen Shell 语义槽位：Input、<code>+</code>、访问权限、工作模式、已选资源、Model·Agent、Voice、Send。<code>+</code> 聚合文件、文件夹、图片、资料 / Context 与低频能力；Provider 负责真实适配，不在本 Blueprint 另立首版 Composer。</td></tr>
+    <tr><td>人才与能力先发现、后员工化</td><td>Workbuddy 的 Market / Discover 浏览、专家档案、专家团、单一招募 CTA；Coze 的 Skill / Connector 说明与设置入口。</td><td>专家、Skill、Connector 均用 Focus View 完整判断；“招募”后才进入公司身份、岗位、责任、业务、Workspace 与 Employee 装配。专家不等于员工。</td></tr>
+    <tr><td>专业 Workspace 的渐进上下文</td><td>Codex / Claude Code：项目上下文、连续 Session、当前成果；VS Code / Cursor：专业工具与 Conversation 分离；Relevance AI / EvoFlow：多 Agent 长任务、等待与人工介入。</td><td>Curis 将一个 Coding Session 转译为一个 Employee Workstation，多个工作位同在 Main Workspace；研发首版 Pane 仅 Code / Source、Diff / Changes、Preview / Result，按对象出现。不复制 Issue / Project 或 DAG Builder 语义，工作仍回到 Business、Result 与 CEO Review。</td></tr>
+    <tr><td>资料、设置与 Studio 的成熟路径</td><td>Notion 的目录、面包屑、阅读、恢复；Codex / Coze / Notion 的头像菜单 → 设置 Workspace；成熟产品的版本对比与安全启用节奏。</td><td>资料阅读留在主区，来源 / 权限 / 引用 / 使用关系仅在不打断阅读时进入 Pane。设置不是第七个一级区；Studio 用“待修改版本 / 测试这次调整 / 当前运行版本 / 恢复上一版本”而非技术控制台。</td></tr>
+  </tbody></table>
+  <h3>减少视觉噪音的正式规则</h3>
+  <p class="section-lead">对象、行、面包屑、Hover Action、Popover、Composer Action 与命令优先成为入口。一个视口通常只保留 0–1 个强主按钮；完整信息进入 Focus View，轻量状态进入 Popover，持续工作进入主区。Tab 仅在同一对象下确有稳定、同级的工作视图时出现，不以永久 Tab 代替渐进披露。</p>
+</div></section>
+
+<section id="ws-auth"><div class="wrap">
+  <header><h2>17 · Workspace 内部结构权威指针（消费 Frozen Shell Contract）</h2><p class="section-lead">本 UI Blueprint 只定义空间原语、七区导航与通用交互基调。任何 Workspace <strong>内部结构</strong>（四栏 Pane、Adaptive Surface 默认收起、Main 自成立、Main = Domain Business Surface + 工作区、Employee List/Row/Status、Conversation、Composer、Model/Agent-backed、Employee Detail/Result → Utility、Context Isolation、Runtime ≠ UI 展开、长内容块规则）一律以 Frozen <code>Curis_Workspace_Shell_Contract_And_Shared_Patterns.md</code> 为准，本文件<strong>不重复定义、不新增规则</strong>。下列为本文件直接消费的 Shared 规则索引（真值与细节以该 Frozen 文件为准）：</p></header>
+  <div class="callout"><strong>Professional Workspace / Multi-Surface 接受边界：</strong>Four-Pane 是职责模型，不是固定四根物理栏。Navigation 负责公司级导航；Context 负责当前业务的 Domain Navigation 与当前上下文；Main 显示当前选中的 Professional Surface 及相关工作；Utility 承载当前对象的 Detail / Editor / Evidence / Tool；CEO Assistant 是 Global Company Employee，不是第五个 Pane。切换 Surface 只改变 Truth 的观察与工作入口，不新建 Runtime、Team、Employee、Cycle、Result 或 Session。</div>
+  <div class="grid two">
+    <div class="card"><h3>壳层与导航（消费 Frozen §0–§2）</h3><ul>
+      <li>Navigation / Main 为默认基础桌面；Context / Utility 为 Adaptive Surface，默认收起（Frozen §0.1 Main must stand on its own）。</li>
+      <li>四独立 Pane 顶部齐平、各自 Pane-local Header，无全局 Topbar（Frozen §1.2 / §1.5）。</li>
+      <li>Main = Domain Business Surface（业务展示区，内部架构名非强制 UI 标题）+ Shared Work Area（工作区）；Employee Workstation ∈ 工作区 ≠ 整个 Main（Frozen §0.1 / §3.1）。</li>
+    </ul></div>
+    <div class="card"><h3>工作区与员工（消费 Frozen §3.1 / §3.8 / §3.14）</h3><ul>
+      <li>工作区 = Employee Workstation List，普通列表行（不做 Card）；Employee Row 两行结构（头像跨两行 + 姓名岗位 + 当前职责 + UI Status 投影 + 展开箭头）。</li>
+      <li>Shared Employee UI Status = Runtime Truth 的用户侧投影（空闲 / 工作中·&lt;desc&gt; / 阻塞·&lt;cause&gt;），不改动 Runtime State Schema（Frozen §3.1）。</li>
+      <li>点头像/姓名 → Utility Employee Detail（六字段，无 Conversation）；Conversation 只在 Main Workstation（Frozen §3.12 / §3.14）。</li>
+      <li>Runtime State ≠ UI 展开状态；收起不暂停、不改变真实工作状态（Frozen §3.1）。</li>
+    </ul></div>
+    <div class="card"><h3>Conversation 与 Composer（消费 Frozen §3.1 / §3.4 / §3.5）</h3><ul>
+      <li>Conversation 不 Card 化、普通短消息自然流；长内容（长文本/Tool/Terminal/Code/Diff/Structured Result）用 bounded embedded content block，块内滚动、可进 Utility 完整查看；不 Frozen px/字数/样式（Frozen §3.1 Delta-X12）。</li>
+      <li>Shared Composer Shell 固定语义槽位（Input / + Add / 访问权限 / 工作模式 / 已选资源 / 执行选择 Model·Agent / Voice / Send），布局仅 Desktop 推荐、响应式可重排（Frozen §3.5）。</li>
+      <li>Provider Adaptation：Shared 固定槽位 + 显性区分 Model-backed / Agent-backed；Provider 决定权限/模式/能否切模型/Agent 原生设置，不写死具体 Provider（Frozen §3.5）。</li>
+    </ul></div>
+    <div class="card"><h3>引用与隔离（消费 Frozen §3.4 / §3.12）</h3><ul>
+      <li>Result / Artifact 在 Conversation 内用轻量引用（📄 标题 ↗），点击 → Utility 专业预览；Utility 内可完整展示（Frozen §3.4）。</li>
+      <li>Context Isolation：History/Knowledge 不自动注入进行中 Workstation Context；Context 只答本次工作上下文，不含完整员工详情 / 不含 Conversation（Frozen §3.12）。</li>
+    </ul></div>
+  </div>
+  <div class="callout" style="margin-top:12px"><strong>权威来源：</strong>全部上述结构规则的 Frozen 真源为 <code>docs/03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md</code>；当前视觉语言真源为 Frozen <code>docs/03_Design/CURIS_VISUAL_STANDARD_V1.md</code>。旧 <code>Curis_Design_System.md</code> / <code>Curis_UI_Frozen_Spec_2026-08-04.md</code> 仅在未被新标准取代的实现兼容与可访问性部分参考；token 迁移按 <code>docs/reviews/CURIS_VISUAL_TOKEN_MIGRATION_MAP.md</code>，本文件不执行迁移。</div>
+</div></section>
+
+<section id="review"><div class="wrap">
+  <header><h2>18 · CONSOLIDATED STRUCTURE — CEO FINAL REVIEW REQUIRED</h2><p>本文件现为 Design AI 的上位设计契约。它不授权实现，也不替代正式 Browser/Desktop、持久化、失败恢复和 Business Runtime 验收。</p></header>
+  <div class="grid two"><div class="card"><h3>Design AI 必须遵守</h3><ul><li>Low Surface Complexity, High Functional Density 与 L1–L4 Progressive Disclosure。</li><li>Provider-Native Workstation：Curis 统一组织与责任外层，Provider 承担成熟专业交互内层。</li><li>Current Frozen Shell的用户控制展开/收起、唯一初始展开规则、完整Composer槽位、局部Context、按需Utility与Conversation/Artifact分工；历史Compact Composer和首版设计分级不是Current Shared Rule。</li><li>所有 Capability 状态如实表达；完整产品位置不等同已接通。</li></ul></div><div class="card"><h3>仍等待专项设计</h3><ul><li>Content Growth（含 XHS Channel 形态）、视频 Channel 形态、会议、Workspace Studio 的具体视觉/组件专项设计。</li><li>人才与能力、组织中心、资料库已分别登记当前 UI 基线；旧视觉基线只作历史/结构参考；后续依据本轮Current产品结构与Visual Standard重新设计，不能重新发明产品。</li><li>正式实现仍须独立 Issue、Approved Design、真实 Browser/Desktop、持久化、失败恢复与 Business Runtime 证据。</li></ul></div></div>
+  <div class="screen" style="margin-top:12px"><pre>唯一 Product Blueprint
+        ↓
+唯一 UI Blueprint（本文件）
+        ↓
+专项 Reference Research / Design Brief
+        ↓
+Design AI / Figma
+        ↓
+Approved Design
+        ↓
+Codex Implementation</pre></div>
+  <div class="callout warn" style="margin-top:12px"><strong>READY FOR DESIGN：</strong>Codex 不再从 Product Blueprint 自行推导页面视觉；Codex 的职责是在 Approved Design 后按设计实现。后续专项设计只能合并回本文件相应章节，不得创建 Shell / 人才与能力 / Workspace UI Blueprint。</div>
+</div></section>
+</main>
+  <footer><div class="wrap">Curis UI Blueprint · 当前唯一 UI Blueprint（原文件原位升级） · Status: Frozen · CURIS PRODUCT TRUTH — FINAL ACCEPTED · Domain UX / Visual Delta remains Candidate / Pending · 消费 Product Blueprint 5.6 / Master Map 3.2 · 2026-09-15 Consolidation · FINAL VISUAL NOT APPROVED</div></footer>
+</body>
+</html>

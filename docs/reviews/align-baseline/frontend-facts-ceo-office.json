@@ -1,0 +1,128 @@
+{
+  "brandText": "CCuris OS",
+  "groupLabels": [
+    "公司",
+    "经营工具",
+    "公司资源"
+  ],
+  "items": [
+    {
+      "href": "/ceo-office",
+      "label": "CEO 工作台",
+      "active": false,
+      "has3px": true
+    },
+    {
+      "href": "/ceo-office/reports",
+      "label": "重要汇报",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/strategy-room",
+      "label": "战略会议室",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/runtime-trace",
+      "label": "运行轨迹",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/analytics",
+      "label": "经营",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/projects",
+      "label": "业务",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/organization",
+      "label": "AI 团队",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/organization",
+      "label": "工作空间",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/meeting",
+      "label": "会议工作台",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/decisions",
+      "label": "决策室",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/brainstorm",
+      "label": "头脑风暴室",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/execution",
+      "label": "执行工作台",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/company-runtime",
+      "label": "成果库",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/knowledge",
+      "label": "知识库",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/finance",
+      "label": "财务",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/calendar",
+      "label": "日历",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/capabilities",
+      "label": "能力中心",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/settings",
+      "label": "设置",
+      "active": false,
+      "has3px": false
+    },
+    {
+      "href": "/ceo-office/help",
+      "label": "帮助与反馈",
+      "active": false,
+      "has3px": false
+    }
+  ],
+  "accentLines": 1,
+  "hasMoreToggle": false,
+  "moreToggleText": null,
+  "footerText": "设置帮助与反馈齐齐活林 · Admin"
+}

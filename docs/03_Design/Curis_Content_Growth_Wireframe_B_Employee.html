@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Content Growth · 场景B 员工方式 / 信息雷达（中保真结构稿 · Shared Detail）</title>
+<style>
+  :root{
+    --surface-1:#ffffff; --surface-2:#f3f4f5; --bg:#eef0f1;
+    --border:#e0e3e5; --text-1:#1c2126; --text-2:#4a525a; --text-3:#8a929a;
+    --accent:#1f7a4d; --accent-soft:#e6f3ec; --warn:#b4642a; --warn-soft:#fbeede;
+    --r2:8px; --r3:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text-1);font-family:system-ui,-apple-system,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.5}
+  .topbar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface-1);border-bottom:1px solid var(--border)}
+  .lights{display:flex;gap:6px}.lights i{width:10px;height:10px;border-radius:50%;background:#d3d7da;display:inline-block}
+  .nav{display:flex;gap:14px;color:var(--text-2);font-size:12px}.nav b{color:var(--text-1)}
+  .shell{display:grid;grid-template-columns:200px 1fr 300px;gap:10px;padding:10px;align-items:start}
+  .pane{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:10px;min-height:340px}
+  .ph{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .main{grid-column:2}
+  .card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:12px;margin-bottom:10px}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .t{font-weight:600;margin:0}
+  .d{color:var(--text-2);margin:4px 0 0}
+  .btn{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r2);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text-1)}
+  .btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.sm{padding:3px 8px;font-size:11px}
+  .pill{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+  .pill.green{background:var(--accent-soft);color:var(--accent);border-color:#bfe3cf}
+  .pill.warn{background:var(--warn-soft);color:var(--warn);border-color:#f0d4b0}
+  .mini{font-size:11px;color:var(--text-3)}
+  .hide{display:none}
+  .tagcg{font-size:10px;color:var(--accent);border:1px solid #bfe3cf;background:var(--accent-soft);padding:1px 6px;border-radius:999px}
+  .empchip{background:var(--surface-1);border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+  .detail{border-left:3px solid var(--accent)}
+  .sfield{display:flex;gap:8px;padding:3px 0;border-bottom:1px dashed var(--border);font-size:12px}
+  .sfield .k{width:108px;color:var(--text-3);flex:none}
+  .sfield .v{color:var(--text-1)}
+  .ext{margin-top:10px;border:1px solid var(--border);border-radius:var(--r3);padding:10px;background:var(--accent-soft)}
+  .ext .eh{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
+  .tabs{display:flex;gap:6px;margin-bottom:8px}
+  .tabs .on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .src{border:1px solid var(--border);border-radius:var(--r2);padding:8px 10px;margin-bottom:6px;background:var(--surface-1)}
+  .src.paused{opacity:.6}
+  .chat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:10px;margin-top:8px;font-size:12px}
+  .chat .u{color:var(--accent);font-weight:600}
+  .chat .e{color:var(--text-2)}
+  .legend{font-size:11px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:10px;margin:10px}
+  code{background:#eef1f2;padding:1px 5px;border-radius:5px;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="lights"><i></i><i></i><i></i></div>
+  <div class="nav"><span>业务空间</span> › <b>内容增长</b> › <span>Curis AI 经营方向</span></div>
+</div>
+
+<div class="shell">
+  <!-- Navigation Pane (SHELL·T1) -->
+  <div class="pane">
+    <div class="ph">Navigation · SHELL · T1</div>
+    <div class="mini">六区导航固定<br/><br/>· 概览<br/>· <b>内容增长</b><br/>· 任务<br/>· 数据<br/>· 设置<br/>· 帮助</div>
+  </div>
+
+  <!-- Main Pane (SHELL) · 正常 Content Growth 工作面 -->
+  <div class="pane main">
+    <div class="ph">Main · SHELL（正常 Content Growth 工作面）</div>
+
+    <div class="card">
+      <div class="row"><span class="pill green">进行中</span><div class="t" style="margin:0">AI 浏览器 · 抖音制作中</div></div>
+      <div class="d">小红书 · 今晚 20:00 自动发布 + [调整]</div>
+      <div style="margin-top:8px">
+        <button class="empchip" id="openEmp">👤 信息收集 · 王岚</button>
+        <span class="mini">（点员工 → 沿用 Shared Employee Detail 右侧详情，不进 Main 独立页面）</span>
+      </div>
+    </div>
+
+    <!-- 对话 → Shared Employee Detail 同步示意 -->
+    <div class="chat" id="chatBox">
+      <div><span class="u">你</span>：这个网站（AI 观察站）不错，以后每天也看看。</div>
+      <div><span class="e">王岚</span>：已经加入日常信息来源。</div>
+      <div class="mini" id="syncNote">→ Shared Employee Detail「工作方式 / 信息雷达」已同步出现「AI 观察站」（同一份方法，GUI 与对话一致）。</div>
+    </div>
+  </div>
+
+  <!-- 右侧详情空间：Shared Employee Detail（沿用 Shared 露出方式） -->
+  <div class="pane detail hide" id="empDetail">
+    <div class="ph">Shared Employee Detail · 右侧详情空间（沿用 Shared 露出方式）</div>
+    <button class="btn sm" id="closeEmp" style="float:right;margin-top:-22px">收起</button>
+
+    <div class="sfield"><span class="k">姓名</span><span class="v">王岚</span></div>
+    <div class="sfield"><span class="k">头像</span><span class="v">[头像]</span></div>
+    <div class="sfield"><span class="k">岗位 / Role</span><span class="v">信息收集</span></div>
+    <div class="sfield"><span class="k">Organization</span><span class="v">Curis AI 经营方向</span></div>
+    <div class="sfield"><span class="k">Agent / Model</span><span class="v">Claude / GPT-5（按配置）</span></div>
+    <div class="sfield"><span class="k">Skills</span><span class="v">信息检索 · 热点研判 · 信号提炼</span></div>
+    <div class="sfield"><span class="k">Tools / Capability</span><span class="v">Web 抓取 · RSS · 平台 API</span></div>
+    <div class="sfield"><span class="k">Computer Access</span><span class="v">可读写文件 / 浏览器</span></div>
+    <div class="sfield"><span class="k">Responsibility</span><span class="v">信息收集（当前 Context：Curis AI）</span></div>
+    <div class="sfield"><span class="k">Current Executor</span><span class="v">王岚</span></div>
+    <div class="sfield"><span class="k">Status</span><span class="v"><span class="pill green">在岗</span></span></div>
+
+    <!-- Content Growth 业务扩展 Section：工作方式（在 Shared Detail 内） -->
+    <div class="ext">
+      <div class="eh">工作方式（Content Growth 扩展 · 由「信息收集」职责决定内容）</div>
+      <div class="tabs">
+        <button class="btn sm on" id="tabHow">怎么工作</button>
+        <button class="btn sm" id="tabRadar">信息雷达（Source Portfolio）</button>
+      </div>
+
+      <div id="howPanel">
+        <div class="d">· 当前关注：官方动态 · 行业网站 · 平台热点 · 对标账号 · 用户评论</div>
+        <div class="d">· 工作节奏：每天 3 轮（09:00 / 15:00 / 21:00）· 重点关注 18 个固定来源 + 平台热点 + 用户评论</div>
+        <div class="d">· 最近变化：新增「AI 前线」· 降频「某低频博客」· 暂停「已停更周刊」</div>
+        <div class="d">· AI 优化建议：建议加入平台新政官方号（近期政策变化频繁）</div>
+      </div>
+
+      <div id="radarPanel" class="hide">
+        <div class="src"><div class="row"><div class="t" style="margin:0">AI 前线（行业媒体）</div><span class="pill green" style="margin-left:auto">活跃</span></div><div class="d">关注：AI 工具发布 · 每天 3 轮 · 最近贡献 ↑</div><div class="row" style="margin-top:6px"><button class="btn sm">暂停</button><button class="btn sm">删除</button><button class="btn sm">改频率</button></div></div>
+        <div class="src"><div class="row"><div class="t" style="margin:0">AI 观察站（对话新增）</div><span class="pill green" style="margin-left:auto">活跃</span></div><div class="d">关注：AI 产品动态 · 每天 1 轮 <span class="mini">（示例数据）</span></div><div class="row" style="margin-top:6px"><button class="btn sm">暂停</button><button class="btn sm">删除</button></div></div>
+        <div class="src paused"><div class="row"><div class="t" style="margin:0">已停更周刊</div><span class="pill" style="margin-left:auto">暂停</span></div><div class="d">用户手动暂停</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>Pane 标注</b>：<code>Navigation (SHELL·T1)</code> · <code>Main (SHELL)</code> 正常 Content Growth 工作面 · 右侧详情空间 = <b>Shared Employee Detail</b>（沿用 Shared 露出方式，非 Main 独立页面）。<br/>
+  <b>DELTA T5（Shared 一致）</b>：Employee 是 Company OS Shared Employee；Content Growth 仅在 Shared Employee Detail 内增加「工作方式」扩展 Section（由职责决定内容），不新建 Employee Method Workspace、不改全局 Employee 露出方式、不重定义 Employee UI。<br/>
+  <b>Context Isolation</b>：同一员工服务多经营方向时，无论从哪点开都是同一个 Shared Detail；业务扩展内容按当前 Context（Curis AI）显示，不自动加载全部 Office Method Context。<br/>
+  <b>同一份方法</b>：对话「加一个源」→ Shared Employee Detail 信息雷达同步出现（演示已写入 chatBox 同步提示）；反向 GUI 删除也同步。<br/>
+  <b>不固定 5 员工</b>：本例「信息收集·王岚」可承担多职责；未来增长再拆，不破坏 Company OS Frozen Organization 语义。<br/>
+  <b>示例数据</b>：本结构稿中的来源表现 / 贡献趋势均为 <b>Illustrative / Demo Evidence</b>，仅用于说明员工方式与信息雷达体验；真实产品仅在来源数据真实可用时显示真实数字，UNAVAILABLE / UNKNOWN 时不伪造贡献 / 质量 Evidence。<br/>
+  <b>纪律</b>：无 Policy inheritance / 无 w1–w8 公式 / Platform Facts 四态不写死数字；套用 Frozen Shell 四 Pane、无 Global Topbar。
+</div>
+
+<script>
+  const detail=document.getElementById('empDetail');
+  document.getElementById('openEmp').onclick=()=>detail.classList.remove('hide');
+  document.getElementById('closeEmp').onclick=()=>detail.classList.add('hide');
+  const how=document.getElementById('howPanel'), radar=document.getElementById('radarPanel');
+  const tHow=document.getElementById('tabHow'), tRadar=document.getElementById('tabRadar');
+  tHow.onclick=()=>{how.classList.remove('hide');radar.classList.add('hide');tHow.classList.add('on');tRadar.classList.remove('on');};
+  tRadar.onclick=()=>{radar.classList.remove('hide');how.classList.add('hide');tRadar.classList.add('on');tHow.classList.remove('on');};
+</script>
+</body>
+</html>

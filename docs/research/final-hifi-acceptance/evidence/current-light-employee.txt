@@ -1,0 +1,95 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- generic: 工作范围
+- button "收起 Context":
+- generic: 当前工作范围
+- generic: 暂无运行中工作
+- generic: 相关结果
+- generic: 完整档案
+- button "打开员工档案（Utility）"
+- main:
+  - link "组织中心":
+    - /url: "#/org/dir"
+  - generic: /
+  - link "研发部":
+    - /url: "#"
+  - generic: /
+  - generic: 孙浩
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - generic: 孙
+  - heading "孙浩" [level=1]
+  - text: Workspace 负责人 · 研发部 · Leader ·
+  - generic: 工作中 · 联调收口与发布门禁
+  - button "完整档案"
+  - button "进入对话"
+  - button "对话"
+  - button "当前工作"
+  - button "责任"
+  - button "能力"
+  - button "结果"
+  - button "设置"
+  - generic: 孙
+  - text: 孙浩 · Workspace 负责人
+  - generic: 工作中 · 联调收口与发布门禁
+  - generic: 这里是与 孙浩 的工作对话。当前责任：登录模块 v1.4 发布门禁检查。
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.2 · GLM-5.3
+  - textbox "与 孙浩 对话，或直接交代一件事…"
+  - button "添加附件":
+  - 'button "引用 @员工 / #文件 / #结果"':
+  - button "最小权限":
+    - text: 最小权限
+  - button "对话":
+    - text: 对话
+  - button "执行 · 孙浩":
+    - text: 执行 · 孙浩
+  - button "GLM-5.3":
+    - text: GLM-5.3
+  - button "发送" [disabled]:
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你

@@ -1,0 +1,482 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · I. Content Growth / XHS（小红书运营办公室）
+  覆盖：I1 办公室入口(总览/日历/内容/数据/自动化) · I2 内容生产工作区(Employee Presences) · I3 Context 选题库 · I4 Utility 图文/数据/审核 · I5 发布后 Analytics(System Activity)
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 科技 · 小红书运营 Workspace · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 880px) { .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); } .tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); } .ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.emp-list { display: flex; flex-direction: column; }
+.emp-row { border-bottom: 1px solid var(--ui-line); } .emp-row:last-child { border-bottom: 0; }
+.emp-row-head { display: grid; grid-template-columns: 36px 1fr auto auto; grid-template-rows: auto auto; align-items: center; gap: 0 var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-2); cursor: pointer; }
+.emp-row-head:hover { background: var(--ui-surface); }
+.emp-avatar { grid-row: 1 / 3; width: 36px; height: 36px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: var(--ui-fs-2); cursor: pointer; }
+.emp-id { grid-column: 2; grid-row: 1; display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.emp-name { font-weight: 600; cursor: pointer; } .emp-role { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.emp-duty { grid-column: 2; grid-row: 2; font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.emp-status { grid-column: 3; grid-row: 1 / 3; } .emp-chevron { grid-column: 4; grid-row: 1 / 3; color: var(--ui-text-2); transition: transform 150ms ease; }
+.emp-row.is-open .emp-chevron { transform: rotate(90deg); }
+.emp-body { display: none; padding: 0 var(--ui-sp-2) var(--ui-sp-4) calc(36px + var(--ui-sp-3) + var(--ui-sp-2)); }
+.emp-row.is-open .emp-body { display: block; }
+.av-1 { background: #4a6fa5; } .av-2 { background: #5b8c6e; } .av-3 { background: #9a7b4e; } .av-4 { background: #7a5b8c; } .av-5 { background: #a05b6b; } .av-6 { background: #4e8c8c; }
+.result-ref { display: inline-flex; align-items: center; gap: var(--ui-sp-1); color: var(--ui-accent); font-size: var(--ui-fs-2); cursor: pointer; text-decoration: none; border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-sm); }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+.dl { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row .k { color: var(--ui-text-2); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.kpi { display: flex; flex-direction: column; gap: 2px; } .kpi .n { font-size: var(--ui-fs-7); font-weight: 650; line-height: 1.1; } .kpi .l { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+/* Employee Presence（P2）：Note 卡上的轻量责任存在 */
+.note-card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); background: var(--ui-surface); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.note-card .title { font-weight: 600; }
+.presence { display: flex; align-items: center; gap: var(--ui-sp-2); padding-top: var(--ui-sp-2); border-top: 1px solid var(--ui-line); }
+.presence .pa { width: 22px; height: 22px; border-radius: var(--ui-r-pill); display: grid; place-items: center; color: #0c0c0d; font-weight: 700; font-size: 10px; }
+.presence .pt { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.presence .ps { margin-left: auto; }
+/* System Activity（P3）：无员工头像 */
+.sys-activity { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-3); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.sys-activity .dot { width: 8px; height: 8px; border-radius: var(--ui-r-pill); background: var(--ui-text-3); }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--ui-sp-2); }
+.cal-cell { border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); min-height: 64px; padding: var(--ui-sp-1); font-size: var(--ui-fs-1); }
+.cal-cell.today { border-color: var(--ui-accent); }
+.cal-cell .ev { background: var(--ui-surface-2); border-radius: var(--ui-r-xs); padding: 2px 4px; margin-top: 2px; color: var(--ui-text-2); }
+
+/* Frame B · Shared Workspace Shell + Team Operating + Leader marking */
+.ws-shell { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-4); display: flex; flex-direction: column; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-4); }
+.ws-shell-leader { display: flex; align-items: center; gap: var(--ui-sp-3); }
+.ws-shell-info { display: flex; align-items: baseline; gap: var(--ui-sp-2); }
+.ws-shell-name { font-weight: 600; }
+.ws-shell-role { color: var(--ui-accent); font-size: var(--ui-fs-2); }
+.ws-shell-status { margin-left: auto; }
+.ws-shell-field { display: flex; gap: var(--ui-sp-3); font-size: var(--ui-fs-2); }
+.ws-shell-field .k { color: var(--ui-text-2); min-width: 80px; }
+.ws-shell-field .v.is-actionable { cursor: pointer; color: var(--ui-text); }
+.ws-shell-field .v.is-actionable:hover { color: var(--ui-accent); }
+.ws-shell-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); margin-bottom: var(--ui-sp-4); }
+.ws-shell-op .op-title { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+.op-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ui-sp-2) var(--ui-sp-4); font-size: var(--ui-fs-2); }
+.op-grid > div { display: flex; gap: var(--ui-sp-2); }
+.op-grid .l { color: var(--ui-text-2); }
+.team-op { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-3) var(--ui-sp-4); margin-top: var(--ui-sp-4); }
+.team-op-row { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; font-size: var(--ui-fs-2); }
+.team-op-title { font-weight: 600; }
+.team-op-default { color: var(--ui-text-2); margin-right: var(--ui-sp-2); }
+.to-pill { display: inline-block; padding: 2px var(--ui-sp-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-pill); background: var(--ui-surface-2); font-size: var(--ui-fs-1); }
+.to-arrow { color: var(--ui-text-2); }
+.team-op-edit { margin-left: auto; }
+.team-op-pane { margin-top: var(--ui-sp-3); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.team-op-track { display: flex; align-items: center; gap: var(--ui-sp-2); flex-wrap: wrap; }
+.team-op-foot { display: flex; gap: var(--ui-sp-2); justify-content: flex-end; }
+.emp-row.is-leader { background: linear-gradient(90deg, var(--ui-surface-2) 0%, transparent 40%); }
+.emp-row.is-leader .emp-avatar { box-shadow: 0 0 0 2px var(--ui-accent); }
+.emp-row.is-leader .emp-role { color: var(--ui-accent); }
+.leader-scope-line { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); }
+
+/* Round 11 · XHS Domain Primary Surface (Content Operating) + View Switch */
+.primary-surface { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); background: var(--ui-surface); padding: var(--ui-sp-5); margin-bottom: var(--ui-sp-5); }
+.ps-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ui-sp-4); padding-bottom: var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); }
+.ps-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.ps-view-switch { display: flex; gap: 2px; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: 2px; background: var(--ui-bg); }
+.vs-btn { padding: 2px var(--ui-sp-3); font-size: var(--ui-fs-1); background: transparent; border: 0; color: var(--ui-text-2); cursor: pointer; border-radius: var(--ui-r-xs); font: inherit; }
+.vs-btn.is-active { background: var(--ui-text); color: var(--ui-bg); font-weight: 600; }
+.ps-week { display: flex; flex-direction: column; gap: var(--ui-sp-4); }
+.ps-day { border-left: 2px solid var(--ui-line); padding-left: var(--ui-sp-4); }
+.ps-day-head { display: flex; gap: var(--ui-sp-3); align-items: baseline; margin-bottom: var(--ui-sp-2); font-size: var(--ui-fs-2); }
+.ps-day-name { font-weight: 650; }
+.ps-day-date { color: var(--ui-text-2); }
+.ps-obj { padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); }
+.ps-obj:last-child { border-bottom: 0; }
+.ps-obj-title { font-weight: 600; font-size: var(--ui-fs-3); margin-bottom: 4px; }
+.ps-obj-meta { font-size: var(--ui-fs-2); color: var(--ui-text-2); display: flex; gap: var(--ui-sp-2); align-items: center; flex-wrap: wrap; }
+.ps-stage { color: var(--ui-text); }
+.ps-owner { color: var(--ui-text); }
+.ps-sep { opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="搜索" data-open-utility aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>Curis 研发</span></a>
+          <a class="nav-item active" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>AI 科技 · 小红书运营</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- I3 Context 选题库 -->
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">选题库</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">信号</div>
+      <div class="ctx-list">
+        <div class="ctx-item active">「通勤穿搭」搜索量上升</div>
+        <div class="ctx-item">竞品爆文：极简书桌</div>
+      </div>
+      <div class="ctx-head">素材</div>
+      <div class="ctx-list">
+        <div class="ctx-item">产品实拍图 ×12</div>
+        <div class="ctx-item">用户证言 ×3</div>
+      </div>
+      <div class="ctx-head">内容日历</div>
+      <div class="ctx-list">
+        <div class="ctx-item">8 月种草排期</div>
+        <div class="ctx-item">历史发布</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="../department-business-work-surface-2026-08-18/CURIS_DEPARTMENT_BUSINESS_WORK_SURFACE_UX_EXPLORATION.html#state-2">内容增长部</a><span class="sep">/</span><a href="../department-business-work-surface-2026-08-18/CURIS_DEPARTMENT_BUSINESS_WORK_SURFACE_UX_EXPLORATION.html#state-4">小红书运营</a></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="page-head">
+        <h1>AI 科技</h1>
+        <div class="sub">Content Operating Surface · 内容排期 · 团队运转 · 工作区</div>
+      </div>
+
+      <!-- Frame B · Shared Workspace Shell · AI 科技 instance -->
+      <div class="ws-shell">
+        <div class="ws-shell-field"><span class="k">负责人</span><span class="v is-actionable" data-leader-jump>陈真 · 工作空间负责人 ›</span></div>
+        <div class="ws-shell-field"><span class="k">目标</span><span class="v is-actionable">本周期目标已设置 ›</span></div>
+        <div class="ws-shell-field"><span class="k">规则与配置</span><span class="v is-actionable">已配置 5 项 ›</span></div>
+      </div>
+
+      <!-- Frame B · Current Operating Summary -->
+      <div class="ws-shell-op">
+        <div class="op-title">当前经营</div>
+        <div class="op-grid">
+          <div><span class="l">经营状态</span><span class="v">增长验证中</span></div>
+          <div><span class="l">本轮重点</span><span class="v">验证 AI 工具实测是否具有更高关注转化</span></div>
+          <div><span class="l">最新判断</span><span class="v">工具实测出现领先信号，但证据仍不足</span></div>
+          <div><span class="l">下一步</span><span class="v">继续当前策略，周五复盘</span></div>
+          <div><span class="l">需要关注</span><span class="v">还需一个观察窗口才能形成定位调整建议</span></div>
+        </div>
+      </div>
+
+      <!-- Domain Primary Work Surface · 内容排期 / Content Operating -->
+<div class="primary-surface">
+  <div class="ps-head">
+    <h2 class="ps-title">内容排期</h2>
+    <div class="ps-view-switch" data-view-switch>
+      <button class="vs-btn">月</button>
+      <button class="vs-btn is-active">周</button>
+      <button class="vs-btn">日</button>
+    </div>
+  </div>
+
+  <div class="ps-week">
+    <div class="ps-day">
+      <div class="ps-day-head"><span class="ps-day-name">周一</span><span class="ps-day-date">8-18</span></div>
+      <div class="ps-obj">
+        <div class="ps-obj-title">AI 工具测评 · 极简风</div>
+        <div class="ps-obj-meta"><span class="ps-stage">文案中</span><span class="ps-sep">·</span><span class="ps-owner">林月</span><span class="ps-sep">·</span><span class="status warning">待审核</span></div>
+      </div>
+      <div class="ps-obj">
+        <div class="ps-obj-title">AI 效率工具合集 · 选题</div>
+        <div class="ps-obj-meta"><span class="ps-stage">选题中</span><span class="ps-sep">·</span><span class="ps-owner">陈真</span><span class="ps-sep">·</span><span class="status neutral">草稿</span></div>
+      </div>
+    </div>
+
+    <div class="ps-day">
+      <div class="ps-day-head"><span class="ps-day-name">周三</span><span class="ps-day-date">8-20</span></div>
+      <div class="ps-obj">
+        <div class="ps-obj-title">GPT 产品体验</div>
+        <div class="ps-obj-meta"><span class="ps-stage">待视觉</span><span class="ps-sep">·</span><span class="ps-owner">苏晴</span><span class="ps-sep">·</span><span class="status neutral">视觉中</span></div>
+      </div>
+    </div>
+
+    <div class="ps-day">
+      <div class="ps-day-head"><span class="ps-day-name">周五</span><span class="ps-day-date">8-22</span></div>
+      <div class="ps-obj">
+        <div class="ps-obj-title">AI 效率工具合集 · 发布版</div>
+        <div class="ps-obj-meta"><span class="ps-stage">待发布</span><span class="ps-sep">·</span><span class="ps-owner">苏晴</span><span class="ps-sep">·</span><span class="status success">就绪</span></div>
+      </div>
+      <div class="ps-obj">
+        <div class="ps-obj-title">通勤穿搭 · 极简风</div>
+        <div class="ps-obj-meta"><span class="ps-stage">已发布</span><span class="ps-sep">·</span><span class="ps-owner">陈真</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 团队运转 · 轻量（退出 Tab，作为 Primary Surface 下方的轻量行） -->
+<div class="team-op">
+  <div class="team-op-row">
+    <span class="team-op-title">团队运转</span>
+    <span class="team-op-default">默认流程</span>
+    <span class="to-pill">选题</span><span class="to-arrow">→</span><span class="to-pill">调研</span><span class="to-arrow">→</span><span class="to-pill">文案</span><span class="to-arrow">→</span><span class="to-pill">视觉</span><span class="to-arrow">→</span><span class="to-pill">发布</span>
+    <button class="chip team-op-edit" data-team-op-edit>+ 编辑</button>
+  </div>
+  <div class="team-op-pane" data-team-op-pane hidden>
+    <div class="team-op-track">
+      <span class="to-pill">选题</span><span class="to-arrow">→</span><span class="to-pill">调研</span><span class="to-arrow">→</span><span class="to-pill">文案</span><span class="to-arrow">→</span><span class="to-pill">视觉</span><span class="to-arrow">→</span><span class="to-pill">发布</span>
+    </div>
+    <div class="team-op-foot">
+      <button class="chip" data-team-op-add>+ 添加岗位</button>
+      <button class="btn btn-primary" data-team-op-done>完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 工作区 · 默认全部收起 · Leader 固定第一工位 -->
+<div class="section">
+  <div class="section-head"><h2 class="section-title">工作区</h2><span class="section-sub">默认收起 · 点击行展开 Workstation · Leader 固定第一工位</span></div>
+  <div class="emp-list">
+    <div class="emp-row is-leader" data-emp-row>
+      <div class="emp-row-head">
+        <div class="emp-avatar av-3" data-open-util>陈</div>
+        <div class="emp-id"><span class="emp-name" data-open-util>陈真</span><span class="emp-role">工作空间负责人</span></div>
+        <div class="emp-duty">当前职责：统筹 AI 科技工作空间目标、内容节奏、团队结果与下一轮经营</div>
+        <span class="emp-status"><span class="status success">工作中 · 经营</span></span>
+        <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="emp-body">
+        <div class="leader-scope-line">Assignment · Employee = <b>陈真</b> · Role = <b>工作空间负责人</b> · Scope = <b>AI 科技工作空间</b></div>
+        <div class="leader-conv" style="margin-top:var(--ui-sp-3);border:1px solid var(--ui-line);border-radius:var(--ui-r-md);background:var(--ui-surface-2);padding:var(--ui-sp-3);display:flex;flex-direction:column;gap:var(--ui-sp-3)">
+          <div style="display:flex;gap:var(--ui-sp-2);align-items:flex-start">
+            <div style="flex:0 0 auto;font-weight:600;color:var(--ui-text-2);font-size:var(--ui-fs-2);min-width:40px">CEO</div>
+            <div style="background:var(--ui-surface);border:1px solid var(--ui-line);border-radius:var(--ui-r-md);padding:var(--ui-sp-2) var(--ui-sp-3);color:var(--ui-text);font-size:var(--ui-fs-3);line-height:1.5">这一轮为什么还在继续做 AI 工具实测，没有直接把账号定位改成这个方向？</div>
+          </div>
+          <div style="display:flex;gap:var(--ui-sp-2);align-items:flex-start">
+            <div style="flex:0 0 auto;font-weight:600;color:var(--ui-accent);font-size:var(--ui-fs-2);min-width:40px">陈真</div>
+            <div style="background:var(--ui-surface);border:1px solid var(--ui-accent);border-radius:var(--ui-r-md);padding:var(--ui-sp-2) var(--ui-sp-3);color:var(--ui-text);font-size:var(--ui-fs-3);line-height:1.5">前两轮 AI 工具实测的关注转化高于行业新闻，但只有两个观察窗口，还没到调整定位的证据门槛。所以这一轮没改定位，只把工具实测内容占比提了上来。到第三个观察窗口（周五复盘）如果信号继续成立，我会交一份定位调整建议。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="emp-row" data-emp-row>
+      <div class="emp-row-head">
+        <div class="emp-avatar av-3" data-open-util>陈</div>
+        <div class="emp-id"><span class="emp-name" data-open-util>陈真</span><span class="emp-role">选题 · 内容增长</span></div>
+        <div class="emp-duty">当前责任：AI 选题库维护 · 话题捕捉</div>
+        <span class="emp-status"><span class="status neutral">空闲</span></span>
+        <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+    </div>
+
+    <div class="emp-row" data-emp-row>
+      <div class="emp-row-head">
+        <div class="emp-avatar av-1" data-open-util>林</div>
+        <div class="emp-id"><span class="emp-name" data-open-util>林月</span><span class="emp-role">调研 · 内容增长</span></div>
+        <div class="emp-duty">当前责任：AI 工具实测 · 数据收集</div>
+        <span class="emp-status"><span class="status success">工作中 · 调研</span></span>
+        <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+    </div>
+
+    <div class="emp-row" data-emp-row>
+      <div class="emp-row-head">
+        <div class="emp-avatar av-1" data-open-util>林</div>
+        <div class="emp-id"><span class="emp-name" data-open-util>林月</span><span class="emp-role">文案 · 内容增长</span></div>
+        <div class="emp-duty">当前责任：AI 工具测评稿 · 文案起草</div>
+        <span class="emp-status"><span class="status warning">文案中</span></span>
+        <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+    </div>
+
+    <div class="emp-row" data-emp-row>
+      <div class="emp-row-head">
+        <div class="emp-avatar av-2" data-open-util>苏</div>
+        <div class="emp-id"><span class="emp-name" data-open-util>苏晴</span><span class="emp-role">视觉 · 内容增长</span></div>
+        <div class="emp-duty">当前责任：封面风格 · 视觉规范</div>
+        <span class="emp-status"><span class="status neutral">空闲</span></span>
+        <span class="emp-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="emp-body"><div class="helper">Workstation 占位。</div></div>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </main>
+
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">Utility · 内容</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="tabs" data-tab-group="xutil" style="border-bottom:1px solid var(--ui-line);margin-bottom:var(--ui-sp-3)">
+        <button class="tab active" data-tab="preview">图文预览</button>
+        <button class="tab" data-tab="review">审核</button>
+        <button class="tab" data-tab="data">数据</button>
+      </div>
+      <div class="tab-panel active" data-tab-panel="xutil" data-tab-id="preview">
+        <div class="card" style="background:var(--ui-surface)"><div class="helper" style="text-align:center;padding:var(--ui-sp-6)">图文预览占位<br><span class="mock-badge">示例数据</span></div></div>
+        <div style="margin-top:var(--ui-sp-3)"><button class="btn btn-secondary" style="width:100%">发布预览</button></div>
+      </div>
+      <div class="tab-panel" data-tab-panel="xutil" data-tab-id="review">
+        <div class="detail-field"><div class="k">审核项</div><div class="v">通勤穿搭 · 极简风</div></div>
+        <div class="detail-field"><div class="k">风险</div><div class="v">品牌表达合规（需确认）</div></div>
+        <div style="display:flex;gap:var(--ui-sp-2)"><button class="btn btn-primary">通过</button><button class="btn btn-ghost">退回修改</button></div>
+      </div>
+      <div class="tab-panel" data-tab-panel="xutil" data-tab-id="data">
+        <div class="detail-field"><div class="k">数据看板</div><div class="v">阅读 2.4w · 互动 1.1k · 转化 3.8% (EST)</div></div>
+        <div class="detail-field"><div class="k">任务</div><div class="v">归因分析 · 进行中</div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('.emp-row', function () {
+    var row = this;
+    row.querySelector('.emp-row-head').addEventListener('click', function (e) {
+      if (e.target.closest('[data-open-util]')) return;
+      row.classList.toggle('is-open');
+    });
+    row.querySelectorAll('[data-open-util]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.stopPropagation(); shell.classList.add('with-utility'); });
+    });
+  });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+
+  on('[data-view-switch] .vs-btn', function () {
+    var sw = this.closest('[data-view-switch]');
+    if (!sw) return;
+    sw.querySelectorAll('.vs-btn').forEach(function (b) { b.classList.remove('is-active'); });
+    this.classList.add('is-active');
+  });
+  on('[data-leader-jump]', function () {
+    var leader = document.querySelector('.emp-row.is-leader');
+    if (!leader) return;
+    leader.classList.add('is-open');
+    leader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  on('[data-team-op-edit]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (!target) return;
+    target.hidden = !target.hidden;
+    this.textContent = target.hidden ? '+ 编辑' : '收起';
+  });
+  on('[data-team-op-done]', function () {
+    var wrap = this.closest('.team-op');
+    if (!wrap) return;
+    var target = wrap.querySelector('[data-team-op-pane]');
+    if (target) target.hidden = true;
+    var edit = wrap.querySelector('[data-team-op-edit]');
+    if (edit) edit.textContent = '+ 编辑';
+  });
+})();
+</script>
+</body>
+</html>

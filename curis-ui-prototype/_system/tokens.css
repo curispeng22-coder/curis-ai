@@ -1,0 +1,272 @@
+/* ============================================================
+   Curis Design Tokens — Frozen (Curis_Design_System.md)
+   Single source of truth. Replaces ALL page-private palettes.
+   Light = gray canvas (#f5f5f7) + white cards (#ffffff);
+   Dark = #1a1c1f surface (never pure black).
+   ============================================================ */
+
+/* Font stack leads with system-ui so there is ZERO remote dependency.
+   If "Inter" is installed locally it is still preferred; otherwise the
+   OS UI font is used. No @import — never render-blocks on the network. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --ui-bg: #1a1c1f;
+  --ui-surface: #222529;
+  --ui-surface-2: #2b2f34;
+
+  /* Lines & text */
+  --ui-line: #343940;
+  --ui-text: #f3f4f6;
+  --ui-text-2: #a7adb6;
+  --ui-text-3: #a3aab4;
+
+  /* Primary action (dark theme: brand green) */
+  --ui-action-primary-bg: #32f08c;
+  --ui-action-primary-hover: #0fdc78;
+  --ui-action-primary-fg: #0c0c0d;
+
+  /* Accent (active AI state / focus / brand signal) */
+  --ui-accent: #32f08c;
+
+  /* Semantic (small text / icon / label / indicator line ONLY) */
+  --ui-success: #3fcf86;
+  --ui-warning: #d89a3a;
+  --ui-danger: #e57373;
+
+  /* Shell metrics */
+  --ui-sidebar-w: 220px;
+  --ui-topbar-h: 52px;
+
+  /* Radius & elevation (calm, low-contrast) */
+  --ui-radius: 12px;
+  --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ui-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --ui-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.44);
+
+  /* Type */
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+
+  /* ── 字阶：唯一真源，7 档，下限 12px ──────────────────────────
+     P1-2：此前 20 个页面各自内联 9 档 --text-* 私有标度，实测渲染出
+     22 个字号档位、1369 个节点小于 12px。字号标度与颜色一样只能有一
+     个真源，且 CEO 长时间阅读的界面不允许出现 8–11px 的正文。 */
+  --ui-fs-1: 12px;   /* 说明文字、元信息、徽标 */
+  --ui-fs-2: 13px;   /* 次要正文、表格、标签 */
+  --ui-fs-3: 14px;   /* 正文默认 */
+  --ui-fs-4: 16px;   /* 卡片标题、导语 */
+  --ui-fs-5: 20px;   /* 区块标题 */
+  --ui-fs-6: 24px;   /* 页面标题 */
+  --ui-fs-7: 28px;   /* 大数字、展示位 */
+
+  /* 旧页面私有别名 → 一律收敛到上面 7 档，保持 var(--text-*) 调用可用 */
+  --text-xs: var(--ui-fs-1);
+  --text-sm: var(--ui-fs-1);
+  --text-md: var(--ui-fs-1);
+  --text-base: var(--ui-fs-2);
+  --text-lg: var(--ui-fs-3);
+  --text-xl: var(--ui-fs-4);
+  --text-2xl: var(--ui-fs-5);
+  --text-3xl: var(--ui-fs-6);
+  --text-4xl: var(--ui-fs-7);
+}
+
+/* 兜底：浏览器默认字号（h1 2em=32px、small 0.8em=12.8px 等）会绕开标度，
+   这里把所有文本容器钉死在 7 档内，杜绝派生出档外字号。 */
+html { font-size: 16px; }
+body { font-size: var(--ui-fs-3); }
+h1 { font-size: var(--ui-fs-6); }
+h2 { font-size: var(--ui-fs-5); }
+h3 { font-size: var(--ui-fs-4); }
+h4, h5, h6 { font-size: var(--ui-fs-3); }
+small, sub, sup, figcaption { font-size: var(--ui-fs-1); }
+sub, sup { line-height: 0; }
+/* 表单控件不继承 body 字号，浏览器默认给 13.333px —— 会凭空派生出档外字号 */
+button, input, select, textarea, optgroup { font-size: var(--ui-fs-2); font-family: inherit; }
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Stronger surface contrast than the original spec table: gray canvas,
+     white cards, subtle secondary surface. Prevents cards from disappearing
+     into the page background. */
+  --ui-bg: #f5f5f7;
+  --ui-surface: #ffffff;
+  --ui-surface-2: #f7f8fa;
+
+  --ui-line: #e5e7eb;
+  --ui-text: #1a1c1f;
+  --ui-text-2: #4b5563;
+  --ui-text-3: #626b76;
+
+  /* Light theme: primary action = dark solid (never large green) */
+  --ui-action-primary-bg: #30333a;
+  --ui-action-primary-hover: #17181a;
+  --ui-action-primary-fg: #ffffff;
+
+  --ui-accent: #1a1c1f;
+
+  --ui-success: #21895d;
+  --ui-warning: #b87922;
+  --ui-danger: #c43f3f;
+
+  --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+  --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+  --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+}
+
+/* System mode follows OS. Applies when html has data-theme="system".
+   Dark is the Frozen default, so :root / [data-theme="dark"] above already
+   cover the OS-dark case; this block overrides to light when OS is light. */
+@media (prefers-color-scheme: light) {
+  html[data-theme="system"] {
+    color-scheme: light;
+
+    /* Stronger surface contrast than the original spec table: gray canvas,
+       white cards, subtle secondary surface. Prevents cards from disappearing
+       into the page background. */
+    --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+    --ui-line: #e5e7eb;
+    --ui-text: #1a1c1f; --ui-text-2: #4b5563; --ui-text-3: #626b76;
+
+    /* Light theme: primary action = dark solid (never large green) */
+    --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+
+    --ui-accent: #1a1c1f;
+
+    --ui-success: #21895d;
+    --ui-warning: #b87922;
+    --ui-danger: #c43f3f;
+
+    --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+    --ui-shadow-2: 0 4px 12px rgba(15, 18, 35, 0.08);
+    --ui-shadow-3: 0 12px 32px rgba(15, 18, 35, 0.12);
+  }
+}
+
+/* ============================================================
+   FROZEN LAYER 2 — 主题无关的结构令牌
+   ------------------------------------------------------------
+   立此层的原因（2026-08-04 全站实测）：
+     · 间距 gap 渲染出 18 个档位（1,2,3,4,5,6,7,8,9,10,12,13,14,16,18,20,22,24）
+       padding 单页最多 18 档 —— 等于完全没有间距系统。
+     · 圆角渲染出 13 个档位（3,4,5,6,7,8,9,10,12,14,50,999,9999）。
+     · 层级、动效、焦点环、控件高度令牌为 0，各页自行硬编码。
+   这些令牌与主题无关，放在独立 :root 里，light / dark 都继承。
+   ============================================================ */
+:root {
+  /* ── 间距标度：8 档，4px 基数 ─────────────────────────────
+     用法：内边距 / 外边距 / gap 一律从这 8 档取值，不得写字面量。
+     1–2 用于组件内元素贴合，3–4 用于组件内分区，5–6 用于卡片内边距，
+     7–8 用于区块之间。超过 48px 的留白用 sp-8 叠加，不新增档位。
+     ≤3px 的光学微调（1px 对齐、2px 视觉补偿）不入标度，保留字面量。 */
+  --ui-sp-1: 4px;    /* 图标与文字、徽标内边距 */
+  --ui-sp-2: 8px;    /* 紧凑控件内边距、行内元素间距 */
+  --ui-sp-3: 12px;   /* 列表项间距、按钮横向内边距 */
+  --ui-sp-4: 16px;   /* 卡片内边距（紧凑）、表单行间距 */
+  --ui-sp-5: 20px;   /* 卡片内边距（默认） */
+  --ui-sp-6: 24px;   /* 区块内边距、栅格列间距 */
+  --ui-sp-7: 32px;   /* 区块之间 */
+  --ui-sp-8: 48px;   /* 页面主区上下留白、空态图文垂直留白 */
+
+  /* ── 圆角标度：5 档 ───────────────────────────────────── */
+  --ui-r-xs: 4px;     /* 徽标、色块、进度条 */
+  --ui-r-sm: 8px;     /* 按钮、输入框、下拉 */
+  --ui-r-md: 12px;    /* 卡片、面板 */
+  --ui-r-lg: 16px;    /* 抽屉、模态、大容器 */
+  --ui-r-pill: 999px; /* 胶囊标签、圆形头像/图标钮 */
+
+  /* ── 层级：6 档，杜绝 z-index: 99999 军备竞赛 ───────────── */
+  --ui-z-base: 0;
+  --ui-z-sticky: 100;    /* 顶栏、侧栏、表头吸顶 */
+  --ui-z-dropdown: 200;  /* 下拉、气泡、tooltip */
+  --ui-z-drawer: 300;    /* 抽屉及其遮罩 */
+  --ui-z-modal: 400;     /* 模态对话框 */
+  --ui-z-toast: 500;     /* 全局提示 */
+  --ui-z-devmode: 9000;  /* Dev Mode 标注层（永远在最上） */
+
+  /* ── 动效：3 档时长 + 3 条缓动 ─────────────────────────── */
+  --ui-dur-1: 120ms;  /* 即时反馈：hover、按下 */
+  --ui-dur-2: 200ms;  /* 标准过渡：展开、淡入 */
+  --ui-dur-3: 320ms;  /* 大位移：抽屉、模态 */
+  --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);  /* 默认 */
+  --ui-ease-decel: cubic-bezier(0, 0, 0, 1);       /* 入场 */
+  --ui-ease-accel: cubic-bezier(0.3, 0, 1, 1);     /* 离场 */
+
+  /* ── 焦点环：键盘可达性的唯一样式来源 ───────────────────── */
+  --ui-focus-w: 2px;
+  --ui-focus-offset: 2px;
+  --ui-focus-color: var(--ui-accent);
+
+  /* ── 控件高度：触达目标的下限在这里定死 ─────────────────
+     WCAG 2.5.8 (AA) 要求最小 24×24 CSS px；本系统取 32px 作为
+     桌面端下限，主操作 40px。图标按钮同样吃这套高度并保持等宽。 */
+  --ui-ctl-h-sm: 32px;   /* 次级 / 紧凑控件下限 */
+  --ui-ctl-h: 36px;      /* 默认控件 */
+  --ui-ctl-h-lg: 40px;   /* 主操作、表单主输入 */
+  --ui-tap-min: 32px;    /* 任何可点击元素的最小命中边长 */
+
+  /* ── 行高 ─────────────────────────────────────────────── */
+  --ui-lh-tight: 1.25;  /* 标题、大数字 */
+  --ui-lh: 1.5;         /* 正文 */
+  --ui-lh-loose: 1.7;   /* 长段落说明 */
+}
+
+/* ── 触达目标基线 ────────────────────────────────────────
+   2026-08-04 实测：全站 124 处可点击元素高度 < 32px（主题切换 27px、
+   次级按钮 26px、关闭按钮 28px；runtime 四页各 12–20 处）。
+   这里用 min-height/min-width 兜底：CSS 规范中 min-* 优先于 height，
+   因此页面写死的 height:26px 会被自动抬到 32px，无需逐页改。
+   确需更小的纯装饰元素请加 data-tap="none" 显式豁免并写明理由。 */
+button,
+select,
+summary,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  min-height: var(--ui-tap-min);
+  min-width: var(--ui-tap-min);
+}
+/* 语义等同按钮的链接（独立 CTA、面包屑、导航项）同样吃触达下限。
+   句子中间的行内文字链接不在此列 —— WCAG 2.5.8 对 inline target 有明确
+   豁免，把它们撑到 32px 反而会破坏段落行距。 */
+a[data-cta],
+.crumbs a,
+.sidebar-nav a,
+.nav a {
+  min-height: var(--ui-tap-min);
+  display: inline-flex;
+  align-items: center;
+}
+[data-tap="none"] {
+  min-height: 0;
+  min-width: 0;
+  display: revert;
+}
+
+/* 焦点可见性：全站统一，不允许任何页面 outline: none 而不给替代 */
+:where(a, button, select, input, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--ui-focus-w) solid var(--ui-focus-color);
+  outline-offset: var(--ui-focus-offset);
+  border-radius: var(--ui-r-xs);
+}
+
+/* 尊重系统「减少动态效果」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ui-dur-1: 0ms;
+    --ui-dur-2: 0ms;
+    --ui-dur-3: 0ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

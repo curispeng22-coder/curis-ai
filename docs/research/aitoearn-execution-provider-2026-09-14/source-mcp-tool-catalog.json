@@ -1,0 +1,317 @@
+[
+  {
+    "name": "createVideoDraft",
+    "schema": "CreateDraftGenerationV2DtoSchema",
+    "description": "Generate video content drafts using AI. For draftType=draft, prompt provides the video subject/content and captionPrompt provides social title, description, topic, tone, CTA, and length requirements. When draftType=video, only media is generated and prompt is the pure video prompt. Returns task IDs, use getDraftTaskStatus to check progress.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/unified-mcp/draft-generation.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "createImageTextDraft",
+    "schema": "CreateImageTextDraftDtoSchema",
+    "description": "Generate image-text content drafts using AI. For draftType=draft, prompt provides the image subject/content and captionPrompt provides social title, description, topic, tone, CTA, and length requirements. When draftType=image, only media is generated and prompt is the pure image prompt. Returns task IDs, use getDraftTaskStatus to check progress.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/unified-mcp/draft-generation.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getDraftTaskStatus",
+    "schema": "z.object({ taskId: z.string().describe('Draft generation task ID') })",
+    "description": "Get the status and result of a draft generation task. Status: generating, success, or failed. Returns generated content details on success.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/unified-mcp/draft-generation.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getMediaGroupInfoByName",
+    "schema": "GetGroupInfoByNameSchema",
+    "description": "Get the authenticated user's media group by title. Returns matching group details, or default group if not found.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "createMedia",
+    "schema": "CreateMediaSchema",
+    "description": "Create a new media resource for the authenticated user. Provide group ID, type, media URL, and optional thumbnail, title, and description.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getDraftGroupInfoByName",
+    "schema": "GetGroupInfoByNameSchema",
+    "description": "Get the authenticated user's draft group by title. Returns matching group details, or default group if not found.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "createDraft",
+    "schema": "CreateMaterialSchema",
+    "description": "Create a new draft for the authenticated user. Provide group ID, title, description, cover URL, media list, type, and options.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listDrafts",
+    "schema": "ListDraftsSchema",
+    "description": "List the authenticated user's drafts with pagination. Supports filtering by group ID and title.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getDraftDetail",
+    "schema": "GetDraftDetailSchema",
+    "description": "Get detailed information of a single draft, including title, description, topics, and media list.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "deleteDraft",
+    "schema": "DeleteDraftSchema",
+    "description": "Delete a single draft for the authenticated user.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listMedia",
+    "schema": "ListMediaSchema",
+    "description": "List the authenticated user's media resources with pagination. Supports filtering by group ID.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listDraftGroups",
+    "schema": "ListGroupsSchema",
+    "description": "List all draft groups for the authenticated user.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listMediaGroups",
+    "schema": "ListGroupsSchema",
+    "description": "List all media groups for the authenticated user.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/content/content.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "createChannelPublishFlow",
+    "schema": "CreateChannelPublishFlowSchema",
+    "description": "Create a channels publish flow with the v2 channels input shape. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listChannelPublishRecords",
+    "schema": "ListChannelPublishRecordsSchema",
+    "description": "List channels publish records for the authenticated user.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelPublishRecordByRecordId",
+    "schema": "GetChannelPublishRecordByRecordIdSchema",
+    "description": "Get one channels publish record by recordId.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelPublishRecordByTaskId",
+    "schema": "GetChannelPublishRecordByTaskIdSchema",
+    "description": "Get one channels publish record by taskId.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelPublishRecordByFlowId",
+    "schema": "GetChannelPublishRecordByFlowIdSchema",
+    "description": "Get one channels publish record by flowId.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "publishChannelTaskNow",
+    "schema": "ChannelPublishTaskSchema",
+    "description": "Publish a channels task immediately. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "cancelChannelPublishTask",
+    "schema": "ChannelPublishTaskSchema",
+    "description": "Cancel a channels publish task. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "updateChannelPublishAt",
+    "schema": "UpdateChannelPublishAtSchema",
+    "description": "Update a channels publish task publish time. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "requestChannelPublishUpdate",
+    "schema": "RequestChannelPublishUpdateSchema",
+    "description": "Request an update for a published channels task using the v2 update data shape. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listChannelPlatforms",
+    "schema": "undefined",
+    "description": "List channels platform metadata, capabilities, publish limits, and option schemas.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelPlatform",
+    "schema": "ChannelPlatformSchema",
+    "description": "Get one channels platform metadata entry.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listBilibiliChannelPlatformCategories",
+    "schema": "ListBilibiliChannelPlatformCategoriesSchema",
+    "description": "List Bilibili content categories currently supported by channels MCP.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listYoutubeChannelPlatformCategories",
+    "schema": "ListYoutubeChannelPlatformCategoriesSchema",
+    "description": "List YouTube content categories currently supported by channels MCP.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelWorkLinkInfo",
+    "schema": "GetChannelWorkLinkInfoSchema",
+    "description": "Resolve a work link through the channels work provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listChannelWorks",
+    "schema": "ListChannelWorksSchema",
+    "description": "List works for a platform account through the channels work provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelWorkDetail",
+    "schema": "ChannelWorkSchema",
+    "description": "Get a platform work detail through the channels work provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "verifyChannelWorkOwnership",
+    "schema": "VerifyChannelWorkOwnershipSchema",
+    "description": "Verify whether a platform work belongs to a candidate channels account.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelAccountAnalytics",
+    "schema": "GetChannelAccountAnalyticsSchema",
+    "description": "Get channels account analytics through the platform analytics provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "getChannelWorkAnalytics",
+    "schema": "ChannelWorkSchema",
+    "description": "Get channels work analytics through the platform analytics provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "listChannelEngagementComments",
+    "schema": "ListChannelEngagementCommentsSchema",
+    "description": "List comments for a platform work through the channels engagement provider.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "submitChannelEngagementComment",
+    "schema": "SubmitChannelEngagementCommentSchema",
+    "description": "Create a comment for a platform work through the channels engagement provider. Side Effect: yes.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  },
+  {
+    "name": "callChannelEngagementFunction",
+    "schema": "CallChannelEngagementFunctionSchema",
+    "description": "Call a channels engagement function. Side Effect: yes. data fields: delete_comment/hide_reply/unhide_reply use commentId; like/unlike/repost/undo_repost/bookmark/remove_bookmark use platformWorkId; quote uses platformWorkId and content; follow/unfollow use targetPlatformUid.",
+    "path": "project/aitoearn-backend/apps/aitoearn-server/src/core/channels/mcp/channels.mcp.controller.ts",
+    "repo": "yikart/AiToEarn",
+    "commit": "9413d73918271bd716b9ea59f61c9f59e485619b",
+    "evidence": "L2 SOURCE REGISTRATION; remote tools/list NOT OBSERVED"
+  }
+]

@@ -1,0 +1,35 @@
+FROM python:3.14-slim@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6
+
+WORKDIR /srv/curis
+RUN set -eux; \
+    rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*; \
+    printf '%s\n' \
+        'Types: deb' \
+        'URIs: https://snapshot.debian.org/archive/debian/20260713T000000Z' \
+        'Suites: trixie' \
+        'Components: main' \
+        'Signed-By: /usr/share/keyrings/debian-archive-keyring.pgp' \
+        > /etc/apt/sources.list.d/debian.sources; \
+    dpkg-query -W -f='${Package}\t${Version}\t${Architecture}\n' | LC_ALL=C sort > /tmp/dpkg.before; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends git=1:2.47.3-0+deb13u1; \
+    dpkg-query -W -f='${Package}\t${Version}\t${Architecture}\n' | LC_ALL=C sort > /tmp/dpkg.after; \
+    comm -13 /tmp/dpkg.before /tmp/dpkg.after > /tmp/dpkg.added; \
+    echo '62effd872607d28da1240d1e59279f81620b52675db8c23c8ff573fbe64d7bce  /tmp/dpkg.added' | sha256sum -c -; \
+    rm -rf /var/lib/apt/lists/* /tmp/dpkg.before /tmp/dpkg.after /tmp/dpkg.added
+COPY backend/requirements.txt /srv/curis/backend/requirements.txt
+RUN pip install --no-cache-dir -r /srv/curis/backend/requirements.txt
+COPY backend/ /srv/curis/backend/
+COPY tools/real_rd_fixture/target_a.py tools/real_rd_fixture/target_b.py /srv/curis/tools/real_rd_fixture/
+RUN set -eux; \
+    git init -q -b real-rd-fixture /srv/curis; \
+    git -C /srv/curis config user.name 'Curis Build'; \
+    git -C /srv/curis config user.email 'build@curis.local'; \
+    git -C /srv/curis add -- tools/real_rd_fixture/target_a.py tools/real_rd_fixture/target_b.py; \
+    GIT_AUTHOR_DATE='2000-01-01T00:00:00Z' GIT_COMMITTER_DATE='2000-01-01T00:00:00Z' \
+        git -C /srv/curis commit -q -m 'Initialize RealRD fixture'; \
+    test "$(git -C /srv/curis ls-files)" = "$(printf '%s\n' \
+        tools/real_rd_fixture/target_a.py tools/real_rd_fixture/target_b.py)"
+
+ENV PYTHONPATH=/srv/curis
+CMD ["python", "-m", "backend.app.workspace_startup"]

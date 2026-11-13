@@ -1,0 +1,35 @@
+# social-auto-upload 自托管（Wave 2 · D2）
+# 来源：github.com/dreammis/social-auto-upload（MIT，Python + patchright 反检测）。
+# 作为发布执行端：patchright 浏览器自动化，cookie 登录各平台，覆盖
+# 抖音/小红书/视频号/B站/快手/百家号/TikTok/YouTube。
+#
+# 启动前提：
+#   1) 克隆上游到 ./social-auto-upload（git clone https://github.com/dreammis/social-auto-upload.git ./social-auto-upload）
+#      —— 真实仓库不进提交（见 .gitignore）。
+#   2) docker compose up -d
+#
+# 网络边界（零第三方 SaaS）：
+#   - 仅对内网暴露发布桥接（127.0.0.1:8090），Curis Connector 经内网调用。
+#   - 创始人 cookie 来自 Curis Vault，运行期由 Curis 经 HTTP 请求体注入本服务，
+#     不写文件、不进提交（见 .env.example / .gitignore）。
+
+services:
+  social-auto-upload:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: curis-social-auto-upload
+    restart: unless-stopped
+    environment:
+      SAU_REPO: /app/social-auto-upload
+      SAU_PORT: "8090"
+      # cookie 不在此处配置；由 Curis Connector 调用 /api/publish 时按平台注入。
+    ports:
+      - "127.0.0.1:8090:8090"
+    volumes:
+      # 上游仓库（含 patchright 浏览器脚本）。
+      - ./social-auto-upload:/app/social-auto-upload:ro
+    # patchright 需可写 home 与浏览器缓存。
+    user: "${SAU_UID:-1000}"
+    profiles:
+      - publish

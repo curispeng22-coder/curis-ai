@@ -1,0 +1,80 @@
+%% ── 序列 1：1024 rail / 桌面两级 / 移动抽屉 ──
+sequenceDiagram
+    participant U as 用户
+    participant S as TerraSidebar
+    participant N as TerraNavData
+    participant P as 当前页面
+
+    U->>S: 1024 点击图标（rail）
+    S->>P: <a href="/ceo-office/xxx"> 跳转一级默认页
+    Note over S: rail 态隐藏标签/二级/chevron
+
+    U->>S: ≥1280 点击 chevron
+    S->>S: onToggle(top) 仅切换 expanded
+    S->>N: 读取 subs(top)
+    S-->>U: 仅展开/收起二级列表
+    Note over P: 当前路由不变（handoff nav.group.chevron）
+
+    U->>S: <1024 汉堡
+    S->>P: 286px 抽屉 + 遮罩，选二级跳转
+
+%% ── 序列 2：数据加载与空/错/partial ──
+sequenceDiagram
+    participant P as 页面组件
+    participant A as 只读端点/快照
+    participant E as TerraState
+
+    P->>P: useEffect → loadData()
+    P->>A: getProjects()/getEmployees()...
+    alt 成功且有数据
+        A-->>P: 真实/示例(标示例快照)
+        P->>P: 渲染卡片网格
+    else 成功但空
+        A-->>P: []
+        P->>E: TerraEmptyState(reason="尚未建立…")
+    else 请求失败/未接入
+        A-->>P: throw / 无源
+        P->>E: TerraErrorState(reason, onRetry) 或 未记录
+    else partial（多模块部分失败）
+        A-->>P: 模块A 成功 / 模块B 失败
+        P->>P: 模块A 正常；模块B 独立 TerraErrorState
+        Note over P: 失败模块不阻塞整页
+    end
+
+%% ── 序列 3：创建流本地草稿（项目/部门/员工）──
+sequenceDiagram
+    participant U as 用户
+    participant D as *FormDrawer
+    participant L as useLocalDraft
+    participant E as TerraState
+
+    U->>D: 点击"新建/新增" → 打开抽屉
+    U->>D: 填写 → 提交
+    D->>D: 校验（名称/目标/归属非空）
+    alt 校验失败
+        D-->>U: 字段错误（inline）
+    else 校验通过
+        D->>L: createDraft(payload)
+        L-->>D: {draft, isDraft:true, savedAt}
+        D->>E: 显示"草稿已生成（本地）"
+        Note over D: 不调用 createProject/Department/Employee POST（红线 §5）
+        D->>D: 关闭抽屉 / 进入详情（本地态）
+    end
+    U->>D: 点击 取消/返回
+    D->>D: 丢弃草稿，关闭抽屉
+
+%% ── 序列 4：编辑/建员工本地草稿（T4）──
+sequenceDiagram
+    participant U as 用户
+    participant ED as EmployeeEditDrawer / CreateEmployeeDrawer
+    participant L as useLocalDraft
+    participant E as TerraState
+
+    U->>ED: 打开编辑 / 部门内建员工
+    U->>ED: 修改字段 → 保存
+    ED->>L: updateDraft(id, patch)
+    L-->>ED: {draft, isDraft:true}
+    ED->>E: 显示"本地草稿已更新（未接入后端）"
+    Note over ED: 不 POST 后端 Employee CRUD 端点（红线）
+    U->>ED: 取消/返回
+    ED->>ED: 丢弃草稿

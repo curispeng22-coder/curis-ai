@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "source": "colors_and_type.css + navigation-ia.css",
+  "color": {
+    "primary": "#4a7c59",
+    "primaryDark": "#2f523b",
+    "primaryLight": "#e8f0e8",
+    "primarySoft": "#f0f6f0",
+    "accent": "#705c30",
+    "accentLight": "#f5efe3",
+    "background": "#faf6f0",
+    "surface": "#fffefb",
+    "surface2": "#f7f2ea",
+    "surface3": "#f0ebe0",
+    "text": "#1f241c",
+    "text2": "#4a5346",
+    "text3": "#7a8273",
+    "line": "#e8e2d8",
+    "line2": "#d9d2c6",
+    "success": "#15935a",
+    "successSurface": "#e8f5ed",
+    "warning": "#a8742a",
+    "warningSurface": "#f9f0e0",
+    "error": "#b83230",
+    "errorSurface": "#fae8e7"
+  },
+  "font": {
+    "serif": "Literata, Noto Serif SC, Songti SC, serif",
+    "sans": "Nunito Sans, Inter, PingFang SC, Microsoft YaHei, sans-serif",
+    "pageTitle": {"family": "serif", "size": 24, "lineHeight": 1.1, "weight": 700},
+    "cardTitle": {"family": "serif", "size": 15, "lineHeight": 1.3, "weight": 600},
+    "body": {"family": "sans", "size": 14, "lineHeight": 1.6, "weight": 400},
+    "label": {"family": "sans", "size": 12, "lineHeight": 1.4, "weight": 500},
+    "helper": {"family": "sans", "size": 11, "lineHeight": 1.45, "weight": 400},
+    "button": {"family": "sans", "size": 12, "lineHeight": 1, "weight": 700}
+  },
+  "space": {"1": 4, "2": 8, "3": 12, "4": 16, "6": 24, "8": 32, "12": 48},
+  "radius": {"sm": 8, "md": 12, "lg": 16, "full": 9999},
+  "shadow": {
+    "sm": "0 1px 2px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.05)",
+    "md": "0 2px 4px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.06)",
+    "lg": "0 8px 24px rgba(74,85,66,.08)",
+    "float": "0 8px 24px rgba(74,85,66,.05)"
+  },
+  "layout": {
+    "desktop": {"viewport": [1440, 900], "navWidth": 220, "contentPadding": [24, 24, 20], "gridGap": 14},
+    "tablet": {"viewport": [1024, 768], "navWidth": 76, "contentPadding": [20, 20, 16], "gridGap": 12},
+    "mobile": {"viewport": [390, 844], "navWidth": 286, "drawerWidth": "min(286px, 86vw)", "contentPadding": [16, 16, 16], "gridGap": 12}
+  }
+}

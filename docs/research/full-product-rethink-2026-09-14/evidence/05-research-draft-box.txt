@@ -1,0 +1,101 @@
+- region "Notifications alt+T"
+- link "公告 AitoEarn将于9月份开始使用云账户发放提现奖励":
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button "关闭":
+- complementary:
+  - link "AiToEarn":
+    - /url: /
+    - img "AiToEarn"
+  - navigation:
+    - link "淘金广场":
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link "我的团队":
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link "AI Agent":
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link "内容管理":
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link "AI发布":
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link "热门内容":
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link "数据统计":
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link "AI打卡":
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link "AI互动":
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link "产品定价":
+      - /url: /pricing
+      - generic: 产品定价
+  - button "我的频道":
+    - generic: 我的频道
+  - button "浏览器插件 未安装":
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button "搜索菜单":
+  - link "开放平台":
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link "API Keys":
+    - /url: /developer/api-keys
+  - button "U user_FBVvPDQC":
+    - generic: U
+    - generic "user_FBVvPDQC"
+- main:
+  - button "CURIS-RESEARCH-TEST-2026-09-14"
+  - button "Default"
+  - button "更多":
+    - generic: 更多
+  - button "新建":
+    - generic: 新建
+  - button:
+  - textbox "最多上传 10 段视频素材，视频总时长不超过 30 秒；最多上传 10 个音频素材，音频总时长不超过 30 秒；最多上传 30 张图片素材。在提示词输入 '@' 引用上传的媒体资源；输入“#”引用真人素材":
+    - paragraph
+  - generic: 最多上传 10 段视频素材，视频总时长不超过 30 秒；最多上传 10 个音频素材，音频总时长不超过 30 秒；最多上传 30 张图片素材。在提示词输入 '@' 引用上传的媒体资源；输入“#”引用真人素材
+  - button "重置配置":
+  - button "打开提示词编辑器":
+  - button "生成视频":
+    - generic: 生成视频
+  - button "在提示词输入 '@' 引用上传的媒体资源":
+  - button "输入“#”引用真人素材":
+  - button "Seedance 2.5":
+    - generic: Seedance 2.5
+  - button "比例 9:16, 视频分辨率 720p, 数量 1":
+    - generic: 9:16
+    - generic: 720p
+    - generic: "1"
+  - button "8s":
+    - generic: 8s
+  - button "真人素材":
+    - generic: 真人素材
+  - generic "积分消耗仅为预估，会根据实际结果有一定波动":
+    - generic: "164.16"
+  - button "AI批量生成":
+  - tablist:
+    - tab "全部" [selected]
+    - tab "草稿"
+    - tab "视频"
+    - tab "图片"
+  - heading "全部" [level=3]
+  - button "生成记录":
+    - text: 生成记录
+  - tabpanel "全部":
+    - paragraph: 暂无媒体资源
+    - paragraph: 该分组暂无媒体资源
+  - button "回到顶部":
+- alert: AiToEarn - 内容管理 - AI生成视频、图片与Seedance模型创作
+- listbox "Typeahead menu"
+- listbox "Typeahead menu"
+- listbox "Typeahead menu"

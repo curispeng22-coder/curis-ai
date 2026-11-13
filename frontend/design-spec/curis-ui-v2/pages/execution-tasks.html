@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务队列 — Curis CEO Office</title>
+    <style id="theme-vars">
+/* Curis CEO Office — Terra Warm Cream + Forest Green */
+/* Brand Prefix: curis */
+
+:root {
+  /* ── Brand Primary ── */
+  --curis-primary: #4a7c59;
+  --curis-primary-dark: #2f523b;
+  --curis-primary-light: #e8f0e8;
+  --curis-primary-soft: #f0f6f0;
+
+  /* ── Accent (CEO Decision) ── */
+  --curis-accent: #705c30;
+  --curis-accent-light: #f5efe3;
+
+  /* ── Background ── */
+  --curis-bg: #faf6f0;
+  --curis-surface: #fffefb;
+  --curis-surface-2: #f7f2ea;
+  --curis-surface-3: #f0ebe0;
+
+  /* ── Text ── */
+  --curis-txt: #1f241c;
+  --curis-txt-2: #4a5346;
+  --curis-txt-3: #7a8273;
+
+  /* ── Line / Border ── */
+  --curis-line: #e8e2d8;
+  --curis-line-2: #d9d2c6;
+
+  /* ── State Colors ── */
+  --state-success: #15935a;
+  --state-success-surface: #e8f5ed;
+  --state-info: #3f7d6e;
+  --state-warning: #a8742a;
+  --state-warning-surface: #f9f0e0;
+  --state-error: #b83230;
+  --state-error-surface: #fae8e7;
+
+
+  /* ── Capability Category Colors (earthy, §4.2) ── */
+  /* 低饱和、暖调为主；和谐落在 #faf6f0 奶油底。状态色优先于类目色。 */
+  --cat-agent: #3f6b4a;
+  --cat-agent-surface: #eaf1eb;
+  --cat-model: #5a7a8a;
+  --cat-model-surface: #eaf0f3;
+  --cat-skill: #b8893b;
+  --cat-skill-surface: #f7f0e3;
+  --cat-tool: #b5563f;
+  --cat-tool-surface: #f7ede9;
+  --cat-workflow: #7a6b8a;
+  --cat-workflow-surface: #f1eef3;
+
+  /* ── Semantic Aliases (for apply-html-head-contract) ── */
+  --curis-background: #faf6f0;
+  --curis-foreground: #1f241c;
+  --curis-card: #fffefb;
+  --curis-card-foreground: #1f241c;
+  --curis-popover: #fffefb;
+  --curis-popover-foreground: #1f241c;
+  --curis-primary-foreground: #ffffff;
+  --curis-muted: #f0ebe0;
+  --curis-muted-foreground: #7a8273;
+  --curis-border: #e8e2d8;
+  --curis-input: #e8e2d8;
+  --curis-ring: #4a7c59;
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --curis-radius-sm: 8px;
+  --curis-radius-md: 12px;
+  --curis-radius-lg: 16px;
+  --curis-radius-small: 8px;
+  --curis-radius-medium: 12px;
+  --curis-radius-large: 16px;
+
+  /* ── Shadow ── */
+  --shadow-sm: 0 1px 2px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.05);
+  --shadow-md: 0 2px 4px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.06);
+  --shadow-lg: 0 8px 24px rgba(74,85,66,.08);
+  --shadow-float: 0 8px 24px rgba(74,85,66,.05);
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* ── Typography ── */
+  --font-serif: 'Literata', 'Noto Serif SC', 'Songti SC', serif;
+  --font-sans: 'Nunito Sans', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* Page Title */
+  .ph-title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--curis-txt);
+  }
+
+  /* Card Title */
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--curis-txt);
+  }
+
+  /* Module Card Name */
+  .module-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--curis-txt);
+  }
+
+  /* Navigation */
+  .nav-1 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--curis-txt);
+  }
+  .nav-2 {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+  }
+
+  /* Body */
+  .body-text {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--curis-txt);
+  }
+
+  /* Label / Data */
+  .label-text {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+  }
+
+  /* Helper */
+  .helper-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--curis-txt-3);
+  }
+
+  /* Button */
+  .btn-text {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.0;
+    font-weight: 700;
+  }
+
+  /* ── Component Base Styles ── */
+  .card {
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .card-hd {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--curis-line);
+  }
+  .card-bd {
+    padding: var(--space-4);
+  }
+  .card-ft {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--curis-line);
+    background: var(--curis-surface-2);
+  }
+
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--curis-primary);
+    color: var(--curis-primary-foreground);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-new:hover {
+    background: var(--curis-primary-dark);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--curis-txt-2);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-ghost:hover {
+    background: var(--curis-surface-2);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: var(--curis-primary-light);
+    color: var(--curis-primary-dark);
+    border-radius: var(--radius-full);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+  .icon-box.green { background: var(--state-success-surface); }
+  .icon-box.cyan { background: #e8f0f0; }
+  .icon-box.amber { background: var(--state-warning-surface); }
+  .icon-box.red { background: var(--state-error-surface); }
+  .icon-box.primary { background: var(--curis-primary-light); }
+  .icon-box.surface { background: var(--curis-surface-2); }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--curis-txt-3);
+  }
+  .search-box svg { flex-shrink: 0; }
+  .search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--curis-txt);
+    width: 100%;
+  }
+
+  .empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-6);
+    color: var(--curis-txt-3);
+    text-align: center;
+  }
+  .empty-box svg { opacity: 0.4; margin-bottom: var(--space-3); }
+  .empty-box p { font-size: 13px; line-height: 1.5; }
+
+  .boundary {
+    padding: var(--space-3) var(--space-4);
+    background: var(--curis-surface-2);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--curis-line);
+  }
+  .boundary p {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--curis-txt-3);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--curis-txt-3);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--curis-primary); }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-dot.green { background: var(--state-success); }
+  .status-dot.amber { background: var(--state-warning); }
+  .status-dot.red { background: var(--state-error); }
+
+  .cat-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) 0;
+    overflow-x: auto;
+  }
+  .cat-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px;
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-full);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cat-chip:hover { background: var(--curis-surface-2); }
+  .cat-chip.active {
+    background: var(--curis-primary);
+    color: var(--curis-primary-foreground);
+    border-color: var(--curis-primary);
+  }
+}
+
+    
+  .tbl-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--curis-line);
+    gap: 12px;
+    transition: background 0.1s;
+  }
+  .tbl-row:hover { background: var(--curis-surface-2); }
+  .tbl-data {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--curis-txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .p-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .p-tag.p0 { background: var(--state-error-surface); color: var(--state-error); }
+  .p-tag.p1 { background: var(--state-warning-surface); color: var(--state-warning); }
+  .p-tag.p2 { background: var(--curis-surface-2); color: var(--curis-txt-3); }
+  </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--curis-background);
+    --color-foreground: var(--curis-foreground);
+    --color-card: var(--curis-card);
+    --color-card-foreground: var(--curis-card-foreground);
+    --color-popover: var(--curis-popover);
+    --color-popover-foreground: var(--curis-popover-foreground);
+    --color-primary: var(--curis-primary);
+    --color-primary-foreground: var(--curis-primary-foreground);
+    --color-muted: var(--curis-muted);
+    --color-muted-foreground: var(--curis-muted-foreground);
+    --color-accent: var(--curis-accent);
+    --color-border: var(--curis-border);
+    --color-input: var(--curis-input);
+    --color-ring: var(--curis-ring);
+    --radius-sm: var(--curis-radius-sm);
+    --radius-md: var(--curis-radius-md);
+    --radius-lg: var(--curis-radius-lg);
+  }
+  @layer base {
+    body { background: var(--curis-background); color: var(--curis-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--curis-background); }
+      .text-background { color: var(--curis-background); }
+      .border-background { border-color: var(--curis-background); }
+      .ring-background { --tw-ring-color: var(--curis-background); }
+      .bg-foreground { background-color: var(--curis-foreground); }
+      .text-foreground { color: var(--curis-foreground); }
+      .border-foreground { border-color: var(--curis-foreground); }
+      .ring-foreground { --tw-ring-color: var(--curis-foreground); }
+      .bg-card { background-color: var(--curis-card); }
+      .text-card { color: var(--curis-card); }
+      .border-card { border-color: var(--curis-card); }
+      .ring-card { --tw-ring-color: var(--curis-card); }
+      .bg-card-foreground { background-color: var(--curis-card-foreground); }
+      .text-card-foreground { color: var(--curis-card-foreground); }
+      .border-card-foreground { border-color: var(--curis-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--curis-card-foreground); }
+      .bg-popover { background-color: var(--curis-popover); }
+      .text-popover { color: var(--curis-popover); }
+      .border-popover { border-color: var(--curis-popover); }
+      .ring-popover { --tw-ring-color: var(--curis-popover); }
+      .bg-popover-foreground { background-color: var(--curis-popover-foreground); }
+      .text-popover-foreground { color: var(--curis-popover-foreground); }
+      .border-popover-foreground { border-color: var(--curis-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--curis-popover-foreground); }
+      .bg-primary { background-color: var(--curis-primary); }
+      .text-primary { color: var(--curis-primary); }
+      .border-primary { border-color: var(--curis-primary); }
+      .ring-primary { --tw-ring-color: var(--curis-primary); }
+      .bg-primary-foreground { background-color: var(--curis-primary-foreground); }
+      .text-primary-foreground { color: var(--curis-primary-foreground); }
+      .border-primary-foreground { border-color: var(--curis-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--curis-primary-foreground); }
+      .bg-muted { background-color: var(--curis-muted); }
+      .text-muted { color: var(--curis-muted); }
+      .border-muted { border-color: var(--curis-muted); }
+      .ring-muted { --tw-ring-color: var(--curis-muted); }
+      .bg-muted-foreground { background-color: var(--curis-muted-foreground); }
+      .text-muted-foreground { color: var(--curis-muted-foreground); }
+      .border-muted-foreground { border-color: var(--curis-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--curis-muted-foreground); }
+      .bg-accent { background-color: var(--curis-accent); }
+      .text-accent { color: var(--curis-accent); }
+      .border-accent { border-color: var(--curis-accent); }
+      .ring-accent { --tw-ring-color: var(--curis-accent); }
+      .bg-border { background-color: var(--curis-border); }
+      .text-border { color: var(--curis-border); }
+      .border-border { border-color: var(--curis-border); }
+      .ring-border { --tw-ring-color: var(--curis-border); }
+      .bg-input { background-color: var(--curis-input); }
+      .text-input { color: var(--curis-input); }
+      .border-input { border-color: var(--curis-input); }
+      .ring-input { --tw-ring-color: var(--curis-input); }
+      .bg-ring { background-color: var(--curis-ring); }
+      .text-ring { color: var(--curis-ring); }
+      .border-ring { border-color: var(--curis-ring); }
+      .ring-ring { --tw-ring-color: var(--curis-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+  <script src="../assets/navigation-ia.js" defer></script>
+  <link rel="stylesheet" href="../assets/navigation-ia.css">
+</head>
+<body>
+<div class="canvas">
+
+  <!-- ====== Left Sidebar ====== -->
+      <aside class="sidebar">
+    <div class="sidebar-brand">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="16" height="16" rx="4" fill="#fff" fill-opacity=".15"/>
+        <path d="M6 7h8M6 10h5M6 13h7" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>Curis</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="ceo-home.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#fff" stroke-width="1.3"/><rect x="4" y="4" width="8" height="3" rx="1" fill="#fff" fill-opacity=".7"/><rect x="4" y="9" width="4" height="3" rx="1" fill="#fff" fill-opacity=".7"/></svg>
+        <span class="nav-label">总裁办公室</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="decision-center.html">
+          <span class="nav-label">决策中心</span>
+        </a>
+        <a class="nav-item" href="reports.html">
+          <span class="nav-label">重要汇报</span>
+        </a>
+        <a class="nav-item" href="strategy-room.html">
+          <span class="nav-label">战略会议室</span>
+        </a>
+      </div>
+      <a class="nav-item" href="project-center.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="#fff" stroke-width="1.3"/><path d="M2 4l1.5-2h9L14 4" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 7h4M6 9.5h2" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg>
+        <span class="nav-label">项目中心</span>
+      </a>
+      <a class="nav-item" href="org-center.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="2.5" stroke="#fff" stroke-width="1.3"/><path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="13" cy="6" r="1.5" stroke="#fff" stroke-width="1" opacity=".5"/><path d="M13 8.5c1 .5 1.5 1.5 1.5 2.5" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".5"/></svg>
+        <span class="nav-label">组织中心</span>
+      </a>
+      <a class="nav-item" href="capability-center.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="2" stroke="#fff" stroke-width="1.3"/><path d="M6 6h4v4H6z" fill="#fff" fill-opacity=".3"/><path d="M5 1v2M11 1v2M5 13v2M11 13v2M1 5h2M1 11h2M13 5h2M13 11h2" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg>
+        <span class="nav-label">能力中心</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="capability-skill-list.html">
+          <span class="nav-label">技能 Skill</span>
+        </a>
+        <a class="nav-item" href="capability-tool-list.html">
+          <span class="nav-label">工具 Tool</span>
+        </a>
+        <a class="nav-item" href="capability-workflow-list.html">
+          <span class="nav-label">工作流 Workflow</span>
+        </a>
+      </div>
+      <a class="nav-item" href="analytics.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14V2h12" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10l3-4 2.5 2.5L14 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">经营分析</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="analytics-org.html">
+          <span class="nav-label">组织维度</span>
+        </a>
+        <a class="nav-item" href="analytics-project.html">
+          <span class="nav-label">项目维度</span>
+        </a>
+        <a class="nav-item" href="analytics-workflow.html">
+          <span class="nav-label">工作流维度</span>
+        </a>
+      </div>
+      <a class="nav-item" href="brainstorm.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 015 5c0 2-1 3.5-2.5 4.3V13H5.5v-1.7C4 10.5 3 9 3 7a5 5 0 015-5z" stroke="#fff" stroke-width="1.3"/><path d="M6 14h4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><path d="M8 6v2M7 7h2" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg>
+        <span class="nav-label">头脑风暴室</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="brainstorm-active.html">
+          <span class="nav-label">进行中的会话</span>
+        </a>
+        <a class="nav-item" href="brainstorm-results.html">
+          <span class="nav-label">产出结果</span>
+        </a>
+      </div>
+      <a class="nav-item" href="knowledge.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h4.5a1 1 0 011 1v8a.5.5 0 00-.5.5H3V3z" stroke="#fff" stroke-width="1.3"/><path d="M13 3H8.5a1 1 0 00-1 1v8a.5.5 0 01.5.5H13V3z" stroke="#fff" stroke-width="1.3"/><path d="M5 6h1M5 8h1M9 6h1M9 8h1" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg>
+        <span class="nav-label">知识中心</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="knowledge-company.html">
+          <span class="nav-label">公司级知识</span>
+        </a>
+        <a class="nav-item" href="knowledge-project.html">
+          <span class="nav-label">项目级知识</span>
+        </a>
+        <a class="nav-item" href="knowledge-dept.html">
+          <span class="nav-label">部门级知识</span>
+        </a>
+      </div>
+      <a class="nav-item active expanded" href="execution.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2l3 5-3 5" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 2l3 5-3 5" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+        <span class="nav-label">执行工作台</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav expanded">
+        <a class="nav-item active" href="execution-tasks.html">
+          <span class="nav-label">任务队列</span>
+        </a>
+        <a class="nav-item" href="execution-runs.html">
+          <span class="nav-label">运行记录</span>
+        </a>
+      </div>
+      <a class="nav-item" href="settings.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="#fff" stroke-width="1.3"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>
+        <span class="nav-label">公司设置</span>
+        <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="sub-nav">
+        <a class="nav-item" href="settings-profile.html">
+          <span class="nav-label">公司档案</span>
+        </a>
+        <a class="nav-item" href="settings-brand.html">
+          <span class="nav-label">品牌与视觉</span>
+        </a>
+        <a class="nav-item" href="settings-notify.html">
+          <span class="nav-label">通知设置</span>
+        </a>
+      </div>
+    </nav>
+
+
+  </aside>
+
+  <!-- ====== Main Content ====== -->
+  <main class="main">
+
+    <!-- ── Row 1: Page Identity + Fact Cards ── -->
+    <div class="row row-1" style="align-items:stretch;">
+      <!-- Left: Title -->
+      <div class="span4">
+        <div class="page-identity">
+          <h1>任务队列</h1>
+          <p class="subtitle">待执行与执行中的任务列表</p>
+        </div>
+      </div>
+      <!-- Right: Fact Cards -->
+      <div class="span8">
+        <div class="facts-row">
+          <div class="fact-card">
+            <div class="fact-dot-wrap">
+              <div class="status-dot" style="background:var(--curis-txt-3)"></div>
+            </div>
+            <div>
+              <div class="fact-number">12</div>
+              <div class="fact-label">待执行</div>
+            </div>
+          </div>
+          <div class="fact-card">
+            <div class="fact-dot-wrap">
+              <div class="status-dot amber"></div>
+            </div>
+            <div>
+              <div class="fact-number">8</div>
+              <div class="fact-label">执行中</div>
+            </div>
+          </div>
+          <div class="fact-card">
+            <div class="fact-dot-wrap">
+              <div class="status-dot green"></div>
+            </div>
+            <div>
+              <div class="fact-number">268</div>
+              <div class="fact-label">已完成</div>
+            </div>
+          </div>
+          <div class="fact-card">
+            <div class="fact-dot-wrap">
+              <div class="status-dot red"></div>
+            </div>
+            <div>
+              <div class="fact-number">3</div>
+              <div class="fact-label">失败</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Row 2: Main Content (Task List) + Right Sidebar (Filters) ── -->
+    <div class="row row-2" style="min-height:0;">
+      <!-- Left: Task List Card -->
+      <div class="span8">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;">
+          <div class="card-hd">
+            <span class="card-title">任务列表</span>
+          </div>
+          <div class="card-bd" style="flex:1;overflow-y:auto;padding:0;">
+            <!-- Table Header -->
+            <div class="tbl-header">
+              <div class="tbl-cell" style="flex:2">任务名称</div>
+              <div class="tbl-cell" style="flex:1">触发方式</div>
+              <div class="tbl-cell" style="flex:1.5">关联工作流</div>
+              <div class="tbl-cell" style="flex:1">状态</div>
+              <div class="tbl-cell" style="flex:1">下次执行</div>
+            </div>
+            <!-- Empty State -->
+            <div style="display:flex;flex-direction:column;">
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">CRM 用户登录接口开发</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">客户管理系统 v2.0</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--curis-surface-2);color:var(--curis-txt-3)">已分配</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p0">P0</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">数据看板图表渲染</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">客户管理系统 v2.0</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--state-warning-surface);color:var(--state-warning)">执行中</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p1">P1</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">工单列表分页查询</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">客户管理系统 v2.0</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--state-warning-surface);color:var(--state-warning)">执行中</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p1">P1</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">客服意图识别模型优化</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">AI 智能客服</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--curis-surface-2);color:var(--curis-txt-3)">待执行</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p0">P0</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">API 文档自动生成</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">客户管理系统 v2.0</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--curis-surface-2);color:var(--curis-txt-3)">待执行</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p2">P2</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">移动端 Bundle 体积优化</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">移动端性能优化</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--state-success-surface);color:var(--state-success)">已完成</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p1">P1</span></div>
+    </div>
+    <div class="tbl-row">
+      <div class="tbl-data" style="flex:2">供应链数据字段映射校验</div>
+      <div class="tbl-data" style="flex:1">Agent</div>
+      <div class="tbl-data" style="flex:1.5">供应链数据迁移</div>
+      <div class="tbl-data" style="flex:1"><span class="tag" style="background:var(--state-error-surface);color:var(--state-error)">返工中</span></div>
+      <div class="tbl-data" style="flex:1"><span class="p-tag p0">P0</span></div>
+    </div>
+  </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: Search + Filters + Actions -->
+      <div class="span4">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;">
+          <div class="card-bd" style="flex:1;display:flex;flex-direction:column;gap:14px;">
+            <!-- Search -->
+            <div class="search-box">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="var(--curis-txt-3)" stroke-width="1.3"/><path d="M9 9l3 3" stroke="var(--curis-txt-3)" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <input type="text" placeholder="搜索任务...">
+            </div>
+            <!-- Status Filter Chips -->
+            <div>
+              <div class="label-text" style="margin-bottom:8px;">状态筛选</div>
+              <div class="cat-bar" style="flex-wrap:wrap;">
+                <span class="cat-chip active">全部</span>
+                <span class="cat-chip">待执行</span>
+                <span class="cat-chip">执行中</span>
+                <span class="cat-chip">已完成</span>
+                <span class="cat-chip">失败</span>
+              </div>
+            </div>
+            <!-- Spacer -->
+            <div style="flex:1;"></div>
+            <!-- New Task Button -->
+            <button class="btn-new" style="width:100%;justify-content:center;">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px">
+                <path d="M8 3v10M3 8h10"/>
+              </svg>
+              新建任务
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+    <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e2d8;
+      font-family: 'Nunito Sans', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Canvas ── */
+    .canvas {
+      width:100%;max-width:1536px;min-height:100vh;
+      overflow:hidden;
+      background: var(--curis-bg);
+      display: flex;
+    }
+
+    /* ── Left Sidebar ── */
+    .sidebar {
+      width: 176px;
+      min-width: 176px;
+      height: 100%;
+      background: var(--curis-primary);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      padding: 0 18px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      margin-bottom: 8px;
+    }
+    .sidebar-brand span {
+      font-family: var(--font-serif);
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .02em;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .nav-item svg { flex-shrink: 0; opacity: .7; }
+    .nav-item .nav-label {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 600;
+      color: rgba(255,255,255,.72);
+    }
+    .nav-item:hover { background: rgba(255,255,255,.08); }
+    .nav-item:hover svg { opacity: 1; }
+    .nav-item:hover .nav-label { color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,.14); }
+    .nav-item.active svg { opacity: 1; }
+    .nav-item.active .nav-label { color: #fff; }
+    /* Accordion nav: sub-nav hidden by default */
+    .sub-nav { 
+      padding: 0; 
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease, padding 0.25s ease;
+    }
+    .sub-nav.expanded {
+      max-height: 500px;
+      padding: 2px 0;
+    }
+    .sub-nav .nav-item { padding: 7px 12px 7px 38px; }
+    .sub-nav .nav-item .nav-label {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: rgba(255,255,255,.52);
+    }
+    .sub-nav .nav-item:hover .nav-label { color: rgba(255,255,255,.85); }
+    .sub-nav .nav-item.active {
+      border-left: 2px solid rgba(255,255,255,.6);
+      background: rgba(255,255,255,.06);
+    }
+    .sub-nav .nav-item.active .nav-label { color: #fff; }
+    
+    /* Chevron for expandable nav items */
+    .nav-chevron {
+      margin-left: auto;
+      width: 12px;
+      height: 12px;
+      transition: transform 0.25s ease;
+      opacity: 0.45;
+      flex-shrink: 0;
+    }
+    .nav-item.expanded > .nav-chevron {
+      transform: rotate(90deg);
+      opacity: 0.7;
+    }
+
+    /* ── Main Content ── */  .main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 24px 20px;
+  }
+
+    /* 12-column grid helper */
+    .row {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .span4 { grid-column: span 4; }
+    .span5 { grid-column: span 5; }
+    .span7 { grid-column: span 7; }
+    .span8 { grid-column: span 8; }
+    .span12 { grid-column: span 12; }
+
+    /* ── Page Identity ── */
+    .page-identity {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .page-identity h1 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--curis-txt);
+      margin-bottom: 8px;
+    }
+    .page-identity .subtitle {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--curis-txt-3);
+    }
+
+    /* ── Facts Row ── */
+    .facts-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 100%;
+    }
+    .fact-card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--curis-surface);
+      border: 1px solid var(--curis-line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .fact-dot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .fact-number {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--curis-txt);
+    }
+    .fact-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--curis-txt-3);
+      line-height: 1.4;
+    }
+
+    /* ── Table Header ── */
+    .tbl-header {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      background: var(--curis-surface-2);
+      border-bottom: 1px solid var(--curis-line);
+      gap: 12px;
+    }
+    .tbl-cell {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--curis-txt-3);
+      white-space: nowrap;
+    }
+
+    /* ── Row Heights ── */
+    .row-1 { height: 82px; }
+    .row-2 { flex: 1; min-height: 0; }
+  
+  /* ── Responsive (P0-04) ── */
+  .mobile-nav-toggle { display: none; }
+  .sidebar-backdrop { display: none; }
+
+  @media (max-width: 1439px) {
+    .canvas {
+      width: 100% !important;
+      max-width: 1536px;
+      height: auto !important;
+      min-height: 100vh;
+    }
+  }
+  @media (max-width: 1023px) {
+    .canvas {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 56px;
+      padding: 16px 0 12px;
+    }
+    .sidebar-brand span { display: none; }
+    .sidebar-brand { justify-content: center; padding: 0 8px 14px; }
+    .sidebar-nav { padding: 0 4px; }
+    .nav-item { justify-content: center; padding: 9px 8px; }
+    .nav-item .nav-label { display: none; }
+    .nav-item .nav-chevron { display: none; }
+    .sub-nav { display: none !important; }
+    .main { padding: 16px; }
+  }
+  @media (max-width: 767px) {
+    body { background: var(--curis-bg, #faf6f0); }
+    .canvas {
+      display: block;
+      box-shadow: none;
+      overflow: visible;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 220px;
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      padding: 20px 0 16px;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-brand span { display: inline; }
+    .sidebar-brand { justify-content: flex-start; padding: 0 18px 18px; }
+    .sidebar-nav { padding: 0 8px; }
+    .nav-item { justify-content: flex-start; padding: 9px 12px; }
+    .nav-item .nav-label { display: inline; }
+    .nav-item .nav-chevron { display: block; }
+    .sub-nav { display: block !important; max-height: none !important; padding: 2px 0 !important; }
+    .main { padding: 14px; }
+    .mobile-nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px; height: 38px;
+      background: var(--curis-surface, #fffefb);
+      border: 1px solid var(--curis-line, #e8e2d8);
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(31,36,28,.4);
+      z-index: 999;
+    }
+    .sidebar-backdrop.open { display: block; }
+    .grid {
+      grid-template-columns: 1fr !important;
+    }
+    .grid > * { grid-column: span 1 !important; }
+    .pulse-row { flex-direction: column; }
+  }
+
+</
+
+  .btn-new[disabled], .btn-primary[disabled], button[disabled].btn-new, button[disabled].btn-primary {
+    background: var(--curis-surface-3) !important;
+    color: var(--curis-txt-3) !important;
+    cursor: not-allowed !important;
+    opacity: 0.75;
+    position: relative;
+  }
+  .btn-new[disabled]::after, .btn-primary[disabled]::after {
+    content: '未接入';
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: var(--curis-line);
+    color: var(--curis-txt-3);
+    line-height: 1.4;
+  }
+  .btn-new[disabled]:hover, .btn-primary[disabled]:hover {
+    background: var(--curis-surface-3) !important;
+  }
+  .btn-new[disabled] svg, .btn-primary[disabled] svg {
+    opacity: 0.5;
+  }
+style>
+<script>
+(function() {
+  // Sidebar accordion: chevron toggles sub-nav, clicking the rest navigates normally
+  document.querySelectorAll('.sidebar-nav .nav-chevron').forEach(function(chevron) {
+    chevron.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const navItem = chevron.closest('.nav-item');
+      if (!navItem) return;
+      const subNav = navItem.nextElementSibling;
+      if (!subNav || !subNav.classList.contains('sub-nav')) return;
+      const sidebar = navItem.closest('.sidebar-nav');
+      const isExpanded = navItem.classList.contains('expanded');
+      
+      // Collapse all other expanded items
+      if (sidebar) {
+        sidebar.querySelectorAll('.nav-item.expanded').forEach(function(item) {
+          if (item !== navItem) {
+            item.classList.remove('expanded');
+            var sib = item.nextElementSibling;
+            if (sib && sib.classList.contains('sub-nav')) {
+              sib.classList.remove('expanded');
+            }
+          }
+        });
+      }
+      
+      // Toggle current
+      if (isExpanded) {
+        navItem.classList.remove('expanded');
+        subNav.classList.remove('expanded');
+      } else {
+        navItem.classList.add('expanded');
+        subNav.classList.add('expanded');
+      }
+    });
+  });
+  
+  // Auto-expand: expand sub-nav for current page's parent
+  var sidebar = document.querySelector('.sidebar-nav');
+  if (sidebar) {
+    var activeItem = sidebar.querySelector('.nav-item.active');
+    if (activeItem) {
+      // Case 1: active item is inside a sub-nav -> expand its parent
+      var subNav = activeItem.closest('.sub-nav');
+      if (subNav) {
+        var parentLink = subNav.previousElementSibling;
+        if (parentLink && parentLink.classList.contains('nav-item')) {
+          parentLink.classList.add('expanded');
+          subNav.classList.add('expanded');
+        }
+      }
+      // Case 2: active item IS the top-level nav-item with sub-nav -> expand it
+      else if (activeItem.nextElementSibling && activeItem.nextElementSibling.classList.contains('sub-nav')) {
+        activeItem.classList.add('expanded');
+        activeItem.nextElementSibling.classList.add('expanded');
+      }
+    }
+  }
+})();
+
+  // ── Mobile nav drawer (P0-04) ──
+  (function() {
+    var toggle = document.querySelector('.mobile-nav-toggle');
+    var sidebar = document.querySelector('.sidebar');
+    var backdrop = document.querySelector('.sidebar-backdrop');
+    if (!toggle || !sidebar) return;
+    function openDrawer() {
+      sidebar.classList.add('open');
+      if (backdrop) backdrop.classList.add('open');
+    }
+    function closeDrawer() {
+      sidebar.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+    toggle.addEventListener('click', function() {
+      if (sidebar.classList.contains('open')) closeDrawer(); else openDrawer();
+    });
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+  })();
+
+</script>
+</body>
+</html>

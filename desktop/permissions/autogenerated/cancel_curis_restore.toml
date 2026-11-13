@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cancel-curis-restore"
+description = "Enables the cancel_curis_restore command without any pre-configured scope."
+commands.allow = ["cancel_curis_restore"]
+
+[[permission]]
+identifier = "deny-cancel-curis-restore"
+description = "Denies the cancel_curis_restore command without any pre-configured scope."
+commands.deny = ["cancel_curis_restore"]

@@ -1,0 +1,1000 @@
+{
+  "data": [
+    {
+      "id": "page-ceo-home",
+      "title": "总裁办公室 / 总部驾驶舱",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392000000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 905,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-945e52c6",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/ceo-home.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-project-center",
+      "title": "项目中心",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392100000,
+      "canvasData": {
+        "x": 620,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1186,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-b610d3b1",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/project-center.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-org-center",
+      "title": "组织中心",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392000000,
+      "canvasData": {
+        "x": 1240,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1235,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a4b87c6e",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/org-center.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-center",
+      "title": "能力中心",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392000000,
+      "canvasData": {
+        "x": 1860,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-d7595624",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-center.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-analytics",
+      "title": "经营分析",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392200000,
+      "canvasData": {
+        "x": 2480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 905,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-09baf327",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/analytics.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-brainstorm",
+      "title": "头脑风暴室",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392300000,
+      "canvasData": {
+        "x": 3100,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 978,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-f630294f",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/brainstorm.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-knowledge",
+      "title": "知识中心",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392400000,
+      "canvasData": {
+        "x": 3720,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 920,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-1baeef80",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/knowledge.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-execution",
+      "title": "执行工作台",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392500000,
+      "canvasData": {
+        "x": 4340,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1015,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-276b8c14",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/execution.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-settings",
+      "title": "公司设置",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392600000,
+      "canvasData": {
+        "x": 4960,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a3684401",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-company-runtime",
+      "title": "公司运行视图",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392700000,
+      "canvasData": {
+        "x": 5580,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1210,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-80c3ecee",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/company-runtime.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-decision-center",
+      "title": "决策中心",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392800000,
+      "canvasData": {
+        "x": 6200,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1170,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-6f5e5cc1",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/decision-center.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-reports",
+      "title": "重要汇报",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753392900000,
+      "canvasData": {
+        "x": 6820,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1095,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-3a6ccbfa",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/reports.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-strategy-room",
+      "title": "战略会议室",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393000000,
+      "canvasData": {
+        "x": 7440,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1145,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-6db7348f",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/strategy-room.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-agent-list",
+      "title": "Agent 列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393100000,
+      "canvasData": {
+        "x": 8060,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-eed1bc29",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-agent-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-model-list",
+      "title": "模型列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393200000,
+      "canvasData": {
+        "x": 8680,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-07d1648c",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-model-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-skill-list",
+      "title": "技能列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393300000,
+      "canvasData": {
+        "x": 9300,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7353c795",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-skill-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-tool-list",
+      "title": "工具列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393400000,
+      "canvasData": {
+        "x": 9920,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-6519751a",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-tool-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-capability-workflow-list",
+      "title": "工作流列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393500000,
+      "canvasData": {
+        "x": 10540,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-5727496c",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/capability-workflow-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-project-detail",
+      "title": "项目详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393600000,
+      "canvasData": {
+        "x": 11160,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1388,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-20211f84",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/project-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-department-detail",
+      "title": "部门详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393700000,
+      "canvasData": {
+        "x": 11780,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1512,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-2e50d86c",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/department-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-skill-detail",
+      "title": "Skill 详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393800000,
+      "canvasData": {
+        "x": 12400,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1633,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-07e3bdfc",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/skill-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-report-detail",
+      "title": "汇报详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753393900000,
+      "canvasData": {
+        "x": 13020,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1481,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-eb555d8f",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/report-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-task-detail",
+      "title": "Task 详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753394000000,
+      "canvasData": {
+        "x": 13640,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1474,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-1977b1c6",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-project-dept",
+      "title": "项目团队视图",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 14260,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-b28c91d0",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/project-dept.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-org-dept",
+      "title": "部门空间",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 14880,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a6a84ee8",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/org-dept.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-org-employees",
+      "title": "员工管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 15500,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-0f19bf71",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/org-employees.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-employee-detail",
+      "title": "员工详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 16120,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1240,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-d1233f8a",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/employee-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-analytics-org",
+      "title": "组织维度分析",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 16740,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-9c59b685",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/analytics-org.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-analytics-project",
+      "title": "项目维度分析",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 17360,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-fe58a9a0",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/analytics-project.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-analytics-workflow",
+      "title": "工作流维度分析",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 17980,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-32026f70",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/analytics-workflow.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-brainstorm-active",
+      "title": "进行中的会话",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 18600,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-5113e848",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/brainstorm-active.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-brainstorm-results",
+      "title": "产出结果",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 19220,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-fa8bea3f",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/brainstorm-results.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-brainstorm-session-detail",
+      "title": "会话详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 19840,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1118,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7b6f5726",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/brainstorm-session-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-knowledge-company",
+      "title": "公司级知识",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 20460,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-e06de75c",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/knowledge-company.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-knowledge-project",
+      "title": "项目级知识",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 21080,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-e3f1aa68",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/knowledge-project.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-knowledge-dept",
+      "title": "部门级知识",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 21700,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-b90f5576",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/knowledge-dept.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-knowledge-entry-detail",
+      "title": "知识条目详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 22320,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1291,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-3d44b4ae",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/knowledge-entry-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-execution-tasks",
+      "title": "任务队列",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 22940,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-bd03a378",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/execution-tasks.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-execution-runs",
+      "title": "运行记录",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 23560,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-74dd8e46",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/execution-runs.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-run-detail",
+      "title": "Run 执行详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 24180,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1297,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-cde23a32",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/run-detail.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-settings-profile",
+      "title": "公司档案",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 24800,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-b230b77b",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-profile.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-settings-brand",
+      "title": "品牌与视觉",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 25420,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-ce814b42",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-brand.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-settings-notify",
+      "title": "通知设置",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785004491539,
+      "canvasData": {
+        "x": 26040,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-e3e64695",
+          "measuredAt": 1785510838973
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-notify.html",
+        "interactions": []
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "Curis CEO Office",
+    "visualEditorEnabled": true,
+    "showEdge": true
+  }
+}

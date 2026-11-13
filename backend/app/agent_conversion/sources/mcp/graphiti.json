@@ -1,0 +1,15 @@
+{
+  "server": "graphiti",
+  "name": "Graphiti",
+  "description": "让 Agent 自建并查询带时间感知的知识图谱，作为 Agent 外置长期记忆体，缓解“干完活就忘”的问题。",
+  "license": "Apache-2.0",
+  "_source_url": "https://github.com/getzep/graphiti",
+  "_original_name": "graphiti",
+  "_scan_batch": "2026-08-31 持续扫描第四批（License 核验订正：上轮 REVIEW，抓取 LICENSE 原文确认为 Apache-2.0）",
+  "_low_current_priority": "Agent 记忆层，当前 Curis 业务暂无落地场景；保留候选以支持未来任意 Business。",
+  "_note": "需图数据库（如 Neo4j）自托管；工具列表为按官方能力描述的代表性摘录。",
+  "tools": [
+    {"name": "build_memory", "description": "将实体与关系写入时间感知知识图谱。"},
+    {"name": "query_memory", "description": "按语义与时间点查询长期记忆。"}
+  ]
+}

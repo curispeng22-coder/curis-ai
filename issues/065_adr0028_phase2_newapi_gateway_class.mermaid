@@ -1,0 +1,51 @@
+classDiagram
+    class GatewayConfig {
+        +gateway_id: str  PK
+        +name: str
+        +type: str  %% enum newapi
+        +base_url: str
+        +status: str  %% active|inactive
+        +credential_ref: str | None  %% 外部引用占位, 零密钥值列
+        +default_model: str | None
+        +created_at: str
+    }
+    class OfficialModel {
+        +model_key: str  PK
+        +provider_id: str
+        +display_name: str
+        +supported_models: list~str~  %% JSON
+        +auth_type: str  %% none|oauth|apikey 形状
+        +source: str  %% =official
+        +gateway_ref: str  %% -> GatewayConfig.gateway_id
+        +status: str  %% active|inactive
+        +default_model: str | None
+        +created_at: str
+        +updated_at: str
+    }
+    class ModelCatalogService {
+        +manage_model_gateway(action, gateway_id, **kw) dict
+        +manage_official_model(action, model_key, **kw) dict
+        +list_gateways() list~GatewayConfig~
+        +list_models(include_inactive) list~OfficialModel~
+    }
+    class Database {
+        +initialize() void
+        +save_model_gateway(...) void
+        +get_model_gateway(id) dict|None
+        +list_model_gateways() list
+        +set_model_gateway_status(id, status) void
+        +save_official_model(...) void
+        +get_official_model(key) dict|None
+        +list_all_official_models() list
+        +list_official_models() list  %% catalog 只读(active)
+        +set_official_model_status(key, status) void
+        +list_catalog_gateways() list  %% 不含 credential_ref
+    }
+    class EvolutionEventLog {
+        +record(correlation_id, event_type, payload, tenant_id, idempotency_key) dict
+    }
+    ModelCatalogService --> Database : 读写
+    ModelCatalogService --> EvolutionEventLog : 写 capability.* 审计(append-only)
+    OfficialModel ..> GatewayConfig : gateway_ref 逻辑引用(写路径校验存在性)
+    note for GatewayConfig "DB 零密钥值列：credential_ref 仅 scheme:reference 不透明串"
+    note for OfficialModel "source=official 兼容范式；auth_type 仅形状；无凭证列"

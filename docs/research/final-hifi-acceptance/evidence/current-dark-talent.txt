@@ -1,0 +1,114 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- main:
+  - link "Curis":
+    - /url: "#"
+  - generic: /
+  - generic: 人才与能力
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - heading "人才与能力" [level=1]
+  - generic: 发现和扩展公司外部能力：专家招募 · 技能安装 · 连接器（公司内部员工在 组织中心 → 员工目录）
+  - button "专家"
+  - button "技能"
+  - button "连接器"
+  - textbox "搜索专家 / 技能 / 连接器"
+  - heading "Curis-ready（官方模板，可直接招募装配）" [level=2]
+  - button "换一换"
+  - generic: 增
+  - generic: 增长运营专家
+  - generic: Curis 官方
+  - generic: Curis 官方 EmployeeTemplate：内容获客节奏与转化复盘。
+  - generic: 内容策略
+  - generic: 增长判断
+  - generic: v1.0 · 官方
+  - button "招募装配"
+  - generic: 数
+  - generic: 数据分析师
+  - generic: Curis 官方
+  - generic: Curis 官方 EmployeeTemplate：经营数据清洗、看板与周报。
+  - generic: 数据分析
+  - generic: 报表
+  - generic: v1.2 · 官方
+  - button "招募装配"
+  - generic: 长
+  - generic: 长文写作专家
+  - generic: Curis 官方
+  - generic: Curis 官方 EmployeeTemplate：长结构文档撰写与改稿。
+  - generic: 写作
+  - generic: 编辑
+  - generic: v1.0 · 官方
+  - button "招募装配"
+  - generic: 全部
+  - generic: Curis-ready
+  - generic: 外部 Candidate
+  - button "综合"
+  - button "最热"
+  - button "最新"
+  - generic: S
+  - generic: SEO 内容专家
+  - generic: 外部来源
+  - generic: 来源：agency-agents-zh · 固定版本 + 文件摘要校验后可招募。
+  - generic: SEO
+  - generic: 关键词
+  - generic: r4 · 外部
+  - button "安装验证"
+  - generic: 电
+  - generic: 电商运营专家
+  - generic: 外部来源
+  - generic: 来源：外部 Candidate 包 · 待安装验证（不可直接执行）。
+  - generic: 电商
+  - generic: 选品
+  - generic: r7 · 外部
+  - button "安装验证"
+  - generic: 测
+  - generic: 测试工程师
+  - generic: 外部来源
+  - generic: 来源：外部 Candidate 包 · 许可证复核中。
+  - generic: 测试
+  - generic: 用例
+  - generic: r2 · 外部
+  - button "安装验证"
+  - generic: 外部 Candidate 需固定版本、文件摘要与逐项安装验证后才可转为可招募（TALENT_MARKET 边界）；安装连接器后去设置完成授权。
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你

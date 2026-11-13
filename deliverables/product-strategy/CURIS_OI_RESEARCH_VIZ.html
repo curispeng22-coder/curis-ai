@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curis Operating Intelligence · 研究可视化（辅助）</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161c24; --panel2:#1c2430; --line:#2b3543;
+    --txt:#e6edf3; --dim:#9aa7b5; --accent:#3fb950; --accent2:#58a6ff;
+    --warn:#e3a008; --danger:#f85149; --purple:#bc8cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;padding:32px 20px 80px}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:28px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:18px 0}
+  .card h2{font-size:17px;margin:0 0 16px;color:var(--accent2);letter-spacing:.5px}
+  .note{font-size:12px;color:var(--dim);border-left:3px solid var(--warn);padding:6px 12px;background:var(--panel2);border-radius:0 6px 6px 0;margin:10px 0}
+  /* flow */
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0}
+  .node{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;min-width:240px;max-width:560px;text-align:center;font-size:13px}
+  .node b{color:var(--txt)}
+  .node.small{font-size:12px;min-width:200px}
+  .arrow{color:var(--accent);font-size:18px;line-height:1;padding:4px 0;font-weight:700}
+  .arrow.dim{color:var(--dim)}
+  .lane{display:flex;gap:18px;align-items:stretch;flex-wrap:wrap;justify-content:center;margin:6px 0}
+  .lane .col{flex:1;min-width:220px;display:flex;flex-direction:column;align-items:center;gap:0}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px}
+  .t-shared{background:rgba(63,185,80,.15);color:var(--accent);border:1px solid rgba(63,185,80,.4)}
+  .t-domain{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.4)}
+  .t-ext{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid rgba(88,166,255,.4)}
+  .t-manual{background:rgba(227,160,8,.15);color:var(--warn);border:1px solid rgba(227,160,8,.4)}
+  .verdict{background:var(--panel2);border:1px solid var(--accent);border-radius:10px;padding:16px 20px;margin-top:14px}
+  .verdict .yes{color:var(--accent);font-weight:700}
+  .verdict .warn{color:var(--warn);font-weight:700}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:12px}
+  .kpi .k{color:var(--dim);font-size:11px}
+  .kpi .v{font-size:15px;font-weight:700;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Curis Operating Intelligence · 经营洞察研究可视化</h1>
+  <div class="sub">研究辅助图（不进入 Current Product Truth）· 完整结论见 CURIS_OPERATING_INTELLIGENCE_RESEARCH.md · 2026-08-18</div>
+
+  <div class="card">
+    <h2>图 A — DATA FLOW MAP（数据流）</h2>
+    <div class="flow">
+      <div class="node"><b>Company OS</b><br/>Entity · Execution · Result · Evidence · Review · Decision
+        <div style="margin-top:6px"><span class="tag t-shared">自动 telemetry</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="node"><b>Usage Event Ledger</b><br/>现有 ai_usage 账本 + Execution 状态（部分真实）</div>
+      <div class="arrow dim">↓ 各类来源汇入</div>
+      <div class="lane">
+        <div class="col">
+          <div class="node small"><b>Domain / Workspace</b><br/>Build/Test/Defect · 曝光/点赞/涨粉
+            <div style="margin-top:6px"><span class="tag t-domain">Domain Contract 声明</span></div></div>
+          <div class="arrow">↓</div>
+          <div class="node small"><b>Domain Observation Store</b></div>
+        </div>
+        <div class="col">
+          <div class="node small"><b>External Platform</b><br/>XHS / 抖音 / GitHub / 广告
+            <div style="margin-top:6px"><span class="tag t-ext">External Adapter</span></div></div>
+          <div class="arrow">↓</div>
+          <div class="node small"><b>（同 Observation Store）</b></div>
+        </div>
+        <div class="col">
+          <div class="node small"><b>CEO 人工数据</b>
+            <div style="margin-top:6px"><span class="tag t-manual">Manual Entry 带可信度</span></div></div>
+          <div class="arrow">↓</div>
+          <div class="node small"><b>（同 Observation Store）</b></div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node"><b>Metric Registry</b><br/>Shared（平台定义） + Domain（Contract 声明）
+        <div style="margin-top:6px"><span class="tag t-shared">one metric one definition</span> <span class="tag t-domain">统一语义层</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="node"><b>Analytics Query Layer</b><br/>只读聚合 · 不复制事实（基于 ai_usage 式投影）</div>
+      <div class="arrow dim">↓ 四类消费</div>
+      <div class="lane">
+        <div class="col"><div class="node small"><b>Explore</b><br/>filter/group/compare/drill</div></div>
+        <div class="col"><div class="node small"><b>AI Analyst</b><br/>对话/归因/Fact-Interpretation 分离</div></div>
+        <div class="col"><div class="node small"><b>Report 对象</b><br/>可溯源资产</div></div>
+        <div class="col"><div class="node small"><b>Proactive Insight</b><br/>阈值/趋势/基线/统计/规则</div></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node"><b>CEO Assistant / 决策支持</b><br/>结论型首页 + 跳转原入口</div>
+      <div class="arrow dim">↓ 回到原入口修改</div>
+      <div class="node small" style="border-style:dashed"><b>Business / Workspace / Employee 变更</b> → 回到 Company OS（闭环）</div>
+    </div>
+    <div class="note">铁律：分析层只读 Company OS + Ledger，<b>不建第二套 Truth / Employee / Business</b>。</div>
+  </div>
+
+  <div class="card">
+    <h2>图 B — AUTO-ONBOARDING MAP（新对象自动接入）</h2>
+    <div class="flow">
+      <div class="node"><b>新建 Business</b>
+        <div style="margin-top:6px"><span class="tag t-shared">定义 Goal / Result</span> <span class="tag t-domain">绑定 Domain Contract</span> <span class="tag t-ext">绑定 Connector</span></div></div>
+      <div class="arrow">↓ 三条路径并行</div>
+      <div class="lane">
+        <div class="col">
+          <div class="node small">① Shared Runtime telemetry 自动开始
+            <div style="margin-top:6px"><span class="tag t-shared">Shared Metrics 自动注册</span></div></div>
+        </div>
+        <div class="col">
+          <div class="node small">② Domain Contract 声明
+            <div style="margin-top:6px"><span class="tag t-domain">Domain Metrics 自动声明（comparable=false）</span></div></div>
+        </div>
+        <div class="col">
+          <div class="node small">③ Connector 接入
+            <div style="margin-top:6px"><span class="tag t-ext">External Adapter 自动采集</span></div></div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node"><b>经营洞察自动出现该 Business</b><br/>Analyst 可读 · Report 自动产生 · CEO 可比较 · 历史对比可用</div>
+    </div>
+    <div class="note">维度自动继承：Department→组织维度 · Employee/Role→ staffing 维度 · Model/Agent→Benchmark 维度 · Workspace→Operating 维度。全部来自 Company OS 单一事实，分析层只投影。</div>
+    <div class="flow" style="margin-top:14px">
+      <div class="node small"><b>新建 Department</b> → 自动成为 Organization 维度</div>
+      <div class="arrow">↓</div>
+      <div class="node small"><b>新建 Employee / Role</b> → 自动进入 Staffing / Efficiency 维度</div>
+      <div class="arrow">↓</div>
+      <div class="node small"><b>切换 Model / Agent</b> → 自动进入 Execution Benchmark 维度</div>
+      <div class="arrow">↓</div>
+      <div class="node small"><b>新增 Workspace</b> → 自动进入 Operating 维度</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>最终回答 — 新增一个完全不同的 Business 能否零代码进入经营洞察？</h2>
+    <div class="grid2">
+      <div class="kpi"><div class="k">基础经营数据（Shared Metrics）</div><div class="v yes">✅ 可继承</div>现已具备 Runtime 地基（ai_usage + UsageMeterService）</div>
+      <div class="kpi"><div class="k">Domain 指标</div><div class="v warn">⚠️ 需 Domain Metric Contract</div>缺失项，补上后 Package 自带声明</div>
+      <div class="kpi"><div class="k">外部数据</div><div class="v warn">⚠️ 需 External Adapter</div>缺失项，补上后 Connector 接入即采集</div>
+      <div class="kpi"><div class="k">分析入口 / 历史比较</div><div class="v yes">✅ 天然可见</div>维度来自 Company OS；Before-After 需 Benchmark Dataset</div>
+    </div>
+    <div class="verdict">
+      <span class="yes">结论：在推荐架构下「可以」，但有前提。</span>
+      只要补齐 <b>Domain Metric Contract + External Adapter + Metric Registry 消费层 + Report/Benchmark/Scheduled Analysis</b>，
+      答案为「可以」，且每新增 Business <b>不修改经营洞察代码</b>。若这些 Gap 不补，答案不是「可以」——Domain 指标与外部数据仍空缺。
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--warn)">
+    <h2 style="color:var(--warn)">⚠️ 当前真实就绪度红线</h2>
+    <p style="font-size:13px;color:var(--dim)">
+      Insights 目前只是已恢复的产品能力设计，<b style="color:var(--danger)">其数据采集与运行时并未交付</b>（CURRENT_STATE 2026-08-18）。
+      XHS Analytics 仍 <b>UNAVAILABLE / no data</b>。现有真实可用数据仅：<b style="color:var(--accent)">组织事实（可读投影）+ 部分 Usage 账本（仅 RD 真实，通用 capability 默认 total_tokens=0）</b>。
+      Domain 指标、外部数据、Report、主动洞察<b style="color:var(--danger)">全部缺失</b>。不要把"文档写了字段"误认为"运行时已有数据"。
+    </p>
+  </div>
+</div>
+</body>
+</html>

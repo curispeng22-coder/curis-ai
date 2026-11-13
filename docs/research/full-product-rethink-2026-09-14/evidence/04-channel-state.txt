@@ -1,0 +1,175 @@
+- region "Notifications alt+T"
+- complementary:
+  - link:
+    - /url: /
+  - navigation:
+    - link:
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link:
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link:
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link:
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link:
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link:
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link:
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link:
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link:
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link:
+      - /url: /pricing
+      - generic: 产品定价
+  - button:
+    - generic: 我的频道
+  - button:
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button:
+  - link:
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link:
+    - /url: /developer/api-keys
+  - button:
+    - generic: U
+    - generic: user_FBVvPDQC
+- main:
+  - button:
+    - text: 返回
+  - button:
+    - text: 刷新
+  - text: 小红书
+  - generic: 邀请中
+  - heading [level=1]: AiToEarn小红书推广
+  - text: 推广任务
+  - text: 一键发
+  - generic: 线上推广
+  - text: CPE奖励
+  - generic: 收益总览
+  - generic: 最多可赚
+  - generic: ¥
+  - text: "50.00"
+  - generic: 每千次互动
+  - button:
+  - generic: ¥200.00
+  - generic: CPM/CPE/里程碑封顶
+  - button:
+  - generic: ¥50.00
+  - button:
+  - generic: AI推荐分
+  - generic: "85"
+  - generic: 招募进度
+  - text: 16/50
+  - button: 接受任务
+  - generic: 接单后提交时限
+  - button:
+  - generic: 2小时
+  - text: 适用平台
+  - text: 小红书
+  - generic: 任务要求
+  - paragraph: 作品30天内不允许删除
+  - button:
+    - generic: 举报
+  - link:
+    - /url: https://beian.miit.gov.cn
+    - text: 京ICP备19059131号-15
+  - link:
+    - /url: https://beian.mps.gov.cn/#/query/webSearch?code=11010502060417
+    - generic: 京公网安备11010502060417号
+- alert: AiToEarn小红书推广 ¥200.00/ 千次互动 - AiToEarn淘金广场
+- dialog "频道管理":
+  - heading "频道管理" [level=2]
+  - button "我的频道 1" [active]:
+    - generic: 我的频道
+    - generic: "1"
+  - button "抖音 抖音 1":
+    - img "抖音"
+    - generic: 抖音
+    - generic: "1"
+  - generic: 可连接的平台
+  - button "小红书 小红书":
+    - img "小红书"
+    - generic: 小红书
+  - button "微信视频号 微信视频号":
+    - img "微信视频号"
+    - generic: 微信视频号
+  - button "快手 快手":
+    - img "快手"
+    - generic: 快手
+  - button "微信公众号 微信公众号":
+    - img "微信公众号"
+    - generic: 微信公众号
+  - button "哔哩哔哩 哔哩哔哩":
+    - img "哔哩哔哩"
+    - generic: 哔哩哔哩
+  - button "YouTube YouTube 仅国际站":
+    - img "YouTube"
+    - generic: YouTube
+    - generic: 仅国际站
+  - button "Pinterest Pinterest 仅国际站":
+    - img "Pinterest"
+    - generic: Pinterest
+    - generic: 仅国际站
+  - button "Twitter（X） Twitter（X） 仅国际站":
+    - img "Twitter（X）"
+    - generic: Twitter（X）
+    - generic: 仅国际站
+  - button "TikTok TikTok 仅国际站":
+    - img "TikTok"
+    - generic: TikTok
+    - generic: 仅国际站
+  - button "Facebook Facebook 仅国际站":
+    - img "Facebook"
+    - generic: Facebook
+    - generic: 仅国际站
+  - button "Instagram Instagram 仅国际站":
+    - img "Instagram"
+    - generic: Instagram
+    - generic: 仅国际站
+  - button "Threads Threads 仅国际站":
+    - img "Threads"
+    - generic: Threads
+    - generic: 仅国际站
+  - button "LinkedIn LinkedIn 仅国际站":
+    - img "LinkedIn"
+    - generic: LinkedIn
+    - generic: 仅国际站
+  - button "连接新频道":
+    - text: 连接新频道
+  - generic: 刷新粉丝数
+  - generic: 每个平台 1 小时内只能刷新一次，登录过期账号会自动跳过。
+  - button "刷新全部平台":
+    - text: 刷新全部平台
+  - button "新建分组":
+    - text: 新建分组
+  - generic: 默认空间
+  - generic: 1 个频道
+  - button "添加频道":
+    - generic: 添加频道
+  - img "熙熙壤壤"
+  - generic: 熙熙壤壤
+  - img "抖音"
+  - generic: 抖音
+  - text: 离线
+  - button "插件未同步 · 未安装插件":
+    - generic: 插件未同步 · 未安装插件
+  - button "千粉以上自动获取，千粉以下需先在AiToEarn发布作品；历史授权账号可能需重新授权，新授权数据建议次日查看。":
+    - generic: "粉丝: 0"
+  - button "重新授权":
+    - generic: 重新授权
+  - button:
+  - button "Close":
+    - generic: Close

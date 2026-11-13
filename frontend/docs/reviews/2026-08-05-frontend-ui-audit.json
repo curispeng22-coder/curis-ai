@@ -1,0 +1,565 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "theme": "dark",
+  "errorTotal": 0,
+  "warnTotal": 47,
+  "results": [
+    {
+      "route": "/ceo-office",
+      "name": "总裁办公室",
+      "sampled": 256,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/home/summary",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/organization",
+      "name": "组织中心",
+      "sampled": 210,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/companies",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/organization/employees",
+      "name": "员工列表",
+      "sampled": 212,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/employees",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/projects",
+      "name": "项目中心",
+      "sampled": 204,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/companies",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/execution",
+      "name": "执行工作台",
+      "sampled": 210,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/tasks",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/capabilities",
+      "name": "能力中心",
+      "sampled": 226,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 5,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/capabilities/registry?include_inactive=true",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/private-models",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/capabilities/private?capability_type=agent",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/knowledge",
+      "name": "知识中心",
+      "sampled": 214,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/knowledge/entries",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/decisions",
+      "name": "待决策",
+      "sampled": 293,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 2,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/reports",
+      "name": "报告中心",
+      "sampled": 321,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 2,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/analytics",
+      "name": "数据分析",
+      "sampled": 251,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 5,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/departments",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/employees",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/projects",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/company-runtime",
+      "name": "公司运行视图",
+      "sampled": 273,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/capabilities/registry?include_inactive=false",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/runtime-trace",
+      "name": "运行轨迹",
+      "sampled": 216,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 3,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/runtime-trace?limit=100",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/strategy-room",
+      "name": "战略室",
+      "sampled": 281,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 2,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/brainstorm",
+      "name": "头脑风暴",
+      "sampled": 251,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 2,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/ceo-office/settings",
+      "name": "设置",
+      "sampled": 254,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 2,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/snapshot",
+          "selector": "-",
+          "text": ""
+        },
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/assistant/notifications?after_event_id=0",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/guide",
+      "name": "引导",
+      "sampled": 198,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 1,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/guides",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/onboarding",
+      "name": "初始化",
+      "sampled": 25,
+      "skeleton": {},
+      "errorCount": 0,
+      "warnCount": 1,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/workspace/companies",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/control/secret-vault",
+      "name": "凭据保管",
+      "sampled": 21,
+      "skeleton": {},
+      "errorCount": 0,
+      "warnCount": 1,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 500 (Internal Server Error) · /gateway/api/credential",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    }
+  ]
+}

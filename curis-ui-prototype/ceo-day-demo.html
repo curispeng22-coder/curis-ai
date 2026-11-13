@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Curis · CEO 的一天（真实 API 接入演示）</title>
+<script src="curis-api.js"></script>
+<link rel="stylesheet" href="_system/tokens.css">
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: var(--ui-font); background: var(--ui-bg); color: var(--ui-text); margin:0; padding:var(--ui-sp-6); }
+  h1 { font-size: var(--ui-fs-4); margin:0 0 var(--ui-sp-3); }
+  .bar { display:flex; gap:var(--ui-sp-2); align-items:center; flex-wrap:wrap; margin-bottom:var(--ui-sp-3); }
+  input { background: var(--ui-surface-2); border:1px solid var(--ui-line); color: var(--ui-text);
+          padding:var(--ui-sp-2) var(--ui-sp-2); border-radius:var(--ui-r-xs); min-width:260px; }
+  button { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border:0; padding:var(--ui-sp-2) var(--ui-sp-3);
+           border-radius:var(--ui-r-xs); cursor:pointer; font-size: var(--ui-fs-2); }
+  button.ghost { background: var(--ui-surface-2); color: var(--ui-text-2); border: 1px solid var(--ui-line); }
+  button:disabled { opacity:.5; cursor:default; }
+  pre { background: var(--ui-surface); border:1px solid var(--ui-line); border-radius:var(--ui-r-sm);
+        padding:var(--ui-sp-3); height:420px; overflow:auto; font-size: var(--ui-fs-1); line-height:1.5; color: var(--ui-text-2); }
+  .ok { color: var(--ui-success); } .err { color: var(--ui-danger); } .step { color: var(--ui-accent); }
+  .mock-badge { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: 3px var(--ui-sp-2); border-radius: var(--ui-r-pill);
+    font-size: var(--ui-fs-1); font-weight: 500; background: var(--ui-surface-2); color: var(--ui-text-3);
+    border: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); vertical-align: middle; }
+  .mock-badge::before { content: ""; width: 6px; height: 6px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+</style>
+</head>
+<body>
+<h1>Curis · CEO 的一天 —— 真实后端接入演示<span class="mock-badge">示例数据</span></h1>
+<div class="bar">
+  <input id="base" aria-label="日期基准" value="http://localhost:8000" />
+  <button id="run">跑通正常 7 步闭环</button>
+  <button id="fail" class="ghost">跑通失败路径（无授权→扩大冻结）</button>
+</div>
+<pre id="log">点击上方按钮开始。后端需先启动（见 README / 启动命令）。</pre>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const log = (msg, cls) => {
+  const p = document.createElement("div");
+  if (cls) p.className = cls;
+  p.textContent = msg;
+  $("log").appendChild(p);
+  $("log").scrollTop = $("log").scrollHeight;
+};
+
+function api() { return new CurisAPI($("base").value); }
+function pastIso() { return new Date(Date.now() - 3600e3).toISOString().slice(0, 19) + "+00:00"; }
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function runNormal() {
+  const a = api();
+  $("log").textContent = "";
+  try {
+    log("① 创建业务方向 → ACTIVE", "step");
+    const d = await a.createDirection({ name: "小红书增长", template_type: "xhs",
+      opportunity: "新品类机会", target_outcome: "首月 1000 元验证" });
+    await a.submitBrief(d.direction_id);
+    await a.approveDirection(d.direction_id, true);
+    log("   业务方向 " + d.direction_id.slice(0, 8) + " → ACTIVE", "ok");
+
+    log("② 承诺 → ACTIVE（AI 回报首条结果）", "step");
+    const c = await a.createCommitment({ business_id: d.direction_id,
+      department_name: "增长组", name: "每周研究", target_outcome: "产出研究简报" });
+    await a.firstResult(c.commitment_id);
+    log("   承诺 " + c.commitment_id.slice(0, 8) + " → ACTIVE", "ok");
+
+    log("③ 工作空间 → OPERATING（三级门禁）", "step");
+    const w = await a.create工作空间({ business_id: d.direction_id, name: "小红书工作空间" });
+    await a.startBlueprint(w.workspace_id);
+    await a.passSimulation(w.workspace_id);
+    await a.submit工作空间Approval(w.workspace_id, true, true);
+    await a.approveLaunch(w.workspace_id);
+    log("   工作空间 " + w.workspace_id.slice(0, 8) + " → OPERATING", "ok");
+
+    log("④ 定节奏 + 到点自动开跑 → 命中升级 WAITING_CEO", "step");
+    const cad = await a.createCadence({ business_id: d.direction_id, name: "每日研究",
+      schedule_text: "daily 08:00", escalation: { reason: "需要 CEO 拍板" } });
+    await a.enableCadence(cad.cadence_id, pastIso());
+    const fired = await a.fire();
+    const runId = fired.spawned[0];
+    log("   运行 " + runId.slice(0, 8) + " 已生成并转 WAITING_CEO", "ok");
+
+    log("⑤ CEO 处理 → ACKNOWLEDGED → RESOLVED", "step");
+    await a.openRun(runId);
+    await a.resolveRun(runId, "已拍板");
+    log("   运行 " + runId.slice(0, 8) + " → RESOLVED", "ok");
+
+    log("⑥ 外部数据回流 → 成果（VERIFIED）+ 贡献权重 100%", "step");
+    const o = await a.createOutcome({ business_id: d.direction_id, run_id: runId,
+      commitment_id: c.commitment_id, value: 1200.0, evidence_grade: "VERIFIED",
+      source: "api", contributors: [
+        { agent: "researcher", model: "gpt", weight: 60 },
+        { agent: "writer", model: "claude", weight: 40 } ] });
+    await a.confirmAttribution(o.outcome_id);
+    log("   成果 " + o.outcome_id.slice(0, 8) + " → REVIEWED（可追溯到 run）", "ok");
+
+    log("⑦ 记账归因 → 验证结论 VERIFIED → 扩大业务开启", "step");
+    await a.setVerification(d.direction_id, "VERIFIED");
+    await a.scaleDirection(d.direction_id);
+    log("   业务方向 → SCALING，闭环完成 ✅", "ok");
+  } catch (e) {
+    log("✗ 出错：" + e.message, "err");
+  }
+}
+
+async function runFailure() {
+  const a = api();
+  $("log").textContent = "";
+  try {
+    log("① 创建并启动业务方向", "step");
+    const d = await a.createDirection({ name: "测试业务", template_type: "xhs",
+      opportunity: "o", target_outcome: "t" });
+    await a.submitBrief(d.direction_id);
+    await a.approveDirection(d.direction_id, true);
+
+    log("② 无外部授权 → 成果强制 UNVERIFIED", "step");
+    const o = await a.createOutcome({ business_id: d.direction_id,
+      evidence_grade: "UNVERIFIED", value: 0, contributors: [ { agent: "a", weight: 100 } ] });
+    log("   成果 " + o.outcome_id.slice(0, 8) + " → UNVERIFIED", "ok");
+
+    log("③ 验证结论非 VERIFIED → 尝试扩大业务（预期被拒）", "step");
+    await a.setVerification(d.direction_id, "UNVERIFIED");
+    try {
+      await a.scaleDirection(d.direction_id);
+      log("✗ 不应到达：扩大居然成功了", "err");
+    } catch (e) {
+      log("   ✓ 扩大被冻结：" + e.message, "ok");
+    }
+  } catch (e) {
+    log("✗ 出错：" + e.message, "err");
+  }
+}
+
+$("run").onclick = runNormal;
+$("fail").onclick = runFailure;
+</script>
+</body>
+</html>

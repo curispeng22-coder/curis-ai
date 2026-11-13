@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<link rel="icon" href="data:," />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Writing Business 写好每一章，让故事继续 — 高保真交互探索</title>
+<!--
+  CURIS — WRITING BUSINESS HTML EXPLORATION
+  本地 Mock 原型：无后端、无真实平台调用、无外链资源。
+  数据在 localStorage 内保存以模拟长期连续性；本页不启动任何后台进程。
+  结构输入：docs/research/writing-business-product-structure-2026-09-21/（RESEARCH / Review）
+-->
+<link rel="stylesheet" href="styles.css?v=a7eb3eba78" />
+</head>
+<body>
+<div id="app">
+  <aside id="rail">
+    <div class="rail-host">
+      <div class="rail-host-line">Curis · 一人公司</div>
+      <div class="rail-host-name">写作经营</div>
+      <div class="rail-host-sub">写好每一章，让故事继续</div>
+    </div>
+    <nav id="nav" class="rail-nav" aria-label="写作经营专业区"></nav>
+    <div class="rail-foot">
+      <div class="rail-note">
+        <div class="rn-t">本地原型 · 演示数据</div>
+        <div class="rn-s">无后台进程运行；改动只写入本机浏览器</div>
+      </div>
+      <button class="rail-reset" data-action="act.rst" data-fn="resetDemo">重置演示数据</button>
+    </div>
+    <div id="railResize" class="rsz rsz-rail" role="separator" aria-orientation="vertical" title="拖动调整左栏宽度"></div>
+  </aside>
+
+  <div id="content">
+    <header id="topbar">
+      <div class="tb-left">
+        <button class="btn icon on" id="btnRail" data-action="ui.rail" aria-expanded="true" title="收起左栏 · Context（我在哪 / 查看哪一项）">▤</button>
+        <button class="btn icon back" data-action="back" id="btnBack" title="返回上一位置（保留原范围与筛选）">←</button>
+        <div id="crumb" class="crumb"></div>
+      </div>
+      <div id="quickbar" class="quickbar" role="toolbar" aria-label="高频直达"></div>
+      <div class="tb-right">
+        <div class="tb-scope" id="scopeBox" title="当前经营范围"></div>
+        <button class="btn icon" id="btnAside" data-action="ui.aside" aria-expanded="false" title="展开右栏 · Utility（属性 / 证据 / 版本）">▥</button>
+        <div class="tb-author"><span class="av">作</span>作者（你）</div>
+      </div>
+    </header>
+
+    <div id="viewport" class="viewport">
+      <main id="main" class="main" tabindex="-1"></main>
+      <div id="asideResize" class="rsz rsz-aside" role="separator" aria-orientation="vertical" title="拖动调整右栏宽度"></div>
+      <aside id="aside" class="aside hide"></aside>
+    </div>
+  </div>
+</div>
+
+<div id="drawer" class="drawer" aria-hidden="true"></div>
+<div id="drawerBackdrop" class="drawer-backdrop" data-action="close-drawer"></div>
+<div id="modal" class="modal-root"></div>
+<div id="toasts" class="toasts"></div>
+
+<script src="data.js?v=ce8c235ae3"></script>
+<script src="app.js?v=e41afa7313"></script>
+<script src="views-operate.js?v=c4ba21185d"></script>
+<script src="views-market.js?v=e5999cb826"></script>
+<script src="views-craft.js?v=239ae5d84c"></script>
+<script src="views-book.js?v=dabef8ec22"></script>
+<script src="views-publish.js?v=a68f21bbdc"></script>
+<script src="views-audience.js?v=0fdb2504f4"></script>
+<script src="views-learning.js?v=a13a4cbd74"></script>
+<script src="views-flow.js?v=9af31d598e"></script>
+<script src="views-reflection.js?v=e2061cc0db"></script>
+<script src="views-journey.js?v=5022c1e5f1"></script>
+<script>window.addEventListener('DOMContentLoaded', function(){ WB.init(); });</script>
+</body>
+</html>

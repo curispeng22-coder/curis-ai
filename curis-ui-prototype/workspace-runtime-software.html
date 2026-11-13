@@ -1,0 +1,504 @@
+<!doctype html>
+<!--
+  ============================================================================
+  Curis 工作空间 Shell — 软件研发（部门办公室）运行现场
+  ----------------------------------------------------------------------------
+  基于冻结 _system 重写，对齐 工作空间 Shell 规范（docs/03_Design/Curis_工作空间_Shell.md）§8.1：
+    · 顶栏 52px、侧栏 220px、完整 12 分组导航、当前页高亮（软件工作室）
+    · 全部令牌走 --ui-*，无私有 accent
+    · 结果条指标由域声明（北极星=回归通过率，每项带口径 note）
+    · 管道看板：需求池→实现中→评审→待发布→已发布（只读），卡片带 commit/PR/CI 状态
+    · 责任链 / 侧栏面板 / CEO 决策队列齐全
+  交互：JS 数据驱动看板、拖拽（生产态可拖）、键盘等价（「移动至下一阶段」）、
+        详情抽屉。mock 数据带「示例数据」徽标。
+  ============================================================================
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <link rel="stylesheet" href="_system/assistant-drawer.css">
+    <script src="_system/theme.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研发办公室 · Curis · 工作空间 Shell</title>
+    <style>
+    :root {
+      --ok: var(--ui-success, #10b981); --warn: var(--ui-warning, #f59e0b); --bad: var(--ui-danger, #ef4444);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "PingFang SC", sans-serif;
+      color: var(--ui-text); background: var(--ui-bg);
+    }
+    * { box-sizing: border-box; }
+    html { margin: 0; }
+    body { margin: 0; min-height: 100vh; background: var(--ui-bg); }
+
+    .shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* 侧栏（冻结 220px） */
+    .sidebar { width: 220px; flex: 0 0 220px; padding: var(--ui-sp-5) var(--ui-sp-3); border-right: 1px solid var(--ui-line); background: var(--ui-surface-2); overflow-y: auto; }
+    .brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-2) var(--ui-sp-6); font-size: var(--ui-fs-3); font-weight: 650; }
+    .brand-mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--ui-r-xs); color: var(--ui-action-primary-fg); background: var(--ui-action-primary-bg); font-size: var(--ui-fs-1); font-weight: 800; }
+    .nav-label { margin: 0 var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); letter-spacing: .06em; text-transform: uppercase; }
+    .nav { display: grid; gap: 3px; }
+    .nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-1); text-decoration: none; }
+    .nav-item:hover, .nav-item.active { color: var(--ui-text); background: rgba(224,226,242,.06); }
+    .nav-icon { width: 14px; color: var(--ui-text-3); text-align: center; }
+    .sidebar-foot { margin-top: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.5; border-top: 1px solid var(--ui-line); }
+
+    /* 主区 */
+    .main { min-width: 0; min-height: 0; flex: 1; display: flex; flex-direction: column; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-sp-4); height: var(--ui-topbar-h); padding: 0 var(--ui-sp-7); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+    .crumbs { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .crumbs strong { color: var(--ui-text); }
+    .top-right { display: flex; align-items: center; gap: var(--ui-sp-3); }
+    .trust-pill { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .trust-pill::before { content: ""; width: 6px; height: 6px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+    .trust-pill.live { background: rgba(16,185,129,.14); color: var(--ui-success); border-color: rgba(16,185,129,.3); }
+    .trust-pill.live::before { background: var(--ui-success); }
+    .ceo-badge { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-3); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .ceo-badge::before { content: ""; width: 7px; height: 7px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+    .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+    .theme-btn { border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease; }
+    .theme-btn:hover { color: var(--ui-text); }
+    .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+
+    .content { max-width: 1440px; margin: 0 auto; padding: var(--ui-sp-6) var(--ui-sp-7) var(--ui-sp-8); width: 100%; overflow-y: auto; flex: 1; min-height: 0; }
+    .banner { margin-bottom: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-3); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.6; }
+    .banner strong { color: var(--ui-text); }
+
+    /* 槽位 1：结果条 */
+    .section-title { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-2); font-weight: 600; color: var(--ui-text); }
+    .result-bar { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-5); }
+    .metric { padding: var(--ui-sp-3) var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .metric span { display: block; color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .metric strong { display: block; margin-top: var(--ui-sp-1); font-size: var(--ui-fs-5); font-weight: 620; }
+    .metric small { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .metric small.up { color: var(--ui-success); }
+    .metric .caliber { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.4; }
+    .result-note { margin: 0 0 var(--ui-sp-3); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+
+    /* 槽位 2：责任链 */
+    .chain { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-5); }
+    .role { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .role strong { display: block; font-size: var(--ui-fs-1); }
+    .role span { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.45; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: var(--ui-r-pill); margin-right: var(--ui-sp-1); vertical-align: middle; background: var(--ui-text-3); }
+    .dot.run { background: var(--ui-warning); } .dot.done { background: var(--ui-success); } .dot.wait { background: var(--ui-text-3); }
+    .role em { display: inline-block; margin-top: var(--ui-sp-2); font-style: normal; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+    /* 两栏：管道 + 侧栏面板 */
+    .work-grid { display: grid; grid-template-columns: 1fr 340px; gap: var(--ui-sp-4); align-items: start; }
+
+    /* 槽位 3：管道看板 */
+    .board-head { display: flex; align-items: center; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-2); }
+    .board { display: flex; gap: var(--ui-sp-3); overflow-x: auto; overflow-y: auto; padding-bottom: var(--ui-sp-1); max-height: calc(100vh - 360px); }
+    .lane { flex: 1 1 0; min-width: 190px; background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); }
+    .lane.review { background: transparent; border-style: dashed; }
+    .lane-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; color: var(--ui-text-2); }
+    .lane-count { color: var(--ui-text-3); font-weight: 400; }
+    .card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); margin-bottom: var(--ui-sp-2); cursor: grab; }
+    .card:last-child { margin-bottom: 0; }
+    .card.active { border-color: var(--ui-accent); }
+    .card h4 { margin: 0 0 var(--ui-sp-1); font-size: var(--ui-fs-1); font-weight: 600; line-height: 1.4; }
+    .card .meta { display: flex; align-items: center; justify-content: space-between; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .card .owner { display: flex; align-items: center; gap: var(--ui-sp-1); }
+    .card .avatar { width: 16px; height: 16px; border-radius: var(--ui-r-pill); display: grid; place-items: center; font-size: var(--ui-fs-1); font-weight: 700; color: var(--ui-action-primary-fg); background: var(--ui-accent); }
+    .card .sdot { width: 6px; height: 6px; border-radius: var(--ui-r-pill); display: inline-block; margin-right: var(--ui-sp-1); }
+    .card .sdot.ontrack { background: var(--ui-success); } .card .sdot.attention { background: var(--ui-warning); } .card .sdot.decision { background: var(--ui-accent); } .card .sdot.risk { background: var(--ui-danger); }
+    .card .evidence { margin-top: var(--ui-sp-2); padding-top: var(--ui-sp-2); border-top: 1px solid var(--ui-line); font-size: var(--ui-fs-1); color: var(--ui-text-3); line-height: 1.45; }
+    .card .ci { margin-top: var(--ui-sp-1); display: flex; gap: var(--ui-sp-1); flex-wrap: wrap; }
+    .ci-tag { font-size: var(--ui-fs-1); padding: 2px var(--ui-sp-1); border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+    .ci-tag.green { color: var(--ui-success); border-color: rgba(16,185,129,.35); }
+    .ci-tag.amber { color: var(--ui-warning); border-color: rgba(245,158,11,.35); }
+    .card .checkpoint { margin-top: var(--ui-sp-1); display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .card .checkpoint.urgent { color: var(--ui-warning); }
+    .card .move { margin-top: var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-accent); cursor: pointer; background: none; border: none; padding: 0; }
+    .lane.review .card { cursor: default; opacity: .92; }
+    .empty-stage { padding: var(--ui-sp-4) var(--ui-sp-2); text-align: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); }
+
+    /* 槽位 4：侧栏面板 */
+    .panels { display: grid; gap: var(--ui-sp-3); }
+    .panel { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .panel h3 { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; }
+    .panel p, .panel li { color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.55; }
+    .panel ul { margin: 0; padding-left: var(--ui-sp-4); }
+    .panel .note { color: var(--ui-text-3); font-size: var(--ui-fs-1); margin-top: var(--ui-sp-1); }
+    .metrics-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ui-sp-2); }
+    .metrics-2 .m { display: flex; flex-direction: column; gap: 3px; padding: var(--ui-sp-2); background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .metrics-2 .m label { font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+    .metrics-2 .m b { font-size: var(--ui-fs-3); font-weight: 620; }
+    .metrics-2 .m small { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .accept-item { display: flex; gap: var(--ui-sp-2); padding: var(--ui-sp-2); margin-top: var(--ui-sp-2); background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .accept-item .thumb { width: 40px; height: 40px; border-radius: var(--ui-r-xs); background: var(--ui-surface); display: grid; place-items: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); flex-shrink: 0; }
+    .accept-item .info { flex: 1; min-width: 0; }
+    .accept-item .t { font-size: var(--ui-fs-1); font-weight: 600; }
+    .accept-item .s { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin: 3px 0 var(--ui-sp-1); }
+    .accept-item .acts { display: flex; gap: var(--ui-sp-1); }
+    .mini-btn { height: 26px; padding: 0 var(--ui-sp-2); font-size: var(--ui-fs-1); border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text); cursor: pointer; }
+    .mini-btn:hover { background: var(--ui-surface-2); }
+    .insight { padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); border: 1px solid var(--ui-line); margin-top: var(--ui-sp-2); }
+    .insight .lab { font-size: var(--ui-fs-1); color: var(--ui-text-3); text-transform: uppercase; letter-spacing: .04em; }
+    .insight .ti { font-size: var(--ui-fs-1); font-weight: 600; margin: var(--ui-sp-1) 0 var(--ui-sp-1); }
+    .insight .tx { font-size: var(--ui-fs-1); color: var(--ui-text-2); line-height: 1.5; }
+    .insight .tag { display: inline-flex; margin-top: var(--ui-sp-1); padding: 3px var(--ui-sp-2); border-radius: var(--ui-r-xs); background: rgba(224,226,242,.08); color: var(--text-2); font-size: var(--ui-fs-1); }
+
+    /* 槽位 5：CEO 决策队列 */
+    .queue-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); margin-top: var(--ui-sp-2); background: var(--ui-surface-2); border-left: 3px solid var(--ui-accent); border-radius: var(--ui-r-xs); font-size: var(--ui-fs-1); color: var(--ui-text); cursor: pointer; }
+    .queue-item:hover { background: rgba(224,226,242,.06); }
+    .queue-item .q-status { margin-left: auto; color: var(--ui-warning); font-size: var(--ui-fs-1); }
+
+    .empty-state { padding: var(--ui-sp-5); text-align: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); }
+
+    /* 详情抽屉 */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 200; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; top: 0; right: 0; width: 400px; max-width: 100%; height: 100%; background: var(--ui-surface); border-left: 1px solid var(--ui-line); box-shadow: -8px 0 28px rgba(0,0,0,.3); transform: translateX(100%); transition: transform .25s cubic-bezier(.16,1,.3,1); z-index: 201; display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { padding: var(--ui-sp-4); border-bottom: 1px solid var(--ui-line); display: flex; align-items: flex-start; justify-content: space-between; }
+    .drawer-head h2 { margin: 0; font-size: var(--ui-fs-3); font-weight: 600; max-width: 320px; line-height: 1.4; }
+    .drawer-close { width: 28px; height: 28px; border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); cursor: pointer; }
+    .drawer-body { flex: 1; overflow: auto; padding: var(--ui-sp-4); }
+    .drawer-body .sec { margin-bottom: var(--ui-sp-4); }
+    .drawer-body .sec-t { font-size: var(--ui-fs-1); color: var(--ui-text-3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: var(--ui-sp-2); }
+    .drawer-body .field { display: flex; justify-content: space-between; padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-1); }
+    .drawer-body .field:last-child { border-bottom: 0; }
+    .drawer-body .field .l { color: var(--ui-text-2); } .drawer-body .field .v { color: var(--ui-text); font-weight: 500; }
+    .drawer-acts { padding: var(--ui-sp-3) var(--ui-sp-4); border-top: 1px solid var(--ui-line); display: flex; gap: var(--ui-sp-2); }
+    .drawer-acts .btn { flex: 1; height: 32px; border-radius: var(--ui-r-sm); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text); cursor: pointer; font-size: var(--ui-fs-1); }
+    .drawer-acts .btn.primary { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border-color: var(--ui-action-primary-bg); }
+
+    .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; padding: var(--ui-sp-2) var(--ui-sp-4); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text); font-size: var(--ui-fs-1); box-shadow: 0 8px 24px rgba(0,0,0,.35); transition: all .2s ease; z-index: 300; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @media (max-width: 1280px) { .work-grid { grid-template-columns: 1fr; } .result-bar { grid-template-columns: repeat(3, 1fr); } .chain { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 760px) {
+      .sidebar { width: 64px; flex-basis: 64px; padding: var(--ui-sp-4) var(--ui-sp-2); }
+      .brand span, .nav-label, .nav-item span:not(.nav-icon), .sidebar-foot { display: none; }
+      .nav-item { justify-content: center; }
+      .topbar, .content { padding-left: var(--ui-sp-4); padding-right: var(--ui-sp-4); }
+      .result-bar, .chain { grid-template-columns: 1fr 1fr; }
+    }
+    </style>
+</head>
+<body data-assistant-context="软件研发运行现场">
+
+<div class="shell">
+    <!-- 侧栏：完整 12 分组导航（冻结；软件工作室当前页高亮） -->
+    <aside class="sidebar" role="navigation" aria-label="主导航">
+        <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+        <nav class="nav">
+            <p class="nav-label">公司</p>
+            <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+            <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+            <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+            <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+            <p class="nav-label">工作空间</p>
+            <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+            <a class="nav-item active" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+            <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+            <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+            <p class="nav-label">经营工具</p>
+            <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+            <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+            <p class="nav-label">公司资源</p>
+            <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+            <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+            <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+            <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+        </nav>
+        <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="crumbs"><span>Curis</span><span>/</span><span>工作空间</span><span>/</span><strong>研发办公室 · Curis v0.2</strong></div>
+            <div class="top-right">
+                <span class="trust-pill" title="数据可信状态">等待 CEO 验收</span>
+                <a class="btn primary" href="workspace-studio.html" style="text-decoration:none;">去 装修台装修 →</a>
+                <span class="ceo-badge" aria-live="polite">待 CEO 决策：1</span>
+                <label class="cap-switch" style="display:inline-flex;align-items:center;gap:var(--ui-sp-1);">
+                    <span style="font-size:var(--ui-fs-1);color:var(--ui-text-3);">当前能力</span>
+                    <select id="runtimeCapSelect" aria-label="当前能力" style="font-size:var(--ui-fs-1);color:var(--ui-text);background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);padding:var(--ui-sp-1) var(--ui-sp-2);max-width:190px;cursor:pointer;outline:none;"></select>
+                </label>
+                <div class="theme-switch" role="group" aria-label="主题切换"></div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="banner">
+                <strong>研发办公室运行现场（工作空间 Shell）。</strong>
+                结果条 / 价值成本 / CEO 决策以研发域示范：北极星=回归通过率（目标 ≥95%，比「功能做了多少」更能反映交付质量），非「完成度%」。数据仍示例，带「示例数据」徽标。
+            </div>
+
+            <!-- 槽位 1：结果条（研发域，指标由域声明 + 口径） -->
+            <h2 class="section-title">结果条<span class="mock-badge" style="margin-left:var(--ui-sp-2);">示例数据</span></h2>
+            <p class="result-note">（研发域：北极星=回归通过率；接入其他域时整体替换，禁止套通用模板）</p>
+            <div class="result-bar">
+                <div class="metric"><span>回归通过率（北极星）</span><strong>100%</strong><small class="up">24 / 24 用例通过</small><span class="caliber">口径：自动回归用例通过数 ÷ 总数（目标 ≥95%）</span></div>
+                <div class="metric"><span>本周期版本</span><strong>v0.2.0</strong><small>待发布</small><span class="caliber">口径：当前迭代版本号</span></div>
+                <div class="metric"><span>开放缺陷</span><strong>1</strong><small>首启性能待观察</small><span class="caliber">口径：未关闭 defect 数（目标 0）</span></div>
+                <div class="metric"><span>待 review PR</span><strong>3</strong><small>阻塞 1 项</small><span class="caliber">口径：等待评审的 PR 数</span></div>
+                <div class="metric"><span>首次验收通过率</span><strong>78%</strong><small>工程实现 AI</small><span class="caliber">口径：一次验收通过的工作项 ÷ 总交付工作项</span></div>
+            </div>
+
+            <!-- 槽位 2：责任链 -->
+            <h2 class="section-title">责任链</h2>
+            <div class="chain" role="list">
+                <div class="role" role="listitem"><strong>产品 AI</strong><span>对「v0.2 范围」负责</span><em><span class="dot wait"></span>准备中</em></div>
+                <div class="role" role="listitem"><strong>研发 AI</strong><span>对「实现与发布准备」负责</span><em><span class="dot run"></span>执行中</em></div>
+                <div class="role" role="listitem"><strong>QA AI</strong><span>对「真实路径验证」负责</span><em><span class="dot run"></span>验收中</em></div>
+                <div class="role" role="listitem"><strong>CEO</strong><span>对「真实使用验收」负责</span><em><span class="dot run"></span>待决策 1 项</em></div>
+            </div>
+
+            <!-- 两栏：管道看板 + 侧栏面板 -->
+            <div class="work-grid">
+                <!-- 槽位 3：管道看板（4 活跃泳道 + 1 回顾区） -->
+                <section>
+                    <div class="board-head">
+                        <h2 class="section-title" style="margin:0">管道看板</h2>
+                        <div class="filter-group" style="display:flex;gap:var(--ui-sp-1);margin-left:auto">
+                            <button class="mini-btn" data-filter="all">全部</button>
+                            <button class="mini-btn" data-filter="decision">待决策</button>
+                            <button class="mini-btn" data-filter="attention">关注</button>
+                        </div>
+                    </div>
+                    <div class="board" role="list" aria-label="研发工作项管道" id="pipeline">
+                        <!-- 泳道由 JS 注入 -->
+                    </div>
+                </section>
+
+                <!-- 槽位 4：侧栏面板 -->
+                <aside class="panels" aria-label="上下文面板">
+                    <div class="panel">
+                        <h3>外部结果与验收</h3>
+                        <div class="metrics-2">
+                            <div class="m"><label>版本</label><b>v0.2.0</b><small>commit c7a2e91</small></div>
+                            <div class="m"><label>回归</label><b>24 / 24</b><small>QA AI · 全部通过</small></div>
+                            <div class="m"><label>待 review PR</label><b>3</b><small>阻塞 1</small></div>
+                            <div class="m"><label>开放缺陷</label><b>1</b><small>首启性能</small></div>
+                        </div>
+                        <div class="accept-item">
+                            <div class="thumb">✓</div>
+                            <div class="info">
+                                <div class="t">v0.2 验收包</div>
+                                <div class="s">CEO 真实打开产品，完成「创建公司→工作台→业务状态→下达指令」</div>
+                                <div class="acts"><button class="mini-btn">通过</button><button class="mini-btn">打回</button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <h3>本周期价值与成本</h3>
+                        <div class="metrics-2">
+                            <div class="m"><label>工程实现 AI</label><b>¥1,920</b><small>78% 首次通过</small></div>
+                            <div class="m"><label>QA AI</label><b>¥380</b><small>24/24 回归</small></div>
+                            <div class="m"><label>成本合计</label><b>¥2,300</b><small>模型 + 工具</small></div>
+                            <div class="m"><label>复用成果</label><b>6 份</b><small>简报/决策/提交/报告…</small></div>
+                        </div>
+                        <p class="note">成本口径：模型调用 + CI/工具；复用成果进入成果库带上下文复用到下一版本。</p>
+                    </div>
+
+                    <div class="panel">
+                        <h3>洞察与下一步</h3>
+                        <div class="insight">
+                            <div class="lab">下一周期改进</div>
+                            <div class="ti">首启性能是唯一下周期风险</div>
+                            <div class="tx">首屏 >2s 需排查；开放缺陷 1 项与待 review PR 3（阻塞 1）应在 v0.2 发布前清零。</div>
+                            <span class="tag">进入需求池待评估</span>
+                        </div>
+                        <!-- 槽位 5（面板内）：CEO 决策队列高亮项 -->
+                        <div class="queue-item" role="button" tabindex="0">v0.2 验收通过<span class="q-status">待 CEO 确认</span></div>
+                        <div class="queue-item" role="button" tabindex="0">退回修改 / 请求现场演示<span class="q-status">待 CEO 确认</span></div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- 详情抽屉 -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="detailDrawer" aria-label="工作项详情">
+    <div class="drawer-head">
+        <h2 id="drawerTitle">工作项</h2>
+        <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-acts">
+        <button class="btn" id="drawerCancel">关闭</button>
+        <button class="btn">查看证据</button>
+        <button class="btn primary">推进到下一阶段</button>
+    </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="_system/assistant-drawer.js"></script>
+<script>
+/* ── 管道数据（软件研发域；mock） ── */
+const stages = [
+    { id: 'backlog', name: '需求池', active: true },
+    { id: 'implement', name: '实现中', active: true },
+    { id: 'review', name: '评审', active: true },
+    { id: 'publish', name: '待发布', active: true },
+    { id: 'released', name: '已发布（只读）', active: false }
+];
+
+const items = [
+    { id:'w1', title:'CEO 真实使用验收路径', stage:'backlog', owner:'产品 AI', status:'ontrack', statusLabel:'正常', evidence:'范围已锁定：创建公司→工作台→业务状态→下达指令', checkpoint:'今日 14:00 范围评审', ci:[] },
+    { id:'w2', title:'v0.2 核心实现', stage:'implement', owner:'研发 AI', status:'ontrack', statusLabel:'正常', evidence:'commit c7a2e91 · 2h 前', checkpoint:'今日 18:00 提交评审', ci:[{t:'commit c7a2e91',k:'green'},{t:'CI 绿',k:'green'}] },
+    { id:'w3', title:'首启性能优化', stage:'implement', owner:'研发 AI', status:'attention', statusLabel:'关注', evidence:'首屏 >2s，需排查主路径加载', checkpoint:'明日 10:00 前优化', ci:[{t:'perf 待查',k:'amber'}] },
+    { id:'w4', title:'24 项回归套件', stage:'review', owner:'QA AI', status:'decision', statusLabel:'待决策', evidence:'24/24 通过 · 等待 CEO 确认', checkpoint:'CEO 验收', ci:[{t:'24/24 通过',k:'green'}] },
+    { id:'w5', title:'验收包文档', stage:'publish', owner:'QA AI', status:'ontrack', statusLabel:'正常', evidence:'验收包已生成，含真实路径脚本', checkpoint:'待 CEO 验收后发布', ci:[] },
+    { id:'w6', title:'v0.1 已发布', stage:'released', owner:'研发 AI', status:'done', statusLabel:'已归档', evidence:'v0.1.0 已上线 · 运行 14 天', checkpoint:'已沉淀为 Knowledge', ci:[{t:'v0.1.0',k:'green'}] }
+];
+
+const pipeline = document.getElementById('pipeline');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const detailDrawer = document.getElementById('detailDrawer');
+const drawerTitle = document.getElementById('drawerTitle');
+const drawerBody = document.getElementById('drawerBody');
+const toast = document.getElementById('toast');
+let currentFilter = 'all';
+let draggedCard = null;
+
+function renderPipeline() {
+    pipeline.innerHTML = '';
+    stages.forEach(stage => {
+        const stageItems = items.filter(v => v.stage === stage.id && (currentFilter === 'all' || v.status === currentFilter));
+        const allCount = items.filter(v => v.stage === stage.id).length;
+        const lane = document.createElement('div');
+        lane.className = 'lane' + (stage.active ? '' : ' review');
+        lane.dataset.stage = stage.id;
+        lane.innerHTML = `<div class="lane-head">${stage.name} <span class="lane-count">${allCount}</span></div>`;
+        const zone = document.createElement('div');
+        zone.className = 'stage-dropzone';
+        zone.dataset.stage = stage.id;
+        if (stageItems.length === 0) {
+            zone.innerHTML = '<div class="empty-stage">无匹配内容</div>';
+        } else {
+            stageItems.forEach(v => zone.appendChild(createCard(v, stage)));
+        }
+        lane.appendChild(zone);
+        pipeline.appendChild(lane);
+    });
+    setupDnD();
+}
+
+function createCard(v, stage) {
+    const card = document.createElement('div');
+    card.className = 'card' + (v.status === 'decision' ? ' active' : '');
+    card.draggable = stage.active;
+    card.dataset.id = v.id;
+    card.dataset.status = v.status;
+    const ciHtml = v.ci.length ? `<div class="ci">${v.ci.map(c => `<span class="ci-tag ${c.k}">${c.t}</span>`).join('')}</div>` : '';
+    card.innerHTML = `
+        <h4>${v.title}</h4>
+        <div class="meta">
+            <div class="owner"><span class="avatar">${v.owner[0]}</span>${v.owner}</div>
+            <div><span class="sdot ${v.status}"></span>${v.statusLabel}</div>
+        </div>
+        <div class="evidence">${v.evidence}</div>
+        ${ciHtml}
+        <div class="checkpoint ${v.urgent ? 'urgent' : ''}">${v.urgent ? '⚠' : '◷'} ${v.checkpoint}</div>
+        ${stage.active ? '<button class="move" data-move>移动至下一阶段 →</button>' : ''}
+    `;
+    if (stage.active) {
+        card.addEventListener('click', () => openDrawer(v));
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+    }
+    return card;
+}
+
+function setupDnD() {
+    pipeline.querySelectorAll('.stage-dropzone').forEach(zone => {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', handleDrop);
+    });
+}
+function handleDragStart(e) { draggedCard = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function handleDragEnd() { this.classList.remove('dragging'); draggedCard = null; pipeline.querySelectorAll('.stage-dropzone').forEach(z => z.classList.remove('drag-over')); }
+function handleDrop(e) {
+    e.preventDefault(); this.classList.remove('drag-over');
+    if (!draggedCard) return;
+    const newStage = this.dataset.stage;
+    const v = items.find(x => x.id === draggedCard.dataset.id);
+    const oldName = stages.find(s => s.id === v.stage).name;
+    const newName = stages.find(s => s.id === newStage).name;
+    v.stage = newStage;
+    showToast(`「${v.title.slice(0,12)}…」已从 ${oldName} 移动到 ${newName}`);
+    renderPipeline();
+}
+
+function openDrawer(v) {
+    const stageName = stages.find(s => s.id === v.stage).name;
+    drawerTitle.textContent = v.title;
+    const ciHtml = v.ci.length ? v.ci.map(c => `<span class="ci-tag ${c.k}">${c.t}</span>`).join(' ') : '—';
+    drawerBody.innerHTML = `
+        <div class="sec"><div class="sec-t">当前状态</div>
+            <div class="field"><span class="l">阶段</span><span class="v">${stageName}</span></div>
+            <div class="field"><span class="l">负责人</span><span class="v">${v.owner}</span></div>
+            <div class="field"><span class="l">状态</span><span class="v">${v.statusLabel}</span></div>
+        </div>
+        <div class="sec"><div class="sec-t">证据</div><div class="insight" style="margin:0"><div class="tx">${v.evidence}</div></div></div>
+        <div class="sec"><div class="sec-t">CI / 提交</div><div class="insight" style="margin:0"><div class="ci">${ciHtml}</div></div></div>
+        <div class="sec"><div class="sec-t">下一检查点</div><div class="insight" style="margin:0"><div class="ti">${v.checkpoint}</div></div></div>`;
+    drawerOverlay.classList.add('open'); detailDrawer.classList.add('open');
+}
+function closeDrawer() { drawerOverlay.classList.remove('open'); detailDrawer.classList.remove('open'); }
+function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
+
+drawerOverlay.addEventListener('click', closeDrawer);
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('drawerCancel').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+/* 键盘等价：移动至下一阶段（替代拖拽） */
+pipeline.addEventListener('click', e => {
+    const btn = e.target.closest('.move');
+    if (btn) {
+        const card = btn.closest('.card');
+        const v = items.find(x => x.id === card.dataset.id);
+        const idx = stages.findIndex(s => s.id === v.stage);
+        if (idx < stages.length - 1) {
+            const next = stages[idx + 1];
+            const oldName = stages[idx].name;
+            v.stage = next.id;
+            showToast(`「${v.title.slice(0,12)}…」已从 ${oldName} 移动到 ${next.name}`);
+            renderPipeline();
+        }
+        return;
+    }
+});
+
+/* 过滤 */
+document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => {
+    currentFilter = b.dataset.filter;
+    renderPipeline();
+}));
+
+renderPipeline();
+</script>
+<script>
+/* 主题切换按钮注入（theme.js 接管实际切换） */
+(function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+        var b = document.createElement('button');
+        b.className = 'theme-btn'; b.setAttribute('data-curis-theme', t); b.textContent = labels[t];
+        sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar');
+    if (host) host.appendChild(sw);
+})();
+</script>
+  <script src="_system/canonical-nav.js"></script>
+  <script src="_system/runtime-capability.js"></script>
+</body>
+</html>

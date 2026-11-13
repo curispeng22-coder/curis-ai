@@ -1,0 +1,24 @@
+# GitHub repo metadata captured 2026-09-19 05:12 CST
+# command: gh api repos/<owner>/<repo>
+full_name	stars	forks	pushed_at	created_at	license	archived	language	open_issues
+OpenHands/OpenHands	88439	11616	2026-09-18	2024-03-13	MIT	false	TypeScript	821
+FoundationAgents/MetaGPT	70489	8958	2026-01-21	2023-06-30	MIT	false	Python	132
+OpenBMB/ChatDev	34339	4299	2026-07-24	2023-08-28	Apache-2.0	false	Python	73
+SWE-agent/SWE-agent	20355	2225	2026-09-14	2024-04-02	MIT	false	Python	114
+smtg-ai/claude-squad	8496	618	2026-08-20	2025-03-09	AGPL-3.0	false	Go	58
+max-sixty/worktrunk	8003	273	2026-09-18	2025-10-17	NOASSERTION	false	Rust	40
+johannesjo/parallel-code	1011	137	2026-09-18	2026-02-18	MIT	false	TypeScript	54
+dagger/container-use	4047	205	2026-09-14	2025-05-23	Apache-2.0	false	Go	62
+BloopAI/vibe-kanban	28124	3014	2026-09-18	2025-06-14	Apache-2.0	false	Rust	536
+stablyai/orca	71861	4696	2026-09-18	2026-03-17	MIT	false	TypeScript	6321
+Untrivial-ai/agent-orchestrator	12172	1677	2026-09-18	2026-02-13	Apache-2.0	false	Go	741
+anthropics/claude-code	146241	23759	2026-09-18	2025-02-22	-	false	TypeScript	12523
+openai/codex	125140	19405	2026-09-18	2025-04-13	Apache-2.0	false	Rust	17766
+anomalyco/opencode	208420	27414	2026-09-18	2025-04-30	MIT	false	TypeScript	5958
+SWE-agent/SWE-ReX	593	120	2026-09-14	2024-10-14	MIT	false	Python	56
+humanlayer/humanlayer	11579	955	2026-06-19	2024-08-05	NOASSERTION	false	TypeScript	45
+e2b-dev/E2B	13874	1041	2026-09-18	2023-03-04	Apache-2.0	false	Python	71
+microsoft/autogen	61049	9233	2026-04-15	2023-08-18	CC-BY-4.0	false	Python	1076
+ag2ai/ag2	4939	720	2026-09-17	2024-11-11	Apache-2.0	false	Python	28
+crewAIInc/crewAI	58738	8497	2026-09-18	2023-10-27	MIT	false	Python	362
+aaif-goose/goose	54441	6269	2026-09-18	2024-08-23	Apache-2.0	false	Rust	386

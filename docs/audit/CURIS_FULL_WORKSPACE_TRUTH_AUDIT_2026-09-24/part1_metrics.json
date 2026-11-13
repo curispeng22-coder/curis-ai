@@ -1,0 +1,8 @@
+{
+  "root_files": 50,
+  "drift_named_directories": 244,
+  "governance_named_candidate_docs": 337,
+  "direct_governance_rule_sources_inspected": 21,
+  "drift_rows_excluding_dependency_paths": 244,
+  "baseline_sha": "78cacbd0857cc36c9f3fe0e4b11346489993b728"
+}

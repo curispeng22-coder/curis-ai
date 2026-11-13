@@ -1,0 +1,110 @@
+# Agent Orchestrator domain model — status.go + session.go excerpts
+
+package domain
+
+// SessionStatus is the single-word DISPLAY status the dashboard renders. It is
+// derived from persisted session facts plus PR facts and is never stored.
+type SessionStatus string
+
+// The display statuses the dashboard renders.
+const (
+	StatusWorking          SessionStatus = "working"
+	StatusPROpen           SessionStatus = "pr_open"
+	StatusDraft            SessionStatus = "draft"
+	StatusCIFailed         SessionStatus = "ci_failed"
+	StatusReviewPending    SessionStatus = "review_pending"
+	StatusChangesRequested SessionStatus = "changes_requested"
+	StatusApproved         SessionStatus = "approved"
+	StatusMergeable        SessionStatus = "mergeable"
+	StatusMerged           SessionStatus = "merged"
+	StatusNeedsInput       SessionStatus = "needs_input"
+	StatusExited           SessionStatus = "exited"
+	StatusIdle             SessionStatus = "idle"
+	StatusTerminated       SessionStatus = "terminated"
+	// StatusNoSignal marks a live session whose agent has never delivered a
+	// hook callback for the current spawn/restore: AO cannot tell whether the
+	// agent is working or stuck (broken hook pipeline, blocked interactive
+	// prompt). Rendered instead of a confident idle.
+	StatusNoSignal SessionStatus = "no_signal"
+)
+
+---- session.go (SessionKind + SessionMetadata) ----
+	// IssueID identifies a tracker issue.
+	IssueID string
+)
+
+// SessionKind distinguishes a worker session from an orchestrator session.
+type SessionKind string
+
+// Session kinds.
+const (
+	KindWorker       SessionKind = "worker"
+	KindOrchestrator SessionKind = "orchestrator"
+)
+
+// ConversationCheckpointState records which main-turn boundaries AO has
+// durably observed for the hook-derived replay checkpoint. The legacy value is
+// intentionally distinct: rows written before owner/event scoping may still be
+// enforced by an ordinary switch, but only those text dimensions may be waived
+// by explicit provider-history consent.
+type ConversationCheckpointState string
+
+// Conversation checkpoint states, from unscoped legacy data through a fully
+// observed main-turn boundary.
+const (
+	ConversationCheckpointLegacy ConversationCheckpointState = "legacy"
+	ConversationCheckpointEmpty  ConversationCheckpointState = "empty"
+	// ConversationCheckpointCoordination records an AO-authored turn boundary.
+	// It carries across a prompt-submit/Stop pair so provider coordination can
+	// never be promoted into replay evidence, even when Stop omits the prompt.
+	ConversationCheckpointCoordination ConversationCheckpointState = "coordination"
+	ConversationCheckpointPrompt       ConversationCheckpointState = "prompt"
+	ConversationCheckpointComplete     ConversationCheckpointState = "complete"
+)
+
+// Trusted reports whether the checkpoint was collected by the scoped
+// main-turn state machine rather than inherited from pre-provenance storage.
+func (s ConversationCheckpointState) Trusted() bool {
+	return s == ConversationCheckpointPrompt || s == ConversationCheckpointComplete
+}
+
+// ConversationCheckpointOrigin classifies the main-turn boundary reported by
+// a provider hook. Empty preserves compatibility with older hook clients.
+type ConversationCheckpointOrigin string
+
+// Conversation checkpoint origins distinguish compatibility traffic, real
+// human turns, and AO-authored coordination turns.
+const (
+	ConversationCheckpointOriginUnknown      ConversationCheckpointOrigin = ""
+	ConversationCheckpointOriginHuman        ConversationCheckpointOrigin = "human"
+	ConversationCheckpointOriginCoordination ConversationCheckpointOrigin = "coordination"
+)
+
+// Valid reports whether an activity request carries a supported origin.
+func (o ConversationCheckpointOrigin) Valid() bool {
+	return o == ConversationCheckpointOriginUnknown ||
+		o == ConversationCheckpointOriginHuman ||
+		o == ConversationCheckpointOriginCoordination
+}
+
+// SessionMetadata is the typed, off-status metadata for a session: operational
+// handles and seed inputs used by Session Manager and reaper.
+type SessionMetadata struct {
+	// Permissions pins the resolved launch policy independently of future project defaults.
+	Permissions PermissionMode `json:"permissions,omitempty"`
+
+	Branch            string `json:"branch,omitempty"`
+	WorkspacePath     string `json:"workspacePath,omitempty"`
+	WorkspaceRepoPath string `json:"workspaceRepoPath,omitempty"`
+	DiffBaseSHA       string `json:"diffBaseSha,omitempty"`
+	DiffBaseRef       string `json:"diffBaseRef,omitempty"`
+	RuntimeHandleID   string `json:"runtimeHandleId,omitempty"`
+	RuntimeLaunchID   string `json:"runtimeLaunchId,omitempty"`
+	AgentSessionID    string `json:"agentSessionId,omitempty"`
+	// AgentSessionIDLaunchID identifies the terminal runtime generation proven to
+	// own AgentSessionID. Usually that proof comes from a provider hook. A
+	// coordinated Chat-to-TUI handoff may also establish it by launching the
+	// target with the exact structured provider id transferred from Chat.
+	AgentSessionIDLaunchID   string    `json:"-"`
+	NativeIdentityObservedAt time.Time `json:"-"`
+	Prompt                   string    `json:"prompt,omitempty"`

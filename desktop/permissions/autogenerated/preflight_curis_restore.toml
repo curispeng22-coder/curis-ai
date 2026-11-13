@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-preflight-curis-restore"
+description = "Enables the preflight_curis_restore command without any pre-configured scope."
+commands.allow = ["preflight_curis_restore"]
+
+[[permission]]
+identifier = "deny-preflight-curis-restore"
+description = "Denies the preflight_curis_restore command without any pre-configured scope."
+commands.deny = ["preflight_curis_restore"]

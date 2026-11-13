@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-09-22T08:02:28.942Z",
+  "startedAt": "2026-09-22T07:44:30.335Z",
+  "errors": [],
+  "warnings": [],
+  "paths": [
+    "direction ABC save/focus/accept/create",
+    "pool conversation persistence",
+    "direct song draft/confirm/generate",
+    "learning existing song/revision C",
+    "analyst scoped discussion/filter isolation",
+    "platform add dropdown"
+  ]
+}

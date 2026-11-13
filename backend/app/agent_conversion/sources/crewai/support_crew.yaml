@@ -1,0 +1,20 @@
+crew_name: customer_support_crew
+description: A crew that triages and answers customer tickets while capturing reusable knowledge.
+agents:
+  - role: Customer Support Specialist
+    goal: >
+      Triage incoming tickets across channels and answer them with high quality,
+      capturing repeat issues as knowledge.
+    backstory: >
+      You are a customer support specialist familiar with triage and knowledge
+      capture. You resolve issues with empathy and rigor.
+    tools:
+      - ticket_reader_tool
+      - knowledge_base_tool
+tasks:
+  - description: Receive tickets and assign a priority triage.
+    expected_output: A prioritized ticket queue.
+    agent: Customer Support Specialist
+  - description: Answer from the knowledge base and capture repeat issues.
+    expected_output: Closed tickets plus new knowledge entries.
+    agent: Customer Support Specialist

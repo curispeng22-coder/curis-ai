@@ -1,0 +1,20 @@
+crew_name: market_research_crew
+description: A crew that researches markets and competitors to produce decision-ready briefs.
+agents:
+  - role: Senior Research Analyst
+    goal: >
+      Gather and synthesize market and competitor intelligence into concise,
+      decision-ready research briefs with verifiable sources.
+    backstory: >
+      You are a senior research analyst who excels at retrieving information from
+      public channels and cross-validating it. You turn noise into structured insight.
+    tools:
+      - web_search_tool
+      - data_analyzer_tool
+tasks:
+  - description: Retrieve public materials on the target topic and deduplicate them.
+    expected_output: A deduplicated pool of signal items with sources.
+    agent: Senior Research Analyst
+  - description: Cluster findings and produce a research brief with sources and uncertainty.
+    expected_output: A structured research brief.
+    agent: Senior Research Analyst

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "writing.chapter/v1",
+  "title": "写作章节",
+  "type": "object",
+  "initialState": "DRAFT",
+  "required": [
+    "title",
+    "bookRef",
+    "status"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "章节名称",
+      "maxLength": 160
+    },
+    "bookRef": {
+      "type": "string",
+      "title": "所属作品标识",
+      "maxLength": 256
+    },
+    "volumeRef": {
+      "type": "string",
+      "title": "所属卷标识",
+      "maxLength": 256
+    },
+    "storyNodeRef": {
+      "type": "string",
+      "title": "故事节点标识",
+      "maxLength": 256
+    },
+    "status": {
+      "type": "string",
+      "title": "章节记录状态",
+      "enum": [
+        "DRAFT",
+        "ARCHIVED"
+      ],
+      "default": "DRAFT"
+    }
+  }
+}

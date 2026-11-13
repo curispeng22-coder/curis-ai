@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>内容制作 · Production Overview — Curis</title>
+  <style>
+    :root {
+      --rail: 214px;
+      --topbar: 56px;
+      --aside: 340px;
+      --gap: 16px;
+      --accent: #2f5bff;
+      --working: #2f5bff;
+      --wait: #8b929f;
+      --review: #c07d10;
+      --blocked: #d64545;
+      --ready: #0f9d63;
+      --done: #0f9d63;
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --border: #e3e5e8;
+      --text: #1f2329;
+      --text-secondary: #5c6670;
+      --text-muted: #8b929f;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+      min-width: 1200px;
+    }
+    /* Shell */
+    .left-rail {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: var(--rail);
+      background: #0f1115;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .rail-brand {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .rail-brand .host { font-size: 12px; color: #8b929f; letter-spacing: 0.3px; }
+    .rail-brand .workspace { font-size: 15px; font-weight: 600; margin-top: 2px; }
+    .rail-brand .scope { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .rail-nav { flex: 1; padding: 10px 12px; overflow-y: auto; }
+    .rail-nav-group { margin-bottom: 18px; }
+    .rail-nav-group-title {
+      font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 0 8px 6px;
+    }
+    .rail-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 6px;
+      color: #c7ccd6; font-size: 13px; cursor: pointer;
+    }
+    .rail-nav-item:hover { background: rgba(255,255,255,0.06); }
+    .rail-nav-item.active { background: rgba(47,91,255,0.18); color: #fff; }
+    .rail-nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+    .rail-foot {
+      padding: 12px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: #9ca3af;
+    }
+    .rail-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #2f5bff; display: grid; place-items: center;
+      font-size: 11px; font-weight: 600; color: #fff;
+    }
+    .topbar {
+      position: fixed; left: var(--rail); top: 0; right: 0; height: var(--topbar);
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 99;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; color: var(--text-secondary); font-size: 13px; }
+    .topbar-left .sep { color: var(--border); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%; background: #2f5bff;
+      display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 600;
+    }
+    /* Main area */
+    .app-main {
+      margin-left: var(--rail);
+      padding-top: var(--topbar);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    .page-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 18px 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+    }
+    .page-title h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.2px; }
+    .page-title .scope-note { margin-top: 4px; color: var(--text-secondary); font-size: 12px; }
+    .page-meta { display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-size: 12px; }
+    .content {
+      flex: 1;
+      padding: 20px 24px 28px;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr var(--aside);
+      gap: var(--gap);
+      align-items: start;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel-head {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-weight: 600; font-size: 13px;
+    }
+    /* Controls */
+    .controls {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      margin-bottom: 14px;
+    }
+    .tabs { display: flex; gap: 4px; }
+    .tab {
+      padding: 6px 12px; border-radius: 6px; cursor: pointer;
+      color: var(--text-secondary); font-size: 13px; border: 1px solid transparent;
+    }
+    .tab:hover { background: #f2f3f5; }
+    .tab.active { background: rgba(47,91,255,0.08); color: var(--accent); border-color: rgba(47,91,255,0.25); font-weight: 600; }
+    .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-secondary); font-size: 12px; cursor: pointer;
+    }
+    .chip.active { background: #f2f3f5; color: var(--text); border-color: #d1d5db; font-weight: 500; }
+    /* Summary bar */
+    .summary-bar {
+      display: flex; gap: 8px; margin-bottom: 14px;
+    }
+    .summary-item {
+      flex: 1; min-width: 0;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+    }
+    .summary-item .icon {
+      width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .summary-item .label { color: var(--text-muted); font-size: 11px; }
+    .summary-item .value { font-size: 18px; font-weight: 700; margin-top: -1px; }
+    /* Tables */
+    .dense-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .dense-table th {
+      text-align: left; padding: 10px 12px; font-weight: 600; color: var(--text-secondary);
+      background: #fbfbfb; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .dense-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .dense-table tr:last-child td { border-bottom: none; }
+    .dense-table tr:hover:not(.line-header) { background: #f9fafb; }
+    .line-header td {
+      background: #f3f4f6; padding: 7px 12px; font-weight: 600; color: var(--text);
+      border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 2;
+    }
+    .line-header .line-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px;
+    }
+    .line-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .line-meta { color: var(--text-muted); font-weight: 400; margin-left: 8px; font-size: 11px; }
+    /* Cells */
+    .cell-work { min-width: 200px; }
+    .work-id { color: var(--accent); font-weight: 600; font-size: 11px; margin-right: 6px; }
+    .work-title { font-weight: 500; }
+    .muted { color: var(--text-muted); }
+    .secondary { color: var(--text-secondary); }
+    .nowrap { white-space: nowrap; }
+    .clamp-2 {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    /* Avatars & Pills */
+    .avatar {
+      width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center;
+      color: #fff; font-size: 10px; font-weight: 600; flex: 0 0 auto;
+    }
+    .avatar.empty { background: #e3e5e8; color: #9ca3af; }
+    .person { display: inline-flex; align-items: center; gap: 6px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .pill-working { color: var(--working); background: rgba(47,91,255,0.08); }
+    .pill-wait { color: var(--wait); background: rgba(139,146,159,0.10); }
+    .pill-review { color: var(--review); background: rgba(192,125,16,0.10); }
+    .pill-blocked { color: var(--blocked); background: rgba(214,69,69,0.08); }
+    .pill-ready { color: var(--ready); background: rgba(15,157,99,0.08); }
+    .pill-done { color: var(--done); background: rgba(15,157,99,0.08); }
+    /* Progress */
+    .progress { display: flex; align-items: center; gap: 8px; min-width: 90px; }
+    .progress-track { flex: 1; height: 5px; background: #eceef1; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+    .progress-num { font-size: 11px; color: var(--text-secondary); min-width: 26px; text-align: right; }
+    /* Aside */
+    .aside-list { padding: 8px 0; }
+    .aside-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 16px; border-bottom: 1px solid var(--border);
+    }
+    .aside-row:last-child { border-bottom: none; }
+    .aside-row .left { display: flex; align-items: center; gap: 10px; }
+    .aside-row .title { font-weight: 500; }
+    .aside-row .sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+    /* Footer */
+    .footer-note {
+      padding: 12px 24px; border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 11px; text-align: right;
+      background: var(--surface);
+    }
+  </style>
+</head>
+<body>
+  <aside class="left-rail">
+    <div class="rail-brand">
+      <div class="host">Curis · 一人公司</div>
+      <div class="workspace">Content Growth</div>
+      <div class="scope">Professional Workspace</div>
+    </div>
+    <nav class="rail-nav">
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">制作</div>
+        <div class="rail-nav-item active"><span class="dot"></span>内容制作</div>
+        <div class="rail-nav-item"><span class="dot"></span>发布排期</div>
+        <div class="rail-nav-item"><span class="dot"></span>数据回收</div>
+      </div>
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">资产</div>
+        <div class="rail-nav-item"><span class="dot"></span>脚本库</div>
+        <div class="rail-nav-item"><span class="dot"></span>素材库</div>
+        <div class="rail-nav-item"><span class="dot"></span>账号资产</div>
+      </div>
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">组织</div>
+        <div class="rail-nav-item"><span class="dot"></span>员工</div>
+        <div class="rail-nav-item"><span class="dot"></span>路由规则</div>
+      </div>
+    </nav>
+    <div class="rail-foot">
+      <div class="rail-avatar">CEO</div>
+      <span>CEO perspective</span>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <span>Professional Workspace</span><span class="sep">/</span><span>Content Growth</span><span class="sep">/</span><strong>内容制作</strong>
+    </div>
+    <div class="topbar-right">
+      <span style="color:var(--text-muted);font-size:12px;">1440×1000</span>
+      <div class="topbar-avatar">CEO</div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div class="page-title">
+        <h1>内容制作</h1>
+        <div class="scope-note" id="scope-note"></div>
+      </div>
+      <div class="page-meta">
+        <span id="meta-total"></span>
+        <span id="meta-employees"></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="summary-bar" id="summary-bar"></div>
+
+      <div class="controls">
+        <div class="tabs" id="tabs"></div>
+        <div class="filter-chips" id="filter-chips"></div>
+      </div>
+
+      <div class="main-grid">
+        <section class="panel" id="works-panel">
+          <table class="dense-table" id="works-table">
+            <thead>
+              <tr>
+                <th>Work</th>
+                <th>Line / Method</th>
+                <th>Account</th>
+                <th>Stage</th>
+                <th>State</th>
+                <th>Owner</th>
+                <th>Progress</th>
+                <th>Current Artifact</th>
+                <th>Next Step</th>
+              </tr>
+            </thead>
+            <tbody id="works-body"></tbody>
+          </table>
+        </section>
+
+        <aside class="panel" id="right-panel">
+          <div class="panel-head">状态图例 & 筛选</div>
+          <div class="aside-list" id="legend-list"></div>
+        </aside>
+      </div>
+    </div>
+
+    <footer class="footer-note">Direction B — Dense Operational · Visual exploration only</footer>
+  </main>
+
+  <script>
+    const DATA = {
+      "workspace": {"name": "Content Growth", "host": "Curis · 一人公司", "scope": "内容制作"},
+      "screen1": {
+        "title": "Production Overview",
+        "pageTitle": "内容制作 · Production Overview",
+        "scopeNote": "经营来源：抖音｜创始人IP · 数字人口播的反馈周期与稳定之境",
+        "tabs": ["全部", "图文制作", "口播制作", "视频制作", "长文章制作"],
+        "activeTab": "全部",
+        "filters": {
+          "state": ["全部", "执行中", "等待中", "Review", "Blocked", "可发布"],
+          "account": ["账号：已选 1 个", "小红书｜品牌号", "小红书｜创始人IP", "抖音｜品牌号", "抖音｜创始人IP", "公众号｜品牌官方号", "公众号｜创始人号"]
+        },
+        "summary": {"total": 7, "working": 2, "waiting": 2, "review": 1, "blocked": 1, "ready": 1, "employees": 5},
+        "lines": [
+          {"key": "oral", "name": "口播制作", "format": "视频（口播类）", "methods": ["数字人口播", "真人素材口播"], "color": "#2f5bff", "works": [
+            {"id": "W-202", "title": "AI 会不会取代你的岗位", "account": "抖音｜创始人IP", "method": "数字人口播", "spec": "9:16 · 60s · 1080×1920", "stage": "数字人口播合成", "state": "working", "stateLabel": "执行中", "owner": "高戈", "ownerAvatar": "高", "ownerColor": "#1f7ae0", "next": "用言舟 v2 生成口播，试听后进入剪辑", "artifact": "脚本 v3", "progress": 56},
+            {"id": "W-204", "title": "3 个让 AI 写得更像你的方法", "account": "抖音｜品牌号", "method": "数字人口播", "spec": "9:16 · 25s", "stage": "等待数字人队列", "state": "waiting", "stateLabel": "等待中", "owner": "周砚", "ownerAvatar": "周", "ownerColor": "#0f9d63", "next": "言舟队列空闲后自动继续", "artifact": "脚本 v1", "progress": 45}
+          ]},
+          {"key": "image", "name": "图文制作", "format": "图文", "methods": ["图文排版"], "color": "#d97706", "works": [
+            {"id": "W-201", "title": "AI 时代的职场效率清单", "account": "小红书｜品牌号", "method": "图文排版", "spec": "3:4 · 8 页", "stage": "封面与包装", "state": "working", "stateLabel": "执行中", "owner": "乔叶", "ownerAvatar": "乔", "ownerColor": "#d97706", "next": "乔叶出结论前置封面 v2，随后提交人工把关", "artifact": "内页文案 v2", "progress": 74},
+            {"id": "W-205", "title": "创业第 180 天", "account": "小红书｜创始人IP", "method": "图文排版", "spec": "3:4 · 6 页", "stage": "缺创始人授权照片", "state": "blocked", "stateLabel": "Blocked", "owner": "徐白", "ownerAvatar": "徐", "ownerColor": "#0e8f7e", "next": "需 CEO 提供 2 张授权照片（AR-1）", "artifact": "正文 v2", "progress": 30},
+            {"id": "W-207", "title": "数据卡点自查表", "account": "抖音｜品牌号", "method": "图文排版", "spec": "3:4 · 9 页", "stage": "责任未配置", "state": "waiting", "stateLabel": "等待中", "owner": null, "ownerAvatar": null, "ownerColor": null, "next": "缺内容制作责任人，已进入组织路由等待分配", "artifact": "—", "progress": 0}
+          ]},
+          {"key": "article", "name": "长文章制作", "format": "文章", "methods": ["长文章"], "color": "#0f9d63", "works": [
+            {"id": "W-203", "title": "一人公司如何搭建内容系统", "account": "公众号｜品牌官方号", "method": "长文章", "spec": "2,400 字 · 系统图 1 张", "stage": "待人工把关", "state": "review", "stateLabel": "Review", "owner": "周砚", "ownerAvatar": "周", "ownerColor": "#0f9d63", "next": "创始人 IP 内容必须人工 Review，等待确认", "artifact": "初稿 v1", "progress": 88}
+          ]},
+          {"key": "video", "name": "视频制作", "format": "视频（非口播）", "methods": ["混剪", "屏幕演示"], "color": "#1f7ae0", "works": [
+            {"id": "W-206", "title": "上周热点：AI 职场报告", "account": "抖音｜品牌号", "method": "混剪", "spec": "9:16 · 45s", "stage": "可发布成品", "state": "ready", "stateLabel": "可发布", "owner": "高戈", "ownerAvatar": "高", "ownerColor": "#1f7ae0", "next": "进入发布队列排期", "artifact": "成片 v1", "progress": 100}
+          ]}
+        ]
+      }
+    };
+
+    const stateMap = {
+      working: { cls: 'pill-working', color: '#2f5bff' },
+      waiting: { cls: 'pill-wait', color: '#8b929f' },
+      wait: { cls: 'pill-wait', color: '#8b929f' },
+      review: { cls: 'pill-review', color: '#c07d10' },
+      blocked: { cls: 'pill-blocked', color: '#d64545' },
+      ready: { cls: 'pill-ready', color: '#0f9d63' },
+      done: { cls: 'pill-done', color: '#0f9d63' }
+    };
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function pill(state, label) {
+      const m = stateMap[state] || stateMap.waiting;
+      return `<span class="pill ${m.cls}">${esc(label || state)}</span>`;
+    }
+    function avatar(name, char, color) {
+      if (!char) return `<span class="avatar empty">—</span>`;
+      return `<span class="avatar" style="background:${esc(color||'#8b929f')}">${esc(char)}</span>`;
+    }
+    function person(name, char, color) {
+      return `<span class="person">${avatar(name, char, color)}<span>${esc(name || '未分配')}</span></span>`;
+    }
+    function progress(pct, state) {
+      const m = stateMap[state] || stateMap.working;
+      return `<div class="progress"><div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${m.color}"></div></div><span class="progress-num">${pct}%</span></div>`;
+    }
+
+    const s1 = DATA.screen1;
+    document.title = s1.pageTitle;
+    document.getElementById('scope-note').textContent = s1.scopeNote;
+    document.getElementById('meta-total').textContent = `共 ${s1.summary.total} 个 Work`;
+    document.getElementById('meta-employees').textContent = `${s1.summary.employees} 位 Employee`;
+
+    // Summary bar
+    const sum = s1.summary;
+    const sumItems = [
+      { label: 'Total', value: sum.total, color: '#1f2329' },
+      { label: 'Working', value: sum.working, color: '#2f5bff' },
+      { label: 'Waiting', value: sum.waiting, color: '#8b929f' },
+      { label: 'Review', value: sum.review, color: '#c07d10' },
+      { label: 'Blocked', value: sum.blocked, color: '#d64545' },
+      { label: 'Ready', value: sum.ready, color: '#0f9d63' },
+      { label: 'Employees', value: sum.employees, color: '#6b7280' }
+    ];
+    document.getElementById('summary-bar').innerHTML = sumItems.map(i => `
+      <div class="summary-item">
+        <div class="icon" style="background:${i.color}">${i.label[0]}</div>
+        <div>
+          <div class="label">${esc(i.label)}</div>
+          <div class="value" style="color:${i.color}">${i.value}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Tabs
+    document.getElementById('tabs').innerHTML = s1.tabs.map(t =>
+      `<div class="tab ${t === s1.activeTab ? 'active' : ''}">${esc(t)}</div>`
+    ).join('');
+
+    // Filter chips
+    const chips = [];
+    s1.filters.state.forEach((f, i) => chips.push({ text: f, active: i === 0, type: 'state' }));
+    s1.filters.account.forEach((f, i) => chips.push({ text: f, active: i === 0, type: 'account' }));
+    document.getElementById('filter-chips').innerHTML = chips.map(c =>
+      `<span class="chip ${c.active ? 'active' : ''}">${esc(c.text)}</span>`
+    ).join('');
+
+    // Table
+    const tbody = document.getElementById('works-body');
+    let rows = '';
+    s1.lines.forEach(line => {
+      rows += `<tr class="line-header"><td colspan="9">
+        <span class="line-tag"><span class="line-dot" style="background:${esc(line.color)}"></span>${esc(line.name)}
+          <span class="line-meta">${esc(line.format)} · ${esc(line.methods.join(' / '))}</span>
+        </span>
+      </td></tr>`;
+      line.works.forEach(w => {
+        rows += `<tr>
+          <td class="cell-work"><span class="work-id">${esc(w.id)}</span><span class="work-title">${esc(w.title)}</span></td>
+          <td><div>${esc(line.name)}</div><div class="muted">${esc(w.method)}</div></td>
+          <td class="secondary nowrap">${esc(w.account)}</td>
+          <td class="secondary nowrap">${esc(w.stage)}</td>
+          <td>${pill(w.state, w.stateLabel)}</td>
+          <td>${person(w.owner, w.ownerAvatar, w.ownerColor)}</td>
+          <td>${progress(w.progress, w.state)}</td>
+          <td class="secondary nowrap">${esc(w.artifact)}</td>
+          <td class="clamp-2 muted" title="${esc(w.next)}">${esc(w.next)}</td>
+        </tr>`;
+      });
+    });
+    tbody.innerHTML = rows;
+
+    // Legend
+    const legend = [
+      { label: '执行中', color: '#2f5bff' },
+      { label: '等待中', color: '#8b929f' },
+      { label: 'Review', color: '#c07d10' },
+      { label: 'Blocked', color: '#d64545' },
+      { label: '可发布', color: '#0f9d63' }
+    ];
+    document.getElementById('legend-list').innerHTML = legend.map(l => `
+      <div class="aside-row">
+        <div class="left"><span class="legend-dot" style="background:${l.color}"></span><span>${esc(l.label)}</span></div>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>

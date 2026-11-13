@@ -1,0 +1,153 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间":
+    - text: 业务空间
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - generic: 对话 · Quick Access
+  - button "陈真 资深运营":
+    - generic: 陈真
+    - generic: 资深运营
+  - button "林月 调研":
+    - generic: 林月
+    - generic: 调研
+  - button "苏晴 视觉":
+    - generic: 苏晴
+    - generic: 视觉
+  - button "何川 数据分析":
+    - generic: 何川
+    - generic: 数据分析
+  - button "孙浩 Workspace 负责人":
+    - generic: 孙浩
+    - generic: Workspace 负责人
+  - button "林涛 研发部部长":
+    - generic: 林涛
+    - generic: 研发部部长
+  - button "C CEO 知行创意（fixture 公司）":
+    - generic: C
+    - generic: CEO
+    - generic: 知行创意（fixture 公司）
+- main:
+  - link "Curis":
+    - /url: "#"
+  - generic: /
+  - generic: CEO 工作台
+  - generic: 已同步
+  - button "通知":
+  - button "主题" [active]:
+  - button "Utility"
+  - heading "今日经营" [level=1]
+  - generic: 9 月 12 日 周五 · 简报只呈现需要你注意的事，全部有事实来源
+  - heading "今日简报" [level=2]
+  - generic: 按影响排序 · 4 项
+  - generic: 需要决定
+  - generic: 《AI 工具测评》定位调整待你确认
+  - generic: 林月 · 内容增长部 · AI 科技 · 制作被阻塞；研究指向教程向（EST）
+  - generic: 需要决定
+  - generic: 灰度发布：登录模块 v1.4 首批 5%
+  - generic: 孙浩 · 研发部 · Curis 研发 · 生产发布不可逆，需你批准
+  - generic: 结果
+  - generic: 登录模块 v1.3 联调通过
+  - generic: 周岚 · 研发部 · 可作 v1.4 回归基线
+  - generic: 进行中
+  - generic: 选题研究进入对比分析阶段
+  - generic: 林月 · AI 科技 · 预计 30 分钟后输出 3 个选题
+  - generic: 进行中
+  - generic: 宠物寄养：行业研究与 Workspace 设计进行中
+  - generic: 顾行 / 苏格 · 空间工程部 · 激活建议将在下午提交
+  - generic: 会议
+  - generic: 16:00 周五复盘 · AI 科技内容转化
+  - generic: 陈真 组织 · 4 人 · 议程含定位调整确认
+  - heading "正在运行" [level=2]
+  - generic: 3 个工作 · 2 位员工
+  - generic: 工作中
+  - generic: AI 工具选题机会研究
+  - button "查看工作"
+  - generic: 林
+  - text: 林月 · 调研 / 文案 · 内容增长工作空间
+  - generic: ✓
+  - text: 收集近 7 天相关笔记评论样本 + 搜索词热度（信号）
+  - generic: ✓
+  - text: 对比 5 个对标账号近 30 天内容结构
+  - generic: 输出 3 个可执行选题与理由（Intent 候选）
+  - generic: 交接至 内容运营：排期制作
+  - generic: 当前：正在对比「教程 + 工具清单」组合的互动率数据 · 18 分钟 · ◇ 4.2
+  - generic "工具活动（2）· 默认折叠"
+  - text: 交接至 内容运营：生成 3 个实测选题（默认下一 Responsibility，非强制 DAG）
+  - generic: 工作中
+  - generic: 登录模块重构 v1.4
+  - button "查看工作"
+  - generic: 周
+  - text: 周岚 · 开发工程师 · Curis 研发
+  - generic: ✓
+  - text: 产品 / 需求确认（王琳）
+  - generic: ✓
+  - text: 架构确认（林涛）
+  - generic: ✓
+  - text: Runtime 实现
+  - generic: Frontend Adapter 与接口联调
+  - generic: 交接至 测试：回归测试与质量证据
+  - generic: Review / 发布门禁（孙浩）
+  - generic: 当前：正在联调登录接口错误码与前端提示映射（异常分支修复） · 1 小时 12 分 · ◇ 12.6
+  - generic "工具活动（3）· 默认折叠"
+  - text: 交接至 测试验证（赵敏）→ Review / 发布门禁（孙浩）
+  - text: 查看结果 · 登录模块重构 v1.3 联调通过
+  - generic: 工作中
+  - generic: 宠物寄养市场与定价研究
+  - button "查看工作"
+  - generic: 顾
+  - text: 顾行 · 行业研究专家 · 宠物寄养工作空间
+  - generic: ✓
+  - text: 行业事实：本地生活服务宠物寄养供给与定价带
+  - generic: 竞品：3 个平台型竞品的服务结构
+  - generic: 受众：养宠人群分层与付费意愿（EST）
+  - generic: 输出行业研究简报（可引用证据）
+  - generic: 当前：正在对比 3 个平台型竞品的服务结构 · 32 分钟 · ◇ 5.5
+  - generic "工具活动（2）· 默认折叠"
+  - text: 交接至 空间设计（苏格）：作为 Workspace 设计输入
+  - heading "最新结果" [level=2]
+  - link "成果库 →":
+    - /url: "#/results"
+  - generic: DOC
+  - text: 选题研究简报 · AI 工具机会
+  - text: 林月 · 已完成 · 证据 2 条 · 被 1 处引用
+  - generic: DOC
+  - text: 《AI 工具测评 · 极简风》图文 v0.9
+  - text: 林月 · 待确认 · 证据 2 条 · 被 1 处引用
+  - generic: CODE
+  - text: 登录模块重构 v1.3 联调通过
+  - text: 周岚 · 已完成 · 证据 3 条 · 被 1 处引用
+  - heading "公司脉搏" [level=2]
+  - generic: 次级信息 · 点击展开
+  - generic: 价值
+  - generic: 两条主线：内容获客（增长验证中）、产品交付（v1.4 联调）
+  - generic: 执行
+  - generic: 3 个工作运行中 · 1 个阻塞待你
+  - generic: 供给
+  - generic: 模型用量 54% / 预算 · 连接器 2 个待授权
+  - generic: 风险
+  - generic: 825 选题合规边界（今日内）
+  - generic: 方向
+  - generic: 行业洞察新业务激活建议将在下午提交
+  - generic: 连续性
+  - generic: 周报已归档 · 上周决议 2 项已闭环
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你
+- generic "设计测试工具 — 非产品 UI":
+  - generic: STATE · DESIGN TOOL
+  - combobox:
+    - option "normal" [selected]
+    - option "emptyFirst"
+    - option "needsCEO"
+    - option "error"

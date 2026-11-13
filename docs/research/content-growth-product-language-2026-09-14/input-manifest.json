@@ -1,0 +1,78 @@
+{
+  "R1": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_CONTENT_GROWTH_BUSINESS_LOGIC_V2.md",
+    "sha256": "a44e9cc106b0a127e78363cd995277683b7e2bfa5f2dc3680e4acacdc2368087"
+  },
+  "R2": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_CONTENT_GROWTH_FULL_PRODUCT_CAPABILITY_DERIVATION.md",
+    "sha256": "6a4714fd2b849b7cb50cb766932fed21284321f94dade7e6fbf8ea56f0750d23"
+  },
+  "R3": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_DOUYIN_REAL_PLATFORM_OPERATING_DEEP_DIVE.md",
+    "sha256": "3de5954dc7c119257aa0a96ed875bed6e65a7009e94de7293f942c50770bf549"
+  },
+  "R4": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_CONTENT_GROWTH_AI_USER_OPERATING_BOUNDARY.md",
+    "sha256": "ec30ddcfc8712295f092f9a0a942a074ab4b0607a3e8624361379d7370dc3ecf"
+  },
+  "R5": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_CONTENT_GROWTH_PRODUCT_LANGUAGE_DERIVATION.md",
+    "sha256": "ee26f2495242b2bf94e34454ca8244da934550c7afa99f7900c49087dab2a480"
+  },
+  "R6": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/full-product-rethink-2026-09-14/CURIS_2026_09_14_FULL_PRODUCT_RETHINK_REVIEW.md",
+    "sha256": "4bb3de24dea0deaa40f2a2ffdab67528dbc79e9c6e528517955871a9a78be7f2"
+  },
+  "R7": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/research/aitoearn-execution-provider-2026-09-14/CURIS_AITO_EARN_SOCIAL_PLATFORM_EXECUTION_PROVIDER_REVIEW.md",
+    "sha256": "0d1551fd5a89f1ae3bbb9f34cb21175a15abbbf4aa23c3a704cd5003f53a030f"
+  },
+  "A0": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/PRODUCT_DOCUMENT_POINTER.md",
+    "sha256": "8c20737de7d89d94c51aca4de52a524f0e44bd02b63bba4001986bb80c9ed761"
+  },
+  "A1": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Blueprint.html",
+    "sha256": "b46aa46e4b50fa14c1b489d0b8d76532171d59a2e087d0fa8380f659cec1d77d"
+  },
+  "A2": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_Master_Map.md",
+    "sha256": "23fab713e92d29ec7b58bfcd99b3e8078424d1ee93cb5570052c100c52e6f97d"
+  },
+  "A3": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/Curis_Product_UI_Blueprint.html",
+    "sha256": "c185f0a0e20f3dad94da7889d595029441c334b89641bf5317285895d13d2a83"
+  },
+  "A4": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/01_Product/CURIS_PRODUCT_STRUCTURE_BASELINE_PRE_DESIGN_RESEARCH.md",
+    "sha256": "674fde2b66817f16b3e048af5d5c2cc3a650b061bf0c56d90efa898d7eccb059"
+  },
+  "A5": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Workspace_Shell_Contract_And_Shared_Patterns.md",
+    "sha256": "b8bec77dcbc939882b6f6534d56efbe54fdde5f18f22278ecb58e577b21e5a11"
+  },
+  "A6": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Company_OS_Shared_Authority.md",
+    "sha256": "2c40d35a26dba033948ef0aeb0f74bd7b01bd30ce9b861c9d5c030c10a9d59ec"
+  },
+  "A7": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Content_Growth_Domain_Authority.md",
+    "sha256": "fde22d15496e1dd365fb772ea25e676b79983adc20d0a495074fbcc3d364a3db"
+  },
+  "A8": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CURIS_CORE_PRODUCT_AUTHORITY_REPAIR.md",
+    "sha256": "75827d741b9105f2df39cad6ef0d0902ad5d3315980be8e4de7263842c3e1ac4"
+  },
+  "A9": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/reviews/CONTENT_GROWTH_CEO_AUTHORITY_DECISION_RECONCILIATION.md",
+    "sha256": "edbfece4b56738425db570001172c99db7573ff2be8959de94761f51f55e7fba"
+  },
+  "R8": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/03_Design/Curis_Content_Growth_Operating_Strategy_UX_Translation.md",
+    "sha256": "344bb9ca988968a5e17021c61b81834acf341b67448931ba338b8d122172cd91"
+  },
+  "I1": {
+    "path": "/Users/yy/Documents/Curis AI Workspace/docs/00_Context/CURRENT_STATE.md",
+    "sha256": "fcdc3e125f8c1e7837faed2dea66bc35d542ea3a941fa3fe0f719da51da33bfc"
+  }
+}

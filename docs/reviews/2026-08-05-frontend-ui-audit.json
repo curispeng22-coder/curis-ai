@@ -1,0 +1,259 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "theme": "dark",
+  "errorTotal": 0,
+  "warnTotal": 1,
+  "results": [
+    {
+      "route": "/",
+      "name": "首页入口",
+      "sampled": 402,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office",
+      "name": "总裁办公室",
+      "sampled": 402,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/organization",
+      "name": "组织中心",
+      "sampled": 462,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/organization/employees",
+      "name": "员工列表",
+      "sampled": 570,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/projects",
+      "name": "项目中心",
+      "sampled": 312,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/execution",
+      "name": "执行工作台",
+      "sampled": 177,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/capabilities",
+      "name": "能力中心",
+      "sampled": 272,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/knowledge",
+      "name": "知识中心",
+      "sampled": 217,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/knowledge/memory",
+      "name": "记忆库",
+      "sampled": 181,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/decisions",
+      "name": "待决策",
+      "sampled": 223,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/reports",
+      "name": "报告中心",
+      "sampled": 245,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/analytics",
+      "name": "数据分析",
+      "sampled": 246,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/company-runtime",
+      "name": "公司运行视图",
+      "sampled": 187,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/runtime-trace",
+      "name": "运行轨迹",
+      "sampled": 145,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/strategy-room",
+      "name": "战略室",
+      "sampled": 205,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/brainstorm",
+      "name": "头脑风暴",
+      "sampled": 199,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/ceo-office/settings",
+      "name": "设置",
+      "sampled": 172,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/guide",
+      "name": "引导",
+      "sampled": 122,
+      "skeleton": {
+        "topbar": 52,
+        "sidebar": 220
+      },
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "name": "登录",
+      "sampled": 7,
+      "skeleton": {},
+      "errorCount": 0,
+      "warnCount": 1,
+      "violations": [
+        {
+          "rule": "R6-后端接口",
+          "level": "warn",
+          "detail": "Failed to load resource: the server responded with a status of 404 (Not Found) · http://127.0.0.1:8000/api/auth/local/status",
+          "selector": "-",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "route": "/onboarding",
+      "name": "初始化",
+      "sampled": 26,
+      "skeleton": {},
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    },
+    {
+      "route": "/control/secret-vault",
+      "name": "凭据保管",
+      "sampled": 20,
+      "skeleton": {},
+      "errorCount": 0,
+      "warnCount": 0,
+      "violations": []
+    }
+  ]
+}

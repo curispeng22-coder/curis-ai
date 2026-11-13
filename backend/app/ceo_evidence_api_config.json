@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "timeline_default_limit": 200,
+  "timeline_max_limit": 1000,
+  "org_tree_include_skills": true,
+  "org_tree_include_tools": true,
+  "pending_include_resolved_recent_days": 7
+}

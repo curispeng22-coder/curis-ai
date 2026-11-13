@@ -1,0 +1,18 @@
+{
+  "main": {
+    "component": "object-list",
+    "title": "作品库",
+    "objectType": "WritingBook"
+  },
+  "context": {
+    "component": "object-detail",
+    "title": "章节目录",
+    "objectType": "WritingChapter"
+  },
+  "utility": {
+    "component": "object-create-form",
+    "title": "添加章节记录",
+    "objectType": "WritingChapter",
+    "action": "core.domain-object.create"
+  }
+}

@@ -1,0 +1,46 @@
+sequenceDiagram
+    autonumber
+    actor Lead as 主理人(运行脚本)
+    participant R as RealRDExecutor
+    participant L as LocalRDToolset(read)
+    participant W as LocalRDToolset(write)
+    participant G as LocalRDToolset(git)
+    participant M as ModelGatewayAdapter
+    participant E as EvolutionEventLog
+
+    Lead->>R: run(issue_spec)
+    R->>E: _claim_once(issue_id) 单主占锁(begin immediate)
+    alt 同 Issue 已在进行
+        E-->>R: 已存在 real_rd.run.started
+        R-->>Lead: RealRDExecutorError(issue_already_running)
+    else 占锁成功
+        loop 每轮 round = 1..max_rounds
+            R->>L: read_file(target_files) 取 sha256(preimage)
+            L-->>R: {path, sha256}
+            R->>R: _build_prompt(instructions + 内容 + last_failure)
+            R->>M: execute(prompt) 真实网关调用
+            M-->>R: {output, total_tokens, estimated_cost}
+            R->>R: _parse_diff(output) → 原始 unified diff
+            R->>W: _apply_diff_transactional({diff, preimage_hashes})
+            W-->>R: ({files:[{path,preimage,postimage}]}, rollback)
+            R->>W: run_test({command_id})
+            alt 测试通过(exit_code=0)
+                W-->>R: {exit_code:0}
+                R-->>R: break → status=succeeded
+            else 测试失败
+                W-->>R: LocalRDToolError(command_failed)
+                R->>W: rollback() 回滚本轮 diff
+                R-->>R: last_failure=失败输出, 进入下一轮
+            end
+        end
+        alt 成功
+            R->>G: git_read({operation:"diff"})
+            G-->>R: {output: 真实 diff 文本}
+            R->>E: record("real_rd.run.succeeded", issue_id, {rounds,tokens,cost})
+            R-->>Lead: {status:succeeded, diff_text, rounds, ...}
+        else 失败(轮次耗尽/无法解析)
+            R->>W: rollback() 确保无残留
+            R->>E: record("real_rd.run.failed", issue_id, {rounds,...})
+            R-->>Lead: {status:failed, diff_text:"", ...}
+        end
+    end

@@ -1,0 +1,17 @@
+{
+  "packageId": "com.curis.local.content-growth",
+  "version": "0.1.0",
+  "digest": "aec85f973ca864f581c8fe6f800b68a1b9c23dc25ad5e194ca4e61e9edddcc0d",
+  "published": false,
+  "decision": null,
+  "scope": [
+    "LOCAL_GRAPHIC_AUTHORING",
+    "MANUAL_ADOPTION",
+    "CAPABILITY_GATED_EMPLOYEE_SUGGESTION"
+  ],
+  "support": "Exact Core/App version; isolated evidence pending",
+  "retention": "retain-business-data-read-only",
+  "migration": "NO_AUTOMATIC_MIGRATION",
+  "providerFeeGrant": false,
+  "notice": "内部候选验证：尚未正式发行。本地编辑与人工采用；员工建议另需模型、责任和准确执行授权。四格式与逐账号发布、回执、复盘继续独立交付。"
+}

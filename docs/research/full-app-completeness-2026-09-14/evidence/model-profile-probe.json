@@ -1,0 +1,95 @@
+{
+  "method": "isolated AST execution of current _profile only; synthetic metadata, no app imports, credentials, database or network",
+  "source": "/Users/yy/Documents/Curis AI Workspace/backend/app/ai_capability_registry.py",
+  "sha256": "0e71cca169772b0a7a21354c2b6cecc7308ab335327fafe840b1a22b09801989",
+  "cases": [
+    {
+      "case": "embedding_only",
+      "input": {
+        "supportedGenerationMethods": [
+          "embedContent"
+        ]
+      },
+      "output": {
+        "features": {
+          "chat": "supported",
+          "reasoning": "unknown",
+          "coding": "unknown",
+          "vision": "unknown",
+          "image": "unknown",
+          "audio": "unknown",
+          "embedding": "supported",
+          "tool_calling": "unknown",
+          "structured_output": "unknown",
+          "context": null,
+          "location": "cloud"
+        },
+        "evidence": "provider_api",
+        "cost": {
+          "status": "unknown",
+          "source": "official"
+        },
+        "availability": "available"
+      }
+    },
+    {
+      "case": "synthetic_nested_capability_and_token_fields",
+      "input": {
+        "max_input_tokens": 200000,
+        "max_tokens": 16000,
+        "capabilities": {
+          "vision": {
+            "supported": false
+          }
+        }
+      },
+      "output": {
+        "features": {
+          "chat": "supported",
+          "reasoning": "unknown",
+          "coding": "unknown",
+          "vision": "supported",
+          "image": "unknown",
+          "audio": "unknown",
+          "embedding": "unknown",
+          "tool_calling": "unknown",
+          "structured_output": "unknown",
+          "context": null,
+          "location": "cloud"
+        },
+        "evidence": "provider_api",
+        "cost": {
+          "status": "unknown",
+          "source": "official"
+        },
+        "availability": "available"
+      },
+      "note": "Synthetic robustness input, not a claimed exact live Claude response. max_input_tokens/max_tokens are documented; the vision key shape here tests dictionary truthiness only."
+    },
+    {
+      "case": "empty_metadata",
+      "input": {},
+      "output": {
+        "features": {
+          "chat": "supported",
+          "reasoning": "unknown",
+          "coding": "unknown",
+          "vision": "unknown",
+          "image": "unknown",
+          "audio": "unknown",
+          "embedding": "unknown",
+          "tool_calling": "unknown",
+          "structured_output": "unknown",
+          "context": null,
+          "location": "cloud"
+        },
+        "evidence": "conservative_curis_default",
+        "cost": {
+          "status": "unknown",
+          "source": "official"
+        },
+        "availability": "available"
+      }
+    }
+  ]
+}

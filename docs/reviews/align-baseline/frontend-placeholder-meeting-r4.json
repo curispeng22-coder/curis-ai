@@ -1,0 +1,7 @@
+{
+  "route": "/ceo-office/meeting",
+  "hasTerraEmpty": true,
+  "hasPlanningCopy": true,
+  "blueprintNote": true,
+  "consoleErrors": []
+}

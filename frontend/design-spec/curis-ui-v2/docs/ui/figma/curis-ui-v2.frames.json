@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "figmaPage": "Curis CEO Office / V2 Handoff",
+  "scope": "primary product surfaces",
+  "fullPageInventory": "curis-ui-v2.all-pages.json",
+  "framePolicy": {"desktop": [1440, 900], "tablet": [1024, 768], "mobile": [390, 844]},
+  "states": ["default", "hover", "focus", "expanded", "drawer-open", "empty", "partial", "error", "disabled", "success"],
+  "frames": [
+    {"id":"ceo-home","name":"01 CEO Office / 总部驾驶舱","route":"pages/ceo-home.html","states":["default","empty","partial","error"]},
+    {"id":"project-center","name":"02 Project Center / 全部项目总览","route":"pages/project-center.html","states":["default","hover","empty","error"]},
+    {"id":"project-dept","name":"03 Project Department / 部门项目合集","route":"pages/project-dept.html?dept=研发部","states":["default","hover","empty","error"]},
+    {"id":"org-center","name":"04 Organization Center / 组织总览","route":"pages/org-center.html","states":["default","hover","empty","partial","error"]},
+    {"id":"org-employees","name":"05 HR / 人事部员工管理","route":"pages/org-employees.html","states":["default","hover","empty","error"]},
+    {"id":"capability-center","name":"06 Capability Center / 能力中心","route":"pages/capability-center.html","states":["default","hover","empty","partial","error"]},
+    {"id":"analytics","name":"07 Analytics / 经营分析","route":"pages/analytics.html","states":["default","empty","partial","error"]},
+    {"id":"decision-center","name":"08 Decision Center / 决策中心","route":"pages/decision-center.html","states":["default","hover","empty","error"]},
+    {"id":"reports","name":"09 Reports / 重要汇报","route":"pages/reports.html","states":["default","hover","empty","error"]},
+    {"id":"strategy-room","name":"10 Strategy Room / 战略会议室","route":"pages/strategy-room.html","states":["default","hover","empty","error"]},
+    {"id":"brainstorm","name":"11 Brainstorm / 头脑风暴室","route":"pages/brainstorm.html","states":["default","empty","error"]},
+    {"id":"knowledge","name":"12 Knowledge / 知识中心","route":"pages/knowledge.html","states":["default","empty","error"]},
+    {"id":"execution","name":"13 Execution / 执行工作台","route":"pages/execution.html","states":["default","empty","partial","error"]},
+    {"id":"settings","name":"14 Company Settings / 公司设置","route":"pages/settings.html","states":["default","error"]},
+    {"id":"company-runtime","name":"15 Company Runtime / 公司运行视图","route":"pages/company-runtime.html","states":["default","partial","error"]},
+    {"id":"project-miniapp","name":"16 Project Detail / 微信小程序研发","route":"pages/project-miniapp-detail.html","states":["default","create-dialog","resource-drawer","success"]},
+    {"id":"project-xhs","name":"17 Project Detail / 小红书自动化 Workflow","route":"pages/project-xhs-workflow-detail.html","states":["default","create-dialog","resource-drawer","success"]},
+    {"id":"department-create","name":"18 Create Department / 新建部门","route":"pages/department-create.html","states":["default","focus","success","error"]},
+    {"id":"employee-create","name":"19 Create Employee / 新增员工","route":"pages/employee-create.html","states":["default","focus","success","error"]}
+  ],
+  "componentFrames": [
+    {"name":"Nav / Desktop / Expanded","states":["default","hover","expanded"]},
+    {"name":"Nav / Mobile / Drawer","states":["closed","drawer-open"]},
+    {"name":"Card / Empty","states":["empty","error","partial"]},
+    {"name":"Dialog / Resource Picker","states":["closed","open","selected"]},
+    {"name":"Button / Primary","states":["default","hover","focus","disabled"]}
+  ]
+}

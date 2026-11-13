@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Growth · Continuous Content Journey — Wireframe (Mid-fidelity)</title>
+<style>
+  :root{
+    --bg:#1a1c1f; --surface-1:#202327; --surface-2:#24282d; --surface-3:#2a2f36;
+    --border:#333a42; --text-1:#e6e9ec; --text-2:#9aa3ad; --text-3:#6b7480;
+    --accent:#2e9e63; --accent-deep:#1f7a4d; --warning:#d9952a; --danger:#d05a4f; --success:#2e9e63;
+    --r1:4px; --r2:8px; --r3:12px; --pill:999px; --nav-w:220px; --ctx-w:260px; --util-w:360px;
+    --font:system-ui,-apple-system,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;font-family:var(--font);}
+  body{margin:0;background:var(--bg);color:var(--text-1);font-size:13px;line-height:1.5;}
+  .app{display:grid;min-height:100vh;}
+  .app.c0{grid-template-columns:var(--nav-w) 1fr;}
+  .app.c1{grid-template-columns:var(--nav-w) var(--ctx-w) 1fr;}
+  .app.c2{grid-template-columns:var(--nav-w) 1fr var(--util-w);}
+  .app.c3{grid-template-columns:var(--nav-w) var(--ctx-w) 1fr var(--util-w);}
+  .col{display:flex;flex-direction:column;min-width:0;min-height:0;}
+  .col.hide{display:none;}
+  .pane-header{display:flex;align-items:center;justify-content:space-between;height:44px;min-height:44px;padding:0 12px;border-bottom:1px solid var(--border);background:var(--surface-1);}
+  .pane-tag{font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:var(--pill);padding:1px 7px;}
+  .tag-shell{color:#7fb0ff;border-color:#2c4a73;}
+  .tag-cg{color:#8fe0b0;border-color:#2c5a40;}
+  .traffic{display:flex;gap:6px;}
+  .traffic i{width:11px;height:11px;border-radius:50%;background:#3a3f47;display:inline-block;}
+  .search{color:var(--text-2);font-size:16px;}
+  .t-toggle{width:26px;height:26px;border:1px solid var(--border);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:13px;cursor:pointer;}
+  .t-toggle.on{color:var(--accent);border-color:var(--accent);}
+  .nav-col{border-right:1px solid var(--border);background:var(--surface-1);}
+  .nav{padding:10px 10px 0;}
+  .brand{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;font-weight:600;}
+  .brand .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#1d6b46);}
+  .nav-section{font-size:11px;color:var(--text-3);padding:10px 8px 4px;}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r2);color:var(--text-2);margin-bottom:2px;}
+  .nav-item .ico{width:16px;text-align:center;}
+  .nav-item.active{background:var(--surface-3);color:var(--text-1);}
+  .nav-item.child{margin-left:18px;font-size:12px;}
+  .nav-item.child.active{color:var(--accent);}
+  .nav-foot{position:absolute;bottom:10px;left:10px;color:var(--text-3);font-size:11px;}
+  .content{padding:18px 24px;overflow:auto;flex:1;position:relative;}
+  .mock-badge{position:absolute;top:10px;right:14px;font-size:10px;color:var(--text-3);border:1px dashed var(--border);border-radius:var(--pill);padding:2px 8px;}
+  .crumb{color:var(--text-2);font-size:12px;}
+  .crumb b{color:var(--text-1);}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:var(--r2);padding:7px 14px;font-size:12px;cursor:pointer;font-family:var(--font);}
+  .btn.ghost{background:transparent;color:var(--text-1);border:1px solid var(--border);}
+  .btn.sm{padding:5px 11px;font-size:12px;}
+  .legend{margin-top:22px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border);padding-top:12px;}
+  .legend code{background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--text-2);}
+  /* journey */
+  .theme{font-size:18px;font-weight:700;margin:0 0 2px;}
+  .theme-sub{color:var(--text-2);margin:0 0 16px;font-size:13px;}
+  .step-h{display:flex;align-items:center;gap:9px;margin:20px 0 10px;font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;}
+  .step-h .n{width:20px;height:20px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-2);}
+  .step-h.done .n{background:var(--accent-deep);color:#fff;}
+  .card{border:1px solid var(--border);border-radius:var(--r2);padding:13px 15px;background:var(--surface-1);margin-bottom:10px;}
+  .card.cg{border-color:#2c5a40;}
+  .card .t{font-weight:600;margin-bottom:3px;}
+  .card .d{color:var(--text-2);font-size:12px;}
+  .pill{font-size:11px;border-radius:var(--pill);padding:2px 9px;border:1px solid var(--border);color:var(--text-2);}
+  .pill.green{color:var(--success);border-color:#2c5a40;}
+  .pill.work{color:var(--accent);border-color:#2c5a40;}
+  .pill.wait{color:var(--text-3);}
+  .pill.warn{color:var(--warning);border-color:#5a4420;}
+  .pill.skip{color:var(--text-3);background:var(--surface-2);}
+  /* account production rows */
+  .acc-row{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;background:var(--surface-1);margin-bottom:9px;}
+  .acc-ava{width:36px;height:36px;border-radius:9px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;}
+  .acc-body{flex:1;min-width:0;}
+  .acc-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .acc-name{font-weight:600;}
+  .acc-format{font-size:12px;color:var(--text-2);}
+  .acc-status{margin-left:auto;font-size:11px;}
+  .acc-detail{font-size:12px;color:var(--text-2);margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .reuse{font-size:11px;color:#7fb0ff;border:1px solid #2c4a73;border-radius:var(--pill);padding:1px 8px;}
+  .acc-acts{margin-top:8px;display:flex;gap:8px;}
+  .acc-acts .lnk{font-size:11px;color:var(--accent);text-decoration:underline;cursor:pointer;}
+  /* AI bubble */
+  .ai{display:flex;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:13px 15px;margin:12px 0;max-width:680px;}
+  .ai .curis{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1d6b46);flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;}
+  .ai .body{font-size:13px;}
+  .ai .acts{margin-top:9px;display:flex;gap:8px;}
+  /* presence inline */
+  .pres-inline{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);}
+  .ava-sm{width:24px;height:24px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:11px;flex:none;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .dot.work{background:var(--accent);} .dot.wait{background:var(--text-3);} .dot.done{background:var(--success);}
+  /* context / utility */
+  .ctx-col,.util-col{background:var(--surface-2);border-right:1px solid var(--border);}
+  .util-col{border-right:0;border-left:1px solid var(--border);}
+  .sig{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .sig:last-child{border-bottom:0;}
+  .sig .src{font-size:11px;color:var(--text-3);}
+  .util-card{border:1px solid var(--border);border-radius:var(--r2);padding:12px;background:var(--surface-1);margin-bottom:10px;}
+  .metrics{display:flex;gap:18px;}
+  .metric .v{font-size:18px;font-weight:700;}
+  .metric .l{font-size:11px;color:var(--text-3);}
+</style>
+</head>
+<body>
+<div class="app c1" id="app">
+
+  <!-- NAVIGATION (SHELL · T1) -->
+  <div class="col nav-col">
+    <div class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span class="search">🔍</span><span class="pane-tag tag-shell">SHELL · T1</span></div>
+    </div>
+    <div class="nav">
+      <div class="brand"><span class="logo"></span> Curis</div>
+      <div class="nav-item"><span class="ico">🏠</span> 首页 / CEO 工作台</div>
+      <div class="nav-section">业务空间</div>
+      <div class="nav-item active"><span class="ico">🗂</span> 业务空间</div>
+      <div class="nav-item child active"><span class="ico">▶</span> 内容增长</div>
+      <div class="nav-item"><span class="ico">🔬</span> 研发办公室</div>
+      <div class="nav-section">其他</div>
+      <div class="nav-item"><span class="ico">🧩</span> 组织中心</div>
+      <div class="nav-item"><span class="ico">🎯</span> 人才市场</div>
+      <div class="nav-item"><span class="ico">📚</span> 资料库</div>
+      <div class="nav-item"><span class="ico">💬</span> 会议</div>
+      <div class="nav-foot">设置 · 帮助与反馈</div>
+    </div>
+  </div>
+
+  <!-- CONTEXT (SHELL · T2 · CG: 为什么值得做 / 选题信号) -->
+  <div class="col ctx-col" id="ctxCol">
+    <div class="pane-header">
+      <span style="font-size:12px;color:var(--text-2);">为什么值得做 · 选题信号</span>
+      <span class="pane-tag tag-cg">CG · T2</span>
+    </div>
+    <div class="content">
+      <div class="sig"><span class="dot work"></span><div><div>「AI 浏览器」近 7 天讨论量 +210%</div><div class="src">来源：平台热点信号</div></div></div>
+      <div class="sig"><span class="dot work"></span><div><div>竞品已发 3 条相关测评，互动偏高</div><div class="src">来源：对标监测</div></div></div>
+      <div class="sig"><span class="dot wait"></span><div><div>用户常问「哪个 AI 浏览器好用」</div><div class="src">来源：评论挖掘</div></div></div>
+      <div class="sig"><span class="dot wait"></span><div><div>「办公效率」是品牌核心话题</div><div class="src">来源：品牌资料（Curis AI）</div></div></div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-3);border-top:1px solid var(--border);padding-top:10px;">点击 Main Header 的 <code style="background:var(--surface-2);padding:1px 5px;border-radius:4px;">▤(T2)</code> 收起本栏。</div>
+    </div>
+  </div>
+
+  <!-- MAIN (SHELL · CG content: Continuous Content Journey) -->
+  <div class="col main-col">
+    <div class="pane-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="t-toggle on" id="t2" title="为什么值得做 (T2)">▤</span>
+        <span class="crumb" id="mainCrumb">业务空间 / 内容增长 / <b>一条内容</b></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="pane-tag tag-shell">MAIN · SHELL</span>
+        <span class="t-toggle" id="t3" title="数据回流 (T3)">▥</span>
+      </div>
+    </div>
+    <div class="content">
+      <span class="mock-badge">示例数据</span>
+      <div id="journeyView">
+      <div class="theme">AI 浏览器正在改变办公方式</div>
+      <div class="theme-sub">这是同一条内容，在几个账号上分别推进 —— 你不用管「怎么分发给谁」，Curis 按账号分别制作与发布。</div>
+
+      <!-- STEP 1: AI 发现选题 · I1 入口（A 自动 / B 用户采用） -->
+      <div class="step-h done"><span class="n">1</span> AI 发现选题（符合节奏会<b>自动</b>开始；也可主动「做这个」）</div>
+      <div class="card cg">
+        <div class="t">🔥 平台信号：很多人最近在讨论 AI 浏览器</div>
+        <div class="d">Curis 从热点与品牌资料里发现这是一个值得你做的选题（详见左侧「为什么值得做」）。符合你的经营节奏时，Curis 会直接开始制作；你也可以点「做这个」主动采用。</div>
+      </div>
+
+      <!-- STEP 2: 进入制作 -->
+      <div class="step-h done"><span class="n">2</span> 已进入制作</div>
+      <div class="card">
+        <div class="t">✓ 这条内容进入制作（自动或你主动采用）</div>
+        <div class="d">Curis 接下来会建议发到哪些账号、并为每个账号分别准备。</div>
+      </div>
+
+      <!-- STEP 3: Curis 建议发到哪些账号 -->
+      <div class="step-h done"><span class="n">3</span> Curis 建议发到哪些账号</div>
+      <div class="ai">
+        <div class="curis">C</div>
+        <div class="body">
+          这几个品牌账号都能发这条内容。我的建议：
+          <b>抖音 · 小红书 · B站</b> 国内用户为主，建议发；<b>TikTok</b> 这条偏国内办公场景，暂不建议发。
+          你也可以随时增减。
+          <div class="acts">
+            <button class="btn sm">按建议来</button>
+            <button class="btn ghost sm">我要改</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 + 5: 针对不同账号制作 / 每账号状态 -->
+      <div class="step-h done"><span class="n">4</span> 针对不同账号，分别制作</div>
+      <div class="d" style="color:var(--text-2);margin:-4px 0 10px;font-size:12px;">同一主题，每个账号用最合适的形式呈现；能共用的素材（脚本 / 文案）会自动复用，不用你重复给。</div>
+
+      <!-- 抖音 -->
+      <div class="acc-row">
+        <div class="acc-ava">🎵</div>
+        <div class="acc-body">
+          <div class="acc-top">
+            <span class="acc-name">抖音 · Curis AI</span>
+            <span class="acc-format">30 秒口播视频</span>
+            <span class="pill work">制作中</span>
+          </div>
+          <div class="acc-detail">
+            <span class="reuse">已复用脚本 / 文案</span>
+            <span class="pres-inline"><span class="ava-sm">真</span> 视频制作 · 陈真 正在制作</span>
+          </div>
+          <div class="acc-acts"><span class="lnk" data-pw="prod-douyin">编辑抖音版本 →</span></div>
+        </div>
+      </div>
+
+      <!-- 小红书 -->
+      <div class="acc-row">
+        <div class="acc-ava">📕</div>
+        <div class="acc-body">
+          <div class="acc-top">
+            <span class="acc-name">小红书 · Curis AI</span>
+            <span class="acc-format">图文笔记</span>
+            <span class="pill green">已完成</span>
+          </div>
+          <div class="acc-detail">
+            <span class="reuse">已复用脚本 / 文案</span>
+            <span class="pres-inline"><span class="ava-sm">芳</span> 内容策划 · 王芳 已整理</span>
+          </div>
+          <div class="acc-acts"><span class="lnk" data-pw="xhs-pub">查看小红书发布详情 →</span></div>
+        </div>
+      </div>
+
+      <!-- B站 -->
+      <div class="acc-row">
+        <div class="acc-ava">📺</div>
+        <div class="acc-body">
+          <div class="acc-top">
+            <span class="acc-name">B站 · Curis AI</span>
+            <span class="acc-format">8 分钟教程</span>
+            <span class="pill wait">等待制作</span>
+          </div>
+          <div class="acc-detail">
+            <span class="pres-inline"><span class="dot wait"></span> 等抖音口播完成后排期</span>
+          </div>
+          <div class="acc-acts"><span class="lnk" data-pw="prod-bili">准备 B站版本 →</span></div>
+        </div>
+      </div>
+
+      <!-- TikTok -->
+      <div class="acc-row" style="background:var(--surface-2);">
+        <div class="acc-ava">🌐</div>
+        <div class="acc-body">
+          <div class="acc-top">
+            <span class="acc-name">TikTok · Curis AI</span>
+            <span class="acc-format">—</span>
+            <span class="pill skip">暂不发布</span>
+          </div>
+          <div class="acc-detail">
+            <span>这个选题主要针对国内办公场景，暂不建议发 TikTok。</span>
+          </div>
+          <div class="acc-acts"><span class="lnk" data-add="tiktok">要加也行，点这里 →</span></div>
+        </div>
+      </div>
+
+      <!-- STEP 6: 发布 · I2 默认自动排期 -->
+      <div class="step-h"><span class="n">5</span> 发布（默认自动）</div>
+      <div class="card">
+        <div class="t">各账号按各自节奏自动发布</div>
+        <div class="d">小红书 · 今晚 20:00 自动发布（图文，已完成）；抖音制作完自动排期；B站随后；不发 TikTok。只有异常（账号异常 / 超策略 / 风险）才让你决定。</div>
+        <div style="margin-top:8px;display:flex;gap:8px;">
+          <button class="btn ghost sm">调整小红书时间</button>
+          <button class="btn ghost sm">查看排期</button>
+        </div>
+      </div>
+
+      <!-- STEP 7: 数据回流 -->
+      <div class="step-h"><span class="n">6</span> 结果 · 数据回流</div>
+      <div class="card">
+        <div class="t">发布后，表现会自动回来</div>
+        <div class="d">阅读、互动、涨粉会出现在右侧「数据回流」(T3)，以及首页的「最近增长反馈」。</div>
+        <div style="margin-top:8px;"><button class="btn ghost sm" id="openT3">查看数据回流 →</button></div>
+      </div>
+
+      <div class="legend">
+        <b>Pane 标注</b>：<code>Navigation (SHELL·T1)</code> 六区导航 · <code>Main (SHELL)</code> 承载连续内容流（一条内容跨账号）· <code>Context (SHELL·CG 为什么值得做)</code> T2 · <code>Utility (SHELL·CG 数据回流)</code> T3。<br/>
+        <b>连续性核心</b>：用户始终在看「同一条内容」的进展，不是四个独立任务列表；账号差异（形式 / 状态）= 底层 Variant/Publication，但用户面只呈现「各账号分别制作 + 自动复用」。禁词：HIGH_REUSE / FULL_DIVERGENCE / Variant / Target Set / OfficeAccountBinding。<br/>
+        <b>I1 三路径（进入制作）</b>：A. DEFAULT AUTO = 符合经营节奏的选题 Curis 自动开始制作（无需先批准）；B. USER-INITIATED = 用户点「做这个」开始（机会面非审批队列）；C. DECISION REQUIRED = 仅品牌方向/超策略/合规版权/高成本/重大定位变化进 P7。本页演示一条由「采用 / 自动」进入的连续内容流。<br/>
+        <b>I2 自动发布</b>：STEP 5 发布默认自动排期，显示「XX · 今晚20:00 自动发布」+[调整]，非[确认]；仅异常才进 P7。<br/>
+        <b>AI 员工</b>：以「谁在负责 / 正在做」浮现（王芳 / 陈真），不暴露 Router / Assignment / Queue / Capacity。<br/>
+        <b>未暴露原词</b>：Target Account Set（=「发到哪些账号」三源合并）、Distribution Execution Policy（=「不发 TikTok / 等全部准备好再发」语义行为化）。
+      </div>
+      </div><!-- /journeyView -->
+
+      <!-- I3 Professional Workspace：Main 切入专业工作状态（非 Modal） -->
+      <div id="pwView" style="display:none;">
+        <div class="crumb" style="margin-bottom:10px;">业务空间 / 内容增长 / <b>AI 浏览器</b> / <span id="pwCtx">抖音版本 · 内容制作</span></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <button class="btn ghost sm" id="pwBack">← 返回内容流</button>
+          <span class="pill work" id="pwState">制作中</span>
+        </div>
+        <h2 id="pwTitle" style="font-size:17px;margin:0 0 4px;">内容制作 · 抖音版本</h2>
+        <div class="card">
+          <div class="t" id="pwHead">这是「内容制作」专业工作面（按需进入）</div>
+          <div class="d" id="pwBody">在当前内容语境下展开的专业工作状态：抖音 30 秒口播的编辑（脚本 / 分镜 / 字幕 / 封面）。Context 与 Utility 按专业面重声明（左：本版本脚本与素材；右：预览）。点「返回内容流」即回连续内容流，不感知跳办公室。</div>
+        </div>
+        <div class="pres-inline" style="margin-top:10px;"><span class="ava-sm">真</span> 视频制作 · 陈真 正在制作</div>
+        <div class="legend">
+          <b>I3 Professional Workspace ≠ Modal</b>：点「编辑XX版本 / 查看XX发布详情」→ <b>Main 切入专业工作状态</b>（非弹窗），Breadcrumb 保持内容语境（业务空间 / 内容增长 / AI浏览器 / XX版本），Context/Utility 按专业面重声明；点「返回内容流」即回连续内容流。各账号专业面复用现有 Shell Adaptive Surface / Deep Link，本轮不设计其内部布局。
+        </div>
+      </div><!-- /pwView -->
+    </div>
+  </div>
+
+  <!-- UTILITY (SHELL · T3 · CG: 数据回流) -->
+  <div class="col util-col hide" id="utilCol">
+    <div class="pane-header">
+      <span style="font-size:12px;color:var(--text-2);">数据回流 · 增长反馈</span>
+      <span class="pane-tag tag-cg">CG · T3</span>
+    </div>
+    <div class="content">
+      <div class="util-card"><div class="t">本条内容 · 已发布部分</div><div class="metrics" style="margin-top:8px;">
+        <div class="metric"><div class="v">12.4k</div><div class="l">小红书阅读</div></div>
+        <div class="metric"><div class="v">+340</div><div class="l">涨粉</div></div>
+        <div class="metric"><div class="v">5.6%</div><div class="l">互动率</div></div>
+      </div></div>
+      <div class="util-card"><div class="t">各账号表现</div>
+        <div class="pres"><span class="ava-sm" style="background:var(--surface-3);">📕</span><div><div class="nm" style="font-weight:600;">小红书 · Curis AI</div><div class="st" style="font-size:12px;color:var(--text-2);">图文已发 · 阅读 12.4k · 赞藏 980</div></div></div>
+        <div class="pres"><span class="ava-sm" style="background:var(--surface-3);">🎵</span><div><div class="nm" style="font-weight:600;">抖音 · Curis AI</div><div class="st" style="font-size:12px;color:var(--text-2);">口播制作中 · 尚未发布</div></div></div>
+        <div class="pres"><span class="ava-sm" style="background:var(--surface-3);">📺</span><div><div class="nm" style="font-weight:600;">B站 · Curis AI</div><div class="st" style="font-size:12px;color:var(--text-2);">教程等待制作</div></div></div>
+      </div>
+      <div class="util-card" style="color:var(--text-3);font-size:12px;">↗ 最大化可全屏（Frozen Shell S6）。数据来自真实 Connector Evidence（Receipt），不冒充员工产出。</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const app=document.getElementById('app');
+  const ctxCol=document.getElementById('ctxCol'), utilCol=document.getElementById('utilCol');
+  const t2=document.getElementById('t2'), t3=document.getElementById('t3');
+  let ctxOn=true, utilOn=false;
+  function render(){
+    ctxCol.classList.toggle('hide',!ctxOn);
+    utilCol.classList.toggle('hide',!utilOn);
+    t2.classList.toggle('on',ctxOn); t3.classList.toggle('on',utilOn);
+    const m=(ctxOn?1:0)+(utilOn?2:0);
+    app.className='app c'+m;
+  }
+  t2.onclick=()=>{ctxOn=!ctxOn;render();};
+  t3.onclick=()=>{utilOn=!utilOn;render();};
+  document.getElementById('openT3').onclick=()=>{utilOn=true;render();};
+  render();
+
+  // I3 Professional Workspace：Main 切入专业工作状态（非 Modal）
+  const journeyView=document.getElementById('journeyView');
+  const pwView=document.getElementById('pwView');
+  const mainCrumb=document.getElementById('mainCrumb');
+  const pwCtx=document.getElementById('pwCtx'), pwState=document.getElementById('pwState');
+  const pwTitle=document.getElementById('pwTitle'), pwHead=document.getElementById('pwHead'), pwBody=document.getElementById('pwBody');
+  const PW={
+    'prod-douyin':{ctx:'抖音版本 · 内容制作', state:'制作中', title:'内容制作 · 抖音版本', head:'这是「内容制作」专业工作面（按需进入）', body:'在当前内容语境下展开的专业工作状态：抖音 30 秒口播的编辑（脚本 / 分镜 / 字幕 / 封面）。Context 与 Utility 按专业面重声明（左：本版本脚本与素材；右：预览）。点「返回内容流」即回连续内容流，不感知跳办公室。'},
+    'xhs-pub':{ctx:'小红书版本 · 渠道运营', state:'已完成待发布', title:'小红书渠道运营 · 发布详情', head:'这是「小红书渠道运营」专业工作面（按需进入，复用现有 XHS，不修改）', body:'查看小红书图文笔记的发布状态、定时窗口、平台回执（Receipt 来自真实 Connector Evidence）。Context/Utility 按专业面重声明。点「返回内容流」即回连续内容流。'},
+    'prod-bili':{ctx:'B站版本内容制作', state:'等待制作', title:'内容制作 · B站版本', head:'这是「内容制作」专业工作面（按需进入）', body:'为 B站准备 8 分钟教程：脚本结构、章节、封面。前序（抖音口播）完成后排期制作。点「返回内容流」即回连续内容流。'}
+  };
+  document.querySelectorAll('[data-pw]').forEach(el=>{
+    el.onclick=()=>{
+      const k=el.dataset.pw, p=PW[k];
+      pwCtx.textContent=p.ctx; pwState.textContent=p.state;
+      pwTitle.textContent=p.title; pwHead.textContent=p.head; pwBody.textContent=p.body;
+      journeyView.style.display='none'; pwView.style.display='block';
+      mainCrumb.innerHTML='业务空间 / 内容增长 / <b>AI 浏览器</b> / '+p.ctx;
+    };
+  });
+  document.getElementById('pwBack').onclick=()=>{
+    pwView.style.display='none'; journeyView.style.display='block';
+    mainCrumb.innerHTML='业务空间 / 内容增长 / <b>一条内容</b>';
+  };
+</script>
+</body>
+</html>

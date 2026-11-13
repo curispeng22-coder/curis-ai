@@ -1,0 +1,271 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · E. 资料库
+  覆盖：E1 首页(Context 默认展开) · E2 文件阅读(Utility 来源/权限) · E3 搜索结果 · E4 外部连接/权限 · E5 空态
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>资料库 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-surface-2); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+@media (max-width: 880px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); } .tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); } .ctx-item.active { background:rgba(255,255,255,.04); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.doc-card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); background: var(--ui-surface); display: flex; flex-direction: column; gap: var(--ui-sp-2); cursor: pointer; }
+.doc-card:hover { border-color: var(--ui-text-2); }
+.doc-card .name { font-weight: 600; font-size: var(--ui-fs-3); }
+.result-ref { display: inline-flex; align-items: center; gap: var(--ui-sp-1); color: var(--ui-accent); font-size: var(--ui-fs-2); cursor: pointer; text-decoration: none; border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-sm); }
+.result-group { margin-bottom: var(--ui-sp-4); }
+.result-group .g-title { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-2); text-transform: uppercase; letter-spacing: .04em; }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+.dl { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row .k { color: var(--ui-text-2); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.article { max-width: 720px; }
+.article p { margin: 0 0 var(--ui-sp-3); color: var(--ui-text-2); }
+</style>
+</head>
+<body>
+<div class="ws with-context" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="搜索" data-open-utility aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>研发办公室</span></a>
+          <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>小红书运营办公室</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item active" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- E1 Context 侧栏（默认展开） -->
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">资料库</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">最近</div>
+      <div class="ctx-list">
+        <div class="ctx-item active">产品需求文档 v2</div>
+        <div class="ctx-item">竞品周报 08-12</div>
+        <div class="ctx-item">架构决策记录 ADR-12</div>
+      </div>
+      <div class="ctx-head">本地</div>
+      <div class="ctx-list"><div class="ctx-item">导入资料</div><div class="ctx-item">草稿</div></div>
+      <div class="ctx-head">外部资料库</div>
+      <div class="ctx-list"><div class="ctx-item">小红书 · 笔记库</div><div class="ctx-item">GitHub · Wiki</div></div>
+      <div class="ctx-head">公司产生</div>
+      <div class="ctx-list"><div class="ctx-item">会议纪要与决策</div><div class="ctx-item">生成报告</div></div>
+      <div class="ctx-head">文件夹</div>
+      <div class="ctx-list"><div class="ctx-item">产品</div><div class="ctx-item">运营</div><div class="ctx-item">研发</div></div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="index.html">Curis</a><span class="sep">/</span><span>资料库</span></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="page-head">
+        <h1>资料库</h1>
+        <div class="sub">E. 首页、文件阅读、搜索结果、外部连接/权限、空态</div>
+      </div>
+
+      <div class="tabs" data-tab-group="lib">
+        <button class="tab active" data-tab="home">首页</button>
+        <button class="tab" data-tab="read">文件阅读</button>
+        <button class="tab" data-tab="search">搜索结果</button>
+        <button class="tab" data-tab="conn">外部连接</button>
+        <button class="tab" data-tab="empty">空态</button>
+      </div>
+
+      <!-- E1 首页 -->
+      <div class="tab-panel active" data-tab-panel="lib" data-tab-id="home">
+        <div class="grid cols-auto" style="margin-top:var(--ui-sp-4)">
+          <div class="doc-card" data-open-utility><div class="name">产品需求文档 v2</div><div class="helper">本地 · 更新于 2 天前 · 用于产品研发</div></div>
+          <div class="doc-card" data-open-utility><div class="name">竞品周报 08-12</div><div class="helper">公司产生 · 数据分析师产出</div></div>
+          <div class="doc-card" data-open-utility><div class="name">架构决策记录 ADR-12</div><div class="helper">本地 · 研发办公室</div></div>
+          <div class="doc-card" data-open-utility><div class="name">小红书种草选题库</div><div class="helper">外部 · 小红书连接器</div></div>
+        </div>
+        <div class="card" style="margin-top:var(--ui-sp-4)"><div class="helper">待索引项：3 个导入文件尚未建立索引。<button class="btn btn-ghost" style="margin-left:var(--ui-sp-2)">立即索引</button></div></div>
+      </div>
+
+      <!-- E2 文件阅读 -->
+      <div class="tab-panel" data-tab-panel="lib" data-tab-id="read">
+        <div class="article">
+          <h3 style="font-size:var(--ui-fs-4)">产品需求文档 v2</h3>
+          <p>本文档定义产品平台下一阶段的核心能力范围，涵盖登录安全、团队协作与开放接口三部分。</p>
+          <p>登录模块重构目标：在不影响现有用户的前提下，将鉴权迁移至统一会话服务，并补充异常分支用例。</p>
+          <p>验收标准：联调通过率 ≥ 95%，灰度期间监控无异常，回滚窗口 ≤ 30 分钟。</p>
+          <div><a class="result-ref" data-open-utility>查看来源 ▸</a> <a class="result-ref" data-open-utility>权限与引用 ▸</a></div>
+        </div>
+      </div>
+
+      <!-- E3 搜索结果 -->
+      <div class="tab-panel" data-tab-panel="lib" data-tab-id="search">
+        <div class="result-group">
+          <div class="g-title">业务</div>
+          <div class="doc-card"><div class="name">产品平台 · 研发</div><div class="helper">业务 · 含 1 个 Workspace</div></div>
+        </div>
+        <div class="result-group">
+          <div class="g-title">知识 / 文档</div>
+          <div class="doc-card"><div class="name">产品需求文档 v2</div><div class="helper">文档 · 本地</div></div>
+          <div class="doc-card"><div class="name">架构决策记录 ADR-12</div><div class="helper">文档 · 本地</div></div>
+        </div>
+        <div class="result-group">
+          <div class="g-title">员工</div>
+          <div class="doc-card"><div class="name">林涛 · 架构师</div><div class="helper">员工 · 研发办公室</div></div>
+        </div>
+      </div>
+
+      <!-- E4 外部连接 / 权限 -->
+      <div class="tab-panel" data-tab-panel="lib" data-tab-id="conn">
+        <div class="card">
+          <div class="card-title">外部连接与权限</div>
+          <div class="dl" style="margin-top:var(--ui-sp-3)">
+            <div class="dl-row"><span class="k">Connector · 小红书</span><span><span class="status success">已授权</span> · 同步范围：笔记/数据</span></div>
+            <div class="dl-row"><span class="k">Connector · GitHub</span><span><span class="status success">已授权</span> · 同步范围：Wiki/代码</span></div>
+            <div class="dl-row"><span class="k">未连接</span><span>抖音 / TikTok（待接入）</span></div>
+          </div>
+          <div style="margin-top:var(--ui-sp-3)"><button class="btn btn-secondary">管理连接</button> <button class="btn btn-ghost" data-open-utility>授权设置</button></div>
+        </div>
+      </div>
+
+      <!-- E5 空态 -->
+      <div class="tab-panel" data-tab-panel="lib" data-tab-id="empty">
+        <div class="card">
+          <div class="empty-state">
+            <div class="empty-state-icon">○</div>
+            <p class="empty-state-title">资料库为空</p>
+            <p class="empty-state-desc">尚未导入任何资料，也未连接外部资料库。导入或从 Workspace 沉淀结果后将在此显示。</p>
+            <button class="btn btn-secondary">导入资料</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">来源 / 权限</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="detail-field"><div class="k">来源</div><div class="v">本地导入 · /docs/产品需求文档 v2.md</div></div>
+      <div class="detail-field"><div class="k">权限</div><div class="v"><span class="tag">团队可读</span> <span class="tag">仅作者可写</span></div></div>
+      <div class="detail-field"><div class="k">引用 / 使用关系</div><div class="v">被「产品平台」业务引用 2 次，被林涛引用 1 次</div></div>
+      <div class="detail-field"><div class="k">外部授权</div><div class="v">无需外部授权（本地文件）</div></div>
+    </div>
+  </aside>
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

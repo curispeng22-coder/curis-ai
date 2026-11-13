@@ -1,0 +1,179 @@
+- region "Notifications alt+T"
+- link "公告 AitoEarn将于9月份开始使用云账户发放提现奖励":
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button "关闭":
+- complementary:
+  - link "AiToEarn":
+    - /url: /
+    - img "AiToEarn"
+  - navigation:
+    - link "淘金广场":
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link "我的团队":
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link "AI Agent":
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link "内容管理":
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link "AI发布":
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link "热门内容":
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link "数据统计":
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link "AI打卡":
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link "AI互动":
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link "产品定价":
+      - /url: /pricing
+      - generic: 产品定价
+  - button "我的频道":
+    - generic: 我的频道
+  - button "浏览器插件 未安装":
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button "搜索菜单":
+  - link "开放平台":
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link "API Keys":
+    - /url: /developer/api-keys
+  - button "U user_FBVvPDQC":
+    - generic: U
+    - generic "user_FBVvPDQC"
+- main:
+  - heading "发布" [level=1]
+  - button "新建作品":
+    - generic: 新建作品
+  - button "添加频道":
+    - generic: 添加频道
+  - button "全部频道":
+    - generic: 全部频道
+  - button:
+  - button:
+  - generic: 9月12日 - 18日, 2026
+  - generic "公历节日 / 节气":
+    - button "公历节日" [pressed]
+    - button "节气" [pressed]
+  - button "周视图":
+  - button "月视图":
+  - button "今天"
+  - generic "世界急救日 · 公历节日":
+    - button "世界急救日 · 公历节日":
+      - generic: 星期六
+      - generic: "12"
+      - generic "农历 八月初二":
+        - generic: 八月初二
+    - button "世界急救日 · 公历节日": 世界急救日
+  - generic: 星期日
+  - generic: "13"
+  - generic "农历 八月初三":
+    - generic: 八月初三
+  - generic: 星期一
+  - generic: "14"
+  - generic "农历 八月初四":
+    - generic: 八月初四
+  - generic "国际民主日 · 公历节日":
+    - button "国际民主日 · 公历节日":
+      - generic: 星期二
+      - generic: "15"
+      - generic "农历 八月初五":
+        - generic: 八月初五
+    - button "国际民主日 · 公历节日": 国际民主日
+  - generic "国际臭氧层保护日 · 公历节日 / 中国脑健康日 · 公历节日":
+    - button "国际臭氧层保护日 · 公历节日 / 中国脑健康日 · 公历节日":
+      - generic: 星期三
+      - generic: "16"
+      - generic "农历 八月初六":
+        - generic: 八月初六
+    - button "国际臭氧层保护日 · 公历节日": 国际臭氧层保护日
+    - text: ·
+    - button "中国脑健康日 · 公历节日": 中国脑健康日
+  - generic: 星期四
+  - generic: "17"
+  - generic "农历 八月初七":
+    - generic: 八月初七
+  - generic "中国国耻日 · 公历节日 / 九一八事变纪念日 · 公历节日":
+    - button "中国国耻日 · 公历节日 / 九一八事变纪念日 · 公历节日":
+      - generic: 星期五
+      - generic: "18"
+      - generic "农历 八月初八":
+        - generic: 八月初八
+    - button "中国国耻日 · 公历节日": 中国国耻日
+    - text: ·
+    - button "九一八事变纪念日 · 公历节日": 九一八事变纪念日
+  - generic: 00:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 02:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 04:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 06:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 08:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 10:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 12:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 14:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 16:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 18:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 20:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - generic: 22:00
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+  - button "添加帖子":
+- alert

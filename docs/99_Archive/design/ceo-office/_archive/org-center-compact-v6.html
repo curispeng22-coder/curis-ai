@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1536, initial-scale=1.0">
+<title>Curis · 组织中心（Terra 紧凑固定版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sidebar:#4a7c59; --sidebar-hover:#3d6649; --sidebar-active:#3a5f45;
+    --bg:#faf6f0; --surface:#fffefb; --surface-2:#f7f2ea; --surface-3:#f0ebe0;
+    --hero-bg:linear-gradient(135deg,#f5f0e6 0%,#faf8f3 50%,#f0ece2 100%);
+    --hero-border:#e8e2d8;
+    --txt:#1f241c; --txt-2:#4a5346; --txt-3:#7a8273;
+    --line:#e8e2d8; --line-2:#d9d2c6;
+    --primary:#4a7c59; --primary-dark:#2f523b; --primary-light:#e8f0e8; --primary-soft:#f0f6f0;
+    --accent:#705c30; --accent-light:#f5efe3;
+    --cyan:#3f7d6e; --green:#15935a; --green-soft:#e8f5ed;
+    --amber:#a8742a; --amber-soft:#f9f0e0; --red:#b83230; --red-soft:#fae8e7;
+    --radius:16px; --radius-sm:12px;
+    --shadow:0 1px 2px rgba(74,85,66,.04),0 4px 12px rgba(74,85,66,.05);
+    --font-serif:'Literata','Noto Serif SC','Songti SC',serif;
+    --font-sans:'Nunito Sans','Inter','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:#e8e2d8;display:grid;place-items:center;min-height:100vh;overflow:auto}
+  .app{width:1536px;height:1024px;background:var(--bg);display:flex;overflow:hidden;box-shadow:0 24px 60px rgba(31,36,28,.18)}
+
+  /* Sidebar */
+  .sidebar{width:176px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:24px 0;color:#fff;overflow:hidden}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 18px 28px;font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.3px}
+  .brand .logo{width:30px;height:30px;border:2px solid rgba(255,255,255,.7);border-radius:8px;display:grid;place-items:center;font-size:13px}
+  .nav{flex:1;overflow-y:auto;padding:0 12px;display:flex;flex-direction:column;gap:8px}
+  .nav-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;color:rgba(255,255,255,.9);cursor:pointer;white-space:nowrap}
+  .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+  .nav-item.active{background:var(--sidebar-active);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .nav-item .icon{font-size:19px;font-variation-settings:'FILL' 1;flex-shrink:0}
+  .nav-item .chevron{margin-left:auto;font-size:15px;opacity:.7;font-variation-settings:'FILL' 1}
+  .nav-item.secondary{font-size:13px;font-weight:500;color:rgba(255,255,255,.8);padding:8px 12px 8px 40px}
+  .nav-item.secondary.active{background:rgba(255,255,255,.12);box-shadow:none}
+  .side-foot{padding:14px 16px;margin:8px 12px 0;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.75)}
+  .side-foot .ava{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700;font-size:11px}
+
+  /* Main */
+  .main{width:1360px;height:1024px;padding:12px 20px;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:72px 360px 280px 246px;gap:14px;overflow:hidden}
+  .span-12{grid-column:span 12}.span-9{grid-column:span 9}.span-7{grid-column:span 7}
+  .span-5{grid-column:span 5}.span-3{grid-column:span 3}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+  .card-hd{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;min-height:44px}
+  .card-title{font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+  .icon-box{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+  .icon-box.green{background:var(--green-soft);color:var(--green)}
+  .icon-box.cyan{background:#e8f4f1;color:var(--cyan)}
+  .icon-box.amber{background:var(--amber-soft);color:var(--amber)}
+  .icon-box.red{background:var(--red-soft);color:var(--red)}
+  .icon-box.primary{background:var(--primary-light);color:var(--primary-dark)}
+  .icon-box.surface{background:var(--surface-2);color:var(--txt-3)}
+  .icon{font-size:18px;font-variation-settings:'FILL' 1}
+  .tag{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--primary-light);color:var(--primary-dark)}
+  .card-bd{flex:1;padding:14px 16px;position:relative;overflow:hidden}
+  .card-ft{padding:8px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--txt-3);flex-shrink:0;min-height:28px;display:flex;align-items:center}
+  .empty-state{color:var(--txt-3);font-size:12px;line-height:1.5}
+
+  /* Page header */
+  .page-head{grid-column:span 12;background:var(--hero-bg);border:1px solid var(--hero-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+  .page-head::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent)}
+  .ph-left{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+  .ph-title{font-family:var(--font-serif);font-size:24px;font-weight:700;margin:0;letter-spacing:-0.02em;line-height:1.1;color:var(--txt)}
+  .ph-sub{font-size:12px;color:var(--txt-2);display:flex;align-items:center;gap:10px}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(21,147,90,.12);display:inline-block;margin-right:4px}
+  .fact-strip{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+  .fact-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 14px;min-width:120px}
+  .fact-item .lab{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);margin-bottom:3px}
+  .fact-item .vx{font-size:12px;font-weight:600;color:var(--txt-2);display:flex;align-items:center;gap:6px}
+  .fact-item .vx .icon{font-size:16px;color:var(--txt-3)}
+  .btn-new{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;border:none;cursor:pointer}
+  .btn-new:hover{background:var(--sidebar-hover)}
+
+  /* 3D spatial stage */
+  .stage{height:100%;border-radius:var(--radius-sm);position:relative;overflow:hidden;
+    background:radial-gradient(120% 90% at 25% 15%,#e9f1e7 0%,rgba(233,241,231,0) 55%),radial-gradient(120% 90% at 85% 85%,#f3ece0 0%,rgba(243,236,224,0) 55%),linear-gradient(160deg,#dfe9dd,#eceae0);
+    border:1px solid var(--line);display:grid;place-items:center}
+  .stage svg{width:100%;height:100%}
+  .stage-cap{position:absolute;left:14px;bottom:12px;font-size:11px;color:var(--txt-2);background:rgba(251,248,241,.75);padding:4px 10px;border-radius:20px}
+
+  /* Health facts */
+  .hf{display:flex;flex-direction:column;gap:10px}
+  .hf .it{display:flex;flex-direction:column;gap:3px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+  .hf .it:last-child{border-bottom:none;padding-bottom:0}
+  .hf .it .k{font-size:12px;color:var(--txt-3);display:flex;align-items:center;gap:6px}
+  .hf .it .k .icon{font-size:15px}
+  .hf .it .v{font-size:18px;font-weight:700;color:var(--txt-2);font-family:var(--font-serif)}
+  .hf .it .d{font-size:11px;color:var(--txt-3)}
+
+  /* Department space */
+  .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;height:100%}
+  .dept-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);display:flex;overflow:hidden}
+  .dept-visual{width:180px;border-right:1px solid var(--line);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,var(--surface),var(--surface-2))}
+  .dept-visual .thumb{width:140px;height:90px;border-radius:10px;background:var(--surface-3);border:1px solid var(--line);display:grid;place-items:center;position:relative;overflow:hidden}
+  .dept-visual .thumb svg{width:100%;height:100%}
+  .dept-visual h4{font-size:15px;font-weight:700;margin:0;color:var(--txt);font-family:var(--font-serif)}
+  .dept-visual .tag{margin-top:2px}
+  .dept-meta{flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+  .dept-row{display:grid;grid-template-columns:80px 1fr;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .dept-row:last-child{border-bottom:none}
+  .dept-row .k{color:var(--txt-3);display:flex;align-items:center;gap:5px}
+  .dept-row .k .icon{font-size:14px;color:var(--txt-3)}
+  .dept-row .v{color:var(--txt-2);font-weight:600}
+  .dept-row .v.missing{color:var(--txt-3);font-weight:500}
+
+  /* AI employees */
+  .emp-strip{display:flex;flex-direction:column;gap:10px;justify-content:center;height:100%}
+  .emp-avatars{display:flex;gap:8px;justify-content:center;align-items:center}
+  .emp-avatar{width:42px;height:42px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;color:var(--txt-3);font-size:18px}
+  .emp-avatar.add{border-style:dashed;background:transparent;cursor:pointer}
+  .emp-empty{text-align:center;font-size:12px;color:var(--txt-3);margin-top:6px}
+
+  /* Boundary */
+  .boundary{background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--radius);padding:16px 18px;display:flex;flex-direction:column;gap:10px;justify-content:center;height:100%}
+  .boundary .l{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--txt-2);font-family:var(--font-serif)}
+  .boundary .links{display:flex;flex-direction:column;gap:7px;font-size:11.5px;color:var(--txt-2)}
+  .boundary .links .li{display:flex;align-items:center;gap:6px}
+  .boundary .links .icon{font-size:16px;color:var(--amber)}
+
+  .icon-svg{width:1em;height:1em;fill:currentColor;display:inline-block;vertical-align:middle;flex-shrink:0}
+  .icon-box .icon-svg,.dept-visual .icon-box .icon-svg{width:18px;height:18px}
+  .pulse-icon .icon-svg{width:22px;height:22px}
+  .nav-item .icon-svg{width:19px;height:19px}
+  .nav-item.secondary .icon-svg{width:17px;height:17px}
+  .btn-new .icon-svg{width:16px;height:16px}
+  .hero-right-title .icon-box .icon-svg{width:17px;height:17px}
+  .stage-entry .icon-svg{width:14px;height:14px}
+  .empty-action .icon-svg{width:14px;height:14px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden"><defs><symbol id="i-account_tree" viewBox="0 0 24 24"><path d="M22 11V3h-6v6h-2V3H8v8H6V3H2v8c0 2.76 2.24 5 5 5h3v4h8v-4h3c2.76 0 5-2.24 5-5zm-10 7h-4v-4h4v4z"/></symbol><symbol id="i-activity_zone" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l3 9H8l3 9 3-9z"/></symbol><symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol><symbol id="i-analytics" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></symbol><symbol id="i-apartment" viewBox="0 0 24 24"><path d="M17 11V3H7v8H3v10h2v-8h14v8h2V11h-4zm-4-6h2v2h-2V5zm0 4h2v2h-2V9z"/></symbol><symbol id="i-cardiology" viewBox="0 0 24 24"><path d="M19.48 12.35c-1.57-4.08-7.02-4.29-8.15-1.24-1.14-3.05-6.58-2.84-8.15 1.24-1.71 4.44 5.03 8.47 8.15 11.88 3.12-3.41 9.86-7.44 8.15-11.88z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></symbol><symbol id="i-check_circle" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol><symbol id="i-checklist" viewBox="0 0 24 24"><path d="M6 6h2v2H6zm0 5h2v2H6zm0 5h2v2H6zm4-10h8v2h-8zm0 5h8v2h-8zm0 5h8v2h-8z"/></symbol><symbol id="i-expand_less" viewBox="0 0 24 24"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></symbol><symbol id="i-folder_open" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12h20V8c0-1.1-.9-2-2-2zm0 10H4V8h16z"/></symbol><symbol id="i-groups" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></symbol><symbol id="i-meeting_room" viewBox="0 0 24 24"><path d="M19 6H5c-1.1 0-2 .9-2 2v10h2v-2h14v2h2V8c0-1.1-.9-2-2-2zm-7 8H5V8h7z"/></symbol><symbol id="i-monitoring" viewBox="0 0 24 24"><path d="M3 13h2v-2H3zm4 0h2v-6H7zm4 0h2v-4h-2zm4 0h2V5h-2z"/></symbol><symbol id="i-person" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol><symbol id="i-person_off" viewBox="0 0 24 24"><path d="M12 2C9.85 2 8.09 3.55 7.57 5.57l-3.4 3.4L2.1 5.9 3.52 4.48 19.54 20.5 18.12 21.92l-2.3-2.3C14.75 21.19 13.42 22 12 22c-2.21 0-4-1.79-4-4 0-1.42.81-2.75 2.08-3.38L2.1 5.9C1.42 7.97 1 10.19 1 12.5 1 17.75 5.25 22 10.5 22c2.31 0 4.53-.42 6.6-1.18l4.82 4.82 1.42-1.42-1.92-1.92C22.58 20.53 23 18.31 23 16c0-5.25-4.25-9.5-9.5-9.5-2.31 0-4.53.42-6.6 1.18l-2.3-2.3C6.45 4.09 9.05 2 12 2z"/></symbol><symbol id="i-school" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.08L12 15.5l5-2.51v3z"/></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.56-.4-1.17-.73-1.82-.98l-.37-2.55a.484.484 0 0 0-.48-.41h-3.84a.484.484 0 0 0-.48.41l-.37 2.55c-.65.25-1.26.58-1.82.98l-2.39-.96a.488.488 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.56.4 1.17.73 1.82.98l.37 2.55a.484.484 0 0 0 .48.41h3.84a.484.484 0 0 0 .48-.41l.37-2.55c.65-.25 1.26-.58 1.82-.98l2.39.96c.22.08.47-.01.59-.22l1.92-3.32c.12-.22.08-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></symbol><symbol id="i-smart_toy" viewBox="0 0 24 24"><path d="M20 9V7c0-1.1-.9-2-2-2h-3.5c-.6-1.9-2.4-3.3-4.5-3.3S7.1 3.1 6.5 5H3c-1.1 0-2 .9-2 2v2h19zm-7 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm-5 4h10v-2H8v2z"/></symbol><symbol id="i-verified" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 15l-5-5 1.41-1.41L10 13.17l7.59-7.59L19 7l-9 9z"/></symbol><symbol id="i-warning" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol><symbol id="i-widgets" viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></symbol></defs></svg>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">C</div><span>Curis</span></div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-home"/></svg>总裁办公室<span class="chevron"><svg class="icon-svg"><use href="#i-expand_less"/></svg></span></div>
+        <div class="nav-item secondary"><svg class="icon-svg"><use href="#i-analytics"/></svg>决策中心</div>
+        <div class="nav-item secondary"><svg class="icon-svg"><use href="#i-chat"/></svg>重要汇报</div>
+        <div class="nav-item secondary"><svg class="icon-svg"><use href="#i-meeting_room"/></svg>战略会议室</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-folder_open"/></svg>项目中心</div>
+        <div class="nav-item active"><svg class="icon-svg"><use href="#i-groups"/></svg>组织中心</div>
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-widgets"/></svg>能力中心</div>
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-monitoring"/></svg>经营分析</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-lightbulb"/></svg>头脑风暴室</div>
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-school"/></svg>知识中心</div>
+        <div class="nav-item"><svg class="icon-svg"><use href="#i-checklist"/></svg>执行工作台</div>
+      </div>
+      <div class="nav-group"><div class="nav-item"><svg class="icon-svg"><use href="#i-settings"/></svg>公司设置</div></div>
+    </nav>
+    <div class="side-foot"><div class="ava">A</div><span>阿历克斯 · CEO</span></div>
+  </aside>
+
+  <main class="main">
+    <!-- Header -->
+    <section class="page-head">
+      <div class="ph-left">
+        <h1 class="ph-title">组织中心</h1>
+        <div class="ph-sub"><span class="status-dot"></span>Curis AI Company · 公司运行正常</div>
+      </div>
+      <div class="fact-strip">
+        <div class="fact-item">
+          <div class="lab">组织事实</div>
+          <div class="vx"><svg class="icon-svg"><use href="#i-apartment"/></svg>部门数量</div>
+        </div>
+        <div class="fact-item">
+          <div class="lab">·</div>
+          <div class="vx"><svg class="icon-svg"><use href="#i-smart_toy"/></svg>AI 员工</div>
+        </div>
+        <div class="fact-item">
+          <div class="lab">·</div>
+          <div class="vx"><svg class="icon-svg"><use href="#i-warning"/></svg>明确阻塞</div>
+        </div>
+        <button class="btn-new"><svg class="icon-svg"  style="width:16px;height:16px"><use href="#i-add"/></svg>新建部门</button>
+      </div>
+    </section>
+
+    <!-- Spatial overview (9) + Health (3) -->
+    <section class="card span-9">
+      <div class="card-hd"><div class="card-title"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-account_tree"/></svg></span>组织空间总览</div><span class="tag">3D 效果图</span></div>
+      <div class="card-bd" style="padding:0">
+        <div class="stage">
+          <svg viewBox="0 0 820 320" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#e7efe6"/><stop offset="100%" style="stop-color:#ece6da"/></linearGradient>
+              <linearGradient id="floor" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5f0e6"/><stop offset="100%" style="stop-color:#e8e2d8"/></linearGradient>
+              <linearGradient id="wallL" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#fbf8f1"/><stop offset="100%" style="stop-color:#f0ebe0"/></linearGradient>
+              <linearGradient id="wallR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ede8dc"/><stop offset="100%" style="stop-color:#e3ded2"/></linearGradient>
+              <linearGradient id="screenG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#15935a"/><stop offset="100%" style="stop-color:#4a7c59"/></linearGradient>
+              <linearGradient id="screenC" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3f7d6e"/><stop offset="100%" style="stop-color:#6aa99a"/></linearGradient>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+            </defs>
+            <rect width="820" height="320" fill="url(#bg)" opacity=".5"/>
+
+            <!-- bridge -->
+            <path d="M285,180 L535,180" stroke="#3f7d6e" stroke-width="3" stroke-opacity=".35" stroke-linecap="round" filter="url(#soft)"/>
+            <circle cx="285" cy="180" r="4" fill="#3f7d6e"/><circle cx="535" cy="180" r="4" fill="#3f7d6e"/>
+            <text x="410" y="170" text-anchor="middle" font-size="11" fill="#3f7d6e" font-weight="700" opacity=".8">组织数据流</text>
+
+            <!-- Left room: AI R&D -->
+            <g transform="translate(80,60)">
+              <polygon points="0,60 110,20 220,60 110,100" fill="url(#floor)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="0,60 0,130 110,170 110,100" fill="url(#wallL)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="110,100 110,170 220,130 220,60" fill="url(#wallR)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="0,60 110,100 220,60 110,20" fill="#fffefb" opacity=".55" stroke="none"/>
+              <!-- glass frame -->
+              <polygon points="0,60 110,100 220,60 110,20" fill="none" stroke="#4a7c59" stroke-width="1.5" stroke-opacity=".25"/>
+              <line x1="110" y1="20" x2="110" y2="100" stroke="#4a7c59" stroke-width="1" stroke-opacity=".15"/>
+              <line x1="0" y1="60" x2="220" y2="60" stroke="#4a7c59" stroke-width="1" stroke-opacity=".15"/>
+              <!-- desks -->
+              <g transform="translate(45,65)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenG)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <g transform="translate(95,85)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenG)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <g transform="translate(145,55)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenG)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <rect x="85" y="-10" width="110" height="24" rx="12" fill="rgba(21,147,90,.12)" stroke="rgba(21,147,90,.25)" stroke-width="1"/>
+              <text x="140" y="5" text-anchor="middle" font-size="12" font-weight="700" fill="#15935a" font-family="var(--font-serif)">AI 研发中心</text>
+            </g>
+
+            <!-- Right room: AI Content -->
+            <g transform="translate(440,60)">
+              <polygon points="0,60 110,20 220,60 110,100" fill="url(#floor)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="0,60 0,130 110,170 110,100" fill="url(#wallL)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="110,100 110,170 220,130 220,60" fill="url(#wallR)" stroke="#d9d2c6" stroke-width="1"/>
+              <polygon points="0,60 110,100 220,60 110,20" fill="#fffefb" opacity=".55" stroke="none"/>
+              <polygon points="0,60 110,100 220,60 110,20" fill="none" stroke="#3f7d6e" stroke-width="1.5" stroke-opacity=".25"/>
+              <line x1="110" y1="20" x2="110" y2="100" stroke="#3f7d6e" stroke-width="1" stroke-opacity=".15"/>
+              <line x1="0" y1="60" x2="220" y2="60" stroke="#3f7d6e" stroke-width="1" stroke-opacity=".15"/>
+              <g transform="translate(45,65)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenC)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <g transform="translate(95,85)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenC)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <g transform="translate(145,55)">
+                <rect x="0" y="0" width="28" height="16" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                <rect x="4" y="-4" width="20" height="10" rx="1" fill="url(#screenC)" filter="url(#glow)" opacity=".9"/>
+                <circle cx="14" cy="18" r="5" fill="#d9d2c6"/>
+              </g>
+              <rect x="85" y="-10" width="110" height="24" rx="12" fill="rgba(63,125,110,.12)" stroke="rgba(63,125,110,.25)" stroke-width="1"/>
+              <text x="140" y="5" text-anchor="middle" font-size="12" font-weight="700" fill="#3f7d6e" font-family="var(--font-serif)">AI 内容中心</text>
+            </g>
+          </svg>
+          <div class="stage-cap">组织空间总览（3D 效果图占位）</div>
+        </div>
+      </div>
+    </section>
+    <section class="card span-3">
+      <div class="card-hd"><div class="card-title"><span class="icon-box green"><svg class="icon-svg"><use href="#i-cardiology"/></svg></span>组织健康事实</div></div>
+      <div class="card-bd">
+        <div class="hf">
+          <div class="it"><div class="k"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-apartment"/></svg></span>部门数量</div><div class="v">2</div><div class="d">暂无更细分支</div></div>
+          <div class="it"><div class="k"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-smart_toy"/></svg></span>AI 员工数量</div><div class="v">7</div><div class="d">6 在岗 · 1 待命</div></div>
+          <div class="it"><div class="k"><span class="icon-box surface"><svg class="icon-svg"><use href="#i-person_off"/></svg></span>缺失负责人</div><div class="v">0</div><div class="d">负责人字段完整</div></div>
+          <div class="it"><div class="k"><span class="icon-box amber"><svg class="icon-svg"><use href="#i-warning"/></svg></span>明确阻塞</div><div class="v">1</div><div class="d">AI 内容中心</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Department space (12) -->
+    <section class="card span-12">
+      <div class="card-hd"><div class="card-title"><span class="icon-box primary"><svg class="icon-svg"><use href="#i-apartment"/></svg></span>部门空间</div><span class="tag">2 DEPTS</span></div>
+      <div class="card-bd">
+        <div class="dept-grid">
+          <div class="dept-card">
+            <div class="dept-visual">
+              <div class="thumb">
+                <svg viewBox="0 0 140 90" preserveAspectRatio="none">
+                  <defs><linearGradient id="f1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0ece2"/><stop offset="100%" style="stop-color:#e8e2d8"/></linearGradient></defs>
+                  <polygon points="0,45 70,20 140,45 70,70" fill="url(#f1)" stroke="#d9d2c6" stroke-width="1"/>
+                  <polygon points="0,45 0,80 70,105 70,70" fill="#f7f2ea" stroke="#d9d2c6" stroke-width="1"/>
+                  <polygon points="70,70 70,105 140,80 140,45" fill="#ede8dc" stroke="#d9d2c6" stroke-width="1"/>
+                  <rect x="35" y="45" width="20" height="12" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                  <rect x="38" y="42" width="14" height="8" rx="1" fill="#15935a" opacity=".8"/>
+                  <rect x="85" y="55" width="20" height="12" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                  <rect x="88" y="52" width="14" height="8" rx="1" fill="#15935a" opacity=".8"/>
+                </svg>
+              </div>
+              <h4>AI 研发中心</h4>
+              <span class="tag" style="background:var(--green-soft);color:var(--green)">运行中</span>
+            </div>
+            <div class="dept-meta">
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-person"/></svg>负责人</div><div class="v">林见</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-folder_open"/></svg>当前项目</div><div class="v missing">暂无已读取事实</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-smart_toy"/></svg>AI 员工</div><div class="v">4</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-activity_zone"/></svg>工作状态</div><div class="v missing">暂无已读取事实</div></div>
+            </div>
+          </div>
+          <div class="dept-card">
+            <div class="dept-visual">
+              <div class="thumb">
+                <svg viewBox="0 0 140 90" preserveAspectRatio="none">
+                  <defs><linearGradient id="f2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0ece2"/><stop offset="100%" style="stop-color:#e8e2d8"/></linearGradient></defs>
+                  <polygon points="0,45 70,20 140,45 70,70" fill="url(#f2)" stroke="#d9d2c6" stroke-width="1"/>
+                  <polygon points="0,45 0,80 70,105 70,70" fill="#f7f2ea" stroke="#d9d2c6" stroke-width="1"/>
+                  <polygon points="70,70 70,105 140,80 140,45" fill="#ede8dc" stroke="#d9d2c6" stroke-width="1"/>
+                  <rect x="35" y="45" width="20" height="12" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                  <rect x="38" y="42" width="14" height="8" rx="1" fill="#3f7d6e" opacity=".8"/>
+                  <rect x="85" y="55" width="20" height="12" rx="2" fill="#e8e2d8" stroke="#d9d2c6"/>
+                  <rect x="88" y="52" width="14" height="8" rx="1" fill="#a8742a" opacity=".8"/>
+                </svg>
+              </div>
+              <h4>AI 内容中心</h4>
+              <span class="tag" style="background:var(--amber-soft);color:var(--amber)">有阻塞</span>
+            </div>
+            <div class="dept-meta">
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-person"/></svg>负责人</div><div class="v">苏明</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-folder_open"/></svg>当前项目</div><div class="v missing">暂无已读取事实</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-smart_toy"/></svg>AI 员工</div><div class="v">3</div></div>
+              <div class="dept-row"><div class="k"><svg class="icon-svg"><use href="#i-activity_zone"/></svg>工作状态</div><div class="v missing">暂无已读取事实</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-ft">只显示真实 Department；缺失 Owner 时不推测</div>
+    </section>
+
+    <!-- AI employees (7) + Boundary (5) -->
+    <section class="card span-7">
+      <div class="card-hd"><div class="card-title"><span class="icon-box cyan"><svg class="icon-svg"><use href="#i-smart_toy"/></svg></span>AI 员工</div><span class="tag">7</span></div>
+      <div class="card-bd">
+        <div class="emp-strip">
+          <div class="emp-avatars">
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar"><svg class="icon-svg"><use href="#i-person"/></svg></div>
+            <div class="emp-avatar add"><svg class="icon-svg"><use href="#i-add"/></svg></div>
+          </div>
+          <div class="emp-empty">尚无已读取员工 · 员工信息接入后将显示具体角色与状态</div>
+        </div>
+      </div>
+    </section>
+    <section class="card span-5">
+      <div class="card-hd"><div class="card-title"><span class="icon-box amber"><svg class="icon-svg"><use href="#i-verified"/></svg></span>组织运行边界</div></div>
+      <div class="card-bd">
+        <div class="boundary">
+          <div class="l"><svg class="icon-svg"  style="width:18px;height:18px"><use href="#i-verified"/></svg>运行边界</div>
+          <div class="links">
+            <div class="li"><svg class="icon-svg"><use href="#i-check_circle"/></svg>仅显示真实部门与员工归属</div>
+            <div class="li"><svg class="icon-svg"><use href="#i-check_circle"/></svg>负责人缺失不推测</div>
+            <div class="li"><svg class="icon-svg"><use href="#i-check_circle"/></svg>状态以明确 Runtime 字段为准</div>
+            <div class="li"><svg class="icon-svg"><use href="#i-check_circle"/></svg>缺失项显示「暂无已读取事实」</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,1772 @@
+<!doctype html>
+<html lang="zh-CN" class="dark" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <script src="_system/theme.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建公司 · Curis Founding Flow</title>
+    <style id="theme-vars">
+:root {
+  /* Single source of truth = _system/tokens.css (--ui-*).
+     All legacy / shadcn / brand / status tokens below are ALIASES to --ui-*. */
+
+  /* Semantic (canvas head contract) */
+  --background: var(--ui-bg);
+  --foreground: var(--ui-text);
+  --card: var(--ui-surface);
+  --card-foreground: var(--ui-text);
+  --popover: var(--ui-surface-2);
+  --popover-foreground: var(--ui-text);
+  --primary: var(--ui-action-primary-bg);
+  --primary-foreground: var(--ui-action-primary-fg);
+  --secondary: var(--ui-surface-2);
+  --secondary-foreground: var(--ui-text);
+  --muted: var(--ui-text-2);
+  --muted-foreground: var(--ui-text-3);
+  --accent: var(--ui-accent);
+  --accent-foreground: var(--ui-action-primary-fg);
+  --destructive: var(--ui-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--ui-line);
+  --input: var(--ui-line);
+  --ring: var(--ui-accent);
+
+  /* Legacy base surfaces */
+  --bg-base-default: var(--ui-bg);
+  --bg-base-secondary: var(--ui-surface);
+  --bg-base-tertiary: var(--ui-surface-2);
+  --bg-tooltip: var(--ui-surface-2);
+  --bg-menu: var(--ui-surface-2);
+  --bg-invert: var(--ui-surface-2);
+  --bg-invert-hover: var(--ui-surface-2);
+  --bg-overlay-l1: var(--ui-surface-2);
+  --bg-overlay-l2: var(--ui-surface-2);
+  --bg-overlay-l3: var(--ui-surface-2);
+  --bg-overlay-l4: var(--ui-surface-2);
+
+  /* Brand ramp -> accent (frozen system has no brand ramp) */
+  --brand-100: var(--ui-accent);
+  --brand-200: var(--ui-accent);
+  --brand-300: var(--ui-accent);
+  --brand-400: var(--ui-accent);
+  --brand-500: var(--ui-accent);
+  --brand-600: var(--ui-action-primary-hover);
+  --brand-700: var(--ui-accent);
+  --brand-800: var(--ui-accent);
+  --brand-900: var(--ui-action-primary-hover);
+
+  /* Text */
+  --text-default: var(--ui-text);
+  --text-default-hover: var(--ui-text);
+  --text-secondary: var(--ui-text-2);
+  --text-secondary-hover: var(--ui-text);
+  --text-tertiary: var(--ui-text-3);
+  --text-disabled: var(--ui-text-3);
+  --text-onbrand: var(--ui-action-primary-fg);
+  --text-brand: var(--ui-accent);
+  --text-brand-hover: var(--ui-accent);
+  --icon-default: var(--ui-text);
+  --icon-secondary: var(--ui-text-2);
+  --icon-tertiary: var(--ui-text-3);
+  --icon-brand: var(--ui-accent);
+
+  /* Borders */
+  --border-neutral-l1: var(--ui-line);
+  --border-neutral-l2: var(--ui-line);
+  --border-neutral-l3: var(--ui-line);
+  --border-contrast: var(--ui-text);
+  --border-brand: var(--ui-accent);
+
+  /* Status semantics -> frozen --ui-* */
+  --status-error: var(--ui-danger);
+  --status-error-surface: rgba(229, 115, 115, 0.18);
+  --status-warning: var(--ui-warning);
+  --status-warning-surface: rgba(216, 154, 58, 0.18);
+  --status-alert: var(--ui-warning);
+  --status-alert-surface: rgba(216, 154, 58, 0.18);
+  --status-success: var(--ui-success);
+  --status-success-surface: rgba(63, 207, 134, 0.18);
+  --status-primary: var(--ui-accent);
+  /* was blue rgba(53,121,255,.18); conform to frozen green accent */
+  --status-primary-surface: rgba(50, 240, 140, 0.18);
+
+  /* Type scale (discrete Curis scale; kept as literals) */
+  /* Line heights (kept as literals) */
+  --leading-xs: 14px;
+  --leading-sm: 16px;
+  --leading-md: 18px;
+  --leading-base: 20px;
+  --leading-lg: 24px;
+  --leading-xl: 28px;
+  --leading-2xl: 32px;
+  --leading-3xl: 36px;
+  --leading-4xl: 44px;
+
+  /* Spacing (kept as literals) */
+  --space-0: 0;
+  --space-2: 2px;
+  --space-4: var(--ui-sp-1);
+  --space-6: var(--ui-sp-2);
+  --space-8: var(--ui-sp-2);
+  --space-10: var(--ui-sp-2);
+  --space-12: var(--ui-sp-3);
+  --space-14: var(--ui-sp-3);
+  --space-16: var(--ui-sp-4);
+  --space-20: var(--ui-sp-5);
+  --space-24: var(--ui-sp-6);
+  --space-32: var(--ui-sp-7);
+  --space-40: var(--ui-sp-8);
+  --space-64: calc(var(--ui-sp-8) + var(--ui-sp-4));
+
+  /* Radius / elevation / layout (aliases + literals) */
+  --radius-xs: var(--ui-r-xs);
+  --radius-sm: var(--ui-r-sm);
+  --radius-md: var(--ui-r-sm);
+  --radius-lg: var(--ui-r-md);
+  --radius-xl: var(--ui-r-md);
+  --radius-full: var(--ui-r-pill);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+  --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+  --sidebar-width: var(--ui-sidebar-w);
+  --drawer-width: 390px;
+  --topbar-height: var(--ui-topbar-h);
+  --palette-width: 160px;
+  --config-width: 280px;
+
+  --font-body: var(--ui-font);
+  --font-heading: var(--ui-font);
+  --font-mono: var(--ui-mono);
+}
+
+
+
+
+
+/* Curis Visual Design System v1.0 — Tailwind v4 theme bridge
+   Semantic tokens + legacy page tokens for high-fidelity pages. */
+
+
+
+  /* @theme bridge removed: Tailwind CDN dropped in P0-3; --color-* unused */
+
+    </style>        <style id="legacy-base">
+      body { background: var(--background); color: var(--foreground); }
+      td, th { overflow-wrap: break-word; word-break: break-all; word-break: auto-phrase; }
+      th { white-space: nowrap; }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+  <!-- Step indicator -->
+  <div class="step-indicator" role="navigation" aria-label="创建流程步骤">
+    <div class="step-indicator-inner">
+      <div class="step-dot active" data-step="0">
+        <span class="dot"></span>
+        <span class="step-label-desktop">欢迎</span>
+        <span class="step-label-mobile">1</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="1">
+        <span class="dot"></span>
+        <span class="step-label-desktop">创业简报</span>
+        <span class="step-label-mobile">2</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="2">
+        <span class="dot"></span>
+        <span class="step-label-desktop">公司设定</span>
+        <span class="step-label-mobile">3</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="3">
+        <span class="dot"></span>
+        <span class="step-label-desktop">首个业务</span>
+        <span class="step-label-mobile">4</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="4">
+        <span class="dot"></span>
+        <span class="step-label-desktop">AI 团队</span>
+        <span class="step-label-mobile">5</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="5">
+        <span class="dot"></span>
+        <span class="step-label-desktop">启动检查</span>
+        <span class="step-label-mobile">6</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- STEP 0: Welcome -->
+    <section class="step-panel active" data-step="0">
+      <div class="welcome-center">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h1 class="welcome-title">Curis</h1>
+        <p class="welcome-sub">一间 AI 公司，从一次清晰的经营意图开始。<br>我会陪你把它变成可运行的组织。</p>
+        <div class="welcome-actions">
+          <button class="btn btn-secondary btn-large" onclick="goToStep(1)">从零创建公司</button>
+          <button class="btn btn-secondary btn-large" onclick="selectTemplate()">使用业务模式</button>
+        </div>
+        <!-- 行内文字链接：WCAG 2.5.8 对句子中的 inline target 明确豁免，
+             撑到 32px 反而破坏段落行距，故显式标记 data-tap="none" -->
+        <p class="welcome-note">已有公司？<a href="ceo-desk.html" class="text-brand" data-tap="none">进入 CEO 工作台</a></p>
+      </div>
+    </section>
+
+    <!-- STEP 1: Founding Brief -->
+    <section class="step-panel" data-step="1">
+      <div class="step-header">
+        <div class="step-eyebrow">第 02 步 · 创业简报</div>
+        <h2 class="step-title">告诉我你想经营什么</h2>
+        <p class="step-desc">用一句话或几段描述你的意图。Curis 会把它提炼成一份可逐项接受、修改或跳过的最简公司方案。</p>
+      </div>
+
+      <div class="assistant-bubble">
+        <div class="assistant-avatar">C</div>
+        <div class="assistant-text">
+          你好，我是你的 CEO 助理。你可以直接对我说话，比如：<br>
+          <strong>“我想先用 Curis 自己的 AI 研发团队持续完善 Curis，第一阶段验证 CEO 能否真实走完创建、经营、验收和反馈的完整路径。”</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field-group">
+          <label for="ceo-intent">CEO 经营意图</label>
+          <textarea id="ceo-intent" class="brief-input" placeholder="我想解决什么问题、为谁创造什么价值、第一阶段要证明什么结果……" data-dom-id="#ceo-intent"></textarea>
+          <div class="draft-actions">
+            <button class="btn btn-secondary" onclick="draftBrief()">让 Assistant 代拟</button>
+            <button class="btn btn-secondary" onclick="fillSampleBrief()">填入示例</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="brief-draft" class="hidden">
+        <div class="card green">
+          <div class="card-title">AI 提炼的创业简报</div>
+          <div class="card-sub">以下每一项你都可以接受、修改或跳过。跳过项会标记为“待补充”，不影响进入下一步。</div>
+
+          <div class="draft-section active">
+            <h4>为什么存在？</h4>
+            <p>公司要解决的核心问题或信念。</p>
+            <textarea id="brief-why" rows="2" aria-label="为什么做这件事">一人公司的 CEO 需要一支真正能承担责任的 AI 团队，把 Curis 从想法持续做成可使用、可验证、可改进的产品。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>服务谁？</h4>
+            <p>第一阶段的理想客户画像。</p>
+            <textarea id="brief-who" rows="2" aria-label="服务对象">第一阶段先服务 Curis 自己的 CEO：通过真实使用判断产品是否更容易经营公司。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>第一个业务方向</h4>
+            <p>下一阶段要做什么，以及希望看到什么结果。</p>
+            <textarea id="brief-bet" rows="2" aria-label="核心赌注">先用 Curis 自己的 AI 研发团队持续完善 Curis，验证从意图、开发、测试到 CEO 真实验收的完整闭环。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>第一个可验证结果</h4>
+            <p>到什么时间、出现什么结果，才能说明方向有效。</p>
+            <textarea id="brief-outcome" rows="2" aria-label="期望结果">30 天内完成 Curis v0.2，CEO 能真实走完创建公司、查看经营状态、进入工作空间和反馈改进的路径。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>最小责任</h4>
+            <p>CEO 必须持续承担、不可委派的事项。</p>
+            <textarea id="brief-duty" rows="2" aria-label="CEO 责任边界">产品方向、范围取舍、重大资源、真实验收和是否进入下一周期，由 CEO 最终负责。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>未知假设</h4>
+            <p>如果错了会让整个方案失效的关键假设。</p>
+            <textarea id="brief-unknown" rows="2" aria-label="未知与风险">AI 团队能否在不增加 CEO 协调负担的情况下稳定交付；首版产品是否真的让 CEO 更快看见和处理经营问题。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>已有资源</h4>
+            <p>现在能立即投入的时间、资金、关系、工具或数据。</p>
+            <textarea id="brief-resource" rows="2" aria-label="资源">CEO 负责产品判断与验收；Curis 本机代码、测试环境、现有知识和 AI 团队作为第一批执行资源。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+
+          <div class="draft-section">
+            <h4>CEO 必须决定的风险</h4>
+            <p>启动前必须明确承受或规避的风险。</p>
+            <textarea id="brief-risk" rows="2" aria-label="风险">首版可能出现流程缺口或真实使用阻塞；研发 AI 不能自行宣布验收，所有高影响变更必须保留 CEO 判断和回滚路径。</textarea>
+            <div class="draft-actions">
+              <button class="btn btn-secondary" onclick="acceptField(this)">接受</button>
+              <button class="btn btn-ghost" onclick="skipField(this)">跳过</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Company Design -->
+    <section class="step-panel" data-step="2">
+      <div class="step-header">
+        <div class="step-eyebrow">第 03 步 · 公司设定</div>
+        <h2 class="step-title">为公司划定边界</h2>
+        <p class="step-desc">名称、宪章、价值观与决策范围。这是公司的第一张身份证，会出现在 CEO 工作台顶部。</p>
+      </div>
+
+      <div class="card">
+        <div class="field-row">
+          <div class="field-group">
+            <label for="company-name">公司名称</label>
+            <input type="text" id="company-name" value="Curis" oninput="updateCompanyPreview()">
+          </div>
+          <div class="field-group">
+            <label for="company-legal">法律/组织形态</label>
+            <select id="company-legal" onchange="updateCompanyPreview()">
+              <option>一人有限责任公司</option>
+              <option>个人独资企业</option>
+              <option>合伙企业</option>
+              <option>先以自然人主体运行</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="company-charter">公司宪章（一句话使命 + 边界）</label>
+          <textarea id="company-charter" rows="3" oninput="updateCompanyPreview()">帮助一人公司的 CEO 从零搭建并持续经营一家 AI 公司；先把 Curis 自己做成第一个可验证、可持续改进的业务。</textarea>
+        </div>
+        <div class="field-group mb-0">
+          <label for="company-values">核心价值观（用逗号分隔）</label>
+          <input type="text" id="company-values" value="证据优先、CEO 负责、透明交付、持续学习" oninput="updateCompanyPreview()">
+        </div>
+      </div>
+
+      <div class="card green">
+        <div class="card-title">公司卡预览</div>
+        <div class="card-sub">这张卡片将在 CEO 工作台代表你的公司。</div>
+        <div class="company-preview" id="company-preview">
+          <div class="company-preview-name">Curis</div>
+          <div class="company-preview-charter">帮助一人公司的 CEO 从零搭建并持续经营一家 AI 公司；先把 Curis 自己做成第一个可验证、可持续改进的业务。</div>
+          <ul class="value-list" id="preview-values">
+            <li>证据优先</li>
+            <li>CEO 负责</li>
+            <li>透明交付</li>
+            <li>持续学习</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: First Business -->
+    <section class="step-panel" data-step="3">
+      <div class="step-header">
+        <div class="step-eyebrow">第 04 步 · 首个业务</div>
+        <h2 class="step-title">定义第一个业务方向</h2>
+        <p class="step-desc">选择一个业务模板或自由创建。关键是明确：机会、目标结果、外部反馈来源与时间盒。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">选择业务形态</div>
+        <div class="card-sub">点击选择，或选择“自定义”在下方填写。</div>
+        <div class="bet-options">
+          <div class="bet-option selected" data-curis-template="software" onclick="selectBet(this, 'software')">
+            <h4>软件开发 · Curis 自研</h4>
+            <p>产品、研发、测试与 CEO 验收协同，把 Curis 自己持续做出来。</p>
+          </div>
+          <div class="bet-option" data-curis-template="xhs" onclick="selectBet(this, 'xhs')">
+            <h4>内容增长 · 小红书</h4>
+            <p>选题、脚本、发布与平台数据回传，持续提升账号质量。</p>
+          </div>
+          <div class="bet-option" data-curis-template="douyin" onclick="selectBet(this, 'douyin')">
+            <h4>抖音 / TikTok 运营</h4>
+            <p>选题、制作、发布、数据回流与复盘，按平台规则运行。</p>
+          </div>
+          <div class="bet-option" data-curis-template="custom" onclick="selectBet(this, 'custom')">
+            <h4>自由搭建</h4>
+            <p>不套用模板，从零描述你的第一个业务方向。</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="business-opportunity">机会描述</label>
+          <textarea id="business-opportunity" rows="2">Curis 需要一个能持续研发自己的 AI 团队，让每次产品改进都能被真实使用反馈验证。</textarea>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="business-outcome">目标结果</label>
+            <input type="text" id="business-outcome" value="30 天内完成 Curis v0.2 验收，并由 CEO 通过首轮真实使用">
+          </div>
+          <div class="field-group">
+            <label for="business-timebox">时间盒</label>
+            <select id="business-timebox">
+              <option>30 天</option>
+              <option>60 天</option>
+              <option>90 天</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group mb-0">
+          <label for="business-evidence">外部反馈路径</label>
+          <select id="business-evidence">
+            <option selected>CEO 验收 + 产品使用反馈</option>
+            <option>客户合同签署 + 收款记录</option>
+            <option>产品使用数据 API</option>
+            <option>手动周报 + 客户访谈</option>
+            <option>第三方平台数据导入</option>
+          </select>
+          <p class="text-secondary mt-16" style="font-size: var(--text-sm);">外部反馈是 Curis 判断业务是否真实推进的证据来源，不能只是团队内部汇报。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: AI Team & Capability -->
+    <section class="step-panel" data-step="4">
+      <div class="step-header">
+        <div class="step-eyebrow">第 05 步 · AI 团队与能力</div>
+        <h2 class="step-title">配置最小可运行 AI 团队</h2>
+        <p class="step-desc">Curis 推荐了一组 AI 员工与能力绑定。你可以调整角色、授权范围与容量分配。</p>
+      </div>
+
+      <div class="assistant-bubble">
+        <div class="assistant-avatar">C</div>
+        <div class="assistant-text">
+          基于“软件开发 · Curis 自研”，我建议先配置产品、研发、QA 和运行反馈四个责任位。绿色边框表示已分配责任与能力。你可以点击卡片查看或调整授权。
+        </div>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card assigned">
+          <div class="role">CEO 助理</div>
+          <h4>Curis</h4>
+          <p>全局经营协调、日终汇报、决策提醒与 CEO 意图对齐。</p>
+          <span class="capability-tag">经营简报</span>
+          <span class="capability-tag">决策记录</span>
+        </div>
+        <div class="team-card assigned">
+          <div class="role">产品 AI</div>
+          <h4>产品 AI</h4>
+          <p>把 CEO 意图转成可验证的产品增量。</p>
+          <span class="capability-tag">需求拆解</span>
+          <span class="capability-tag">验收标准</span>
+        </div>
+        <div class="team-card assigned">
+          <div class="role">研发 AI</div>
+          <h4>研发 AI</h4>
+          <p>在批准范围内完成 Curis 的实现与发布准备。</p>
+          <span class="capability-tag">代码实现</span>
+          <span class="capability-tag">回归修复</span>
+        </div>
+        <div class="team-card assigned">
+          <div class="role">QA AI</div>
+          <h4>QA AI</h4>
+          <p>验证真实路径、回归和证据可信度。</p>
+          <span class="capability-tag">场景回归</span>
+          <span class="capability-tag">证据整理</span>
+        </div>
+        <div class="team-card">
+          <div class="role">运行反馈 AI</div>
+          <h4>运行反馈 AI</h4>
+          <p>回收真实使用反馈，整理下一周期改进。</p>
+          <span class="capability-tag">反馈归因</span>
+          <span class="capability-tag">改进建议</span>
+        </div>
+        <div class="team-card">
+          <div class="role">平台能力</div>
+          <h4>连接器与工具 · 按需启用</h4>
+          <p>当业务需要代码库、测试环境或外部系统时再接入。</p>
+          <span class="capability-tag">连接器授权</span>
+          <span class="capability-tag">工具配置</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">能力绑定与容量分配</div>
+        <div class="card-sub">当前配置覆盖了 4/6 项核心能力。未分配角色会在需要时从能力市场激活。</div>
+        <div class="sim-row">
+          <span class="sim-label">内容生成能力</span>
+          <span class="sim-value good">墨白 · 80% 容量</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">策略分析能力</span>
+          <span class="sim-value good">星河 · 60% 容量</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">数据回收能力</span>
+          <span class="sim-value good">齿轮 · 50% 容量</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">商务跟进能力</span>
+          <span class="sim-value">待激活 · CEO 暂代</span>
+        </div>
+      </div>
+
+      <div class="card green">
+        <div class="card-title">CEO 审批</div>
+        <p class="card-sub">你批准这个最小 AI 团队承担第一业务的执行责任吗？</p>
+        <label style="display:flex; align-items:center; gap: var(--space-8); cursor: pointer; margin:0;">
+          <input type="checkbox" id="approve-team" style="width:auto;" onchange="updateLaunchCheck()">
+          <span>批准团队配置，授权 AI 员工在各自责任范围内自主执行并汇报</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- STEP 5: Launch Check -->
+    <section class="step-panel" data-step="5">
+      <div class="step-header">
+        <div class="step-eyebrow">第 06 步 · 启动检查</div>
+        <h2 class="step-title">最后确认，准备启动</h2>
+        <p class="step-desc">检查清单、模拟结果与 CEO 批准门。通过后，公司将正式运行并进入 CEO 工作台。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">启动前检查清单</div>
+        <ul class="checklist" id="launch-checklist">
+          <li>
+            <div class="checkbox checked"></div>
+            <div class="check-content">
+              <div class="check-title">经营意图已表达</div>
+              <div class="check-meta">创业简报至少包含“为什么”与“服务谁”。</div>
+            </div>
+            <span class="check-status pass">已满足</span>
+          </li>
+          <li>
+            <div class="checkbox checked"></div>
+            <div class="check-content">
+              <div class="check-title">公司对象已生成</div>
+              <div class="check-meta">名称、宪章、价值观与法律形态已填写。</div>
+            </div>
+            <span class="check-status pass">已满足</span>
+          </li>
+          <li>
+            <div class="checkbox checked"></div>
+            <div class="check-content">
+              <div class="check-title">首个业务方向已定义</div>
+              <div class="check-meta">机会、结果、反馈路径、时间盒已明确。</div>
+            </div>
+            <span class="check-status pass">已满足</span>
+          </li>
+          <li>
+            <div class="checkbox" id="team-check"></div>
+            <div class="check-content">
+              <div class="check-title">AI 团队已获批</div>
+              <div class="check-meta">CEO 必须勾选团队审批。</div>
+            </div>
+            <span class="check-status warn" id="team-status">待确认</span>
+          </li>
+          <li>
+            <div class="checkbox"></div>
+            <div class="check-content">
+              <div class="check-title">风险与待补充项已知情</div>
+              <div class="check-meta">已知未知已记录：首轮真实使用可能暴露性能与经营路径问题。</div>
+            </div>
+            <span class="check-status pass">已满足</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sim-panel">
+        <div class="card-title" style="margin-bottom: var(--space-12);">运行模拟</div>
+        <div class="sim-row">
+          <span class="sim-label">正常场景</span>
+            <span class="sim-value good">30 天内交付可运行增量并完成 CEO 真实验收</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">缺席场景（CEO 离线 7 天）</span>
+            <span class="sim-value">研发继续在批准范围内执行，验收事项自动升级</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">失败场景（验收未通过）</span>
+            <span class="sim-value">验收未通过，保留证据并生成返工与下一周期决策</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">CEO 最终批准</div>
+        <p class="card-sub">点击“启动公司”后，Curis 将创建公司、业务、AI 团队与首个运行周期，并进入 CEO 工作台。</p>
+        <button class="btn btn-primary btn-large" id="launch-btn" onclick="launchCompany()" disabled data-dom-id="#launch-btn">启动公司</button>
+      </div>
+    </section>
+
+    <!-- Footer navigation -->
+    <div class="step-footer">
+      <button class="btn btn-ghost" id="prev-btn" onclick="goToStep(currentStep - 1)" disabled data-dom-id="#prev-btn">上一步</button>
+      <div class="step-footer-right">
+        <button class="btn btn-secondary" id="next-btn" onclick="goToStep(currentStep + 1)" data-dom-id="#next-btn">下一步</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Launch overlay -->
+  <div class="launch-overlay" id="launch-overlay">
+    <div class="launch-spinner"></div>
+    <div class="launch-title">正在创建你的公司</div>
+    <p class="launch-sub">生成公司、业务、AI 团队与首个运行周期……</p>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const totalSteps = 6;
+
+    function updateStepIndicator() {
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        const step = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (step < currentStep) dot.classList.add('completed');
+        if (step === currentStep) dot.classList.add('active');
+      });
+
+      document.querySelectorAll('.step-panel').forEach(panel => {
+        panel.classList.remove('active');
+        if (parseInt(panel.dataset.step) === currentStep) {
+          panel.classList.add('active');
+        }
+      });
+
+      document.getElementById('prev-btn').disabled = currentStep === 0;
+      const nextBtn = document.getElementById('next-btn');
+      if (currentStep === totalSteps - 1) {
+        nextBtn.style.display = 'none';
+      } else {
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.textContent = currentStep === 0 ? '开始创建' : '下一步';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToStep(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      updateStepIndicator();
+    }
+
+    function selectTemplate() {
+      fillSampleBrief();
+      goToStep(1);
+    }
+
+    function fillSampleBrief() {
+      document.getElementById('ceo-intent').value = '我想先用 Curis 自己的 AI 研发团队持续完善 Curis，第一阶段验证 CEO 能否真实走完创建、经营、验收和反馈的完整路径。';
+      draftBrief();
+    }
+
+    function draftBrief() {
+      const intent = document.getElementById('ceo-intent').value.trim();
+      if (!intent) {
+        document.getElementById('ceo-intent').focus();
+        return;
+      }
+      document.getElementById('brief-draft').classList.remove('hidden');
+      document.querySelectorAll('#brief-draft .draft-section').forEach((sec, idx) => {
+        sec.classList.toggle('active', idx === 0);
+      });
+    }
+
+    function acceptField(btn) {
+      const section = btn.closest('.draft-section');
+      section.classList.add('active');
+      btn.textContent = '已接受';
+      btn.disabled = true;
+      /* discipline: accepted field stays secondary, not promoted to primary */
+      btn.classList.add('is-accepted');
+    }
+
+    function skipField(btn) {
+      const section = btn.closest('.draft-section');
+      section.classList.remove('active');
+      section.style.opacity = '0.6';
+      const textarea = section.querySelector('textarea');
+      textarea.value = '[待补充 — 待后续补充]';
+      btn.textContent = '已跳过';
+      btn.disabled = true;
+    }
+
+    function updateCompanyPreview() {
+      const name = document.getElementById('company-name').value || '公司名称';
+      const charter = document.getElementById('company-charter').value || '公司宪章将显示在这里。';
+      const values = document.getElementById('company-values').value.split(/[,，]/).map(v => v.trim()).filter(Boolean);
+
+      document.getElementById('company-preview').querySelector('.company-preview-name').textContent = name;
+      document.getElementById('company-preview').querySelector('.company-preview-charter').textContent = charter;
+
+      const list = document.getElementById('preview-values');
+      list.innerHTML = '';
+      values.forEach(v => {
+        const li = document.createElement('li');
+        li.textContent = v;
+        list.appendChild(li);
+      });
+    }
+
+    function selectBet(el, id) {
+      document.querySelectorAll('.bet-option').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+
+      const mappings = {
+        'software': {
+          opportunity: 'Curis 需要一个能持续研发自己的 AI 团队，让每次产品改进都能被真实使用反馈验证。',
+          outcome: '30 天内完成 Curis v0.2 验收，并由 CEO 通过首轮真实使用'
+        },
+        'xhs': {
+          opportunity: '通过小红书持续验证内容、受众和转化路径，为一人公司的业务获取真实反馈。',
+          outcome: '30 天内发布首轮内容并沉淀可复用的选题、制作与复盘流程'
+        },
+        'douyin': {
+          opportunity: '通过抖音短视频验证内容分发、互动与成交数据，形成可持续的增长闭环。',
+          outcome: '30 天内完成首轮视频发布、数据回传与 CEO 复盘'
+        },
+        'custom': {
+          opportunity: '',
+          outcome: ''
+        }
+      };
+      const map = mappings[id];
+      if (map) {
+        document.getElementById('business-opportunity').value = map.opportunity;
+        document.getElementById('business-outcome').value = map.outcome;
+      }
+    }
+
+    function updateLaunchCheck() {
+      const approved = document.getElementById('approve-team').checked;
+      const check = document.getElementById('team-check');
+      const status = document.getElementById('team-status');
+      const launchBtn = document.getElementById('launch-btn');
+
+      if (approved) {
+        check.classList.add('checked');
+        status.textContent = '已满足';
+        status.classList.remove('warn');
+        status.classList.add('pass');
+        launchBtn.disabled = false;
+      } else {
+        check.classList.remove('checked');
+        status.textContent = '待确认';
+        status.classList.remove('pass');
+        status.classList.add('warn');
+        launchBtn.disabled = true;
+      }
+    }
+
+    function launchCompany() {
+      const overlay = document.getElementById('launch-overlay');
+      overlay.classList.add('active');
+
+      // Simulate creation of real business objects
+      const company = {
+        name: document.getElementById('company-name').value,
+        charter: document.getElementById('company-charter').value,
+        legal: document.getElementById('company-legal').value,
+        values: document.getElementById('company-values').value.split(/[,，]/).map(v => v.trim()).filter(Boolean)
+      };
+      const business = {
+        type: document.querySelector('.bet-option.selected h4').textContent,
+        opportunity: document.getElementById('business-opportunity').value,
+        outcome: document.getElementById('business-outcome').value,
+        timebox: document.getElementById('business-timebox').value,
+        evidence: document.getElementById('business-evidence').value
+      };
+      const team = {
+        approved: document.getElementById('approve-team').checked,
+        members: ['Curis · CEO 助理', '产品 AI', '研发 AI', 'QA AI', '运行反馈 AI']
+      };
+
+      console.log('[Curis Founding] Creating Company:', company);
+      console.log('[Curis Founding] Creating Business:', business);
+      console.log('[Curis Founding] Creating AI Team:', team);
+
+      setTimeout(() => {
+        window.location.href = 'ceo-desk.html';
+      }, 2200);
+    }
+
+    // Initialize
+    updateStepIndicator();
+    updateCompanyPreview();
+  </script>
+
+    <style>
+    /* ────────────────────────────────────────────────
+       Curis Founding Flow
+       Tokens: Curis Visual Design System v1.0 (TRAE dark)
+       ──────────────────────────────────────────────── */
+
+    
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top step indicator */
+    .step-indicator {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(26, 27, 29, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      padding: var(--space-16) var(--space-24);
+    }
+    .step-indicator-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-8);
+    }
+    .step-dot {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .step-dot .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--bg-base-tertiary);
+      border: 1px solid var(--border-neutral-l2);
+      transition: all 0.25s ease;
+    }
+    .step-dot.active { color: var(--text-brand); }
+    .step-dot.active .dot {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+      box-shadow: none;
+    }
+    .step-dot.completed { color: var(--text-secondary); }
+    .step-dot.completed .dot {
+      background: var(--brand-700);
+      border-color: var(--brand-700);
+    }
+    .step-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-neutral-l1);
+      margin: 0 var(--space-8);
+    }
+    .step-label-desktop { display: inline; }
+    .step-label-mobile { display: none; }
+    @media (max-width: 760px) {
+      .step-label-desktop { display: none; }
+      .step-label-mobile { display: inline; }
+      .step-indicator-inner { justify-content: center; }
+    }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      padding: var(--space-40) var(--space-24);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Step panels */
+    .step-panel {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+    .step-panel.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header within step */
+    .step-header {
+      margin-bottom: var(--space-32);
+    }
+    .step-eyebrow {
+      color: var(--text-brand);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-8);
+    }
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      line-height: var(--leading-3xl);
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-12) 0;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .step-desc {
+      color: var(--text-secondary);
+      font-size: var(--text-lg);
+      line-height: var(--leading-lg);
+      max-width: 680px;
+      margin: 0;
+    }
+
+    /* Assistant persona */
+    .assistant-bubble {
+      display: flex;
+      gap: var(--space-12);
+      align-items: flex-start;
+      margin-bottom: var(--space-32);
+      padding: var(--space-16);
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+    }
+    .assistant-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      display: grid;
+      place-items: center;
+      color: var(--text-onbrand);
+      font-size: var(--text-md);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .assistant-text {
+      color: var(--text-default);
+      font-size: var(--text-base);
+      line-height: var(--leading-lg);
+    }
+    .assistant-text strong { color: var(--text-brand); font-weight: 500; }
+
+    /* Cards & panels */
+    .card {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-xl);
+      padding: var(--space-24);
+      margin-bottom: var(--space-16);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover { border-color: var(--border-neutral-l2); }
+    .card.green {
+      border-color: rgba(50, 240, 140, 0.18);
+      background: var(--bg-base-secondary);
+    }
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-8) 0;
+    }
+    .card-sub {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin: 0 0 var(--space-16) 0;
+    }
+
+    /* Form elements */
+    label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      margin-bottom: var(--space-6);
+    }
+    textarea,
+    input[type="text"],
+    select {
+      width: 100%;
+      background: var(--bg-base-tertiary);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-md);
+      padding: var(--space-12) var(--space-12);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-lg);
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    textarea:focus,
+    input[type="text"]:focus,
+    select:focus {
+      border-color: var(--brand-500);
+      box-shadow: 0 0 0 3px rgba(50, 240, 140, 0.08);
+    }
+    textarea::placeholder,
+    input::placeholder { color: var(--text-tertiary); }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%239599A6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: var(--space-32);
+    }
+    .field-group { margin-bottom: var(--space-16); }
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-16);
+    }
+    @media (max-width: 680px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-16);
+      border-radius: var(--radius-md);
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: var(--leading-md);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--brand-400);
+      border-color: var(--brand-400);
+      box-shadow: var(--shadow-glow);
+    }
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-overlay-l3);
+      border-color: var(--border-neutral-l3);
+      color: var(--text-default-hover);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--text-default);
+      background: var(--bg-overlay-l1);
+    }
+    .btn-large {
+      padding: var(--space-12) var(--space-24);
+      font-size: var(--text-lg);
+      border-radius: var(--radius-lg);
+    }
+
+    /* Welcome */
+    .welcome-center {
+      text-align: center;
+      padding: var(--space-64) 0;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--space-24);
+      border-radius: var(--radius-lg);
+      background: var(--brand-500);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-glow);
+    }
+    .logo svg { width: 34px; height: 34px; }
+    .welcome-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-4xl);
+      line-height: var(--leading-4xl);
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-12) 0;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+    .welcome-sub {
+      color: var(--text-secondary);
+      font-size: var(--text-xl);
+      line-height: var(--leading-xl);
+      margin: 0 auto var(--space-32);
+      max-width: 520px;
+    }
+    .welcome-actions {
+      display: flex;
+      gap: var(--space-12);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .welcome-note {
+      margin-top: var(--space-40);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+
+    /* Brief drafting */
+    .draft-section {
+      border-left: 2px solid var(--border-neutral-l2);
+      padding-left: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+    .draft-section.active { border-left-color: var(--brand-500); }
+    .draft-section h4 {
+      font-family: var(--font-heading);
+      font-size: var(--text-base);
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-6) 0;
+      font-weight: 600;
+    }
+    .draft-section p {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin: 0 0 var(--space-12) 0;
+    }
+    .draft-actions {
+      display: flex;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+    }
+    .brief-input {
+      min-height: 120px;
+      margin-bottom: var(--space-12);
+    }
+
+    /* Company card preview */
+    .company-preview {
+      background: var(--bg-base-tertiary);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-24);
+      position: relative;
+      overflow: hidden;
+    }
+    .company-preview::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--brand-500);
+    }
+    .company-preview-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-4) 0;
+      font-weight: 600;
+    }
+    .company-preview-charter {
+      color: var(--text-secondary);
+      font-size: var(--text-base);
+      line-height: var(--leading-lg);
+      margin: 0 0 var(--space-16) 0;
+    }
+    .value-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .value-list li {
+      padding: var(--space-4) var(--space-10);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-full);
+      color: var(--text-default);
+      font-size: var(--text-sm);
+    }
+
+    /* Business bet options */
+    .bet-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-12);
+      margin-bottom: var(--space-24);
+    }
+    .bet-option {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      padding: var(--space-16);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .bet-option:hover { border-color: var(--border-neutral-l2); }
+    .bet-option.selected {
+      border-color: var(--brand-500);
+      background: rgba(50, 240, 140, 0.05);
+      box-shadow: var(--shadow-glow);
+    }
+    .bet-option h4 {
+      margin: 0 0 var(--space-4) 0;
+      font-family: var(--font-heading);
+      font-size: var(--text-base);
+      color: var(--text-default-hover);
+    }
+    .bet-option p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+    }
+    @media (max-width: 680px) {
+      .bet-options { grid-template-columns: 1fr; }
+    }
+
+    /* AI Team map */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-12);
+      margin-bottom: var(--space-24);
+    }
+    .team-card {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      padding: var(--space-16);
+      transition: all 0.2s ease;
+    }
+    .team-card:hover { border-color: var(--border-neutral-l2); }
+    .team-card.assigned { border-color: rgba(50, 240, 140, 0.25); }
+    .team-card h4 {
+      margin: 0 0 var(--space-4) 0;
+      font-family: var(--font-heading);
+      font-size: var(--text-base);
+      color: var(--text-default-hover);
+    }
+    .team-card .role {
+      color: var(--text-brand);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-8);
+    }
+    .team-card p {
+      margin: 0 0 var(--space-12) 0;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-md);
+    }
+    .capability-tag {
+      display: inline-block;
+      padding: var(--space-4) var(--space-8);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-full);
+      color: var(--text-secondary);
+      font-size: var(--text-xs);
+      margin-right: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    @media (max-width: 760px) {
+      .team-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Launch checklist */
+    .checklist {
+      list-style: none;
+      margin: 0 0 var(--space-24) 0;
+      padding: 0;
+    }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-12);
+      padding: var(--space-12) 0;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .checklist li:last-child { border-bottom: 0; }
+    .checklist .checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-neutral-l2);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.2s ease;
+    }
+    .checklist .checkbox.checked {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+    }
+    .checklist .checkbox.checked::after {
+      content: "";
+      width: 5px;
+      height: 9px;
+      border: solid var(--text-onbrand);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+    .checklist .check-content { flex: 1; }
+    .checklist .check-title {
+      color: var(--text-default);
+      font-weight: 500;
+      margin-bottom: var(--space-4);
+    }
+    .checklist .check-meta {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+    .checklist .check-status {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .check-status.pass {
+      color: var(--brand-300);
+      background: rgba(50, 240, 140, 0.08);
+    }
+    .check-status.warn {
+      color: var(--status-warning);
+      background: var(--status-warning-surface);
+    }
+
+    /* Simulation panel */
+    .sim-panel {
+      background: var(--bg-base-tertiary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      padding: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+    .sim-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-8) 0;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .sim-row:last-child { border-bottom: 0; }
+    .sim-label { color: var(--text-secondary); font-size: var(--text-sm); }
+    .sim-value {
+      font-family: var(--font-mono);
+      color: var(--text-default);
+      font-size: var(--text-sm);
+    }
+    .sim-value.good { color: var(--brand-400); }
+
+    /* Bottom navigation */
+    .step-footer {
+      margin-top: auto;
+      padding-top: var(--space-32);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+    .step-footer-right {
+      display: flex;
+      gap: var(--space-12);
+    }
+
+    /* Launch transition overlay */
+    .launch-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 27, 29, 0.98);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-24);
+    }
+    .launch-overlay.active { display: flex; }
+    .launch-spinner {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--border-neutral-l1);
+      border-top-color: var(--brand-500);
+      border-radius: var(--radius-full);
+      animation: spin 0.9s linear infinite;
+      margin-bottom: var(--space-24);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .launch-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      color: var(--text-default-hover);
+      margin: 0 0 var(--space-8) 0;
+    }
+    .launch-sub {
+      color: var(--text-secondary);
+      font-size: var(--text-base);
+      margin: 0;
+    }
+
+    /* Utility */
+    .text-brand { color: var(--text-brand); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-tertiary { color: var(--text-tertiary); }
+    .mono { font-family: var(--font-mono); }
+    .mb-0 { margin-bottom: 0; }
+    .mt-16 { margin-top: var(--space-16); }
+    .mt-24 { margin-top: var(--space-24); }
+    .hidden { display: none; }
+  </style>
+<script>
+/**
+ * Curis Hi-Fi Prototype — shared interaction layer
+ * Handles cross-page navigation, active nav state, toast feedback,
+ * and common button affordances for the click-through demo.
+ */
+(function () {
+  'use strict';
+
+  // ── Navigation map (label text → page file)
+  const NAV_MAP = {
+    'CEO 工作台': 'ceo-desk.html',
+    'CEO 办公桌': 'ceo-desk.html',
+    '经营': 'operating.html',
+    '经营概览': 'operating.html',
+    '业务': 'business.html',
+    '工作空间': 'business.html',
+    '公司': 'ai-organization.html',
+    'AI 团队': 'ai-organization.html',
+    '工作空间': 'workspace-portal.html',
+    '决策': 'decision-room.html',
+    '决策室': 'decision-room.html',
+    '设置': '#',
+    '帮助': '#',
+    '帮助与反馈': '#',
+    '员工目录': '#',
+    '能力中心': '#'
+  };
+
+  // ── Wire sidebar nav items
+  function initNavigation() {
+    const currentPage = (window.location.pathname.split('/').pop() || 'ceo-desk.html');
+
+    document.querySelectorAll('.sidebar .nav-item, aside.sidebar .nav-item, .nav-list .nav-item').forEach(item => {
+      // Skip if already a link
+      if (item.tagName === 'A') return;
+
+      // Determine target from data-href or text content
+      let target = item.dataset.href;
+      if (!target) {
+        const text = item.textContent.trim().split(/\s+/).join(' ');
+        for (const [label, href] of Object.entries(NAV_MAP)) {
+          if (text.includes(label)) {
+            target = href;
+            break;
+          }
+        }
+      }
+
+      if (target) {
+        item.style.cursor = 'pointer';
+        item.setAttribute('role', 'link');
+        item.setAttribute('tabindex', '0');
+        item.dataset.href = target;
+
+        const navigate = () => {
+          if (target === '#') {
+            showToast('该入口将在设置中心接入；当前工作上下文已保留');
+            return;
+          }
+          window.location.href = target;
+        };
+
+        item.addEventListener('click', navigate);
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate();
+          }
+        });
+      }
+
+      // Active state
+      const href = item.dataset.href;
+      if (href && href !== '#') {
+        const active = currentPage === href || currentPage.endsWith('/' + href);
+        item.classList.toggle('active', active);
+      }
+    });
+  }
+
+  // ── Toast
+  function showToast(message, duration = 2200) {
+    let toast = document.getElementById('proto-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'proto-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = `
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-base-secondary, #222427);
+        color: var(--text-default-hover, #f5f9fe);
+        border: 1px solid var(--border-neutral-l2, rgba(224,226,242,.16));
+        padding: var(--ui-sp-2) var(--ui-sp-4);
+        border-radius: var(--ui-r-sm);
+        font-size: var(--ui-fs-2);
+        box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+        z-index: 9999;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration);
+  }
+
+  // ── Button click feedback (where no specific handler exists)
+  function initButtonFeedback() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button, .btn');
+      if (!btn) return;
+
+      // Specific Curis handlers own marked actions; only fallback for unbound controls.
+      if (btn.dataset.curisHandled === 'true') return;
+      // If button already has onclick or bound listener, skip generic feedback
+      if (btn.onclick) return;
+      if (btn.closest('a')) return;
+
+      const label = btn.textContent.trim();
+      if (!label) return;
+
+      // Capture a few generic actions across pages
+      if (/^(决策|查看|调查|委派|暂缓|修复问题|运行模拟|提交审批|批准|拒绝|延后|要求修改|预览|编辑|发送|保存|查看影响)$/.test(label)) {
+        e.preventDefault();
+        showToast(`${label}已记录，CEO 助理会继续跟进`);
+      }
+    });
+  }
+
+  // ── Expose globals for inline onclick handlers that may be missing
+  window.showToast = showToast;
+
+  // ── Auto-init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initButtonFeedback();
+    });
+  } else {
+    initNavigation();
+    initButtonFeedback();
+  }
+})();
+
+</script>
+  <script src="curis-prototype.js"></script>
+  <style id="curis-frozen-patch">
+  /* Frozen alignment patch — single source = _system/tokens.css (--ui-*) */
+  
+
+  .nav-group-label {
+    font-size: var(--ui-fs-1); line-height: 1.45; font-weight: 400;
+    color: var(--text-tertiary); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); letter-spacing: 0.02em;
+  }
+  .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+  .theme-btn {
+    border: 1px solid var(--ui-line); background: var(--ui-surface-2);
+    color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2);
+    font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease;
+  }
+  .theme-btn:hover { color: var(--ui-text); }
+  .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+
+  .topbar { background: var(--ui-surface); }
+  .sidebar { background: var(--ui-surface); }
+  </style>
+  <script>
+  (function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'theme-btn';
+      b.setAttribute('data-curis-theme', t);
+      b.textContent = labels[t];
+      sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar') || document.querySelector('.sidebar');
+    if (host) host.appendChild(sw);
+  })();
+  </script>
+</body>
+</html>

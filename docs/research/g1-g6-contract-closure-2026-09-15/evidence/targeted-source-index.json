@@ -1,0 +1,106 @@
+[
+  {
+    "repo": "microsoft/playwright",
+    "path": "packages/playwright-core/src/client/browserContext.ts",
+    "ref": "52a0e72005b4e8cef47b3174b6fb502636380023",
+    "url": "https://raw.githubusercontent.com/microsoft/playwright/52a0e72005b4e8cef47b3174b6fb502636380023/packages/playwright-core/src/client/browserContext.ts",
+    "file": "microsoft__playwright__packages__playwright-core__src__client__browserContext.ts",
+    "sha256": "da8a11584be787238e664d9df7c4d3d83b08581621999f63aa5219f9a364a138"
+  },
+  {
+    "repo": "microsoft/playwright-mcp",
+    "path": "README.md",
+    "ref": "main",
+    "url": "https://raw.githubusercontent.com/microsoft/playwright-mcp/main/README.md",
+    "file": "microsoft__playwright-mcp__README.md",
+    "sha256": "b0b2f8812e78c48810bd6431b3dd77d4c80eaceca3eaa929553814a9646f0002"
+  },
+  {
+    "repo": "microsoft/playwright-mcp",
+    "path": "LICENSE",
+    "ref": "main",
+    "url": "https://raw.githubusercontent.com/microsoft/playwright-mcp/main/LICENSE",
+    "file": "microsoft__playwright-mcp__LICENSE",
+    "sha256": "9a7110fc2d2f964038e5dc49128f908f29f47a574c961cba16085914e879cbda"
+  },
+  {
+    "repo": "anomalyco/models.dev",
+    "path": "packages/core/src/schema.ts",
+    "ref": "c142a1f8d11298643ebf9313fa889415775b3a4a",
+    "url": "https://raw.githubusercontent.com/anomalyco/models.dev/c142a1f8d11298643ebf9313fa889415775b3a4a/packages/core/src/schema.ts",
+    "file": "anomalyco__models.dev__packages__core__src__schema.ts",
+    "sha256": "689a382d76cec12b9325a76db3d688b52215e12614150d781a07da92633fffce"
+  },
+  {
+    "repo": "BerriAI/litellm",
+    "path": "litellm/router.py",
+    "ref": "9e1ed40db3376dc8e7b9392aa104653ca22d3fdb",
+    "url": "https://raw.githubusercontent.com/BerriAI/litellm/9e1ed40db3376dc8e7b9392aa104653ca22d3fdb/litellm/router.py",
+    "file": "BerriAI__litellm__litellm__router.py",
+    "sha256": "c19c981cf04dc525f200a9cedfdb4e7665a887997aba477999c77766f7012448"
+  },
+  {
+    "repo": "dbos-inc/dbos-transact-py",
+    "path": "dbos/_sys_db.py",
+    "ref": "83805fd84494c85ea09105443884a2786152d921",
+    "url": "https://raw.githubusercontent.com/dbos-inc/dbos-transact-py/83805fd84494c85ea09105443884a2786152d921/dbos/_sys_db.py",
+    "file": "dbos-inc__dbos-transact-py__dbos___sys_db.py",
+    "sha256": "d5835c00a67f5c0b39143c812db7654e01d1197a8481d59a15a4657c29ee1e5f"
+  },
+  {
+    "repo": "dbos-inc/dbos-transact-py",
+    "path": "dbos/_core.py",
+    "ref": "83805fd84494c85ea09105443884a2786152d921",
+    "url": "https://raw.githubusercontent.com/dbos-inc/dbos-transact-py/83805fd84494c85ea09105443884a2786152d921/dbos/_core.py",
+    "file": "dbos-inc__dbos-transact-py__dbos___core.py",
+    "sha256": "acfb9206622a548d117be1cc1b00b33087155091392eab66f842a43b6f314df0"
+  },
+  {
+    "repo": "agronholm/apscheduler",
+    "path": "README.rst",
+    "ref": "3.11.3",
+    "url": "https://raw.githubusercontent.com/agronholm/apscheduler/3.11.3/README.rst",
+    "file": "agronholm__apscheduler__README.rst",
+    "sha256": "49cb8c70dcbe4c40b0cd807ab6027e7087f31510cc3d7d35462b7fab1c315bc4"
+  },
+  {
+    "repo": "agronholm/apscheduler",
+    "path": "LICENSE.txt",
+    "ref": "3.11.3",
+    "url": "https://raw.githubusercontent.com/agronholm/apscheduler/3.11.3/LICENSE.txt",
+    "file": "agronholm__apscheduler__LICENSE.txt",
+    "sha256": "6163f7987dfb38d6bc320ce2b70b2f02b862bc41126516d552ef1cd43247e758"
+  },
+  {
+    "repo": "agronholm/apscheduler",
+    "path": "src/apscheduler/triggers/cron/__init__.py",
+    "ref": "3.11.3",
+    "url": "https://raw.githubusercontent.com/agronholm/apscheduler/3.11.3/src/apscheduler/triggers/cron/__init__.py",
+    "file": "agronholm__apscheduler__src__apscheduler__triggers__cron____init__.py",
+    "sha256": "d45d8fb6987ab66b2a9d69498a4589c7d2d2667a3647c41c1b9f7a8ebd6b31f5"
+  },
+  {
+    "repo": "docling-project/docling",
+    "path": "docling/document_converter.py",
+    "ref": "014e8e357b24aa9d5113317fa454df8a70de9aeb",
+    "url": "https://raw.githubusercontent.com/docling-project/docling/014e8e357b24aa9d5113317fa454df8a70de9aeb/docling/document_converter.py",
+    "file": "docling-project__docling__docling__document_converter.py",
+    "sha256": "6832dcb72c27c9d1a02eec30a5cb701e231cbeaa701bbdc0056ee8fc362f9f86"
+  },
+  {
+    "repo": "tesseract-ocr/tesseract",
+    "path": "include/tesseract/baseapi.h",
+    "ref": "8ae68101439b3f7df123499a784e8896c805179d",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tesseract/8ae68101439b3f7df123499a784e8896c805179d/include/tesseract/baseapi.h",
+    "file": "tesseract-ocr__tesseract__include__tesseract__baseapi.h",
+    "sha256": "540e28e0ebe9f10e7d65061a4bd3522320648705a5e7348042878b309f497e8e"
+  },
+  {
+    "repo": "FFmpeg/FFmpeg",
+    "path": "LICENSE.md",
+    "ref": "639ee849526cfe61ceb312776335c245b98bd9d4",
+    "url": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/639ee849526cfe61ceb312776335c245b98bd9d4/LICENSE.md",
+    "file": "FFmpeg__FFmpeg__LICENSE.md",
+    "sha256": "8c880fa51b7e1d8dbc09a92685da98c129532f3b0a766a9a58a2321ad67bab6c"
+  }
+]

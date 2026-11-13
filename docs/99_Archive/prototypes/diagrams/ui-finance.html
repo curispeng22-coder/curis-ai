@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Curis Workspace — 财务中心</title>
+<style>
+:root{--t50:#F0FDFA;--t100:#CCFBF1;--t300:#5EEAD4;--t400:#2DD4BF;--t500:#14B8A6;--t600:#0D9488;--t700:#0F766E;--t800:#115E59;--bg:#F7FCFA;--card:#FFF;--sub:#EDF7F5;--sb-bg:#FAFEFD;--tx:#0F2922;--tx2:#4A635C;--tx3:#7B9590;--ok:#10B981;--ok-bg:#ECFDF5;--warn:#F59E0B;--warn-bg:#FFFBEB;--err:#EF4444;--err-bg:#FEF2F2;--info:#06B6D4;--info-bg:#ECFEFF;--pur:#8B5CF6;--pur-bg:#F5F3FF;--blu:#3B82F6;--bd:#DEF2EC;--bd2:#C5E5DB;--sh-sm:0 1px 2px rgba(15,41,34,.04);--sh-md:0 4px 12px rgba(15,41,34,.07);--rs:8px;--rm:12px;--rl:16px;--rxl:20px;--rp:999px;--font:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+.sb{width:232px;min-width:232px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 16px}
+.bi{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 4px 12px rgba(20,184,166,.3)}
+.bt h1{font-size:15px;font-weight:700}.bt p{font-size:11px;color:var(--tx3);margin-top:1px}
+.nl{display:flex;flex-direction:column;gap:2px;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rm);font-size:13.5px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.ni svg{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.ni:hover{background:var(--sub);color:var(--tx)}.ni:hover svg{opacity:1}
+.ni.on{background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(20,184,166,.28)}.ni.on svg{opacity:1;color:#fff}
+.sbb{padding-top:10px;border-top:1px solid var(--bd);margin-top:auto}
+.uc{display:flex;align-items:center;gap:10px;padding:6px}.ua{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pur),#A78BFA);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}.uh4{font-size:13px;font-weight:700}.usp{font-size:11px;color:var(--tx3)}.sd{width:8px;height:8px;border-radius:50%;background:var(--ok);margin-left:auto;box-shadow:0 0 6px rgba(16,185,129,.5)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 28px;background:var(--card);border-bottom:1px solid var(--bd)}
+.tg h2{font-size:18px;font-weight:700}.tg p{font-size:12.5px;color:var(--tx3);margin-top:2px}
+.tr{display:flex;align-items:center;gap:12px}
+.se{display:flex;align-items:center;gap:8px;background:var(--sub);border:1px solid var(--bd);border-radius:var(--rp);padding:7px 14px;width:220px;color:var(--tx3);font-size:13px}.se svg{width:16px;height:16px;opacity:.55}
+.sel{font-size:13px;border:1px solid var(--bd);border-radius:var(--rm);padding:8px 14px;color:var(--tx2);background:var(--card);cursor:pointer}
+.ta{width:36px;height:36px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2)}.ta:hover{border-color:var(--t300)}.ta svg{width:18px;height:18px}
+.am{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.ct{padding:22px 28px;display:flex;flex-direction:column;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kc{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:15px 17px;box-shadow:var(--sh-sm)}
+.kc-t{font-size:12px;color:var(--tx3);margin-bottom:7px}.kc-v{font-size:25px;font-weight:800}.kc-v em{font-size:13px;color:var(--tx3);font-style:normal;font-weight:600}
+.kc-d{font-size:11.5px;font-weight:600;margin-top:4px}.kc-d.up{color:var(--ok)}.kc-d.dn{color:var(--err)}
+.r2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;box-shadow:var(--sh-sm)}
+.cd h3{font-size:14.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.cd h3 .mr{font-size:12px;color:var(--t600);cursor:pointer}
+.ch{height:200px;position:relative}
+.cl{display:flex;gap:16px;margin-top:10px;justify-content:flex-end}.ld{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--tx3)}.ldot{width:8px;height:8px;border-radius:50%}
+.dnc{width:120px;height:120px;position:relative;margin:6px auto 0}
+.dnh{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dnt{font-size:10.5px;color:var(--tx3)}.dna{font-size:16px;font-weight:800}
+.dnl{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+.dlr{display:flex;align-items:center;gap:8px;font-size:12.5px}.ldr{width:10px;height:10px;border-radius:3px;flex-shrink:0}.dln{color:var(--tx2);flex:1}.dlc{font-weight:700}
+.r3{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.bl{display:flex;flex-direction:column;gap:11px}
+.br{display:flex;align-items:center;gap:12px}.brl{font-size:12.5px;color:var(--tx2);width:74px;flex-shrink:0;text-align:right}.brt{flex:1;height:20px;background:var(--sub);border-radius:4px;overflow:hidden}.brf{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:600;color:#fff;min-width:32px}.brc{font-size:12px;color:var(--tx3);width:46px;flex-shrink:0;text-align:right}
+.lst{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--bd)}
+.li:last-child{border-bottom:none}
+.li .av{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
+.li .mn{font-size:13.5px;font-weight:600}.li .ms{font-size:11.5px;color:var(--tx3);margin-top:2px}
+.li .mt{margin-left:auto;text-align:right}
+.amt{font-size:14px;font-weight:800}.amt.in{color:var(--ok)}.amt.out{color:var(--err)}
+.tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--rp)}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.wait{background:var(--warn-bg);color:var(--warn)}
+@media(max-width:1100px){.r2,.r3{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sb{display:none}.kpis{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="sb">
+<div class="brand"><div class="bi">C</div><div class="bt"><h1>Curis Workspace</h1><p>一人公司的操作系统</p></div></div>
+<nav class="nl">
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>公司总览</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>员工系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>部门管理</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg>任务系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>工作流</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg>知识库</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>能力中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>经营范围</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>AI 成本</button>
+<button class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 14 11 10 15 16 19 6"/></svg>财务中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>报告中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>系统设置</button>
+</nav>
+<div class="sbb"><div class="uc"><div class="ua">C</div><div><div class="uh4">Curis</div><div class="usp">v0.3</div></div><span class="sd"></span></div></div>
+</aside>
+<div class="main">
+<header class="tb">
+<div class="tg"><h2>财务中心</h2><p>营收、支出与结算 · 一人公司的现金流看板</p></div>
+<div class="tr">
+<select class="sel"><option>本月</option><option>上月</option><option>本季度</option><option>本年</option></select>
+<button class="ta" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13 21a2 2 0 01-2 0"/></svg></button>
+<div class="am">C</div>
+</div>
+</header>
+<div class="ct">
+<div class="kpis">
+<div class="kc"><div class="kc-t">本月营收</div><div class="kc-v">¥3,842</div><div class="kc-d up">↑ 12.5% 环比</div></div>
+<div class="kc"><div class="kc-t">净收益</div><div class="kc-v" style="color:var(--ok)">¥3,456</div><div class="kc-d up">↑ 11.3% 环比</div></div>
+<div class="kc"><div class="kc-t">整体 ROI</div><div class="kc-v" style="color:var(--ok)">3.8x</div><div class="kc-d up">↑ 0.4x 环比</div></div>
+<div class="kc"><div class="kc-t">待结算</div><div class="kc-v" style="color:var(--warn)">¥620</div><div class="kc-d dn">↓ 3 笔</div></div>
+</div>
+<div class="r2">
+<div class="cd"><h3>营收趋势 <span class="mr">导出</span></h3>
+<div class="ch"><svg viewBox="0 0 560 200" width="100%" height="100%" preserveAspectRatio="none">
+<g stroke="#E8FCF7" stroke-width="1"><line x1="0" y1="50" x2="560" y2="50"/><line x1="0" y1="100" x2="560" y2="100"/><line x1="0" y1="150" x2="560" y2="150"/></g>
+<polygon points="20,120 110,100 200,108 290,80 380,88 470,60 540,52 540,190 20,190" fill="#10B981" opacity=".10"/>
+<polyline points="20,120 110,100 200,108 290,80 380,88 470,60 540,52" fill="none" stroke="#10B981" stroke-width="2.4" stroke-linecap="round"/>
+<polyline points="20,150 110,150 200,148 290,146 380,148 470,144 540,146" fill="none" stroke="#94A3B8" stroke-width="2" stroke-dasharray="5,4" stroke-linecap="round"/>
+<g fill="#10B981"><circle cx="20" cy="120" r="3.5"/><circle cx="110" cy="100" r="3.5"/><circle cx="200" cy="108" r="3.5"/><circle cx="290" cy="80" r="3.5"/><circle cx="380" cy="88" r="3.5"/><circle cx="470" cy="60" r="3.5"/><circle cx="540" cy="52" r="3.5"/></g>
+</svg></div>
+<div class="cl"><span class="ld"><i class="ldot" style="background:#10B981"></i>营收</span><span class="ld"><i class="ldot" style="background:#94A3B8"></i>成本</span></div>
+</div>
+<div class="cd"><h3>支出结构 <span class="mr">详情</span></h3>
+<div class="dnc"><svg viewBox="0 0 120 120" width="120" height="120">
+<circle cx="60" cy="60" r="50" fill="none" stroke="#F0FDF9" stroke-width="16"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#14B8A6" stroke-width="16" stroke-dasharray="188.50 125.66" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#F59E0B" stroke-width="16" stroke-dasharray="62.83 251.33" stroke-dashoffset="-188.50" transform="rotate(-90 60 60)"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#8B5CF6" stroke-width="16" stroke-dasharray="37.70 276.46" stroke-dashoffset="-251.33" transform="rotate(-90 60 60)"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#3B82F6" stroke-width="16" stroke-dasharray="25.13 289.03" stroke-dashoffset="-289.03" transform="rotate(-90 60 60)"/>
+</svg><div class="dnh"><span class="dnt">总支出</span><span class="dna">¥386</span></div></div>
+<div class="dnl">
+<div class="dlr"><span class="ldr" style="background:#14B8A6"></span><span class="dln">AI 成本</span><span class="dlc">¥232</span></div>
+<div class="dlr"><span class="ldr" style="background:#F59E0B"></span><span class="dln">平台抽成</span><span class="dlc">¥77</span></div>
+<div class="dlr"><span class="ldr" style="background:#8B5CF6"></span><span class="dln">人力外包</span><span class="dlc">¥46</span></div>
+<div class="dlr"><span class="ldr" style="background:#3B82F6"></span><span class="dln">其他</span><span class="dlc">¥31</span></div>
+</div></div>
+</div>
+<div class="r3">
+<div class="cd"><h3>平台营收分布</h3>
+<div class="bl">
+<div class="br"><span class="brl">抖音</span><div class="brt"><div class="brf" style="width:100%;background:var(--err)">¥1420</div></div><span class="brc">1420</span></div>
+<div class="br"><span class="brl">小红书</span><div class="brt"><div class="brf" style="width:78%;background:var(--warn)">¥1108</div></div><span class="brc">1108</span></div>
+<div class="br"><span class="brl">微信</span><div class="brt"><div class="brf" style="width:60%;background:var(--ok)">¥852</div></div><span class="brc">852</span></div>
+<div class="br"><span class="brl">头条</span><div class="brt"><div class="brf" style="width:42%;background:var(--info)">¥596</div></div><span class="brc">596</span></div>
+<div class="br"><span class="brl">番茄</span><div class="brt"><div class="brf" style="width:26%;background:var(--pur)">¥369</div></div><span class="brc">369</span></div>
+</div></div>
+<div class="cd"><h3>近期交易</h3>
+<div class="lst">
+<div class="li"><div class="av" style="background:linear-gradient(135deg,#EF4444,#FF7A7A)">抖</div><div><div class="mn">抖音创作激励结算</div><div class="ms">07-07 · 已到账</div></div><div class="mt"><span class="amt in">+¥486</span></div></div>
+<div class="li"><div class="av" style="background:linear-gradient(135deg,#FF2442,#FF6B81)">红</div><div><div class="mn">小红书商单收入</div><div class="ms">07-06 · 已到账</div></div><div class="mt"><span class="amt in">+¥320</span></div></div>
+<div class="li"><div class="av" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)">G4</div><div><div class="mn">GPT-4o API 账单</div><div class="ms">07-05 · 已支付</div></div><div class="mt"><span class="amt out">-¥193</span></div></div>
+<div class="li"><div class="av" style="background:linear-gradient(135deg,#07C160,#34D399)">微</div><div><div class="mn">公众号流量主</div><div class="ms">07-04 · 待结算</div></div><div class="mt"><span class="amt in">+¥218</span><span class="tag wait" style="display:block;margin-top:3px">待结算</span></div></div>
+<div class="li"><div class="av" style="background:linear-gradient(135deg,#FF8C00,#FFB347)">番</div><div><div class="mn">番茄小说稿酬</div><div class="ms">07-03 · 待结算</div></div><div class="mt"><span class="amt in">+¥152</span><span class="tag wait" style="display:block;margin-top:3px">待结算</span></div></div>
+</div></div>
+</div>
+</div>
+</div>
+</body>
+</html>

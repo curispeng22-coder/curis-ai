@@ -1,0 +1,62 @@
+classDiagram
+    class GatePrompt {
+        +str gate_id
+        +str category
+        +str title
+        +str business_risk
+        +list~GateOption~ options
+        +str recommended
+        +str one_line_consequence
+        +str expires_at
+    }
+    class PendingDecisionRecord {
+        +str pending_id
+        +str gate_id
+        +str category
+        +str gate_snapshot
+        +str status
+        +str decision
+        +str correlation_id
+        +str gate_label
+        +str created_at
+        +str expires_at
+        +str resolved_at
+    }
+    class PendingDecisionStore {
+        +str db_path
+        +int default_ttl_seconds
+        +create(gate, corr, label, ttl) str
+        +get(pending_id) PendingDecisionRecord
+        +resolve(pending_id, letter) PendingDecisionRecord
+        +cancel(pending_id) PendingDecisionRecord
+        +get_letter(pending_id) str
+        +is_expired(pending_id) bool
+        +list_pending(corr) list
+    }
+    class PendingDecisionSink {
+        +PendingDecisionStore store
+        +int ttl_seconds
+        +ask(gate, *, corr, label) str
+    }
+    class PendingDecisionRaised {
+        +str pending_id
+        +str gate_label
+        +str gate_id
+    }
+    class DecisionSink {
+        <<Protocol>>
+        +ask(gate) Literal[A,B,C,D]
+    }
+    class AutoApproveSink {
+        +ask(gate) "A"
+    }
+    class CancellingSink {
+        +ask(gate) "C"
+    }
+    PendingDecisionStore ..> PendingDecisionRecord : 行映射
+    PendingDecisionSink --> PendingDecisionStore : 写入
+    PendingDecisionSink ..> GatePrompt : ask(gate)
+    PendingDecisionStore ..> GatePrompt : 快照序列化 asdict
+    AutoApproveSink ..|> DecisionSink
+    CancellingSink ..|> DecisionSink
+    note "PendingDecisionSink 不实现阻塞式 DecisionSink（ask 返回 pending_id 而非 letter），经独立 pending_sink 参数接线，默认不启用"

@@ -1,0 +1,155 @@
+- navigation:
+  - generic: C
+  - generic: Curis
+  - button "全局搜索 ⌘K":
+  - generic: 工作区
+  - button "CEO 工作台":
+    - text: CEO 工作台
+  - button "业务空间 3":
+    - text: 业务空间
+    - generic: "3"
+  - generic: 组织与运营
+  - button "组织中心":
+    - text: 组织中心
+  - button "人才与能力":
+    - text: 人才与能力
+  - button "经营洞察":
+    - text: 经营洞察
+  - button "资料库":
+    - text: 资料库
+  - button "会议":
+    - text: 会议
+  - button "C CEO · 模型与设置":
+    - generic: C
+    - text: CEO ·
+    - generic: 模型与设置
+  - button "设置":
+    - text: 设置
+  - button "帮助与反馈":
+    - text: 帮助与反馈
+  - button "成果库":
+    - text: 成果库
+- generic: 工作范围
+- button "收起 Context":
+- generic: 当前工作范围
+- button "AI 工具选题机会研究"
+- button "《AI 工具测评 · 极简风》图文制作（复用至 3 个渠道账号）"
+- generic: 相关结果
+- button "选题研究简报 · AI 工具机会"
+- button "《AI 工具测评 · 极简风》图文 v0.9"
+- generic: 完整档案
+- button "打开员工档案（Utility）"
+- main:
+  - link "组织中心":
+    - /url: "#/org/dir"
+  - generic: /
+  - link "内容增长部":
+    - /url: "#"
+  - generic: /
+  - generic: 林月
+  - generic: 已同步
+  - button "通知":
+  - button "主题":
+  - button "Utility"
+  - generic: 林
+  - heading "林月" [level=1]
+  - text: 调研 / 文案 · 内容增长部 ·
+  - generic: 工作中 · AI 工具实测数据收集
+  - button "完整档案"
+  - button "进入对话"
+  - button "对话"
+  - button "当前工作"
+  - button "责任"
+  - button "能力"
+  - button "结果"
+  - button "设置"
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 调研进入对比分析：5 个对标账号里「教程 + 工具清单」组合互动中位数高 34%（EST，样本 120 篇）。预计 30 分钟后给出 3 个选题。
+  - generic: 评论样本收集
+  - generic: 对标内容结构对比
+  - generic: 输出选题（3 个）
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 2.2 · DeepSeek-V4.1
+  - generic: 好，选题出来先给陈真过目。
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 收到，会走「交接至 内容运营」的默认交接，附研究简报引用。
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.4 · DeepSeek-V4.1
+  - generic: CURIS-FINAL-ACCEPTANCE 测试发送
+  - generic: 已发送 · Employee 开始处理
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 收到：「CURIS-FINAL-ACCEPTANCE 测…」。我当前责任是「《AI 工具测评》文案撰写中」，我先从这个口径推进，完成后把 Result 引用发回这里。
+  - generic "工具活动（1）"
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.3 · DeepSeek-V4.1
+  - generic: FINAL-STOP-TEST
+  - generic: 已发送 · Employee 开始处理
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 收到：「FINAL-STOP-TEST」。我当前责任是「《AI 工具测评》文案撰写中」，我先从这个口径推进，完成后把 Result 引用发回这里。
+  - generic "工具活动（1）"
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.3 · DeepSeek-V4.1
+  - generic: FINAL-STOP-2
+  - generic: 已发送 · Employee 开始处理
+  - generic: 已停止 · 未完成输出已保留（Curis 不丢弃未完成输出 — EvoFlow 反例已避免）
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 收到：「FINAL-STOP-2」。我当前责任是「《AI 工具测评》文案撰写中」，我先从这个口径推进，完成后把 Result 引用发回这里。
+  - generic "工具活动（1）"
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.3 · DeepSeek-V4.1
+  - generic: QUEUE-FIRST
+  - generic: 已发送 · Employee 开始处理
+  - generic: 林
+  - text: 林月 · 调研 / 文案
+  - generic: 工作中 · AI 工具实测数据收集
+  - generic: 收到：「QUEUE-FIRST」。我当前责任是「《AI 工具测评》文案撰写中」，我先从这个口径推进，完成后把 Result 引用发回这里。
+  - generic "工具活动（1）"
+  - button "复制全文":
+  - button "引用":
+  - button "重新生成":
+  - button "分享":
+  - button "更多":
+  - generic: 共消耗 ◇ 0.3 · DeepSeek-V4.1
+  - textbox "与 林月 对话，或直接交代一件事…" [active]: QUEUE-SECOND
+  - button "添加附件":
+  - 'button "引用 @员工 / #文件 / #结果"':
+  - button "最小权限":
+    - text: 最小权限
+  - button "对话":
+    - text: 对话
+  - button "执行 · 林月":
+    - text: 执行 · 林月
+  - button "DeepSeek-V4.1":
+    - text: DeepSeek-V4.1
+  - button "发送":
+- button "CEO 助理 · 1 件需要你": CEO 助理 · 1 件需要你

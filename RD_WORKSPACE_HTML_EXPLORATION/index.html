@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RD 专业工作区 — 高保真交互探索</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 顶栏：window title + project breadcrumb + theme toggle + CEO view -->
+  <header class="winbar" id="winbar"></header>
+
+  <!-- 四 Pane 骨架：Navigation / Context / Main / Utility -->
+  <div class="shell" id="shell">
+    <!-- 左：七区全局导航（不新增 Project 项） -->
+    <aside class="nav-pane" id="nav-pane"></aside>
+
+    <!-- 中左：文件与最近对象（Context；非虚构「上下文」面板，可折叠） -->
+    <aside class="ctx-pane" id="ctx-pane"></aside>
+
+    <!-- 中：Main — Project Operating Header + Decision Banner + Employee Work Surface -->
+    <main class="main-pane">
+      <div class="main-inner">
+        <div id="proj-header"></div>
+        <div id="decision" hidden></div>
+        <div id="work-surface"></div>
+      </div>
+    </main>
+
+    <!-- 右：Utility（Diff / Source / Test / Preview / PR / Build，view-only） -->
+    <aside class="util-pane" id="util-pane"></aside>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

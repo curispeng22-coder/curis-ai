@@ -1,0 +1,98 @@
+[
+  {
+    "class": "search-panel",
+    "font": "14px",
+    "h": 423,
+    "padding": "0px",
+    "radius": "16px",
+    "w": 682
+  },
+  {
+    "class": "sp-input",
+    "font": "14px",
+    "h": 53.5,
+    "padding": "14px 16px",
+    "radius": "0px",
+    "w": 680
+  },
+  {
+    "class": "sp-filters",
+    "font": "14px",
+    "h": 39.5,
+    "padding": "8px 12px",
+    "radius": "0px",
+    "w": 680
+  },
+  {
+    "class": "chip active sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "chip  sp-f",
+    "font": "12px",
+    "h": 22.5,
+    "padding": "2px 8px",
+    "radius": "8px",
+    "w": 42
+  },
+  {
+    "class": "search-results",
+    "font": "14px",
+    "h": 328,
+    "padding": "8px",
+    "radius": "0px",
+    "w": 380
+  },
+  {
+    "class": "search-preview",
+    "font": "14px",
+    "h": 328,
+    "padding": "16px",
+    "radius": "0px",
+    "w": 300
+  }
+]

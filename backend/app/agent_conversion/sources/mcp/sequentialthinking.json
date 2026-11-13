@@ -1,0 +1,20 @@
+{
+  "server": "sequentialthinking",
+  "name": "Sequential Thinking",
+  "description": "Break a complex problem into ordered reasoning steps.",
+  "license": "MIT",
+  "tools": [
+    {
+      "name": "sequential_thinking",
+      "description": "Decompose a complex problem into a sequence of reasoning steps.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "problem": {"type": "string", "description": "The problem to reason about."},
+          "steps": {"type": "integer", "description": "Number of reasoning steps."}
+        },
+        "required": ["problem"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+%% 主链路一：Admin 配置能力（model / tool / connector）
+sequenceDiagram
+    participant A as Admin UI (CapabilityCatalogPanel)
+    participant API as /api/platform/capabilities
+    participant S as CapabilityCatalog
+    participant DB as Database
+    participant EL as EvolutionEventLog
+    A->>API: POST {capability_key,type,name,provider_id,display_name,auth_type,gateway_ref?}
+    API->>API: _require_platform_admin(token)
+    API->>S: create(capability_key, type, ...)
+    alt type == 'model' 且 gateway_ref 提供
+        S->>DB: get_model_gateway(gateway_ref)  %% 存在性校验
+        alt gateway_ref 不存在
+            S-->>API: raise KeyError(422)
+        else 存在
+            S->>DB: save_official_model(type='model', ...)
+        end
+    else type == 'tool'|'connector'
+        S->>DB: save_official_model(type=type, gateway_ref='')  %% 不校验网关
+    end
+    S->>EL: record(capability.created, payload)
+    S-->>API: capability 行 dict
+    API-->>A: 201 capability
+    Note over S,EL: 启用/停用: PUT action=enable|disable
+    S->>DB: set_official_model_status(capability_key, status)
+    S->>EL: record(capability.status_changed)
+
+%% 主链路二：Workspace 只读 catalog（不含凭证）
+sequenceDiagram
+    participant W as Workspace (X-Tenant-Id)
+    participant CAT as /api/catalog/capabilities
+    participant DB as Database
+    W->>CAT: GET /api/catalog/capabilities
+    CAT->>DB: list_catalog_capabilities()  %% 白名单列(model_key,type,name,provider_id,display_name,source,gateway_ref,auth_type,status,...)
+    DB-->>CAT: rows (NO credential_ref / NO api_key / NO token)
+    CAT-->>W: capabilities 投影（含 capability_key 别名，gateway_ref 仅为逻辑引用键）
+    Note over W,DB: 模型仍可由 GET /api/catalog/models 获得（已加 type='model' 过滤，向后兼容）
+
+%% 主链路三：Admin 查看 usage（R-04 直接复用，零新增）
+sequenceDiagram
+    participant A as Admin UI (UsageProjectionPanel)
+    participant API as /api/platform/usage?tenant_id=
+    participant EL as EvolutionEventLog.list_usage_events
+    A->>API: GET ?tenant_id= (Bearer admin token)
+    API->>API: _require_platform_admin(token)
+    alt tenant_id 缺失
+        API-->>A: 422 fail-closed（禁止跨租户聚合）
+    else 存在
+        API->>EL: list_usage_events(tenant_id)  %% filter event_type like 'usage.%'
+        EL-->>API: 纯计量投影(scope_type/quantity/unit/capability_ref/raw_meter_value)
+        API-->>A: usage_events (无 amount/currency/ROI)
+    end
+
+%% 任务依赖图
+graph TD
+    T01[T01 数据与服务基础设施<br/>database.py + catalog_constants.py + capability_catalog.py] --> T02[T02 平台写 API<br/>main.py + capability_catalog + catalog_constants]
+    T01 --> T03[T03 目录只读 API + usage 复用<br/>main.py + database + evolution_event_log]
+    T02 --> T04[T04 前端统一标签页<br/>page.js + CapabilityCatalogPanel + ModelCatalogPanel]
+    T03 --> T04
+    T01 --> T05[T05 测试 + 禁止区/一致性审查 IS_PASS<br/>conftest + test_d5_capability_catalog + test_d5_official_model_catalog]
+    T02 --> T05
+    T03 --> T05
+    T04 --> T05

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis · CEO 总部驾驶舱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --color-bg:#020D18;
+    --color-bg-grad:#061624;
+    --color-sidebar:#020A13;
+    --color-surface-1:#061624;
+    --color-surface-2:#082034;
+    --color-surface-3:#0A2940;
+    --color-surface-4:#0D3150;
+    --color-border:#183A52;
+    --color-border-strong:#245A78;
+    --color-text-primary:#F4F8FC;
+    --color-text-secondary:#C4D2DE;
+    --color-text-muted:#8FA7BA;
+    --color-text-disabled:#647B8D;
+    --color-cyan:#28C8FF;
+    --color-cyan-deep:#087DB8;
+    --color-cyan-soft:#0B3850;
+    --color-cyan-glow:rgba(40,200,255,0.35);
+    --color-emerald:#49DDA5;
+    --color-emerald-glow:rgba(73,221,165,0.35);
+    --color-amber:#FFC857;
+    --color-amber-glow:rgba(255,200,87,0.35);
+    --color-violet:#A083FF;
+    --color-violet-glow:rgba(160,131,255,0.35);
+    --color-red:#FF6B6B;
+    --color-gold:#E7B85C;
+    --radius-sm:6px;
+    --radius-md:10px;
+    --radius-lg:14px;
+    --radius-xl:18px;
+    --space-1:4px;
+    --space-2:8px;
+    --space-3:12px;
+    --space-4:16px;
+    --space-5:20px;
+    --space-6:24px;
+    --space-8:32px;
+    --space-10:40px;
+    --nav-w:176px;
+    --main-pad:24px;
+    --gutter:16px;
+    --shadow-soft:0 8px 32px rgba(0,0,0,0.35);
+    --shadow-glow-cyan:0 0 28px rgba(40,200,255,0.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:Inter,PingFang SC,Microsoft YaHei,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:radial-gradient(ellipse at 30% 0%,var(--color-bg-grad) 0%,var(--color-bg) 60%),var(--color-bg);color:var(--color-text-primary);overflow-x:hidden}
+  .app{display:flex;min-height:100vh}
+  /* sidebar */
+  .sidebar{width:var(--nav-w);background:var(--color-sidebar);border-right:1px solid var(--color-border);display:flex;flex-direction:column;padding:20px 0;position:fixed;height:100vh;left:0;top:0;z-index:100}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 20px 24px;font-weight:700;font-size:18px;letter-spacing:0.04em;color:var(--color-text-primary)}
+  .brand svg{width:28px;height:28px;color:var(--color-cyan)}
+  .nav{flex:1;overflow-y:auto;padding:0 12px}
+  .nav-group{margin-bottom:14px}
+  .nav-item{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s ease;position:relative}
+  .nav-item:hover{background:var(--color-surface-2);color:var(--color-text-primary)}
+  .nav-item.active{background:var(--color-surface-3);color:var(--color-text-primary);box-shadow:inset 0 0 0 1px var(--color-border-strong)}
+  .nav-item.active::before{content:'';position:absolute;left:0;top:10px;bottom:10px;width:3px;background:var(--color-cyan);border-radius:0 3px 3px 0;box-shadow:0 0 8px var(--color-cyan)}
+  .nav-item svg{width:20px;height:20px;color:var(--color-text-muted);transition:color .15s ease;flex-shrink:0}
+  .nav-item:hover svg,.nav-item.active svg{color:var(--color-cyan)}
+  .nav-item .chevron{margin-left:auto;width:16px;height:16px;color:var(--color-text-muted);transition:transform .18s ease;flex-shrink:0}
+  .nav-item.open .chevron{transform:rotate(90deg)}
+  .nav-secondary{padding-left:32px;margin-top:4px;display:none}
+  .nav-group.expanded .nav-secondary{display:block}
+  .nav-secondary .nav-item{height:36px;font-size:13px;font-weight:400;color:var(--color-text-muted);padding:0 10px}
+  .nav-secondary .nav-item:hover{color:var(--color-text-secondary);background:var(--color-surface-2)}
+  .nav-secondary .nav-item.active{background:var(--color-surface-2);color:var(--color-cyan);box-shadow:none}
+  .nav-secondary .nav-item.active::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:2px;background:var(--color-cyan);border-radius:0 2px 2px 0;box-shadow:none}
+  /* main */
+  .main{flex:1;margin-left:var(--nav-w);min-height:100vh;padding:var(--main-pad);background:transparent}
+  .page-header{margin-bottom:var(--space-6)}
+  .page-title{font-size:48px;line-height:1.08;font-weight:700;letter-spacing:-0.025em;margin-bottom:var(--space-3)}
+  .page-subtitle{font-size:18px;line-height:1.5;color:var(--color-text-secondary);font-weight:400;margin-bottom:var(--space-3)}
+  .page-status{display:flex;align-items:center;gap:var(--space-6);margin-top:var(--space-4);flex-wrap:wrap}
+  .status-pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--color-emerald);font-weight:500;background:var(--color-surface-2);border:1px solid rgba(73,221,165,0.25);padding:5px 12px;border-radius:999px}
+  .status-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--color-emerald);box-shadow:0 0 10px var(--color-emerald-glow)}
+  .status-fact{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-muted)}
+  .status-fact .label{color:var(--color-text-secondary)}
+  .status-fact .value{color:var(--color-amber)}
+  /* grid */
+  .grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+  .col-5{grid-column:span 5}
+  .col-7{grid-column:span 7}
+  .col-2-5{grid-column:span 3}
+  .col-12{grid-column:span 12}
+  /* panels */
+  .panel{background:var(--color-surface-1);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+  .panel-title{font-size:18px;line-height:1.3;font-weight:600;color:var(--color-text-primary);margin-bottom:var(--space-4);display:flex;align-items:center;gap:10px}
+  .panel-title .icon{width:22px;height:22px;color:var(--color-cyan);flex-shrink:0}
+  .subtle-glow{position:absolute;inset:0;pointer-events:none;opacity:.12;background:radial-gradient(circle at 80% 20%,var(--color-cyan),transparent 60%)}
+  /* pulse strip */
+  .pulse-strip{display:flex;gap:var(--space-4);height:100%;flex-direction:column}
+  .pulse-card{flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3);position:relative;transition:all .15s ease}
+  .pulse-card:hover{background:var(--color-surface-3);border-color:var(--color-border-strong)}
+  .pulse-card .top{display:flex;align-items:center;gap:10px}
+  .pulse-card .icon-box{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+  .pulse-card .icon-box svg{width:22px;height:22px}
+  .pulse-card .title{font-size:14px;font-weight:600;color:var(--color-text-primary)}
+  .pulse-card .desc{font-size:12px;line-height:1.5;color:var(--color-text-muted)}
+  .pulse-card.cyan .icon-box{background:var(--color-cyan-soft);box-shadow:0 0 16px var(--color-cyan-glow)}
+  .pulse-card.cyan .icon-box svg{color:var(--color-cyan)}
+  .pulse-card.emerald .icon-box{background:rgba(73,221,165,0.12);box-shadow:0 0 16px var(--color-emerald-glow)}
+  .pulse-card.emerald .icon-box svg{color:var(--color-emerald)}
+  .pulse-card.amber .icon-box{background:rgba(255,200,87,0.12);box-shadow:0 0 16px var(--color-amber-glow)}
+  .pulse-card.amber .icon-box svg{color:var(--color-amber)}
+  /* live office */
+  .live-office{height:100%;display:flex;flex-direction:column;min-height:320px}
+  .live-office .viz{flex:1;position:relative;border-radius:var(--radius-md);overflow:hidden;background:linear-gradient(135deg,var(--color-surface-2) 0%,var(--color-surface-1) 100%);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;min-height:260px}
+  .live-office .viz svg{width:100%;height:100%;display:block}
+  .live-office .labels{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;z-index:5}
+  .live-tag{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(6,22,36,0.85);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:12px;font-weight:500;color:var(--color-text-primary);backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(0,0,0,0.25)}
+  .live-tag .dot{width:8px;height:8px;border-radius:50%}
+  .live-tag.cyan .dot{background:var(--color-cyan);box-shadow:0 0 10px var(--color-cyan)}
+  .live-tag.emerald .dot{background:var(--color-emerald);box-shadow:0 0 10px var(--color-emerald)}
+  .live-office .meta{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-4);gap:var(--space-4);flex-wrap:wrap}
+  .live-office .desc{font-size:13px;color:var(--color-text-muted);line-height:1.5}
+  .live-office .link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--color-cyan);text-decoration:none;transition:all .15s ease;flex-shrink:0}
+  .live-office .link:hover{gap:12px;text-shadow:0 0 10px var(--color-cyan-glow)}
+  .live-office .link svg{width:16px;height:16px}
+  /* empty states */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:var(--space-4);min-height:160px}
+  .empty-state .icon-box{width:64px;height:64px;border-radius:var(--radius-xl);background:var(--color-surface-2);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-2)}
+  .empty-state .icon-box svg{width:32px;height:32px;color:var(--color-cyan)}
+  .empty-state h3{font-size:16px;font-weight:600;color:var(--color-text-secondary)}
+  .empty-state p{font-size:13px;color:var(--color-text-muted);max-width:280px;line-height:1.5}
+  .small-empty .icon-box{width:48px;height:48px;border-radius:var(--radius-lg)}
+  .small-empty .icon-box svg{width:24px;height:24px}
+  .small-empty h3{font-size:14px}
+  .small-empty p{font-size:12px}
+  /* department cards */
+  .dept-section-title{margin-bottom:var(--space-4)}
+  .dept-row{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gutter)}
+  .dept-card{background:var(--color-surface-1);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);display:grid;grid-template-columns:180px 1fr;gap:var(--space-6);box-shadow:var(--shadow-soft);transition:all .15s ease}
+  .dept-card:hover{border-color:var(--color-border-strong)}
+  .dept-card .visual{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);background:var(--color-surface-2);border-radius:var(--radius-md);border:1px solid var(--color-border);min-height:160px;position:relative;overflow:hidden}
+  .dept-card .visual .glow{position:absolute;inset:0;opacity:.22;filter:blur(24px)}
+  .dept-card .visual svg{width:72px;height:72px;position:relative;z-index:1}
+  .dept-card .visual .label{font-size:14px;font-weight:600;color:var(--color-text-primary);position:relative;z-index:1}
+  .dept-card .facts{display:flex;flex-direction:column;gap:var(--space-3);justify-content:center}
+  .dept-card .fact{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:var(--space-3);font-size:13px}
+  .dept-card .fact .key{color:var(--color-text-muted)}
+  .dept-card .fact .val{color:var(--color-text-secondary)}
+  .dept-card .fact .val.missing{color:var(--color-text-muted);font-style:italic}
+  /* boundary */
+  .boundary-panel{display:flex;align-items:center;gap:var(--space-5);background:var(--color-surface-1);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-soft)}
+  .boundary-panel .icon-box{width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-surface-2);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .boundary-panel .icon-box svg{width:24px;height:24px;color:var(--color-text-muted)}
+  .boundary-panel .text{flex:1}
+  .boundary-panel h4{font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:4px}
+  .boundary-panel p{font-size:13px;color:var(--color-text-muted);line-height:1.5}
+  .boundary-panel .chart{flex:0 0 280px;height:72px;opacity:.6}
+  /* animations */
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.15)}}
+  .dot-anim{animation:pulse-dot 2.4s ease-in-out infinite}
+  .dot-anim:nth-child(2){animation-delay:.4s}
+  .dot-anim:nth-child(3){animation-delay:.8s}
+  /* responsive */
+  @media (max-width:1279px){
+    .col-5,.col-7,.col-2-5{grid-column:span 12}
+    .dept-row{grid-template-columns:1fr}
+    .dept-card{grid-template-columns:1fr}
+  }
+  @media (max-width:767px){
+    .sidebar{width:72px}
+    .sidebar .brand span,.nav-item span,.nav-item .chevron{display:none}
+    .nav-item{justify-content:center;padding:0}
+    .nav-secondary{display:none !important}
+    .main{margin-left:72px;padding:16px}
+    .grid-12{grid-template-columns:1fr}
+    .col-5,.col-7,.col-2-5,.col-12{grid-column:span 1}
+    .page-title{font-size:32px}
+    .boundary-panel{flex-direction:column;align-items:flex-start}
+    .boundary-panel .chart{flex:0 0 auto;width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .dot-anim{animation:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/><path d="M10 16h12M16 10v12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      <span>CURIS</span>
+    </div>
+    <nav class="nav">
+      <div class="nav-group expanded">
+        <div class="nav-item active open">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>总裁办公室</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="nav-secondary">
+          <div class="nav-item">决策中心</div>
+          <div class="nav-item">重要汇报</div>
+          <div class="nav-item">战略会议室</div>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span>项目中心</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>组织中心</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>能力中心</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>经营分析</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+          <span>头脑风暴室</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>知识中心</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <span>执行工作台</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>公司设置</span>
+        </div>
+      </div>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="page-header">
+      <h1 class="page-title">总裁办公室</h1>
+      <p class="page-subtitle">一人掌舵，AI 团队持续运行</p>
+      <div class="page-status">
+        <span class="status-pill"><span class="dot"></span>公司运行正常</span>
+        <span class="status-fact"><span class="label">当前核心项目目标</span><span class="value">尚未建立核心项目</span></span>
+      </div>
+    </header>
+    
+    <div class="grid-12">
+      <!-- CEO Briefing -->
+      <section class="col-5">
+        <div class="panel" style="height:100%">
+          <div class="subtle-glow"></div>
+          <div class="panel-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            今日公司脉搏
+          </div>
+          <div class="pulse-strip">
+            <div class="pulse-card cyan">
+              <div class="top">
+                <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="8"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                <div class="title">项目推进</div>
+              </div>
+              <div class="desc">暂无已读取事实</div>
+            </div>
+            <div class="pulse-card emerald">
+              <div class="top">
+                <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+                <div class="title">部门运行</div>
+              </div>
+              <div class="desc">暂无已读取事实</div>
+            </div>
+            <div class="pulse-card amber">
+              <div class="top">
+                <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                <div class="title">明确阻塞</div>
+              </div>
+              <div class="desc">暂无已读取事实</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Live Office -->
+      <section class="col-7">
+        <div class="panel live-office">
+          <div class="subtle-glow"></div>
+          <div class="panel-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            实时办公室
+          </div>
+          <div class="viz">
+            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-label="实时办公室等距可视化">
+              <defs>
+                <radialGradient id="bgGrad" cx="50%" cy="30%" r="85%">
+                  <stop offset="0%" stop-color="#0A2940" stop-opacity="0.9"/>
+                  <stop offset="60%" stop-color="#061624" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#020D18" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="glassCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#28C8FF" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#087DB8" stop-opacity="0.06"/>
+                </linearGradient>
+                <linearGradient id="glassGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#49DDA5" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#0B5C42" stop-opacity="0.06"/>
+                </linearGradient>
+                <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#28C8FF" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#020D18" stop-opacity="0.6"/>
+                </linearGradient>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <rect width="640" height="360" fill="url(#bgGrad)"/>
+              <!-- floor grid -->
+              <g stroke="#28C8FF" stroke-opacity="0.08" stroke-width="1">
+                <line x1="0" y1="180" x2="640" y2="180"/>
+                <line x1="320" y1="0" x2="320" y2="360"/>
+                <line x1="0" y1="90" x2="640" y2="90" stroke-opacity="0.05"/>
+                <line x1="0" y1="270" x2="640" y2="270" stroke-opacity="0.05"/>
+                <line x1="160" y1="0" x2="160" y2="360" stroke-opacity="0.05"/>
+                <line x1="480" y1="0" x2="480" y2="360" stroke-opacity="0.05"/>
+                <line x1="0" y1="135" x2="640" y2="135" stroke-opacity="0.03"/>
+                <line x1="0" y1="225" x2="640" y2="225" stroke-opacity="0.03"/>
+                <line x1="240" y1="0" x2="240" y2="360" stroke-opacity="0.03"/>
+                <line x1="400" y1="0" x2="400" y2="360" stroke-opacity="0.03"/>
+              </g>
+              <!-- ambient glow spots -->
+              <circle cx="200" cy="130" r="90" fill="#28C8FF" fill-opacity="0.04" filter="url(#glow)"/>
+              <circle cx="480" cy="110" r="70" fill="#49DDA5" fill-opacity="0.04" filter="url(#glow)"/>
+              <circle cx="360" cy="260" r="110" fill="#28C8FF" fill-opacity="0.03" filter="url(#glow)"/>
+              
+              <!-- back-left glass room (AI R&D) -->
+              <g>
+                <path d="M90 130 L210 70 L330 130 L210 190 Z" fill="url(#glassCyan)" stroke="#28C8FF" stroke-opacity="0.5" stroke-width="1.5"/>
+                <path d="M90 130 L210 190 L210 250 L90 190 Z" fill="#0B3850" fill-opacity="0.35" stroke="#28C8FF" stroke-opacity="0.35" stroke-width="1"/>
+                <path d="M210 190 L330 130 L330 190 L210 250 Z" fill="#0B3850" fill-opacity="0.2" stroke="#28C8FF" stroke-opacity="0.25" stroke-width="1"/>
+                <!-- inner frames -->
+                <line x1="150" y1="100" x2="150" y2="220" stroke="#28C8FF" stroke-opacity="0.2" stroke-width="1"/>
+                <line x1="270" y1="100" x2="270" y2="220" stroke="#28C8FF" stroke-opacity="0.2" stroke-width="1"/>
+                <line x1="90" y1="160" x2="330" y2="160" stroke="#28C8FF" stroke-opacity="0.15" stroke-width="1"/>
+              </g>
+              
+              <!-- back-right glass room (AI Content) -->
+              <g>
+                <path d="M360 90 L460 40 L560 90 L460 140 Z" fill="url(#glassGreen)" stroke="#49DDA5" stroke-opacity="0.5" stroke-width="1.5"/>
+                <path d="M360 90 L460 140 L460 190 L360 140 Z" fill="#0B5C42" fill-opacity="0.35" stroke="#49DDA5" stroke-opacity="0.35" stroke-width="1"/>
+                <path d="M460 140 L560 90 L560 140 L460 190 Z" fill="#0B5C42" fill-opacity="0.2" stroke="#49DDA5" stroke-opacity="0.25" stroke-width="1"/>
+                <line x1="410" y1="65" x2="410" y2="165" stroke="#49DDA5" stroke-opacity="0.2" stroke-width="1"/>
+                <line x1="510" y1="65" x2="510" y2="165" stroke="#49DDA5" stroke-opacity="0.2" stroke-width="1"/>
+              </g>
+              
+              <!-- front central glass room -->
+              <g>
+                <path d="M200 190 L360 120 L520 190 L360 260 Z" fill="url(#glassCyan)" stroke="#28C8FF" stroke-opacity="0.55" stroke-width="1.5"/>
+                <path d="M200 190 L360 260 L360 340 L200 270 Z" fill="#0B3850" fill-opacity="0.45" stroke="#28C8FF" stroke-opacity="0.4" stroke-width="1"/>
+                <path d="M360 260 L520 190 L520 270 L360 340 Z" fill="#0B3850" fill-opacity="0.25" stroke="#28C8FF" stroke-opacity="0.3" stroke-width="1"/>
+                <line x1="280" y1="155" x2="280" y2="300" stroke="#28C8FF" stroke-opacity="0.2" stroke-width="1"/>
+                <line x1="440" y1="155" x2="440" y2="300" stroke="#28C8FF" stroke-opacity="0.2" stroke-width="1"/>
+                <line x1="200" y1="225" x2="520" y2="225" stroke="#28C8FF" stroke-opacity="0.15" stroke-width="1"/>
+              </g>
+              
+              <!-- furniture silhouettes -->
+              <g fill="#020D18" fill-opacity="0.55" stroke="#28C8FF" stroke-opacity="0.25" stroke-width="1">
+                <!-- desks in back-left room -->
+                <rect x="120" y="145" width="36" height="22" rx="2" transform="skewY(-12)"/>
+                <rect x="250" y="140" width="36" height="22" rx="2" transform="skewY(-12)"/>
+                <!-- chairs -->
+                <circle cx="140" cy="175" r="6" fill-opacity="0.7"/>
+                <circle cx="270" cy="170" r="6" fill-opacity="0.7"/>
+              </g>
+              <g fill="#020D18" fill-opacity="0.55" stroke="#49DDA5" stroke-opacity="0.25" stroke-width="1">
+                <rect x="390" y="110" width="32" height="18" rx="2" transform="skewY(-12)"/>
+                <circle cx="406" cy="135" r="5" fill-opacity="0.7"/>
+              </g>
+              <g fill="#020D18" fill-opacity="0.55" stroke="#28C8FF" stroke-opacity="0.25" stroke-width="1">
+                <rect x="250" y="225" width="44" height="26" rx="2" transform="skewY(-12)"/>
+                <rect x="400" y="225" width="44" height="26" rx="2" transform="skewY(-12)"/>
+                <circle cx="275" cy="260" r="7" fill-opacity="0.7"/>
+                <circle cx="425" cy="260" r="7" fill-opacity="0.7"/>
+              </g>
+              
+              <!-- holographic screens -->
+              <g>
+                <rect x="110" y="150" width="68" height="40" fill="url(#screenGrad)" stroke="#28C8FF" stroke-opacity="0.55" stroke-width="1" rx="4" filter="url(#glow)"/>
+                <path d="M120 165 h48" stroke="#28C8FF" stroke-width="1.5" stroke-opacity="0.7"/>
+                <path d="M120 172 h32" stroke="#28C8FF" stroke-width="1" stroke-opacity="0.45"/>
+                <path d="M120 179 h40" stroke="#28C8FF" stroke-width="1" stroke-opacity="0.35"/>
+              </g>
+              <g>
+                <rect x="260" y="230" width="76" height="44" fill="url(#screenGrad)" stroke="#28C8FF" stroke-opacity="0.55" stroke-width="1" rx="4" filter="url(#glow)"/>
+                <path d="M270 246 h56" stroke="#28C8FF" stroke-width="1.5" stroke-opacity="0.7"/>
+                <path d="M270 254 h36" stroke="#28C8FF" stroke-width="1" stroke-opacity="0.45"/>
+                <path d="M270 262 h48" stroke="#28C8FF" stroke-width="1" stroke-opacity="0.35"/>
+              </g>
+              <g>
+                <rect x="420" y="125" width="64" height="36" fill="url(#screenGrad)" stroke="#49DDA5" stroke-opacity="0.55" stroke-width="1" rx="4" filter="url(#glow)"/>
+                <path d="M430 138 h44" stroke="#49DDA5" stroke-width="1.5" stroke-opacity="0.7"/>
+                <path d="M430 145 h28" stroke="#49DDA5" stroke-width="1" stroke-opacity="0.45"/>
+                <path d="M430 151 h36" stroke="#49DDA5" stroke-width="1" stroke-opacity="0.35"/>
+              </g>
+              
+              <!-- employee dots -->
+              <g filter="url(#glow)">
+                <circle cx="150" cy="160" r="4" fill="#28C8FF" class="dot-anim"/>
+                <circle cx="270" cy="155" r="4" fill="#28C8FF" class="dot-anim"/>
+                <circle cx="410" cy="120" r="4" fill="#49DDA5" class="dot-anim"/>
+                <circle cx="280" cy="245" r="4" fill="#28C8FF" class="dot-anim"/>
+                <circle cx="420" cy="245" r="4" fill="#28C8FF" class="dot-anim"/>
+                <circle cx="360" cy="280" r="4" fill="#28C8FF" class="dot-anim"/>
+              </g>
+              
+              <!-- connecting lines between dots -->
+              <g stroke="#28C8FF" stroke-opacity="0.15" stroke-width="1" stroke-dasharray="3 3">
+                <line x1="150" y1="160" x2="270" y2="155"/>
+                <line x1="270" y1="155" x2="280" y2="245"/>
+                <line x1="280" y1="245" x2="420" y2="245"/>
+                <line x1="410" y1="120" x2="420" y2="245"/>
+              </g>
+              
+              <!-- plants -->
+              <g fill="#49DDA5" fill-opacity="0.25" stroke="#49DDA5" stroke-opacity="0.4" stroke-width="1">
+                <circle cx="100" cy="200" r="8"/>
+                <circle cx="100" cy="200" r="4" fill-opacity="0.5"/>
+                <circle cx="550" cy="180" r="8"/>
+                <circle cx="550" cy="180" r="4" fill-opacity="0.5"/>
+                <circle cx="190" cy="290" r="8"/>
+                <circle cx="190" cy="290" r="4" fill-opacity="0.5"/>
+              </g>
+            </svg>
+            <div class="labels">
+              <div class="live-tag cyan"><span class="dot"></span>AI 研发中心</div>
+              <div class="live-tag emerald"><span class="dot"></span>AI 内容中心</div>
+            </div>
+          </div>
+          <div class="meta">
+            <p class="desc">AI 团队在虚拟办公室中持续协作与创造价值</p>
+            <a href="#" class="link">
+              进入公司运行视图
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Core Project -->
+      <section class="col-7">
+        <div class="panel">
+          <div class="panel-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            核心项目推进
+          </div>
+          <div class="empty-state">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            </div>
+            <h3>尚未建立核心项目</h3>
+            <p>项目建立后将在这里显示目标、负责人、所属部门和运行状态</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Pending Reports -->
+      <section class="col-2-5">
+        <div class="panel" style="height:100%">
+          <div class="panel-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            待处理汇报
+          </div>
+          <div class="empty-state small-empty">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <h3>暂无待处理汇报</h3>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Org Health -->
+      <section class="col-2-5">
+        <div class="panel" style="height:100%">
+          <div class="panel-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            组织健康
+          </div>
+          <div class="empty-state small-empty">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3>暂无已读取事实</h3>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Department Space -->
+      <section class="col-12">
+        <div class="panel-title dept-section-title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          正在工作的部门
+        </div>
+        <div class="dept-row">
+          <div class="dept-card">
+            <div class="visual">
+              <div class="glow" style="background:var(--color-cyan)"></div>
+              <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M36 6L10 21v30l26 15 26-15V21L36 6z"/><path d="M36 36L10 21"/><path d="M36 36v30"/><path d="M36 36l26-15"/><path d="M22 28l14 8 14-8"/><path d="M24 44h24"/><path d="M24 52h18"/></svg>
+              <div class="label">AI 研发中心</div>
+            </div>
+            <div class="facts">
+              <div class="fact"><span class="key">当前项目</span><span class="val missing">暂无已读取事实</span></div>
+              <div class="fact"><span class="key">工作状态</span><span class="val missing">暂无已读取事实</span></div>
+              <div class="fact"><span class="key">依赖关系</span><span class="val missing">暂无已读取事实</span></div>
+            </div>
+          </div>
+          <div class="dept-card">
+            <div class="visual">
+              <div class="glow" style="background:var(--color-emerald)"></div>
+              <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M36 6L10 21v30l26 15 26-15V21L36 6z"/><path d="M36 36L10 21"/><path d="M36 36v30"/><path d="M36 36l26-15"/><path d="M22 28l14 8 14-8"/><circle cx="36" cy="48" r="8"/><path d="M32 48h8"/><path d="M36 44v8"/></svg>
+              <div class="label">AI 内容中心</div>
+            </div>
+            <div class="facts">
+              <div class="fact"><span class="key">当前项目</span><span class="val missing">暂无已读取事实</span></div>
+              <div class="fact"><span class="key">工作状态</span><span class="val missing">暂无已读取事实</span></div>
+              <div class="fact"><span class="key">依赖关系</span><span class="val missing">暂无已读取事实</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Boundary -->
+      <section class="col-12">
+        <div class="boundary-panel">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="text">
+            <h4>经营数据概览</h4>
+            <p>仅展示当前工作区已读取的真实项目事实，不补零，不估算。</p>
+          </div>
+          <svg class="chart" viewBox="0 0 280 72" fill="none" preserveAspectRatio="none">
+            <path d="M0 60 Q40 58 70 45 T140 40 T210 30 T280 20" stroke="var(--color-cyan)" stroke-width="2" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4"/>
+            <path d="M0 60 L70 45 L140 40 L210 30 L280 20" stroke="var(--color-cyan)" stroke-width="2" fill="none" stroke-opacity="0.5"/>
+            <circle cx="70" cy="45" r="3" fill="var(--color-cyan)" fill-opacity="0.5"/>
+            <circle cx="140" cy="40" r="3" fill="var(--color-cyan)" fill-opacity="0.5"/>
+            <circle cx="210" cy="30" r="3" fill="var(--color-cyan)" fill-opacity="0.5"/>
+          </svg>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

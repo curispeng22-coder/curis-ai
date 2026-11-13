@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Curis Workspace — 任务台</title>
+<style>
+:root{--t50:#F0FDFA;--t100:#CCFBF1;--t300:#5EEAD4;--t400:#2DD4BF;--t500:#14B8A6;--t600:#0D9488;--t700:#0F766E;--t800:#115E59;--bg:#F7FCFA;--card:#FFF;--sub:#EDF7F5;--sb-bg:#FAFEFD;--tx:#0F2922;--tx2:#4A635C;--tx3:#7B9590;--ok:#10B981;--ok-bg:#ECFDF5;--warn:#F59E0B;--warn-bg:#FFFBEB;--err:#EF4444;--err-bg:#FEF2F2;--info:#06B6D4;--info-bg:#ECFEFF;--pur:#8B5CF6;--pur-bg:#F5F3FF;--blu:#3B82F6;--bd:#DEF2EC;--bd2:#C5E5DB;--sh-sm:0 1px 2px rgba(15,41,34,.04);--sh-md:0 4px 12px rgba(15,41,34,.07);--rs:8px;--rm:12px;--rl:16px;--rxl:20px;--rp:999px;--font:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+.sb{width:232px;min-width:232px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 16px}
+.bi{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 4px 12px rgba(20,184,166,.3)}
+.bt h1{font-size:15px;font-weight:700}.bt p{font-size:11px;color:var(--tx3);margin-top:1px}
+.nl{display:flex;flex-direction:column;gap:2px;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rm);font-size:13.5px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.ni svg{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.ni:hover{background:var(--sub);color:var(--tx)}.ni:hover svg{opacity:1}
+.ni.on{background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(20,184,166,.28)}.ni.on svg{opacity:1;color:#fff}
+.sbb{padding-top:10px;border-top:1px solid var(--bd);margin-top:auto}
+.uc{display:flex;align-items:center;gap:10px;padding:6px}.ua{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pur),#A78BFA);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}.uh4{font-size:13px;font-weight:700}.usp{font-size:11px;color:var(--tx3)}.sd{width:8px;height:8px;border-radius:50%;background:var(--ok);margin-left:auto;box-shadow:0 0 6px rgba(16,185,129,.5)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 28px;background:var(--card);border-bottom:1px solid var(--bd)}
+.tg h2{font-size:18px;font-weight:700}.tg p{font-size:12.5px;color:var(--tx3);margin-top:2px}
+.tr{display:flex;align-items:center;gap:12px}
+.se{display:flex;align-items:center;gap:8px;background:var(--sub);border:1px solid var(--bd);border-radius:var(--rp);padding:7px 14px;width:220px;color:var(--tx3);font-size:13px}
+.se svg{width:16px;height:16px;opacity:.55}
+.ta{width:36px;height:36px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2)}.ta:hover{border-color:var(--t300)}.ta svg{width:18px;height:18px}
+.am{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--t500),var(--t400));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.ct{padding:22px 28px;display:flex;flex-direction:column;gap:18px}
+.tabs{display:flex;gap:6px;background:var(--sub);padding:4px;border-radius:var(--rm);width:fit-content}
+.tab{padding:8px 18px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--tx2);cursor:pointer;border:none;background:none;transition:all .15s}
+.tab.on{background:var(--card);color:var(--t700);box-shadow:var(--sh-sm)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:7px 14px;border-radius:var(--rp);font-size:12.5px;font-weight:600;border:1.5px solid var(--bd);background:var(--card);color:var(--tx2);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--t300)}
+.chip.on{background:var(--t50);border-color:var(--t400);color:var(--t700)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:42px;padding:0 18px;border:none;border-radius:var(--rm);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,var(--t500),var(--t600));color:#fff;box-shadow:0 6px 16px rgba(13,148,136,.26)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(13,148,136,.32)}
+.btn-primary:focus-visible{outline:2px solid var(--t700);outline-offset:2px}
+.btn svg{width:17px;height:17px}
+/* List */
+.tt{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh-sm)}
+.tt th{text-align:left;font-size:11.5px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;padding:13px 16px;border-bottom:1px solid var(--bd);background:var(--sub)}
+.tt td{padding:14px 16px;font-size:13.5px;vertical-align:middle;border-bottom:1px dashed var(--bd)}
+.tt tr:last-child td{border-bottom:none}.tt tbody tr{transition:background .12s}.tt tbody tr:hover{background:var(--t50)}
+.tdn{font-weight:700}.tdd{color:var(--tx2);font-size:12.5px}
+.tdo{display:flex;align-items:center;gap:9px}.tda{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+.pp{font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--rp);display:inline-flex}.ph{background:var(--err-bg);color:var(--err)}.pm{background:var(--warn-bg);color:var(--warn)}.pl{background:var(--info-bg);color:var(--info)}
+.sp{font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--rp)}.spr{background:var(--info-bg);color:#0891B2}.spd{background:var(--ok-bg);color:#059669}.spw{background:var(--warn-bg);color:#B45309}
+.pbo{width:90px}.pbb{height:6px;background:var(--sub);border-radius:var(--rp);overflow:hidden}.pbi{height:100%;border-radius:var(--rp)}
+/* Kanban */
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.col{background:var(--sub);border-radius:var(--rl);padding:12px;display:flex;flex-direction:column;gap:10px}
+.col-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:2px 4px}.col-ct{margin-left:auto;font-size:11.5px;color:var(--tx3);background:var(--card);border-radius:var(--rp);padding:1px 8px}
+.kc{background:var(--card);border:1px solid var(--bd);border-radius:var(--rm);padding:13px;box-shadow:var(--sh-sm);transition:all .15s;cursor:pointer}
+.kc:hover{border-color:var(--t300);transform:translateY(-1px)}
+.kc-t{font-size:13.5px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.kc-m{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.kc-tags{display:flex;gap:5px}.ktag{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:var(--rp);background:var(--t50);color:var(--t700)}
+.kc-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700}
+.kc-pb{height:5px;background:var(--sub);border-radius:var(--rp);overflow:hidden;margin-top:10px}.kc-pi{height:100%;border-radius:var(--rp)}
+/* Detail */
+.detail{display:grid;grid-template-columns:1.7fr 1fr;gap:16px}
+.dc{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;box-shadow:var(--sh-sm)}
+.dc h3{font-size:16px;font-weight:700;margin-bottom:4px}.dc .dsub{font-size:12.5px;color:var(--tx3);margin-bottom:16px}
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px}
+.mi{background:var(--sub);border-radius:var(--rm);padding:12px 14px}.mi-l{font-size:11.5px;color:var(--tx3);margin-bottom:4px}.mi-v{font-size:14px;font-weight:700}
+.subt{font-size:13px;font-weight:700;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.sk{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--bd)}.sk:last-child{border-bottom:none}
+.sk-ic{width:26px;height:26px;border-radius:7px;background:var(--t50);color:var(--t700);display:flex;align-items:center;justify-content:center;flex-shrink:0}.sk-ic svg{width:14px;height:14px}
+.sk-tx{font-size:13px;font-weight:600;flex:1}.sk-st{font-size:11.5px;color:var(--tx3)}
+.timeline{display:flex;flex-direction:column;gap:0}.tl{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.tl::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--bd)}
+.tl:last-child::before{display:none}
+.tl-dot{width:24px;height:24px;border-radius:50%;background:var(--t100);border:2px solid var(--t400);flex-shrink:0;z-index:1;display:flex;align-items:center;justify-content:center}
+.tl-dot svg{width:12px;height:12px;color:var(--t700)}
+.tl-b{flex:1}.tl-t{font-size:13px;font-weight:600}.tl-s{font-size:11.5px;color:var(--tx3);margin-top:2px}
+@media(max-width:1100px){.board{grid-template-columns:repeat(2,1fr)}.detail{grid-template-columns:1fr}}
+@media(max-width:700px){.sb{display:none}.board{grid-template-columns:1fr}.meta{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="sb">
+<div class="brand"><div class="bi">C</div><div class="bt"><h1>Curis Workspace</h1><p>一人公司的操作系统</p></div></div>
+<nav class="nl">
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>公司总览</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>员工系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>部门管理</button>
+<button class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 3-3M12 6v9M5 21h14"/></svg>任务系统</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>工作流</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-9"/></svg>知识库</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>能力中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>经营范围</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>AI 成本</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 14 11 10 15 16 19 6"/></svg>财务中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>报告中心</button>
+<button class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>系统设置</button>
+</nav>
+<div class="sbb"><div class="uc"><div class="ua">C</div><div><div class="uh4">Curis</div><div class="usp">v0.3</div></div><span class="sd"></span></div></div>
+</aside>
+<div class="main">
+<header class="tb">
+<div class="tg"><h2>任务系统</h2><p>统一任务操作台 · 列表 / 看板 / 详情</p></div>
+<div class="tr">
+<div class="se"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>搜索任务…</div>
+<button class="ta" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13 21a2 2 0 01-2 0"/></svg></button>
+<div class="am">C</div>
+</div>
+</header>
+<div class="ct">
+<div class="tabs"><button class="tab on">列表</button><button class="tab">看板</button><button class="tab">详情</button></div>
+
+<!-- LIST -->
+<div class="toolbar">
+<div class="filters">
+<span class="chip on">全部</span><span class="chip">进行中</span><span class="chip">待办</span><span class="chip">已完成</span><span class="chip">高优先级</span>
+</div>
+<button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建任务</button>
+</div>
+<table class="tt"><thead><tr><th>任务名称</th><th>所属部门</th><th>负责人</th><th>优先级</th><th>截止时间</th><th>进度</th><th>状态</th></tr></thead><tbody>
+<tr><td class="tdn">用户认证模块开发</td><td class="tdd">研发部</td><td class="tdo"><div class="tda" style="background:#3B82F6">J</div>Engineer John</td><td><span class="pp ph">高</span></td><td>今天 18:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:85%;background:var(--t500)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">用户增长策略优化</td><td class="tdd">运营部</td><td class="tdo"><div class="tda" style="background:var(--ok)">M</div>Manager Mike</td><td><span class="pp pm">中</span></td><td>明天 12:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:60%;background:var(--ok)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">AI 投资项目评估</td><td class="tdd">投资部</td><td class="tdo"><div class="tda" style="background:var(--pur)">E</div>Analyst Emma</td><td><span class="pp ph">高</span></td><td>明天 18:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:30%;background:var(--pur)"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">内容发布计划制定</td><td class="tdd">内容部</td><td class="tdo"><div class="tda" style="background:#F59E0B">L</div>Writer Lily</td><td><span class="pp pl">低</span></td><td>后天 12:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:85%;background:#F59E0B"></div></div></td><td><span class="sp spr">进行中</span></td></tr>
+<tr><td class="tdn">登录页 UI 设计</td><td class="tdd">研发部</td><td class="tdo"><div class="tda" style="background:#3B82F6">A</div>Designer Alice</td><td><span class="pp pm">中</span></td><td>后天 18:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:90%;background:#3B82F6"></div></div></td><td><span class="sp sd" style="background:var(--ok-bg);color:#059669">已完成</span></td></tr>
+<tr><td class="tdn">Q3 财报数据整理</td><td class="tdd">财务部</td><td class="tdo"><div class="tda" style="background:var(--pur)">F</div>Fin Tom</td><td><span class="pp ph">高</span></td><td>周五 20:00</td><td class="pbo"><div class="pbb"><div class="pbi" style="width:15%;background:var(--err)"></div></div></td><td><span class="sp spw">待办</span></td></tr>
+</tbody></table>
+
+<!-- KANBAN (hidden by default, shown via tab) -->
+<div class="board" style="display:none">
+<div class="col"><div class="col-h">待办 <span class="col-ct">3</span></div>
+<div class="kc"><div class="kc-t">Q3 财报数据整理</div><div class="kc-m"><div class="kc-tags"><span class="ktag">财务部</span><span class="ktag">高</span></div><div class="kc-av" style="background:var(--pur)">F</div></div><div class="kc-pb"><div class="kc-pi" style="width:15%;background:var(--err)"></div></div></div>
+<div class="kc"><div class="kc-t">竞品调研报告</div><div class="kc-m"><div class="kc-tags"><span class="ktag">运营部</span><span class="ktag">中</span></div><div class="kc-av" style="background:var(--ok)">M</div></div><div class="kc-pb"><div class="kc-pi" style="width:0%;background:var(--sub)"></div></div></div>
+</div>
+<div class="col"><div class="col-h">进行中 <span class="col-ct">4</span></div>
+<div class="kc"><div class="kc-t">用户认证模块开发</div><div class="kc-m"><div class="kc-tags"><span class="ktag">研发部</span><span class="ktag">高</span></div><div class="kc-av" style="background:#3B82F6">J</div></div><div class="kc-pb"><div class="kc-pi" style="width:85%;background:var(--t500)"></div></div></div>
+<div class="kc"><div class="kc-t">用户增长策略优化</div><div class="kc-m"><div class="kc-tags"><span class="ktag">运营部</span><span class="ktag">中</span></div><div class="kc-av" style="background:var(--ok)">M</div></div><div class="kc-pb"><div class="kc-pi" style="width:60%;background:var(--ok)"></div></div></div>
+<div class="kc"><div class="kc-t">AI 投资项目评估</div><div class="kc-m"><div class="kc-tags"><span class="ktag">投资部</span><span class="ktag">高</span></div><div class="kc-av" style="background:var(--pur)">E</div></div><div class="kc-pb"><div class="kc-pi" style="width:30%;background:var(--pur)"></div></div></div>
+</div>
+<div class="col"><div class="col-h">已完成 <span class="col-ct">2</span></div>
+<div class="kc"><div class="kc-t">登录页 UI 设计</div><div class="kc-m"><div class="kc-tags"><span class="ktag">研发部</span><span class="ktag">中</span></div><div class="kc-av" style="background:#3B82F6">A</div></div><div class="kc-pb"><div class="kc-pi" style="width:100%;background:var(--ok)"></div></div></div>
+</div>
+<div class="col"><div class="col-h">已归档 <span class="col-ct">5</span></div>
+<div class="kc"><div class="kc-t">产品需求文档归档</div><div class="kc-m"><div class="kc-tags"><span class="ktag">研发部</span></div><div class="kc-av" style="background:#9CA3AF">·</div></div><div class="kc-pb"><div class="kc-pi" style="width:100%;background:var(--tx3)"></div></div></div>
+</div>
+</div>
+
+<!-- DETAIL (hidden by default) -->
+<div class="detail" style="display:none">
+<div class="dc">
+<h3>用户认证模块开发</h3><div class="dsub">研发部 · 由 Engineer John 负责 · 创建于 07-05</div>
+<div class="meta">
+<div class="mi"><div class="mi-l">优先级</div><div class="mi-v" style="color:var(--err)">高</div></div>
+<div class="mi"><div class="mi-l">状态</div><div class="mi-v" style="color:#0891B2">进行中</div></div>
+<div class="mi"><div class="mi-l">截止时间</div><div class="mi-v">今天 18:00</div></div>
+<div class="mi"><div class="mi-l">进度</div><div class="mi-v">85%</div></div>
+</div>
+<div class="subt">子任务</div>
+<div class="sk"><div class="sk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="sk-tx">登录接口设计</div><div class="sk-st">已完成</div></div>
+<div class="sk"><div class="sk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="sk-tx">Token 刷新机制</div><div class="sk-st">已完成</div></div>
+<div class="sk"><div class="sk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg></div><div class="sk-tx">OAuth 第三方接入</div><div class="sk-st">进行中 60%</div></div>
+<div class="sk"><div class="sk-ic" style="background:var(--sub);color:var(--tx3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg></div><div class="sk-tx">权限中间件</div><div class="sk-st">待办</div></div>
+</div>
+<div class="dc">
+<div class="subt" style="margin-top:0">执行时间线</div>
+<div class="timeline">
+<div class="tl"><div class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-b"><div class="tl-t">任务创建</div><div class="tl-s">07-05 09:12 · 系统</div></div></div>
+<div class="tl"><div class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-b"><div class="tl-t">分配至 Engineer John</div><div class="tl-s">07-05 09:15 · 人事部</div></div></div>
+<div class="tl"><div class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-b"><div class="tl-t">子任务「登录接口」完成</div><div class="tl-s">07-06 14:30 · AI 员工</div></div></div>
+<div class="tl"><div class="tl-dot" style="background:var(--sub);border-color:var(--bd2)"></div><div class="tl-b"><div class="tl-t">OAuth 接入进行中</div><div class="tl-s">进行中 · 预计今天完成</div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

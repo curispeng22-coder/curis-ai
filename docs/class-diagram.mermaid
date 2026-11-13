@@ -1,0 +1,140 @@
+classDiagram
+    %% ── 核心数据模型 ──
+    class RdWorkflowRuntime {
+        +Database database
+        +Any event_log
+        +Callable | None model_fn
+        +Callable | None connector_fn
+        +RealRDExecutor | None real_rd_executor
+        +run(department_id, workflow_content_id, prompt, *, task_id, company_id, model_fn) dict
+        +bind_execution_entry(department_id, workflow_content_id) str
+        -_execute_step(employee, step_name, prompt, *, model_fn) str
+        -_build_step_prompt(prompt, step_name, previous) str
+        -_build_final_report(prompt, results) str
+        -_write_step(run_id, order, step_name, emp_role, emp_id, step_input, output) None
+        -_get_department_instance(department_id) dict | None
+        -_list_employees(department_id) list~dict~
+        -_get_wt_steps(wt_ref) list~dict~
+        -_build_issue_spec(step_name, prompt, employee) dict | None
+        -_mark_run_failed(run_id, reason) None
+    }
+
+    class RealRDExecutor {
+        +Any model
+        +EvolutionEventLog event_log
+        +type toolset_cls
+        +SandboxMode | None sandbox_mode
+        +run(issue_spec) dict
+        -_validate_spec(issue_spec) None
+        -_claim_once(tenant_id, run_id) None
+        -_build_toolsets(...) tuple
+        -_build_prompt(instructions, contents, last_failure) str
+        -_parse_diff(text) str
+        -_safe_run_test(write_tools, test_command_id) tuple
+        -_safe_rollback(rollback) None
+        -_record_run_summary(...) None
+    }
+
+    class LocalRDToolset {
+        +LocalRDToolScope scope
+        +EvolutionEventLog event_log
+        +dict command_registry
+        +SandboxMode sandbox_mode
+        +read_file(raw) dict
+        +search(raw) dict
+        +apply_diff(raw) dict
+        +run_test(raw) dict
+        +git_read(raw) dict
+        +functions() dict~str, Callable~
+        -_apply_diff_transactional(raw) tuple
+        -_build_changes(diff, hashes) list
+        -_atomic_write(changes) Callable
+        -_execute(tool_id, action, ...) Any
+    }
+
+    class ToolRegistry {
+        +Database database
+        +register(tool) dict
+        +get(name) dict
+        +register_real_rd_tool() str
+        +get_real_rd_tool_name() str
+    }
+
+    class ToolRouter {
+        +str | None model_tool_name
+        +plan(task_content) list~str~
+        +tools_for_step(step) list~str~
+        +rd_tools_for_step(step, employee_role) list~str~
+        +fallback_chain(tool_name) list~str~
+    }
+
+    class ToolExecutor {
+        +ToolRegistry registry
+        +dict tool_functions
+        +execute(tool_name, prompt) dict
+        +execute_chain(tool_chain, initial_input, fallback_planner) dict
+    }
+
+    class AIEmployee {
+        +ToolRouter router
+        +ToolExecutor executor
+        +execute(task_content, prompt, ...) dict
+        +execute_step(step, step_input, ...) dict
+    }
+
+    %% ── 工作流模板数据模型 ──
+    class WorkflowTemplate {
+        +str id
+        +str name
+        +str description
+        +str source
+        +str department_type
+        +str process_type
+        +list steps_json
+        +str status
+    }
+
+    class WorkflowStepMeta {
+        +int step_order
+        +str step_type
+        +str step_name
+        +str employee_role
+        +list required_capability_types
+        +dict | None code_change_spec
+    }
+
+    class IssueSpec {
+        +str issue_id
+        +list~str~ target_files
+        +str test_command_id
+        +list~str~ test_command_argv
+        +str instructions
+        +list~str~ allow_paths
+        +int max_rounds
+        +str | None tenant_id
+        +str | None project_id
+    }
+
+    class RealRDExecutorResult {
+        +str issue_id
+        +str status
+        +int rounds
+        +str diff_text
+        +int | None test_exit_code
+        +list~dict~ files
+        +int total_tokens
+        +float estimated_cost
+    }
+
+    %% ── 关系 ──
+    RdWorkflowRuntime "1" --> "0..1" RealRDExecutor : calls run()
+    RealRDExecutor "1" *--> "3" LocalRDToolset : builds (read/write/git)
+    RealRDExecutor "1" --> "1" LocalRDToolScope : scoped to
+    RealRDExecutor ..> IssueSpec : consumes
+    RealRDExecutor ..> RealRDExecutorResult : produces
+    ToolRouter ..> RdWorkflowRuntime : routing decision
+    ToolExecutor ..> RealRDExecutor : dispatches to (via closure)
+    WorkflowTemplate "1" *--> "*" WorkflowStepMeta : contains
+    WorkflowStepMeta ..> IssueSpec : derives (when code_change)
+    ToolRegistry o-- ToolExecutor : referenced
+    ToolRouter o-- AIEmployee : referenced

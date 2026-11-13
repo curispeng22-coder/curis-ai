@@ -1,0 +1,65 @@
+classDiagram
+    class CanonicalAgentSpec {
+        +str spec_version
+        +SourceMeta source
+        +LicenseInfo license
+        +DivisionInfo division
+        +Identity identity
+        +Mission mission
+        +Persona persona
+        +WorkflowSpec workflow
+        +CapabilityCandidates capability_candidates
+        +SecurityScan security_scan
+        +ConversionDisposition conversion_disposition
+        +asset_slug() str
+    }
+    class SourceMeta { +str adapter +str repo_url +str entry_path +str fetched_at }
+    class LicenseInfo { +str spdx +bool commercial_use +bool copyleft +bool attribution_required }
+    class DivisionInfo { +str source_key +str label +str target_dt_type }
+    class Identity { +str name +str role +str slug +str emoji +str color +str vibe }
+    class Mission { +str summary +list responsibilities +list critical_rules }
+    class Persona { +str archetype +list traits +str decision_style }
+    class WorkflowSpec { +str process_type +list steps }
+    class CapabilityCandidates { +list tool_candidates +list skill_candidates }
+    class SecurityScan { +list credential_patterns +list prompt_injection_flags +list overclaim_flags }
+    class SourceAdapter {
+        <<abstract>>
+        +discover(source_root)* SourceEntry[]
+        +fetch(entry)* Any
+        +parse(raw, entry)* CanonicalAgentSpec
+        +extract_capabilities(spec)* CanonicalAgentSpec
+        +get_metadata()* SourceMetadata
+    }
+    class AgencyMarkdownAdapter {
+        +discover(source_root) SourceEntry[]
+        +fetch(entry) str
+        +parse(raw, entry) CanonicalAgentSpec
+        +extract_capabilities(spec) CanonicalAgentSpec
+        -_parse_frontmatter(text) dict
+        -_split_sections(text) dict
+    }
+    class Sanitizer { +clean_emoji(raw) str +clean_color(raw) str +strip_invisible(text) str }
+    class SecurityScanner { +scan_credential(text) list +scan_prompt_injection(text) list +scan_overclaim(text) list }
+    class SeedMapper {
+        +map_pt(spec) dict
+        +map_et(spec, persona_ref) dict
+        +map_skill_candidates(spec) list
+        +map_tool_candidates(spec) list
+        +map_wt(spec) dict
+        +map_dt(division) dict
+    }
+
+    CanonicalAgentSpec *-- SourceMeta
+    CanonicalAgentSpec *-- LicenseInfo
+    CanonicalAgentSpec *-- DivisionInfo
+    CanonicalAgentSpec *-- Identity
+    CanonicalAgentSpec *-- Mission
+    CanonicalAgentSpec *-- Persona
+    CanonicalAgentSpec *-- WorkflowSpec
+    CanonicalAgentSpec *-- CapabilityCandidates
+    CanonicalAgentSpec *-- SecurityScan
+    SourceAdapter <|-- AgencyMarkdownAdapter
+    AgencyMarkdownAdapter ..> Sanitizer : uses
+    AgencyMarkdownAdapter ..> SecurityScanner : uses
+    AgencyMarkdownAdapter ..> CanonicalAgentSpec : produces
+    SeedMapper ..> CanonicalAgentSpec : consumes

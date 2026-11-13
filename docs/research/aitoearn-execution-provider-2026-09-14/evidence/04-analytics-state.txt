@@ -1,0 +1,81 @@
+- region "Notifications alt+T"
+- link "公告 AitoEarn将于9月份开始使用云账户发放提现奖励":
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button "关闭":
+- complementary:
+  - link "AiToEarn":
+    - /url: /
+    - img "AiToEarn"
+  - navigation:
+    - link "淘金广场":
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link "我的团队":
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link "AI Agent":
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link "内容管理":
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link "AI发布":
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link "热门内容":
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link "数据统计":
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link "AI打卡":
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link "AI互动":
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link "产品定价":
+      - /url: /pricing
+      - generic: 产品定价
+  - button "我的频道":
+    - generic: 我的频道
+  - button "浏览器插件 未安装":
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button "搜索菜单":
+  - link "开放平台":
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link "API Keys":
+    - /url: /developer/api-keys
+  - button "U user_FBVvPDQC":
+    - generic: U
+    - generic "user_FBVvPDQC"
+- main:
+  - main:
+    - button "全部平台":
+      - generic: 全部平台
+    - button "2026-09-07 — 2026-09-13":
+      - generic: 2026-09-07 — 2026-09-13
+    - button "查询数据":
+      - text: 查询数据
+    - button "刷新":
+    - generic: 已更新 0/0
+    - generic: 暂无采集数据
+    - heading "核心总览" [level=2]
+    - generic: 发布作品
+    - strong: "0"
+    - generic: 浏览
+    - strong: "0"
+    - generic: 点赞
+    - strong: "0"
+    - generic: 评论
+    - strong: "0"
+    - generic: 分享
+    - strong: "0"
+    - generic: 收藏
+    - strong: "0"
+    - generic: 该时间范围内暂无发布作品
+- alert

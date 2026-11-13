@@ -1,0 +1,34 @@
+{
+  "status": "STRUCTURAL AND SOURCE CHECKS PASS",
+  "limits": "Does not prove Runtime capability, live settings values, visual usability or rendered Mermaid output. Semantic coverage is separately reviewed in COMPLETION_AUDIT.md.",
+  "capabilities": 48,
+  "steps_per_capability": 18,
+  "passes": {
+    "initial": 36,
+    "adversarial_1": 6,
+    "adversarial_2": 6
+  },
+  "settings": 77,
+  "fields_per_setting": 14,
+  "surfaces": 29,
+  "v1_sections": 42,
+  "ceo_questions": 20,
+  "mermaid_source_blocks": 10,
+  "source_hashes_unchanged": 26,
+  "v1_hash_unchanged": true,
+  "local_links_checked": 8,
+  "artifacts": {
+    "CURIS_FULL_APP_CAPABILITY_COMPLETENESS_DERIVATION.md": {
+      "sha256": "df7d9fd7fbaf83ef8b5ba64bb195412ea1a0be2c94e8ce3492b6f6f97437a61d",
+      "characters": 71469
+    },
+    "CURIS_FULL_PRODUCT_EXPRESSION_V2.md": {
+      "sha256": "fb02299a4db4a9c89c83c06bc484fd5ddc51119ed5d5b07ba2a956fa86515d8a",
+      "characters": 114185
+    },
+    "CURIS_FULL_PRODUCT_EXPERIENCE_MAP.md": {
+      "sha256": "634a1f3f774f28083f4ea72a3cc400619a7af1c3caa0fd1155c7f5bf615f9b1a",
+      "characters": 9523
+    }
+  }
+}

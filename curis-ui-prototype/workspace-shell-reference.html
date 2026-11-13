@@ -1,0 +1,283 @@
+<!doctype html>
+<!--
+  ============================================================================
+  Curis 工作空间 Shell — 统一工作台骨架参考原型（域无关模板）
+  ----------------------------------------------------------------------------
+  用途：新业务接入时，复制本文件并填充 5 个槽位即可，无需重新造页面。
+  冻结纪律：全部令牌走 --ui-*；顶栏 52px；侧栏 220px；主题三态由 _system/theme.js 接管。
+  实例化：把 .active 移到你业务域对应的 nav-item；用真实数据替换「示例」占位内容。
+  槽位清单：① 结果条 ② 责任链 ③ 管道看板 ④ 侧栏面板 ⑤ CEO 决策队列
+  ============================================================================
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <link rel="stylesheet" href="_system/assistant-drawer.css">
+    <script src="_system/theme.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>示例工作空间 · 工作空间 Shell 参考 · Curis</title>
+  <style>
+    :root {
+      --ok: var(--ui-success, #10b981); --warn: var(--ui-warning, #f59e0b); --bad: var(--ui-danger, #ef4444);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+      color: var(--ui-text); background: var(--ui-bg);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--ui-bg); }
+    .shell { display: flex; min-height: 100vh; }
+
+    /* 侧栏（冻结 220px） */
+    .sidebar { width: 220px; flex: 0 0 220px; padding: var(--ui-sp-5) var(--ui-sp-3); border-right: 1px solid var(--ui-line); background: var(--ui-surface-2); }
+    .brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-2) var(--ui-sp-6); font-size: var(--ui-fs-3); font-weight: 650; }
+    .brand-mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--ui-r-xs); color: var(--ui-action-primary-fg); background: var(--ui-action-primary-bg); font-size: var(--ui-fs-1); font-weight: 800; }
+    .nav-label { margin: 0 var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); letter-spacing: .06em; text-transform: uppercase; }
+    .nav { display: grid; gap: 3px; }
+    .nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-1); text-decoration: none; }
+    .nav-item:hover, .nav-item.active { color: var(--ui-text); background: rgba(224,226,242,.06); }
+    .nav-icon { width: 14px; color: var(--ui-text-3); text-align: center; }
+    .sidebar-foot { margin-top: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.5; border-top: 1px solid var(--ui-line); }
+
+    /* 主区 */
+    .main { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-sp-4); height: var(--ui-topbar-h); padding: 0 var(--ui-sp-7); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+    .crumbs { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .crumbs strong { color: var(--ui-text); }
+    .top-right { display: flex; align-items: center; gap: var(--ui-sp-3); }
+    .ceo-badge { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-3); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .ceo-badge::before { content: ""; width: 7px; height: 7px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+
+    /* 主题切换（复用冻结 patch 样式） */
+    .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+    .theme-btn { border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease; }
+    .theme-btn:hover { color: var(--ui-text); }
+    .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+
+    .content { max-width: 1320px; margin: 0 auto; padding: var(--ui-sp-6) var(--ui-sp-7) var(--ui-sp-8); width: 100%; }
+    .banner { margin-bottom: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-3); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.6; }
+    .banner strong { color: var(--ui-text); }
+
+    /* 槽位 1：结果条 */
+    .result-bar { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-5); }
+    .metric { padding: var(--ui-sp-3) var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .metric span { display: block; color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .metric strong { display: block; margin-top: var(--ui-sp-1); font-size: var(--ui-fs-5); font-weight: 620; }
+    .metric small { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .metric small.up { color: var(--ui-success); }
+    .metric .caliber { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.4; }
+    .data-pill { display: inline-flex; align-items: center; gap: var(--ui-sp-1); margin-left: var(--ui-sp-2); padding: 3px var(--ui-sp-2); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .result-note { margin: 0 0 var(--ui-sp-3); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+
+    /* 槽位 2：责任链 */
+    .section-title { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-2); font-weight: 600; color: var(--ui-text); }
+    .chain { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-5); }
+    .role { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .role strong { display: block; font-size: var(--ui-fs-1); }
+    .role span { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.45; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: var(--ui-r-pill); margin-right: var(--ui-sp-1); vertical-align: middle; background: var(--ui-text-3); }
+    .dot.run { background: var(--ui-warning); } .dot.done { background: var(--ui-success); }
+    .role em { display: inline-block; margin-top: var(--ui-sp-2); font-style: normal; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+    /* 两栏：管道 + 侧栏面板 */
+    .work-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--ui-sp-4); align-items: start; }
+
+    /* 槽位 3：管道看板 */
+    .board { display: flex; gap: var(--ui-sp-3); overflow-x: auto; padding-bottom: var(--ui-sp-1); }
+    .lane { flex: 1 1 0; min-width: 180px; background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); }
+    .lane.review { background: transparent; border-style: dashed; }
+    .lane-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; color: var(--ui-text-2); }
+    .lane-count { color: var(--ui-text-3); font-weight: 400; }
+    .card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); margin-bottom: var(--ui-sp-2); cursor: grab; }
+    .card:last-child { margin-bottom: 0; }
+    .card.active { border-color: var(--ui-accent); }
+    .card h4 { margin: 0 0 var(--ui-sp-1); font-size: var(--ui-fs-1); font-weight: 600; }
+    .card .meta { color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.5; }
+    .card .evidence { margin-top: var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .card .move { margin-top: var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-accent); cursor: pointer; background: none; border: none; padding: 0; }
+    .lane.review .card { cursor: default; opacity: .92; }
+
+    /* 槽位 4：侧栏面板 */
+    .panels { display: grid; gap: var(--ui-sp-3); }
+    .panel { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .panel h3 { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; }
+    .panel p, .panel li { color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.55; }
+    .panel ul { margin: 0; padding-left: var(--ui-sp-4); }
+    .panel .note { color: var(--ui-text-3); font-size: var(--ui-fs-1); margin-top: var(--ui-sp-1); }
+
+    /* 槽位 5：CEO 决策队列（面板内高亮项） */
+    .queue-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); margin-top: var(--ui-sp-2); background: var(--ui-surface-2); border-left: 3px solid var(--ui-accent); border-radius: var(--ui-r-xs); font-size: var(--ui-fs-1); color: var(--ui-text); cursor: pointer; }
+    .queue-item:hover { background: rgba(224,226,242,.06); }
+    .queue-item .q-status { margin-left: auto; color: var(--ui-warning); font-size: var(--ui-fs-1); }
+
+    .empty-state { padding: var(--ui-sp-5); text-align: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); }
+
+    @media (max-width: 1024px) { .work-grid { grid-template-columns: 1fr; } .result-bar { grid-template-columns: repeat(3, 1fr); } .chain { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 760px) {
+      .sidebar { width: 64px; flex-basis: 64px; padding: var(--ui-sp-4) var(--ui-sp-2); }
+      .brand span, .nav-label, .nav-item span:not(.nav-icon), .sidebar-foot { display: none; }
+      .nav-item { justify-content: center; }
+      .topbar, .content { padding-left: var(--ui-sp-4); padding-right: var(--ui-sp-4); }
+      .result-bar, .chain { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- 侧栏：完整 12 项分组导航（冻结，实例化时把 .active 移到你的域） -->
+    <aside class="sidebar" role="navigation" aria-label="主导航">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav">
+        <p class="nav-label">公司</p>
+        <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+        <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+        <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+        <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+        <p class="nav-label">工作空间</p>
+        <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+        <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+        <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+        <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+        <p class="nav-label">经营工具</p>
+        <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+        <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+        <p class="nav-label">公司资源</p>
+        <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+        <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+        <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+        <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+      </nav>
+      <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="crumbs"><span>Curis</span><span>/</span><span>工作空间</span><span>/</span><strong>示例工作空间</strong></div>
+        <div class="top-right">
+          <!-- 槽位 5（顶栏常驻）：CEO 决策队列徽标 -->
+          <span class="ceo-badge" aria-live="polite">待 CEO 决策：2</span>
+          <label class="cap-switch" style="display:inline-flex;align-items:center;gap:var(--ui-sp-1);">
+            <span style="font-size:var(--ui-fs-1);color:var(--ui-text-3);">当前能力</span>
+            <select id="runtimeCapSelect" aria-label="当前能力" style="font-size:var(--ui-fs-1);color:var(--ui-text);background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);padding:var(--ui-sp-1) var(--ui-sp-2);max-width:190px;cursor:pointer;outline:none;"></select>
+          </label>
+          <div class="theme-switch" role="group" aria-label="主题切换"></div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="banner">
+          <strong>这是 工作空间 Shell 参考原型（模板）。</strong>
+          新业务接入 = 复制本文件，填充 5 个槽位（结果条 / 责任链 / 管道看板 / 侧栏面板 / CEO 决策队列），把侧栏 <code>.active</code> 移到你的域。本页内容均为「示例」占位，mock 数据带「示例数据」徽标。<br />
+          <strong>指标约定示范：</strong>结果条 / 价值成本面板 / CEO 决策队列以「小红书域」作完整示范（北极星=平均收藏率，每项带口径 note）；责任链与管道沿用通用占位展示槽位结构，接入时整体替换为你的域。
+        </div>
+
+        <!-- 槽位 1：结果条 —— 以下以「小红书域」示范 metrics 槽位结构（北极星=平均收藏率）。
+             接入新业务时，把 5 个指标整体替换为该域的「北极星 + 辅助指标」，每项带 note 口径。 -->
+        <h2 class="section-title">结果条
+          <span class="mock-badge" style="margin-left:var(--ui-sp-2);">示例数据</span>
+          <span class="data-pill" title="数据可信状态">同步中</span>
+        </h2>
+        <p class="result-note">（本栏以小红书域示范：北极星=平均收藏率；接入时整体替换为你的域指标，禁止套通用模板）</p>
+        <div class="result-bar">
+          <div class="metric"><span>平均收藏率（北极星）</span><strong>8.6%</strong><small class="up">↑ 1.2pt 周环比</small><span class="caliber">口径：收藏数 ÷ 曝光数（小红书权重收藏&gt;赞，决定分发）</span></div>
+          <div class="metric"><span>本周发布 / 目标</span><strong>5 / 12</strong><small>待追 7 篇</small><span class="caliber">口径：发布数 ÷ 本周期目标</span></div>
+          <div class="metric"><span>新增粉丝</span><strong>1,248</strong><small class="up">↑ 9% 周环比</small><span class="caliber">口径：周期内净增关注</span></div>
+          <div class="metric"><span>线索价值</span><strong>¥12,400</strong><small class="up">↑ 14% 周环比</small><span class="caliber">口径：私信咨询转化估值（¥）</span></div>
+          <div class="metric"><span>投入产出</span><strong>2.1x</strong><small>内容产出价值 ÷ 投入</small><span class="caliber">口径：产出价值 ÷（模型+人工）投入</span></div>
+        </div>
+
+        <!-- 槽位 2：责任链 -->
+        <h2 class="section-title">责任链</h2>
+        <div class="chain" role="list">
+          <div class="role" role="listitem"><strong>角色 A</strong><span>对「可验收结果 A」负责</span><em><span class="dot run"></span>执行中</em></div>
+          <div class="role" role="listitem"><strong>角色 B</strong><span>对「可验收结果 B」负责</span><em><span class="dot"></span>待开始</em></div>
+          <div class="role" role="listitem"><strong>角色 C</strong><span>对「可验收结果 C」负责</span><em><span class="dot done"></span>已交付</em></div>
+          <div class="role" role="listitem"><strong>CEO</strong><span>对「验收与决策」负责</span><em><span class="dot run"></span>待决策 2 项</em></div>
+        </div>
+
+        <!-- 两栏：管道看板 + 侧栏面板 -->
+        <div class="work-grid">
+          <!-- 槽位 3：管道看板 -->
+          <section>
+            <h2 class="section-title">管道看板</h2>
+            <div class="board" role="list" aria-label="工作项管道">
+              <div class="lane" data-lane="idea"><div class="lane-head">选题 <span class="lane-count">1</span></div>
+                <div class="card" role="listitem" draggable="true"><h4>示例工作项 1</h4><div class="meta">负责人：角色 A</div><div class="evidence">检查点：已立项</div></div>
+              </div>
+              <div class="lane" data-lane="produce"><div class="lane-head">生产 <span class="lane-count">1</span></div>
+                <div class="card active" role="listitem" draggable="true"><h4>示例工作项 2</h4><div class="meta">负责人：角色 B</div><div class="evidence">证据：草稿 v1</div><button class="move" data-move="review">移动至下一阶段 →</button></div>
+              </div>
+              <div class="lane" data-lane="review"><div class="lane-head">审核 <span class="lane-count">1</span></div>
+                <div class="card" role="listitem" draggable="true"><h4>示例工作项 3</h4><div class="meta">负责人：CEO</div><div class="evidence">待品牌/敏感确认</div></div>
+              </div>
+              <div class="lane" data-lane="publish"><div class="lane-head">发布 <span class="lane-count">0</span></div>
+                <div class="empty-state">暂无待发布项</div>
+              </div>
+              <div class="lane review" data-lane="archive"><div class="lane-head">回顾区（只读） <span class="lane-count">1</span></div>
+                <div class="card" role="listitem"><h4>已发布示例</h4><div class="meta">由平台数据派生</div><div class="evidence">不可手动回拖</div></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 槽位 4：侧栏面板 -->
+          <aside class="panels" aria-label="上下文面板">
+            <div class="panel"><h3>外部结果与验收</h3><p>本域产出对接的外部结果与验收状态。</p><p class="note">示例：外部平台回传指标待接入。</p></div>
+            <div class="panel"><h3>价值与成本</h3><ul><li>线索价值：¥12,400</li><li>投入产出：2.1x</li><li>投入（模型+人工）：¥5,900</li></ul><p class="note">投入产出 = 内容产出价值 ÷（模型+人工）投入；口径随域调整。</p></div>
+            <div class="panel"><h3>洞察与下一步</h3><p>近期观察与建议动作。</p>
+              <!-- 槽位 5（面板内）：CEO 决策队列高亮项 -->
+              <div class="queue-item" role="button" tabindex="0">待发布笔记品牌/敏感表达确认<span class="q-status">待 CEO 确认</span></div>
+              <div class="queue-item" role="button" tabindex="0">授权后是否放量投放<span class="q-status">待 CEO 确认</span></div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="_system/assistant-drawer.js"></script>
+  <script>
+    // 主题切换按钮注入（theme.js 接管实际切换逻辑）
+    (function () {
+      if (document.querySelector('[data-curis-theme]')) return;
+      var sw = document.createElement('div');
+      sw.className = 'theme-switch';
+      sw.setAttribute('role', 'group');
+      sw.setAttribute('aria-label', '主题切换');
+      var labels = { dark: '深色', light: '浅色', system: '自动' };
+      ['dark', 'light', 'system'].forEach(function (t) {
+        var b = document.createElement('button');
+        b.className = 'theme-btn';
+        b.setAttribute('data-curis-theme', t);
+        b.textContent = labels[t];
+        sw.appendChild(b);
+      });
+      var host = document.querySelector('.topbar');
+      if (host) host.appendChild(sw);
+    })();
+
+    // 轻量拖拽演示（生产态卡片可拖，结果态只读）
+    (function () {
+      var dragEl = null;
+      document.querySelectorAll('.lane:not(.review) .card[draggable="true"]').forEach(function (c) {
+        c.addEventListener('dragstart', function (e) { dragEl = c; e.dataTransfer.effectAllowed = 'move'; });
+      });
+      document.querySelectorAll('.lane:not(.review)').forEach(function (lane) {
+        lane.addEventListener('dragover', function (e) { e.preventDefault(); });
+        lane.addEventListener('drop', function (e) {
+          e.preventDefault();
+          if (dragEl) { lane.appendChild(dragEl); dragEl = null; }
+        });
+      });
+      document.querySelectorAll('.card .move').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var card = btn.closest('.card');
+          var next = card.closest('.lane').nextElementSibling;
+          if (next && !next.classList.contains('review')) next.appendChild(card);
+        });
+      });
+    })();
+  </script>
+  <script src="_system/canonical-nav.js"></script>
+  <script src="_system/runtime-capability.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+name: curis-freellmapi-experimental
+
+services:
+  freellmapi:
+    image: ghcr.io/tashfeenahmed/freellmapi:v0.6.4
+    env_file:
+      - ${FREELLMAPI_ENV_FILE:-.env}
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    ports:
+      - "127.0.0.1:${FREELLMAPI_HOST_PORT:-3101}:3001"
+    volumes:
+      - freellmapi-data:/app/server/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3001/api/ping').then((response)=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+volumes:
+  freellmapi-data:

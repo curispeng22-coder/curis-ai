@@ -1,0 +1,581 @@
+<!doctype html>
+<!--
+  ============================================================================
+  Curis · 决策室（待决策列表页）— 冻结骨架改造版（路线 B）
+  ----------------------------------------------------------------------------
+  改造要点（对照 review v2 第六节）：
+  ① 标准页面 Shell：220px 侧栏 + 52px 顶栏 + 内容区；移除 modal-backdrop / role=dialog / aria-modal。
+  ② 首屏 = 待决策事项列表（inbox）；点「展开判断」同页原地展开详情，不跳页、不开模态。
+  ③ 返回路径：面包屑「今日简报 / 决策室」；「返回」按钮 = document.referrer 同源 → history.back()，否则 → ceo-desk.html。
+  ④ 无硬编码 workspace-studio 跳转、无隐藏死按钮。
+  ⑤ 空状态：列表为空时仅显示一张卡 + CTA「去工作空间看看」。
+  ⑥ 视觉令牌：仅用 _system/tokens.css（--ui-*），删除内联 shadcn 与 Tailwind CDN。
+  ⑦ 术语本地化：投入产出→投入产出比、AI 员工→执行角色、运行现场→运行版本、装修台→工作空间工作台、Truth→事实层。
+  ============================================================================
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <link rel="stylesheet" href="_system/tokens.css">
+  <link rel="stylesheet" href="_system/shell.css">
+  <link rel="stylesheet" href="_system/assistant-drawer.css">
+  <script src="_system/theme.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>待决策事项 · 决策室 · Curis</title>
+  <style>
+    /* ── 决策室专属组件（仅用 --ui-* 令牌，无私有调色板） ── */
+    .app-shell { display: flex; min-height: 100vh; }
+    .main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+    .crumbs { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+    .crumbs a { color: var(--ui-text-2); text-decoration: none; }
+    .crumbs a:hover { color: var(--ui-text); }
+    .crumbs .sep { color: var(--ui-text-3); }
+    .crumbs [aria-current="page"] { color: var(--ui-text); font-weight: 600; }
+
+    .top-right { display: flex; align-items: center; gap: var(--ui-sp-3); }
+    .ceo-badge {
+      display: inline-flex; align-items: center; gap: var(--ui-sp-1);
+      padding: var(--ui-sp-1) var(--ui-sp-3); border-radius: var(--ui-r-pill);
+      background: rgba(216, 154, 58, 0.14); color: var(--ui-warning);
+      border: 1px solid rgba(216, 154, 58, 0.3); font-size: var(--ui-fs-1); font-weight: 600;
+    }
+    .ceo-badge::before { content: ""; width: 7px; height: 7px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ui-sp-4); margin-bottom: var(--ui-sp-5); flex-wrap: wrap; }
+
+    /* inbox */
+    .dr-inbox { display: flex; flex-direction: column; gap: var(--ui-sp-3); }
+    .dr-item {
+      border: 1px solid var(--ui-line); border-radius: var(--ui-radius);
+      background: var(--ui-surface); overflow: hidden;
+    }
+    .dr-item-head {
+      display: flex; align-items: flex-start; gap: var(--ui-sp-3);
+      padding: var(--ui-sp-4) var(--ui-sp-4); cursor: pointer;
+    }
+    .dr-dot { width: 9px; height: 9px; border-radius: var(--ui-r-pill); margin-top: var(--ui-sp-2); flex: 0 0 auto; background: var(--ui-warning); }
+    .dr-dot.ontrack { background: var(--ui-success); }
+    .dr-dot.attention { background: var(--ui-warning); }
+    .dr-dot.risk { background: var(--ui-danger); }
+    .dr-head-main { flex: 1; min-width: 0; }
+    .dr-title { margin: 0; font-size: var(--ui-fs-4); line-height: 1.4; font-weight: 600; color: var(--ui-text); }
+    .dr-meta { display: flex; flex-wrap: wrap; gap: var(--ui-sp-1) var(--ui-sp-3); margin-top: var(--ui-sp-1); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .dr-summary { margin: var(--ui-sp-2) 0 0; color: var(--ui-text-2); font-size: var(--ui-fs-2); line-height: 1.6; }
+    .dr-expand {
+      flex: 0 0 auto; align-self: center;
+      display: inline-flex; align-items: center; gap: var(--ui-sp-1);
+      padding: var(--ui-sp-2) var(--ui-sp-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-sm);
+      background: var(--ui-surface-2); color: var(--ui-text); font-size: var(--ui-fs-2); font-weight: 500; cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .dr-expand:hover { background: var(--ui-bg); }
+    .dr-expand .chev { transition: transform 150ms ease; }
+    .dr-expand[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+    .dr-detail { border-top: 1px solid var(--ui-line); padding: var(--ui-sp-2) var(--ui-sp-4) var(--ui-sp-5); }
+    .dr-detail[hidden] { display: none; }
+
+    .dr-section { padding: var(--ui-sp-4) 0; border-bottom: 1px solid var(--ui-line); }
+    .dr-section:last-child { border-bottom: 0; }
+    .dr-section-title { display: flex; align-items: center; gap: var(--ui-sp-2); margin: 0 0 var(--ui-sp-3); font-size: var(--ui-fs-3); font-weight: 600; color: var(--ui-text); }
+    .dr-section-title .num {
+      display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: var(--ui-radius-sm);
+      background: var(--ui-surface-2); color: var(--ui-accent); font-family: var(--ui-mono); font-size: var(--ui-fs-1);
+    }
+
+    .dr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+    .dr-fact, .dr-unknown {
+      display: flex; align-items: flex-start; gap: var(--ui-sp-3); padding: var(--ui-sp-3) var(--ui-sp-3);
+      border: 1px solid var(--ui-line); border-radius: var(--ui-radius-sm); background: var(--ui-bg);
+    }
+    .dr-fact .ic, .dr-unknown .ic {
+      width: 18px; height: 18px; border-radius: var(--ui-r-pill); flex: 0 0 auto; margin-top: 1px;
+      display: grid; place-items: center; font-size: var(--ui-fs-1);
+    }
+    .dr-fact .ic { background: rgba(43, 182, 115, 0.14); color: var(--ui-success); }
+    .dr-unknown .ic { background: var(--ui-surface-2); color: var(--ui-text-3); }
+    .dr-fact .t { color: var(--ui-text); font-weight: 500; }
+    .dr-fact .s, .dr-unknown .s { color: var(--ui-text-3); font-size: var(--ui-fs-1); margin-top: 3px; }
+
+    .dr-options { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+    .dr-option {
+      display: flex; align-items: flex-start; gap: var(--ui-sp-3); padding: var(--ui-sp-3);
+      border: 1px solid var(--ui-line); border-radius: var(--ui-radius-sm);
+      background: var(--ui-bg); cursor: pointer; transition: all 150ms ease;
+    }
+    .dr-option:hover { border-color: var(--ui-line); background: var(--ui-surface-2); }
+    .dr-option.selected { border-color: var(--ui-accent); background: rgba(50, 240, 140, 0.06); }
+    .dr-radio { width: 18px; height: 18px; border-radius: var(--ui-r-pill); border: 2px solid var(--ui-line); flex: 0 0 auto; margin-top: 2px; }
+    .dr-option.selected .dr-radio { border-color: var(--ui-accent); background: var(--ui-accent); }
+    .dr-option .o-title { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-text); font-weight: 600; }
+    .dr-option .o-tag { padding: 2px var(--ui-sp-2); border-radius: var(--ui-radius-sm); background: var(--ui-surface-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); font-weight: 500; }
+    .dr-option .o-desc { margin: var(--ui-sp-1) 0 0; color: var(--ui-text-2); font-size: var(--ui-fs-2); line-height: 1.6; }
+
+    .dr-impact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+    .dr-metric { padding: var(--ui-sp-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-sm); background: var(--ui-bg); }
+    .dr-metric .l { color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .dr-metric .v { font-size: var(--ui-fs-4); font-weight: 600; color: var(--ui-text); margin-top: var(--ui-sp-1); }
+    .dr-metric .d { font-size: var(--ui-fs-1); color: var(--ui-text-3); margin-top: var(--ui-sp-1); }
+    .dr-metric .d.up { color: var(--ui-success); }
+    .dr-metric .d.warn { color: var(--ui-warning); }
+    .dr-notes { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+    .dr-note { padding: var(--ui-sp-2) var(--ui-sp-3); border: 1px solid var(--ui-line); border-left-width: 3px; border-radius: var(--ui-radius-sm); background: var(--ui-bg); font-size: var(--ui-fs-2); line-height: 1.6; color: var(--ui-text-2); }
+    .dr-note.cycle { border-left-color: var(--ui-accent); }
+    .dr-note.capacity { border-left-color: var(--ui-accent); }
+    .dr-note.risk { border-left-color: var(--ui-danger); }
+
+    .dr-sim-tabs { display: flex; flex-wrap: wrap; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-3); }
+    .dr-sim-tab {
+      padding: var(--ui-sp-2) var(--ui-sp-3); border-radius: var(--ui-radius-sm); border: 1px solid transparent;
+      background: transparent; color: var(--ui-text-2); font: inherit; font-size: var(--ui-fs-2); font-weight: 500; cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .dr-sim-tab:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+    .dr-sim-tab.active { background: var(--ui-surface-2); color: var(--ui-text); border-color: var(--ui-line); }
+    .dr-sim-panel { display: none; padding: var(--ui-sp-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-sm); background: var(--ui-bg); }
+    .dr-sim-panel.active { display: block; }
+    .dr-sim-title { color: var(--ui-text); font-weight: 600; margin-bottom: var(--ui-sp-1); }
+    .dr-sim-outcome { color: var(--ui-text-2); line-height: 1.6; margin: 0 0 var(--ui-sp-3); }
+    .dr-sim-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ui-sp-2); }
+    .dr-sim-metric { padding: var(--ui-sp-2) var(--ui-sp-3); border-radius: var(--ui-radius-sm); background: var(--ui-surface-2); }
+    .dr-sim-metric .k { color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .dr-sim-metric .val { color: var(--ui-text); font-weight: 500; margin-top: 3px; }
+
+    .dr-actions { display: flex; flex-wrap: wrap; gap: var(--ui-sp-2); margin-top: var(--ui-sp-1); }
+    .dr-hint { color: var(--ui-text-3); font-size: var(--ui-fs-1); margin: 0 0 var(--ui-sp-3); }
+
+    .dr-after {
+      display: none; margin-top: var(--ui-sp-4); padding: var(--ui-sp-4) var(--ui-sp-4);
+      border: 1px solid var(--ui-accent); border-radius: var(--ui-radius-sm);
+      background: rgba(50, 240, 140, 0.06);
+    }
+    .dr-after.active { display: block; }
+    .dr-after-title { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-accent); font-size: var(--ui-fs-3); font-weight: 600; margin-bottom: var(--ui-sp-2); }
+    .dr-after-body { color: var(--ui-text-2); line-height: 1.6; margin-bottom: var(--ui-sp-3); }
+    .dr-after-body strong { color: var(--ui-text); font-weight: 500; }
+    .dr-evidence { padding: var(--ui-sp-3) var(--ui-sp-3); border-radius: var(--ui-radius-sm); background: var(--ui-bg); border: 1px solid var(--ui-line); }
+    .dr-evidence .hdr { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-2); flex-wrap: wrap; }
+    .dr-evidence .hdr strong { color: var(--ui-text); font-size: var(--ui-fs-2); }
+    .dr-evidence .id { font-family: var(--ui-mono); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .dr-evidence .trace { display: flex; flex-direction: column; gap: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+    .dr-evidence .trace .k { color: var(--ui-text-3); }
+
+    .dr-pill {
+      display: inline-flex; align-items: center; gap: var(--ui-sp-1); height: 22px; padding: 0 var(--ui-sp-2);
+      border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); font-weight: 500;
+    }
+    .dr-pill::before { content: ""; width: 6px; height: 6px; border-radius: var(--ui-r-pill); background: currentColor; }
+    .dr-pill.pending { background: rgba(216, 154, 58, 0.14); color: var(--ui-warning); }
+    .dr-pill.decided { background: rgba(43, 182, 115, 0.14); color: var(--ui-success); }
+    .dr-pill.deferred { background: var(--ui-surface-2); color: var(--ui-text-2); }
+    .dr-pill.revised { background: var(--ui-surface-2); color: var(--ui-text-2); }
+    .dr-pill.rejected { background: rgba(217, 87, 87, 0.14); color: var(--ui-danger); }
+
+    @media (max-width: 720px) {
+      .dr-impact-grid, .dr-sim-metrics { grid-template-columns: 1fr; }
+      .dr-item-head { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 侧栏：curis-prototype.js 会按冻结结构重建（此处为基线，无 JS 时也能导航） -->
+    <aside class="sidebar" role="navigation" aria-label="主导航">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-list" aria-label="主导航列表">
+        <div class="nav-group-label">公司</div>
+        <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+        <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+        <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+        <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+        <div class="nav-group-label">工作空间</div>
+        <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+        <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+        <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+        <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+        <div class="nav-group-label">经营工具</div>
+        <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+        <a class="nav-item active" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+        <div class="nav-group-label">公司资源</div>
+        <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+        <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+        <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+        <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+      </nav>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar" role="banner">
+        <nav class="crumbs" aria-label="面包屑">
+          <a href="ceo-desk.html">今日简报</a>
+          <span class="sep">/</span>
+          <span aria-current="page">决策室</span>
+        </nav>
+        <div class="top-right">
+          <span class="ceo-badge" id="pendingBadge" aria-live="polite">待 CEO 决策：0</span>
+          <div class="theme-switch" role="group" aria-label="主题切换"></div>
+          <button class="btn btn-secondary" id="backBtn" type="button">返回</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">CEO 决策</p>
+            <h1 class="page-title">待决策事项</h1>
+            <p class="helper">这里汇集需要你拍板的事项。展开任意一条查看事实、未知、方案与模拟，直接在原地做出决策。</p>
+          </div>
+          <span class="mock-badge">演示数据</span>
+        </div>
+
+        <section id="inbox" class="dr-inbox" aria-label="待决策事项列表"></section>
+
+        <div id="emptyState" class="empty-state" hidden>
+          <div class="empty-state-icon">⚖</div>
+          <p class="empty-state-title">当前没有待决策事项</p>
+          <p class="empty-state-desc">运行中的工作空间产生需要拍板的事项时，会自动汇集到这里。</p>
+          <a class="btn btn-primary" href="workspace-portal.html">去工作空间看看</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="_system/canonical-nav.js"></script><script src="curis-prototype.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── 演示数据：待决策事项（本地化，无 投入产出/AI 员工/运行现场/装修台/Truth 等违禁英文词） ── */
+    var DECISIONS = [
+      {
+        id: 'd1',
+        status: 'pending',
+        statusText: '待决策',
+        title: '批准抖音 / TikTok 运营工作空间搭建方案 v0.3 → 运行版本 v1.1',
+        source: '工作空间工作台 · 业务工程 AI',
+        submittedAt: '2026-08-01 14:32',
+        dueAt: '2026-08-02 10:00',
+        summary: 'CEO 需要决定：是否批准将抖音 / TikTok 运营工作空间从搭建方案 v0.3 发布为运行版本 v1.1，并立即让 AI 团队按新责任矩阵运行？',
+        context: '该决策会立即改变运行中的责任与交接，但保留可追溯的回滚路径。批准后，内容 AI、增长 AI 与工程 AI 将承担新环节责任，旧运行版本 v1.0 保留 14 天；拒绝或延后将把搭建方案退回工作台，并影响 Q3 内容增长周期的检查点。',
+        facts: [
+          { t: '搭建方案 v0.3 已覆盖运行版本 v1.1 全部环节', s: '来源：工作空间工作台 commit #a4f9c2 · 负责人：业务工程 AI · 2 小时前' },
+          { t: '6 类运行模拟全部通过', s: '来源：模拟控制台 · 正常路径 / 执行角色缺席 / 外部延迟 / CEO 拒绝 / 工具失败 / 证据冲突 · 14:32' },
+          { t: '内容 AI 与增长 AI 的责任矩阵已对齐', s: '来源：AI 团队办公室 · 负责人：内容负责人 · 11:08' },
+          { t: '外部平台授权均在有效期内', s: '来源：凭据保险箱 · 抖音 / 小红书 / 视频号 · 1 小时前到期检查通过' },
+          { t: '财务估算已生成：月成本 +¥1,200，预期外部结果 +¥18,000', s: '来源：财务模拟 · 置信度：中 · 基于过去 30 天内容增长数据' }
+        ],
+        unknowns: [
+          { t: '视频号新接口限流策略未实测', s: '风险：发布初期可能触发单日调用上限，导致数据回流延迟 1–2 天。' },
+          { t: '剪辑角色在 4K 素材上的处理时长缺少真实数据', s: '风险：若素材规格升级，可能超出当前容量预算，需临时扩容。' },
+          { t: 'CEO 对「品牌安全审核」标准的具体阈值未最终确认', s: '建议：在运行版本 v1.1 中保留人工检查点，待 CEO 确认后写入规则库。' }
+        ],
+        options: [
+          { key: 'approve', tag: '推荐', t: 'A. 批准并发布运行版本 v1.1', d: '立即从搭建方案 v0.3 发布运行版本 v1.1；AI 团队按新责任矩阵运行；旧运行版本 v1.0 保留 14 天可回滚；首周检查点设为 8 月 5 日。' },
+          { key: 'defer', tag: '', t: 'B. 延后 3 天', d: '待视频号限流实测与 CEO 确认品牌安全阈值后再决策；搭建方案保持待发布状态，当前 v1.0 继续运行。' },
+          { key: 'revise', tag: '', t: 'C. 要求修改', d: '退回工作台，要求补充 4K 剪辑基准测试、品牌安全审核清单，以及视频号限流应对策略；完成后重新提交。' },
+          { key: 'reject', tag: '', t: 'D. 拒绝并保留 v1.0', d: '维持当前运行版本 v1.0 继续运行；搭建方案 v0.3 归档为待办，不触发额外成本，不更改 AI 责任矩阵。' }
+        ],
+        impact: [
+          { l: '经营周期', v: 'Q3 内容增长', d: '延后 3 天将推后检查点至 8/8', cls: 'warn' },
+          { l: 'AI 容量变化', v: '+1 交接节点', d: '内容 AI +20% · 增长 AI +1 交接', cls: '' },
+          { l: '财务影响', v: '投入产出比 约 15:1', d: '↑ +¥18K/月 预期结果 · +¥1.2K/月 成本', cls: 'up' }
+        ],
+        notes: [
+          { cls: 'cycle', t: '经营周期：批准后将把「抖音 / TikTok 运营」纳入 2026-Q3 内容增长周期；若延后，下一检查点从 8/5 推至 8/8，外部演示材料需同步调整。' },
+          { cls: 'capacity', t: 'AI 容量：内容 AI 增加脚本到发布全链路责任；增长 AI 新增数据回流验收节点；工程 AI 承担部署、监控与告警配置。' },
+          { cls: 'risk', t: '承诺风险：若 48 小时内未接入真实账号数据，外部结果无法验证，该工作空间风险等级将从「正常」升至「关注」。' }
+        ],
+        sims: {
+          normal: { title: '正常路径：运行版本 v1.1 按期上线', outcome: '所有 AI 角色在线、外部授权有效、素材规格保持 1080p。首周稳定产出 12 条视频，数据回流正常，CEO 检查点 8/5 通过。', metrics: [['首周产出', '12 条视频'], ['数据回流延迟', '< 2 小时'], ['风险状态', '正常']] },
+          absent: { title: '执行角色缺席：剪辑角色不可用', outcome: '脚本产出继续堆积，剪辑队列在 18 小时后超过阈值。系统将向 CEO 升级，建议临时购买外部剪辑服务或延后发布。', metrics: [['升级时间', '18 小时内'], ['待剪积压', '6 条'], ['CEO 动作', '委派 / 延后']] },
+          delay: { title: '外部延迟：平台授权临时失效', outcome: '发布节点阻塞，数据回流中断 1–2 天。增长 AI 无法验证外部结果，工作空间状态自动标记为「关注」，直至授权恢复。', metrics: [['阻塞时长', '1–2 天'], ['影响结果', '数据无法验证'], ['风险状态', '关注']] },
+          reject: { title: 'CEO 拒绝：保留运行版本 v1.0', outcome: '当前内容流水线继续运行，搭建方案 v0.3 进入「待修改」状态，不触发额外成本，AI 责任矩阵保持不变。', metrics: [['额外成本', '¥0'], ['产出节奏', '维持现状'], ['下一步', '工作台修改后重提']] }
+        },
+        outcomes: {
+          approve: { title: '已批准：抖音 / TikTok 运营工作空间运行版本 v1.1 正式发布', body: '<strong>下一步：</strong>业务工程 AI 将在 10 分钟内完成部署；内容 AI 接管选题到发布全链路；首条检查点设为 2026-08-05 09:00。旧运行版本 v1.0 保留 14 天作为回滚路径。', action: '批准并发布运行版本 v1.1', next: '部署 → 责任矩阵生效 → 首周检查点 8/5' },
+          defer: { title: '已延后：3 天后重新决策', body: '<strong>下一步：</strong>业务工程 AI 安排视频号限流实测；助理将在 CEO 确认品牌安全阈值后重新生成审批材料；当前 v1.0 继续运行，检查点顺延至 8/8。', action: '延后 3 天', next: '完成实测 → 重新提交 → 再次进入决策室' },
+          revise: { title: '已退回：要求修改搭建方案 v0.3', body: '<strong>下一步：</strong>搭建方案退回工作空间工作台；需补充 4K 剪辑基准测试、品牌安全审核清单及视频号限流应对策略；修改完成后重新提交 CEO 审批。', action: '要求修改', next: '工作台修改 → 重新模拟 → 重新提交审批' },
+          reject: { title: '已拒绝：保留运行版本 v1.0', body: '<strong>下一步：</strong>继续运行当前运行版本 v1.0，不更改 AI 责任矩阵；搭建方案 v0.3 归档为「待办」，不触发额外成本；工程 AI 关闭相关部署准备。', action: '拒绝并保留 v1.0', next: '维持现状 → 搭建方案归档 → 按需重新设计' }
+        }
+      },
+      {
+        id: 'd2',
+        status: 'pending',
+        statusText: '待决策',
+        title: '小红书放量投放授权：是否在确认品牌安全阈值后开启',
+        source: '小红书运营办公室 · 增长 AI',
+        submittedAt: '2026-08-03 09:10',
+        dueAt: '2026-08-03 18:00',
+        summary: 'CEO 需要决定：是否在品牌安全审核阈值确认后，对小红书域开启放量投放授权？',
+        context: '当前小红书域处于「关注」状态，数据回流正常但投放受限。开启放量可提升线索价值，但若品牌安全阈值未达标，可能触发平台限流。',
+        facts: [
+          { t: '小红书域近 7 日平均收藏率 8.6%（北极星）', s: '来源：外部结果回流 · 基于过去 7 天数据' },
+          { t: '线索价值已达 ¥12,400，周环比 +14%', s: '来源：价值与成本面板 · 置信度：中' },
+          { t: '品牌安全审核清单已起草，待 CEO 确认阈值', s: '来源：知识库 · 品牌安全规则草稿 v0.2' }
+        ],
+        unknowns: [
+          { t: '放量后单日调用上限是否触发平台限流', s: '风险：若触发，数据回流延迟 1–2 天，影响线索追踪。' }
+        ],
+        options: [
+          { key: 'approve', tag: '推荐', t: 'A. 确认阈值并开启放量', d: '确认品牌安全阈值后，对小红书域开启放量投放授权；增长 AI 按新阈值运行。' },
+          { key: 'defer', tag: '', t: 'B. 延后至阈值确认', d: '待 CEO 在知识库确认品牌安全阈值后再开启放量；当前保持受限状态。' },
+          { key: 'reject', tag: '', t: 'C. 暂不开启放量', d: '维持当前受限投放，不更改阈值与授权状态。' }
+        ],
+        impact: [
+          { l: '线索价值', v: '预期 +¥6K/月', d: '放量后估算', cls: 'up' },
+          { l: '品牌风险', v: '中', d: '阈值未达标时升高', cls: 'warn' },
+          { l: '状态变化', v: '关注 → 正常', d: '阈值确认后', cls: '' }
+        ],
+        notes: [
+          { cls: 'cycle', t: '经营周期：开启放量将把小红书域从「关注」调整为「正常」，并纳入 Q3 内容增长周期检查点。' },
+          { cls: 'risk', t: '承诺风险：若品牌安全阈值未达标即放量，可能触发平台限流，外部结果无法验证。' }
+        ],
+        sims: {
+          normal: { title: '正常路径：放量后线索价值提升', outcome: '阈值确认、授权有效，首周线索价值提升约 ¥6K，数据回流正常，状态调整为正常。', metrics: [['线索价值', '+¥6K/月'], ['状态', '正常'], ['风险', '低']] },
+          delay: { title: '外部延迟：授权生效滞后', outcome: '放量节点阻塞 1–2 天，增长 AI 无法验证外部结果，状态保持关注。', metrics: [['阻塞', '1–2 天'], ['状态', '关注'], ['风险', '中']] },
+          absent: { title: '执行角色缺席：增长 AI 不可用', outcome: '放量计划停滞，排队超阈值后向 CEO 升级，建议延后或委派。', metrics: [['升级', '18h 内'], ['积压', '中'], ['动作', '委派/延后']] },
+          reject: { title: 'CEO 拒绝：维持受限', outcome: '保持当前受限投放，不更改授权与阈值，线索价值维持现状。', metrics: [['成本', '¥0'], ['节奏', '维持'], ['下一步', '阈值确认后重提']] }
+        },
+        outcomes: {
+          approve: { title: '已批准：开启小红书放量投放', body: '<strong>下一步：</strong>增长 AI 在阈值确认后开启放量；首条检查点设为 2026-08-05。', action: '确认阈值并开启放量', next: '授权生效 → 状态转正常 → 检查点 8/5' },
+          defer: { title: '已延后：待阈值确认', body: '<strong>下一步：</strong>CEO 在知识库确认品牌安全阈值后，由助理重新生成审批材料并开启放量。', action: '延后至阈值确认', next: '确认阈值 → 重新提交 → 开启放量' },
+          reject: { title: '已拒绝：维持受限投放', body: '<strong>下一步：</strong>不更改授权与阈值，小红书域保持受限投放，线索价值维持现状。', action: '暂不开启放量', next: '维持现状 → 按需重新评估' }
+        }
+      }
+    ];
+
+    /* ── 渲染 ── */
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    function statusClass(st) {
+      return { pending: 'pending', decided: 'decided', deferred: 'deferred', revised: 'revised', rejected: 'rejected' }[st] || 'pending';
+    }
+
+    function renderDecision(d, idx) {
+      var facts = d.facts.map(function (f) {
+        return '<li class="dr-fact"><span class="ic">✓</span><div><div class="t">' + esc(f.t) + '</div><div class="s">' + esc(f.s) + '</div></div></li>';
+      }).join('');
+      var unknowns = d.unknowns.map(function (u) {
+        return '<li class="dr-unknown"><span class="ic">?</span><div><div class="t">' + esc(u.t) + '</div><div class="s">' + esc(u.s) + '</div></div></li>';
+      }).join('');
+      var options = d.options.map(function (o) {
+        return '<div class="dr-option" role="radio" tabindex="0" aria-checked="false" data-option="' + o.key + '" data-dom-id=".dr-option">' +
+          '<span class="dr-radio" aria-hidden="true"></span>' +
+          '<div><div class="o-title">' + esc(o.t) + (o.tag ? ' <span class="o-tag">' + esc(o.tag) + '</span>' : '') + '</div>' +
+          '<p class="o-desc">' + esc(o.d) + '</p></div></div>';
+      }).join('');
+      var impact = d.impact.map(function (m) {
+        return '<div class="dr-metric"><div class="l">' + esc(m.l) + '</div><div class="v">' + esc(m.v) + '</div><div class="d ' + (m.cls || '') + '">' + esc(m.d) + '</div></div>';
+      }).join('');
+      var notes = d.notes.map(function (n) {
+        return '<div class="dr-note ' + (n.cls || '') + '">' + esc(n.t) + '</div>';
+      }).join('');
+      var simTabs = Object.keys(d.sims).map(function (k, i) {
+        return '<button class="dr-sim-tab' + (i === 0 ? ' active' : '') + '" role="tab" aria-selected="' + (i === 0) + '" aria-controls="sim-' + d.id + '-' + k + '" id="tab-' + d.id + '-' + k + '" data-sim="' + k + '" data-dom-id=".dr-sim-tab">' + simLabel(k) + '</button>';
+      }).join('');
+      var simPanels = Object.keys(d.sims).map(function (k, i) {
+        var s = d.sims[k];
+        var metrics = s.metrics.map(function (m) {
+          return '<div class="dr-sim-metric"><div class="k">' + esc(m[0]) + '</div><div class="val">' + esc(m[1]) + '</div></div>';
+        }).join('');
+        return '<div id="sim-' + d.id + '-' + k + '" class="dr-sim-panel' + (i === 0 ? ' active' : '') + '" role="tabpanel" aria-labelledby="tab-' + d.id + '-' + k + '">' +
+          '<div class="dr-sim-title">' + esc(s.title) + '</div>' +
+          '<p class="dr-sim-outcome">' + esc(s.outcome) + '</p>' +
+          '<div class="dr-sim-metrics">' + metrics + '</div></div>';
+      }).join('');
+      var actions = d.options.map(function (o) {
+        var cls = o.key === 'approve' ? 'btn-primary' : (o.key === 'reject' ? 'btn-danger' : 'btn-secondary');
+        return '<button class="btn ' + cls + '" data-decide="' + o.key + '" data-dom-id=".dr-actions .btn">' + esc(o.t.split('.')[0]) + '</button>';
+      }).join('');
+
+      return '' +
+        '<article class="dr-item" data-id="' + d.id + '">' +
+          '<div class="dr-item-head" role="button" tabindex="0" aria-expanded="false" aria-controls="detail-' + d.id + '">' +
+            '<span class="dr-dot ' + (d.status === 'pending' ? 'attention' : 'ontrack') + '" aria-hidden="true"></span>' +
+            '<div class="dr-head-main">' +
+              '<h2 class="dr-title">' + esc(d.title) + '</h2>' +
+              '<div class="dr-meta"><span>来源：' + esc(d.source) + '</span><span>提交：' + esc(d.submittedAt) + '</span><span>到期：' + esc(d.dueAt) + '</span>' +
+                '<span class="dr-pill ' + statusClass(d.status) + '">' + esc(d.statusText) + '</span></div>' +
+              '<p class="dr-summary">' + esc(d.summary) + '</p>' +
+            '</div>' +
+            '<span class="dr-expand" aria-hidden="true"><span class="chev">▾</span> 展开判断</span>' +
+          '</div>' +
+          '<div class="dr-detail" id="detail-' + d.id + '" hidden>' +
+            '<section class="dr-section"><p class="dr-summary" style="margin-top:0">' + esc(d.context) + '</p></section>' +
+            '<section class="dr-section" aria-labelledby="ft-' + d.id + '"><h3 class="dr-section-title" id="ft-' + d.id + '"><span class="num">01</span>事实与证据</h3><ul class="dr-list">' + facts + '</ul></section>' +
+            '<section class="dr-section" aria-labelledby="uk-' + d.id + '"><h3 class="dr-section-title" id="uk-' + d.id + '"><span class="num">02</span>已知未知</h3><ul class="dr-list">' + unknowns + '</ul></section>' +
+            '<section class="dr-section" aria-labelledby="op-' + d.id + '"><h3 class="dr-section-title" id="op-' + d.id + '"><span class="num">03</span>可选方案</h3><div class="dr-options" role="radiogroup" aria-label="决策选项">' + options + '</div></section>' +
+            '<section class="dr-section" aria-labelledby="im-' + d.id + '"><h3 class="dr-section-title" id="im-' + d.id + '"><span class="num">04</span>影响分析</h3><div class="dr-impact-grid">' + impact + '</div><div class="dr-notes">' + notes + '</div></section>' +
+            '<section class="dr-section" aria-labelledby="sm-' + d.id + '"><h3 class="dr-section-title" id="sm-' + d.id + '"><span class="num">05</span>模拟结果</h3><div class="dr-sim-tabs" role="tablist" aria-label="模拟场景">' + simTabs + '</div>' + simPanels + '</section>' +
+            '<section class="dr-section" aria-labelledby="dc-' + d.id + '"><h3 class="dr-section-title" id="dc-' + d.id + '"><span class="num">06</span>CEO 决策</h3>' +
+              '<p class="dr-hint">选择后，系统将自动记录决策至依据 / 事实层，并向责任主体派发生效指令。</p>' +
+              '<div class="dr-actions" id="actions-' + d.id + '">' + actions + '</div>' +
+              '<div class="dr-after" id="after-' + d.id + '" aria-live="polite">' +
+                '<div class="dr-after-title"><span>✓</span><span class="dr-after-title-text">决策已记录</span></div>' +
+                '<div class="dr-after-body"></div>' +
+                '<div class="dr-evidence"><div class="hdr"><strong>依据 / 事实层记录</strong><span class="id" id="evid-' + d.id + '"></span></div><div class="trace" id="trace-' + d.id + '"></div></div>' +
+                '<div style="margin-top:var(--ui-sp-4)"><button class="btn btn-ghost dr-back" type="button">返回今日简报</button></div>' +
+              '</div>' +
+            '</section>' +
+          '</div>' +
+        '</article>';
+    }
+
+    function simLabel(k) {
+      return { normal: '正常路径', absent: '执行角色缺席', delay: '外部延迟', reject: 'CEO 拒绝' }[k] || k;
+    }
+
+    function render() {
+      var inbox = document.getElementById('inbox');
+      var empty = document.getElementById('emptyState');
+      var badge = document.getElementById('pendingBadge');
+      if (!DECISIONS.length) {
+        inbox.hidden = true; empty.hidden = false;
+        if (badge) badge.textContent = '待 CEO 决策：0';
+        return;
+      }
+      inbox.hidden = false; empty.hidden = true;
+      inbox.innerHTML = DECISIONS.map(renderDecision).join('');
+      if (badge) badge.textContent = '待 CEO 决策：' + DECISIONS.length;
+      bindInbox();
+    }
+
+    /* ── 交互 ── */
+    function goBack() {
+      try {
+        var ref = document.referrer;
+        if (ref && new URL(ref).origin === location.origin) { history.back(); return; }
+      } catch (e) {}
+      location.href = 'ceo-desk.html';
+    }
+
+    function bindInbox() {
+      var inbox = document.getElementById('inbox');
+
+      inbox.addEventListener('click', function (e) {
+        var head = e.target.closest('.dr-item-head');
+        if (head) { toggleItem(head); return; }
+
+        var opt = e.target.closest('.dr-option');
+        if (opt) { selectOption(opt); return; }
+
+        var tab = e.target.closest('.dr-sim-tab');
+        if (tab) { showSim(tab); return; }
+
+        var decide = e.target.closest('[data-decide]');
+        if (decide) { makeDecision(decide); return; }
+
+        var back = e.target.closest('.dr-back');
+        if (back) { goBack(); return; }
+      });
+
+      inbox.addEventListener('keydown', function (e) {
+        var head = e.target.closest('.dr-item-head');
+        if (head && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleItem(head); return; }
+        var opt = e.target.closest('.dr-option');
+        if (opt && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); selectOption(opt); }
+      });
+    }
+
+    function toggleItem(head) {
+      var item = head.closest('.dr-item');
+      var detail = item.querySelector('.dr-detail');
+      var expanded = head.getAttribute('aria-expanded') === 'true';
+      head.setAttribute('aria-expanded', String(!expanded));
+      detail.hidden = expanded;
+    }
+
+    function selectOption(opt) {
+      var item = opt.closest('.dr-item');
+      var key = opt.dataset.option;
+      item.querySelectorAll('.dr-option').forEach(function (o) {
+        var sel = o.dataset.option === key;
+        o.classList.toggle('selected', sel);
+        o.setAttribute('aria-checked', String(sel));
+      });
+    }
+
+    function showSim(tab) {
+      var item = tab.closest('.dr-item');
+      var key = tab.dataset.sim;
+      item.querySelectorAll('.dr-sim-panel').forEach(function (p) { p.classList.remove('active'); });
+      item.querySelector('#sim-' + item.dataset.id + '-' + key).classList.add('active');
+      item.querySelectorAll('.dr-sim-tab').forEach(function (t) {
+        var active = t.dataset.sim === key;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+    }
+
+    function makeDecision(btn) {
+      var item = btn.closest('.dr-item');
+      var d = DECISIONS.filter(function (x) { return x.id === item.dataset.id; })[0];
+      if (!d) return;
+      var choice = btn.dataset.decide;
+      var data = d.outcomes[choice];
+      if (!data) return;
+
+      // 选中对应选项
+      item.querySelectorAll('.dr-option').forEach(function (o) {
+        var sel = o.dataset.option === choice;
+        o.classList.toggle('selected', sel);
+        o.setAttribute('aria-checked', String(sel));
+      });
+
+      var now = new Date();
+      var ts = now.toISOString().replace('T', ' ').slice(0, 19);
+      var id = 'decision://' + now.toISOString().slice(0, 10) + '/' + choice + '-' + now.getTime();
+
+      item.querySelector('.dr-after-title-text').textContent = data.title;
+      item.querySelector('.dr-after-body').innerHTML = data.body;
+      item.querySelector('#evid-' + d.id).textContent = id;
+      item.querySelector('#trace-' + d.id).innerHTML =
+        '<div><span class="k">决策动作：</span>' + esc(data.action) + '</div>' +
+        '<div><span class="k">执行路径：</span>' + esc(data.next) + '</div>' +
+        '<div><span class="k">记录时间：</span><span class="mono">' + esc(ts) + '</span></div>' +
+        '<div><span class="k">来源页面：</span>决策室 / decision-room.html</div>' +
+        '<div><span class="k">写入层：</span>依据 / 事实层 · 状态：不可篡改</div>';
+
+      var after = item.querySelector('#after-' + d.id);
+      after.classList.add('active');
+      after.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      // 锁定操作按钮，更新状态徽标
+      item.querySelectorAll('#actions-' + d.id + ' .btn').forEach(function (b) { b.disabled = true; });
+      var pill = item.querySelector('.dr-pill');
+      if (pill) {
+        var map = { approve: 'decided', defer: 'deferred', revise: 'revised', reject: 'rejected' };
+        pill.className = 'dr-pill ' + (map[choice] || 'decided');
+        pill.textContent = { approve: '已决策', defer: '已延后', revise: '已退回', reject: '已拒绝' }[choice] || '已决策';
+      }
+    }
+
+    /* ── 返回按钮（顶栏）+ 主题切换注入 ── */
+    document.getElementById('backBtn').addEventListener('click', goBack);
+
+    if (document.querySelector('[data-curis-theme]')) {
+      // 已是 curis-prototype.js 注入的，跳过
+    } else {
+      var sw = document.querySelector('.theme-switch');
+      if (sw && !sw.children.length) {
+        var labels = { dark: '深色', light: '浅色', system: '自动' };
+        ['dark', 'light', 'system'].forEach(function (t) {
+          var b = document.createElement('button');
+          b.className = 'theme-btn';
+          b.setAttribute('data-curis-theme', t);
+          b.textContent = labels[t];
+          sw.appendChild(b);
+        });
+      }
+    }
+
+    render();
+  })();
+  </script>
+</body>
+</html>

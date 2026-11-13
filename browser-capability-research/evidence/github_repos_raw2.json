@@ -1,0 +1,19 @@
+{"repo": "openai/openai-cua-sample-app", "license": "MIT", "stars": 1861, "archived": false, "pushed_at": "2026-09-04T21:39:16Z", "lang": "TypeScript", "desc": "Learn how to use CUA (our Computer Using Agent) via the API on multiple computer environments."}
+{"repo":"anthropics/anthropic-quickstarts","error":"http_301"}
+{"repo": "anthropics/claude-quickstarts", "license": "MIT", "stars": 17691, "archived": false, "pushed_at": "2026-09-17T15:18:01Z", "lang": "TypeScript", "desc": "A collection of projects designed to help developers quickly get started with building deployable applications using the Claude API"}
+{"repo": "browser-use/web-ui", "license": "MIT", "stars": 16569, "archived": false, "pushed_at": "2026-05-15T07:26:24Z", "lang": "Python", "desc": "🖥️ Run AI Agent in your browser."}
+{"repo": "browser-use/macOS-use", "license": "MIT", "stars": 1987, "archived": false, "pushed_at": "2025-03-05T19:13:33Z", "lang": "Python", "desc": "Make Mac apps accessible for AI agents"}
+{"repo": "nanobrowser/nanobrowser", "license": "Apache-2.0", "stars": 13810, "archived": false, "pushed_at": "2026-08-18T00:42:48Z", "lang": "TypeScript", "desc": "Open-Source Chrome extension for AI-powered web automation. Run multi-agent workflows using your own LLM API key. Alternative to OpenAI Operator."}
+{"repo": "e2b-dev/E2B", "license": "Apache-2.0", "stars": 13870, "archived": false, "pushed_at": "2026-09-18T15:23:59Z", "lang": "Python", "desc": "Open-source, secure environment with real-world tools for enterprise-grade agents."}
+{"repo": "browserless/browserless", "license": "NOASSERTION", "stars": 13712, "archived": false, "pushed_at": "2026-09-18T05:46:07Z", "lang": "TypeScript", "desc": "Deploy headless browsers in Docker. Run on our cloud or bring your own. Free for non-commercial uses."}
+{"repo":"browserbase/browserbase","error":"http_404"}
+{"repo": "lightpanda-io/browser", "license": "AGPL-3.0", "stars": 35422, "archived": false, "pushed_at": "2026-09-18T14:27:56Z", "lang": "Zig", "desc": "Lightpanda: the headless browser designed for AI and automation"}
+{"repo": "screenpipe/screenpipe", "license": "NOASSERTION", "stars": 21619, "archived": false, "pushed_at": "2026-09-18T15:22:48Z", "lang": "TypeScript", "desc": "YC (S26) | Open Computer History | Record your screen continuously locally and provide context to your agents (Claude, Codex, Openclaw, Hermes, Runner"}
+{"repo": "unclecode/crawl4ai", "license": "Apache-2.0", "stars": 83818, "archived": false, "pushed_at": "2026-09-18T07:00:43Z", "lang": "Python", "desc": "🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper. Don't be shy, join here: https://discord.gg/jP8KfhDhyN"}
+{"repo": "ScrapeGraphAI/Scrapegraph-ai", "license": "MIT", "stars": 31079, "archived": false, "pushed_at": "2026-09-07T13:49:52Z", "lang": "Python", "desc": "Python scraper based on AI"}
+{"repo": "firecrawl/firecrawl", "license": "AGPL-3.0", "stars": 181903, "archived": false, "pushed_at": "2026-09-18T15:04:14Z", "lang": "TypeScript", "desc": "The web data API to search, scrape, and interact at scale. 🔥"}
+{"repo": "microsoft/playwright-python", "license": "Apache-2.0", "stars": 15012, "archived": false, "pushed_at": "2026-09-15T19:21:55Z", "lang": "Python", "desc": "Python version of the Playwright testing and automation library."}
+{"repo": "webdriverio/webdriverio", "license": "MIT", "stars": 9835, "archived": false, "pushed_at": "2026-09-17T03:04:14Z", "lang": "TypeScript", "desc": "Next-gen browser and mobile automation test framework for Node.js"}
+{"repo": "SeleniumHQ/selenium", "license": "Apache-2.0", "stars": 34499, "archived": false, "pushed_at": "2026-09-18T13:05:01Z", "lang": "Java", "desc": "A browser automation framework and ecosystem."}
+{"repo":"zenika/alpine-chrome","error":"http_301"}
+{"repo":"mem0ai/...","error":"http_404"}

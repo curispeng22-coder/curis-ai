@@ -1,0 +1,7 @@
+# Research lab — cloned repositories 2026-09-19 05:12 CST
+
+agent-orchestrator     190M       8e48682 2026-09-19T01:54:49+05:30
+claude-squad           2.7M       ce1ffb4 2026-08-20T01:09:45-04:00
+container-use          4.7M       2e43e62 2026-08-12T09:30:35-07:00
+parallel-code           48M       a84f35b 2026-09-18T21:18:30+02:00
+worktrunk               23M       d92b628 2026-09-18T13:34:25-07:00

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W-202 · Production Work — Curis</title>
+  <style>
+    :root {
+      --rail: 214px;
+      --topbar: 56px;
+      --aside: 360px;
+      --gap: 16px;
+      --accent: #2f5bff;
+      --working: #2f5bff;
+      --wait: #8b929f;
+      --review: #c07d10;
+      --blocked: #d64545;
+      --ready: #0f9d63;
+      --done: #0f9d63;
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --border: #e3e5e8;
+      --text: #1f2329;
+      --text-secondary: #5c6670;
+      --text-muted: #8b929f;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, "PingFang SC", monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+      min-width: 1200px;
+    }
+    /* Shell */
+    .left-rail {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: var(--rail);
+      background: #0f1115;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .rail-brand {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .rail-brand .host { font-size: 12px; color: #8b929f; letter-spacing: 0.3px; }
+    .rail-brand .workspace { font-size: 15px; font-weight: 600; margin-top: 2px; }
+    .rail-brand .scope { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .rail-nav { flex: 1; padding: 10px 12px; overflow-y: auto; }
+    .rail-nav-group { margin-bottom: 18px; }
+    .rail-nav-group-title {
+      font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 0 8px 6px;
+    }
+    .rail-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 6px;
+      color: #c7ccd6; font-size: 13px; cursor: pointer;
+    }
+    .rail-nav-item:hover { background: rgba(255,255,255,0.06); }
+    .rail-nav-item.active { background: rgba(47,91,255,0.18); color: #fff; }
+    .rail-nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+    .rail-foot {
+      padding: 12px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: #9ca3af;
+    }
+    .rail-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #2f5bff; display: grid; place-items: center;
+      font-size: 11px; font-weight: 600; color: #fff;
+    }
+    .topbar {
+      position: fixed; left: var(--rail); top: 0; right: 0; height: var(--topbar);
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 99;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; color: var(--text-secondary); font-size: 13px; }
+    .topbar-left .sep { color: var(--border); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%; background: #2f5bff;
+      display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 600;
+    }
+    /* Main area */
+    .app-main {
+      margin-left: var(--rail);
+      padding-top: var(--topbar);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    .page-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .page-title h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }
+    .page-title .sub { margin-top: 2px; color: var(--text-secondary); font-size: 12px; }
+    .content {
+      flex: 1;
+      padding: 18px 24px 28px;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr var(--aside);
+      gap: var(--gap);
+      align-items: start;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: var(--gap);
+    }
+    .panel:last-child { margin-bottom: 0; }
+    .panel-head {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-weight: 600; font-size: 13px;
+    }
+    .panel-body { padding: 12px 14px; }
+    /* Dense work header */
+    .work-header {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 10px 14px; margin-bottom: var(--gap);
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .work-header .id-pill {
+      padding: 2px 8px; border-radius: 10px; background: rgba(47,91,255,0.08); color: var(--accent);
+      font-size: 11px; font-weight: 700;
+    }
+    .work-header .title { font-size: 16px; font-weight: 700; }
+    .work-header .meta { color: var(--text-secondary); font-size: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .work-header .meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .work-header .divider { color: var(--border); }
+    .work-header .owner { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+    .work-header .progress-wrap { width: 120px; }
+    /* Target deliverable */
+    .deliverable-strip {
+      display: flex; gap: 18px; flex-wrap: wrap;
+    }
+    .dl-item { min-width: 140px; flex: 1; }
+    .dl-item .dt { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+    .dl-item .dd { font-size: 12px; color: var(--text); line-height: 1.4; }
+    /* Tables */
+    .dense-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .dense-table th {
+      text-align: left; padding: 8px 10px; font-weight: 600; color: var(--text-secondary);
+      background: #fbfbfb; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .dense-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .dense-table tr:last-child td { border-bottom: none; }
+    .dense-table tr.current-step { background: #f5f8ff; border-left: 3px solid var(--accent); }
+    .dense-table tr.current-step td:first-child { padding-left: 7px; }
+    /* Avatars & Pills */
+    .avatar {
+      width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center;
+      color: #fff; font-size: 10px; font-weight: 600; flex: 0 0 auto;
+    }
+    .person { display: inline-flex; align-items: center; gap: 5px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .pill-working { color: var(--working); background: rgba(47,91,255,0.08); }
+    .pill-wait { color: var(--wait); background: rgba(139,146,159,0.10); }
+    .pill-review { color: var(--review); background: rgba(192,125,16,0.10); }
+    .pill-blocked { color: var(--blocked); background: rgba(214,69,69,0.08); }
+    .pill-ready { color: var(--ready); background: rgba(15,157,99,0.08); }
+    .pill-done { color: var(--done); background: rgba(15,157,99,0.08); }
+    /* Progress */
+    .progress { display: flex; align-items: center; gap: 8px; }
+    .progress-track { flex: 1; height: 5px; background: #eceef1; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+    .progress-num { font-size: 11px; color: var(--text-secondary); min-width: 28px; text-align: right; }
+    /* Artifact */
+    .artifact-body {
+      font-family: var(--mono);
+      font-size: 14px; line-height: 1.65; color: #24292f;
+      background: #fafbfc; border: 1px solid var(--border); border-radius: 6px;
+      padding: 14px;
+    }
+    .script-line { display: flex; gap: 12px; margin-bottom: 10px; }
+    .script-line:last-child { margin-bottom: 0; }
+    .script-time {
+      flex: 0 0 56px; font-size: 11px; color: var(--text-muted); font-weight: 600;
+      text-align: right; padding-top: 2px;
+    }
+    .script-text { flex: 1; }
+    .artifact-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .meta-chip {
+      padding: 3px 8px; border-radius: 4px; background: #f3f4f6; color: var(--text-secondary);
+      font-size: 11px;
+    }
+    /* Conversation */
+    .chat { display: flex; flex-direction: column; gap: 10px; }
+    .chat-msg { display: flex; gap: 8px; }
+    .chat-msg.me { flex-direction: row-reverse; }
+    .chat-bubble {
+      max-width: 80%; padding: 8px 11px; border-radius: 10px;
+      background: #f3f4f6; color: var(--text); font-size: 12px; line-height: 1.5;
+    }
+    .chat-msg.me .chat-bubble { background: rgba(47,91,255,0.08); color: #1a3fd8; }
+    .chat-name { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+    .chat-context {
+      font-size: 11px; color: var(--text-muted); margin-bottom: 10px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    /* QA */
+    .qa-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .qa-note { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+    .checklist { display: flex; flex-direction: column; gap: 6px; }
+    .check-item {
+      display: flex; align-items: center; gap: 8px; font-size: 12px;
+      padding: 5px 8px; border-radius: 4px; background: #fafbfc;
+    }
+    .check-icon { width: 14px; text-align: center; font-size: 12px; }
+    .check-done { color: var(--ready); }
+    .check-wait { color: var(--wait); }
+    .check-review { color: var(--review); }
+    /* Versions */
+    .version-list { display: flex; flex-direction: column; gap: 6px; }
+    .version-row {
+      display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 5px 0; border-bottom: 1px solid var(--border);
+    }
+    .version-row:last-child { border-bottom: none; }
+    .version-tag { padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .version-tag.current { background: rgba(47,91,255,0.08); color: var(--accent); }
+    .version-tag.superseded { background: #f3f4f6; color: var(--text-muted); }
+    .version-summary { flex: 1; color: var(--text-secondary); }
+    /* Team */
+    .team-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .team-row:last-child { border-bottom: none; }
+    .team-row.current { background: #f5f8ff; margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
+    .team-info { flex: 1; min-width: 0; }
+    .team-role { font-size: 11px; color: var(--text-muted); }
+    .team-resp { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+    /* Footer */
+    .footer-note {
+      padding: 12px 24px; border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 11px; text-align: right;
+      background: var(--surface);
+    }
+    .muted { color: var(--text-muted); }
+    .secondary { color: var(--text-secondary); }
+    .nowrap { white-space: nowrap; }
+    .clamp-2 {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <aside class="left-rail">
+    <div class="rail-brand">
+      <div class="host">Curis · 一人公司</div>
+      <div class="workspace">Content Growth</div>
+      <div class="scope">Professional Workspace</div>
+    </div>
+    <nav class="rail-nav">
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">制作</div>
+        <div class="rail-nav-item active"><span class="dot"></span>内容制作</div>
+        <div class="rail-nav-item"><span class="dot"></span>发布排期</div>
+        <div class="rail-nav-item"><span class="dot"></span>数据回收</div>
+      </div>
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">资产</div>
+        <div class="rail-nav-item"><span class="dot"></span>脚本库</div>
+        <div class="rail-nav-item"><span class="dot"></span>素材库</div>
+        <div class="rail-nav-item"><span class="dot"></span>账号资产</div>
+      </div>
+      <div class="rail-nav-group">
+        <div class="rail-nav-group-title">组织</div>
+        <div class="rail-nav-item"><span class="dot"></span>员工</div>
+        <div class="rail-nav-item"><span class="dot"></span>路由规则</div>
+      </div>
+    </nav>
+    <div class="rail-foot">
+      <div class="rail-avatar">CEO</div>
+      <span>CEO perspective</span>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <span>Professional Workspace</span><span class="sep">/</span><span>Content Growth</span><span class="sep">/</span><strong>W-202</strong>
+    </div>
+    <div class="topbar-right">
+      <span style="color:var(--text-muted);font-size:12px;">1440×1000</span>
+      <div class="topbar-avatar">CEO</div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div class="page-title">
+        <h1><span style="color:var(--accent)">W-202</span> · AI 会不会取代你的岗位</h1>
+        <div class="sub">数字人口播 · 抖音｜创始人IP · Synthesis 执行中</div>
+      </div>
+      <div class="page-title" style="text-align:right;">
+        <div class="sub">负责人</div>
+        <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;font-weight:600;"><span class="avatar" style="background:#1f7ae0">高</span>高戈</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Dense work header -->
+      <div class="work-header" id="work-header"></div>
+
+      <div class="main-grid">
+        <div class="main-col">
+          <!-- Target Deliverable -->
+          <div class="panel">
+            <div class="panel-head">Target Deliverable <span class="muted" style="font-weight:400">· TD-2 / PROP-7</span></div>
+            <div class="panel-body">
+              <div class="deliverable-strip" id="deliverable-strip"></div>
+            </div>
+          </div>
+
+          <!-- Workflow -->
+          <div class="panel">
+            <div class="panel-head">Workflow <span class="muted" style="font-weight:400">· 当前 Synthesis</span></div>
+            <div style="overflow-x:auto;">
+              <table class="dense-table" id="workflow-table">
+                <thead>
+                  <tr>
+                    <th>Step</th>
+                    <th>State</th>
+                    <th>Employee</th>
+                    <th>Input</th>
+                    <th>Artifact</th>
+                    <th>Review</th>
+                    <th>Blocker / Note</th>
+                  </tr>
+                </thead>
+                <tbody id="workflow-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Artifact preview -->
+          <div class="panel">
+            <div class="panel-head">Artifact Preview <span class="muted" style="font-weight:400">· 脚本 v3</span></div>
+            <div class="panel-body">
+              <div class="chat-context" id="artifact-subtitle"></div>
+              <div class="artifact-body" id="artifact-body"></div>
+              <div class="artifact-meta" id="artifact-meta"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="aside-col">
+          <!-- Team -->
+          <div class="panel">
+            <div class="panel-head">Team</div>
+            <div class="panel-body" id="team-body"></div>
+          </div>
+
+          <!-- Conversation -->
+          <div class="panel">
+            <div class="panel-head">Conversation <span class="muted" style="font-weight:400">· Synthesis 上下文</span></div>
+            <div class="panel-body">
+              <div class="chat-context" id="chat-context"></div>
+              <div class="chat" id="chat-body"></div>
+            </div>
+          </div>
+
+          <!-- QA / Next -->
+          <div class="panel">
+            <div class="panel-head">QA / Next</div>
+            <div class="panel-body" id="qa-body"></div>
+          </div>
+
+          <!-- Versions -->
+          <div class="panel">
+            <div class="panel-head">Version History</div>
+            <div class="panel-body">
+              <div class="version-list" id="version-list"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer class="footer-note">Direction B — Dense Operational · Visual exploration only</footer>
+  </main>
+
+  <script>
+    const DATA = {
+      "screen2": {
+        "title": "W-202 · Production Work",
+        "work": {
+          "id": "W-202", "title": "AI 会不会取代你的岗位", "account": "抖音｜创始人IP", "method": "数字人口播",
+          "methodKey": "dh-oral", "owner": "高戈", "ownerAvatar": "高", "ownerColor": "#1f7ae0",
+          "spec": "9:16 · 60s · 1080×1920 · 字幕底部 12%", "status": "working", "statusLabel": "执行中",
+          "stage": "数字人口播合成", "progress": 56, "next": "用言舟 v2 生成口播，试听后进入剪辑"
+        },
+        "targetDeliverable": {
+          "id": "TD-2", "proposal": "PROP-7", "account": "抖音｜创始人IP",
+          "purpose": "建立判断者形象：用一条强观点口播讲清“为什么删工具”",
+          "criteria": "完播率 ≥ 30%，评论区出现真实讨论",
+          "spec": "9:16 · 60s · 1080×1920 · 字幕底部 12% · 每行 ≤14 字",
+          "review": "创始人 IP 内容必须人工 Review（事实与承诺表述）",
+          "basis": "Account Goal v1 · 硬观点口播定位 · 言舟 v2 授权覆盖本账号"
+        },
+        "workflow": {
+          "current": "synth",
+          "steps": [
+            {"key": "brief", "name": "Brief", "state": "done", "stateLabel": "已完成", "by": "周砚", "byAvatar": "周", "byColor": "#0f9d63", "artifact": "Brief v1", "in": "提案 v1 · CEO 输入", "review": "—", "note": "判断与受众已锁定，判据＝完播 ≥30%"},
+            {"key": "script", "name": "Script", "state": "review", "stateLabel": "待 Review", "by": "徐白", "byAvatar": "徐", "byColor": "#0e8f7e", "artifact": "脚本 v3", "in": "Brief v1", "review": "待创始人确认事实表述（“面试 11 人”）", "note": "按 REF-1 反常识结构重写开头；v1/v2 保留"},
+            {"key": "dh", "name": "数字人 / Asset", "state": "done", "stateLabel": "已完成", "by": "江雪", "byAvatar": "江", "byColor": "#be185d", "artifact": "数字人 言舟 v2", "in": "脚本 v2", "review": "通过：授权覆盖 dy-founder 商用内容", "note": ""},
+            {"key": "synth", "name": "Synthesis", "state": "working", "stateLabel": "执行中", "by": "高戈", "byAvatar": "高", "byColor": "#1f7ae0", "artifact": "口播 Artifact", "in": "脚本 v3", "review": "—", "note": "试听后进入剪辑；若 Script 再改，本步输入版本失效需重合成", "blocker": "等待队列；不阻塞其它 Work"},
+            {"key": "edit", "name": "Editing", "state": "wait", "stateLabel": "等待依赖", "by": "高戈", "byAvatar": "高", "byColor": "#1f7ae0", "artifact": "成片", "in": "口播 Artifact", "review": "—", "note": ""},
+            {"key": "sub", "name": "Subtitle / Packaging", "state": "wait", "stateLabel": "等待依赖", "by": "乔叶", "byAvatar": "乔", "byColor": "#d97706", "artifact": "字幕 / 封面", "in": "成片", "review": "—", "note": ""},
+            {"key": "qa", "name": "QA", "state": "wait", "stateLabel": "等待依赖", "by": "周砚", "byAvatar": "周", "byColor": "#0f9d63", "artifact": "把关结论", "in": "字幕版成片", "review": "创始人 IP 内容必须人工 Review，不得自审", "note": ""}
+          ]
+        },
+        "artifact": {
+          "type": "script", "title": "脚本 v3", "subtitle": "当前输入：Synthesis · 负责人：高戈",
+          "body": [
+            {"sec": "0-3 秒", "text": "先别问 AI 会不会取代你。先找出今天重复了三次的工作。"},
+            {"sec": "3-15 秒", "text": "在我们团队过去半年的 11 次面试样本中，有 8 位候选人仍沿用旧流程。这只是团队观察，不代表所有职场人。"},
+            {"sec": "15-35 秒", "text": "AI 真正的风险不是替代，而是让“还按旧方式做”的人显得贵。 "},
+            {"sec": "35-50 秒", "text": "一人公司没有冗余岗位。你要么用 AI 把重复压到 10%，要么把省下的时间投到判断上。"},
+            {"sec": "50-60 秒", "text": "本周我会把我们在用的 3 个筛选动作拆成清单。关注我，下一条直接给模板。"}
+          ],
+          "meta": [
+            {"k": "Hook", "v": "反常识：先别问 AI，先找重复"},
+            {"k": "结构", "v": "结论 → 证据 → 判断 → CTA"},
+            {"k": "字数", "v": "约 180 字 / 60 秒"}
+          ]
+        },
+        "versions": [
+          {"v": "v3", "status": "current", "title": "当前", "summary": "按 REF-1 反常识结构重写开头", "by": "徐白", "time": "09-16 03:20"},
+          {"v": "v2", "status": "superseded", "title": "v2", "summary": "弱化结论，增加案例缓冲", "by": "徐白", "time": "09-15 21:10"},
+          {"v": "v1", "status": "superseded", "title": "v1", "summary": "初稿，平铺直叙", "by": "徐白", "time": "09-15 16:40"}
+        ],
+        "conversation": {
+          "with": "高戈", "withAvatar": "高", "withColor": "#1f7ae0",
+          "context": "W-202 · Synthesis 步骤 · 输入脚本 v3",
+          "messages": [
+            {"from": "me", "text": "高戈，脚本 v3 已按 REF-1 结构改完。看下开头是否太硬，以及 60 秒口播节奏是否压得住。"},
+            {"from": "高戈", "text": "开头没问题，反常识在抖音创始人 IP 上能抓注意力。11 人样本那句需要创始人确认，否则 QA 会卡。"},
+            {"from": "me", "text": "好，那我先让言舟 v2 进队列合成。队列大概多久？"},
+            {"from": "高戈", "text": "当前约 6 分钟。合成完我会先听一遍，再决定节奏点。如果 Script 还要改，这版口播就作废。"}
+          ]
+        },
+        "qa": {
+          "owner": "周砚", "ownerAvatar": "周", "ownerColor": "#0f9d63", "state": "wait",
+          "note": "创始人 IP 内容必须人工 Review，不得自审",
+          "items": [
+            {"k": "事实准确性", "v": "待确认：11 人样本表述"},
+            {"k": "承诺与数据表述", "v": "待 Review"},
+            {"k": "平台规格", "v": "待检查"},
+            {"k": "数字人授权", "v": "已通过：言舟 v2 覆盖本账号"}
+          ]
+        },
+        "team": [
+          {"name": "高戈", "role": "Work Owner / 视频", "resp": "数字人口播合成、视频生成与成片", "avatar": "高", "color": "#1f7ae0", "current": true},
+          {"name": "徐白", "role": "文案 / 脚本", "resp": "脚本 v3，等待创始人确认", "avatar": "徐", "color": "#0e8f7e", "current": false},
+          {"name": "周砚", "role": "制作 Owner / QA", "resp": "最终 QA 与人工 Review", "avatar": "周", "color": "#0f9d63", "current": false},
+          {"name": "江雪", "role": "素材 Owner", "resp": "数字人 言舟 v2 授权与版本", "avatar": "江", "color": "#be185d", "current": false},
+          {"name": "乔叶", "role": "视觉 / 包装", "resp": "字幕与封面（等待剪辑完成）", "avatar": "乔", "color": "#d97706", "current": false}
+        ]
+      }
+    };
+
+    const stateMap = {
+      working: { cls: 'pill-working', color: '#2f5bff' },
+      waiting: { cls: 'pill-wait', color: '#8b929f' },
+      wait: { cls: 'pill-wait', color: '#8b929f' },
+      review: { cls: 'pill-review', color: '#c07d10' },
+      blocked: { cls: 'pill-blocked', color: '#d64545' },
+      ready: { cls: 'pill-ready', color: '#0f9d63' },
+      done: { cls: 'pill-done', color: '#0f9d63' }
+    };
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function pill(state, label) {
+      const m = stateMap[state] || stateMap.waiting;
+      return `<span class="pill ${m.cls}">${esc(label || state)}</span>`;
+    }
+    function avatar(char, color) {
+      return `<span class="avatar" style="background:${esc(color||'#8b929f')}">${esc(char)}</span>`;
+    }
+    function person(name, char, color) {
+      return `<span class="person">${avatar(char, color)}<span>${esc(name)}</span></span>`;
+    }
+    function progress(pct, state) {
+      const m = stateMap[state] || stateMap.working;
+      return `<div class="progress"><div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${m.color}"></div></div><span class="progress-num">${pct}%</span></div>`;
+    }
+
+    const s2 = DATA.screen2;
+    const w = s2.work;
+
+    // Dense work header
+    document.getElementById('work-header').innerHTML = `
+      <span class="id-pill">${esc(w.id)}</span>
+      <span class="title">${esc(w.title)}</span>
+      <span class="divider">|</span>
+      <span class="meta">
+        <span><strong>账号</strong> ${esc(w.account)}</span>
+        <span><strong>方法</strong> ${esc(w.method)}</span>
+        <span><strong>规格</strong> ${esc(w.spec)}</span>
+        <span><strong>阶段</strong> ${esc(w.stage)}</span>
+      </span>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        ${pill(w.status, w.statusLabel)}
+        <span class="owner">${person(w.owner, w.ownerAvatar, w.ownerColor)}</span>
+        <span class="progress-wrap">${progress(w.progress, w.status)}</span>
+      </span>
+    `;
+
+    // Target Deliverable
+    const td = s2.targetDeliverable;
+    document.getElementById('deliverable-strip').innerHTML = [
+      { dt: 'Purpose', dd: td.purpose },
+      { dt: 'Criteria', dd: td.criteria },
+      { dt: 'Spec', dd: td.spec },
+      { dt: 'Review', dd: td.review },
+      { dt: 'Basis', dd: td.basis }
+    ].map(i => `<div class="dl-item"><div class="dt">${esc(i.dt)}</div><div class="dd">${esc(i.dd)}</div></div>`).join('');
+
+    // Workflow
+    const wfBody = document.getElementById('workflow-body');
+    wfBody.innerHTML = s2.workflow.steps.map(st => {
+      const isCurrent = st.key === s2.workflow.current;
+      const note = st.blocker ? `阻塞：${st.blocker}` : st.note;
+      return `<tr class="${isCurrent ? 'current-step' : ''}">
+        <td class="nowrap" style="font-weight:${isCurrent?700:500};">${esc(st.name)}</td>
+        <td>${pill(st.state, st.stateLabel)}</td>
+        <td>${person(st.by, st.byAvatar, st.byColor)}</td>
+        <td class="secondary nowrap">${esc(st.in)}</td>
+        <td class="secondary nowrap">${esc(st.artifact)}</td>
+        <td class="secondary clamp-2" title="${esc(st.review)}">${esc(st.review)}</td>
+        <td class="muted clamp-2" title="${esc(note)}">${esc(note || '—')}</td>
+      </tr>`;
+    }).join('');
+
+    // Artifact
+    const art = s2.artifact;
+    document.getElementById('artifact-subtitle').textContent = art.subtitle;
+    document.getElementById('artifact-body').innerHTML = art.body.map(b => `
+      <div class="script-line"><div class="script-time">${esc(b.sec)}</div><div class="script-text">${esc(b.text)}</div></div>
+    `).join('');
+    document.getElementById('artifact-meta').innerHTML = art.meta.map(m =>
+      `<span class="meta-chip"><strong>${esc(m.k)}</strong> ${esc(m.v)}</span>`
+    ).join('');
+
+    // Team
+    document.getElementById('team-body').innerHTML = s2.team.map(t => `
+      <div class="team-row ${t.current?'current':''}">
+        ${avatar(t.avatar, t.color)}
+        <div class="team-info">
+          <div style="font-weight:600;">${esc(t.name)}</div>
+          <div class="team-role">${esc(t.role)}</div>
+          <div class="team-resp">${esc(t.resp)}</div>
+        </div>
+        ${t.current?'<span class="pill pill-working">当前</span>':''}
+      </div>
+    `).join('');
+
+    // Conversation
+    const conv = s2.conversation;
+    document.getElementById('chat-context').textContent = conv.context;
+    document.getElementById('chat-body').innerHTML = conv.messages.map(m => {
+      const isMe = m.from === 'me';
+      const name = isMe ? '我' : conv.with;
+      const char = isMe ? '我' : conv.withAvatar;
+      const color = isMe ? '#8b929f' : conv.withColor;
+      return `<div class="chat-msg ${isMe?'me':''}">
+        ${avatar(char, color)}
+        <div class="chat-bubble">
+          <div class="chat-name">${esc(name)}</div>
+          <div>${esc(m.text)}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // QA
+    function qaIcon(v) {
+      if (v.includes('已通过')) return '<span class="check-icon check-done">✓</span>';
+      if (v.includes('待确认') || v.includes('待 Review') || v.includes('待检查')) return '<span class="check-icon check-wait">●</span>';
+      return '<span class="check-icon check-review">◐</span>';
+    }
+    document.getElementById('qa-body').innerHTML = `
+      <div class="qa-head">
+        ${person(s2.qa.owner, s2.qa.ownerAvatar, s2.qa.ownerColor)}
+        ${pill(s2.qa.state, '等待依赖')}
+      </div>
+      <div class="qa-note">${esc(s2.qa.note)}</div>
+      <div class="checklist">
+        ${s2.qa.items.map(it => `<div class="check-item">${qaIcon(it.v)}<strong>${esc(it.k)}</strong><span class="secondary">${esc(it.v)}</span></div>`).join('')}
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;">
+        <span class="muted">Next:</span> <span class="secondary">${esc(w.next)}</span>
+      </div>
+    `;
+
+    // Versions
+    document.getElementById('version-list').innerHTML = s2.versions.map(v => `
+      <div class="version-row">
+        <span class="version-tag ${v.status}">${esc(v.title)}</span>
+        <span class="version-summary">${esc(v.summary)}</span>
+        <span class="muted">${esc(v.by)}</span>
+        <span class="muted nowrap">${esc(v.time)}</span>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>

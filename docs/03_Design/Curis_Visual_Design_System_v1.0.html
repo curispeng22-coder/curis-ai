@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Curis Visual Design System v1.0</title>
+  <style>
+    /* ────────────────────────────────────────────────
+       Curis Visual Design System v1.0
+       Tokens: Calm Executive Workspace, theme-aware CEO actions
+       Language: Chinese UI, English tokens & class names
+       ──────────────────────────────────────────────── */
+
+    :root {
+      /* Neutral surfaces */
+      --bg-base-default: #1a1c1f;
+      --bg-base-secondary: #222529;
+      --bg-base-tertiary: #2b2f34;
+      --bg-tooltip: #1a1c1f;
+      --bg-menu: #2b2f34;
+      --bg-invert: #dadde5;
+      --bg-invert-hover: #edeff2;
+
+      /* Overlays (white tint at varying opacity) */
+      --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+      --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+      --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+      --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+      /* Brand green */
+      --brand-100: #e5fff2;
+      --brand-200: #b4fdd9;
+      --brand-300: #85fabf;
+      --brand-400: #5cf5a8;
+      --brand-500: #32f08c;
+      --brand-600: #0fdc78;
+      --brand-700: #0ab861;
+      --brand-800: #05994f;
+      --brand-900: #02743b;
+
+      /* Theme-aware primary action */
+      --action-primary-bg: var(--brand-500);
+      --action-primary-fg: var(--text-onbrand);
+      --action-primary-hover: var(--brand-600);
+
+      /* Text */
+      --text-default: #f3f4f6;
+      --text-default-hover: #ffffff;
+      --text-secondary: #a7adb6;
+      --text-secondary-hover: #f3f4f6;
+      --text-tertiary: #767e89;
+      --text-disabled: #767e89;
+      --text-onbrand: #0c0c0d;
+      --text-brand: #32f08c;
+      --text-brand-hover: #0fdc78;
+
+      /* Icon */
+      --icon-default: #f3f4f6;
+      --icon-secondary: #a7adb6;
+      --icon-tertiary: #767e89;
+      --icon-brand: #32f08c;
+
+      /* Border */
+      --border-neutral-l1: rgba(224, 226, 242, 0.10);
+      --border-neutral-l2: rgba(224, 226, 242, 0.16);
+      --border-neutral-l3: rgba(224, 226, 242, 0.20);
+      --border-contrast: #ffffff;
+      --border-brand: #32f08c;
+
+      /* Status */
+      --status-error: #f65a5a;
+      --status-error-surface: rgba(246, 70, 70, 0.18);
+      --status-warning: #d27e24;
+      --status-warning-surface: rgba(210, 126, 36, 0.16);
+      --status-alert: #d29d00;
+      --status-alert-surface: rgba(210, 157, 0, 0.16);
+      --status-success: #33c192;
+      --status-success-surface: rgba(0, 165, 110, 0.18);
+      --status-primary: #387bff;
+      --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+      /* Typography */
+      --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      /* Font sizes */
+      --text-xs: 10px;
+      --text-sm: 11px;
+      --text-md: 12px;
+      --text-base: 13px;
+      --text-lg: 15px;
+      --text-xl: 18px;
+      --text-2xl: 22px;
+      --text-3xl: 28px;
+      --text-4xl: 36px;
+
+      /* Line heights */
+      --leading-xs: 14px;
+      --leading-sm: 16px;
+      --leading-md: 18px;
+      --leading-base: 20px;
+      --leading-lg: 24px;
+      --leading-xl: 28px;
+      --leading-2xl: 32px;
+      --leading-3xl: 36px;
+      --leading-4xl: 44px;
+
+      /* Spacing */
+      --space-0: 0px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --space-40: 40px;
+      --space-64: 64px;
+
+      /* Radius */
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 10px;
+      --radius-full: 9999px;
+
+      /* Shadows / Elevation */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+      --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+      --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+
+      /* Layout */
+      --sidebar-width: 220px;
+      --drawer-width: 390px;
+      --topbar-height: 52px;
+    }
+
+    /* Production light theme: neutral surfaces with a dark primary action. */
+    [data-theme="light"] {
+      --bg-base-default: #f5f5f7;
+      --bg-base-secondary: #ffffff;
+      --bg-base-tertiary: #f7f8fa;
+      --bg-tooltip: #1a1c1f;
+      --bg-menu: #ffffff;
+      --bg-invert: #1a1c1f;
+      --bg-invert-hover: #2f363d;
+      --bg-overlay-l1: rgba(26, 28, 31, 0.04);
+      --bg-overlay-l2: rgba(26, 28, 31, 0.06);
+      --bg-overlay-l3: rgba(26, 28, 31, 0.08);
+      --bg-overlay-l4: rgba(26, 28, 31, 0.12);
+      --text-default: #1a1c1f;
+      --text-default-hover: #0b0d10;
+      --text-secondary: #626b76;
+      --text-secondary-hover: #1a1c1f;
+      --text-tertiary: #8a929d;
+      --text-disabled: #aeb4bb;
+      --text-onbrand: #ffffff;
+      --text-brand: #21895d;
+      --text-brand-hover: #176c49;
+      --icon-default: #1a1c1f;
+      --icon-secondary: #626b76;
+      --icon-tertiary: #8a929d;
+      --icon-brand: #21895d;
+      --border-neutral-l1: rgba(26, 28, 31, 0.10);
+      --border-neutral-l2: rgba(26, 28, 31, 0.16);
+      --border-neutral-l3: rgba(26, 28, 31, 0.22);
+      --border-contrast: #1a1c1f;
+      --border-brand: #21895d;
+      --action-primary-bg: #30333a;
+      --action-primary-fg: #ffffff;
+      --action-primary-hover: #17181a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--text-brand); text-decoration: none; }
+    a:hover { color: var(--text-brand-hover); }
+    code, .mono { font-family: var(--font-mono); font-size: var(--text-md); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-neutral-l3); }
+
+    /* Cover */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-40) var(--space-32);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(50, 240, 140, 0.08) 0%, transparent 45%),
+        radial-gradient(ellipse at 20% 80%, rgba(56, 123, 255, 0.06) 0%, transparent 45%),
+        var(--bg-base-default);
+    }
+    .cover-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-brand);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .cover-kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      box-shadow: 0 0 12px var(--brand-500);
+    }
+    .cover h1 {
+      margin: var(--space-24) 0 var(--space-12);
+      font-family: var(--font-heading);
+      font-size: var(--text-4xl);
+      line-height: var(--leading-4xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-default-hover);
+    }
+    .cover-lead {
+      max-width: 760px;
+      margin: 0 0 var(--space-32);
+      color: var(--text-secondary);
+      font-size: var(--text-xl);
+      line-height: var(--leading-xl);
+    }
+    .cover-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-24);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+    .cover-meta span { display: flex; align-items: center; gap: var(--space-6); }
+    .cover-meta strong { color: var(--text-secondary); font-weight: 500; }
+
+    /* Navigation */
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-6);
+      padding: var(--space-12) var(--space-24);
+      background: rgba(26, 27, 29, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .toc a {
+      padding: var(--space-6) var(--space-8);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .toc a:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+
+    /* Sections */
+    main { max-width: 1200px; margin: 0 auto; padding: var(--space-32) var(--space-24); }
+    section {
+      padding: var(--space-40) 0;
+      border-bottom: 1px solid var(--border-neutral-l1);
+      scroll-margin-top: 60px;
+    }
+    section:last-child { border-bottom: 0; }
+    .section-header { max-width: 820px; margin-bottom: var(--space-32); }
+    .section-number {
+      display: inline-block;
+      margin-bottom: var(--space-12);
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-sm);
+      background: var(--bg-overlay-l2);
+      color: var(--text-brand);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    h2 {
+      margin: 0 0 var(--space-12);
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      line-height: var(--leading-3xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-default-hover);
+    }
+    h3 {
+      margin: var(--space-32) 0 var(--space-12);
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      line-height: var(--leading-xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    h4 {
+      margin: var(--space-24) 0 var(--space-8);
+      font-size: var(--text-lg);
+      line-height: var(--leading-lg);
+      font-weight: 600;
+      color: var(--text-default);
+    }
+    .section-header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: var(--text-lg);
+      line-height: var(--leading-lg);
+    }
+
+    /* Typography scale example */
+    .type-scale { display: grid; gap: var(--space-16); margin: var(--space-24) 0; }
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-16);
+      padding-bottom: var(--space-12);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .type-row:last-child { border-bottom: 0; }
+    .type-name {
+      width: 160px;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+    .type-sample { flex: 1; color: var(--text-default); }
+    .type-spec {
+      width: 220px;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      text-align: right;
+    }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-12); }
+    @media (max-width: 980px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .toc { display: none; }
+    }
+
+    /* Cards / Panels */
+    .panel {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+    }
+    .panel h4 { margin-top: 0; }
+    .panel p { margin: 0; color: var(--text-secondary); }
+    .panel p + p { margin-top: var(--space-8); }
+
+    /* Token swatches */
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-12); margin: var(--space-24) 0; }
+    .swatch {
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-neutral-l1);
+      background: var(--bg-base-secondary);
+    }
+    .swatch-color { height: 64px; border-bottom: 1px solid var(--border-neutral-l1); }
+    .swatch-info { padding: var(--space-8) var(--space-10); }
+    .swatch-name { color: var(--text-default); font-size: var(--text-sm); font-weight: 500; }
+    .swatch-hex { color: var(--text-tertiary); font-family: var(--font-mono); font-size: var(--text-xs); }
+
+    /* Tables */
+    .ds-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-24) 0;
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      font-size: var(--text-md);
+    }
+    .ds-table th, .ds-table td {
+      padding: var(--space-10) var(--space-12);
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .ds-table th {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default-hover);
+      font-weight: 600;
+    }
+    .ds-table tr:last-child td { border-bottom: 0; }
+    .ds-table td { color: var(--text-default); }
+    .ds-table td.muted { color: var(--text-secondary); }
+
+    /* Inline component sandbox */
+    .sandbox {
+      margin: var(--space-24) 0;
+      padding: var(--space-24);
+      border: 1px dashed var(--border-neutral-l2);
+      border-radius: var(--radius-xl);
+      background: var(--bg-overlay-l1);
+    }
+    .sandbox-label {
+      display: inline-block;
+      margin-bottom: var(--space-16);
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-sm);
+      background: var(--bg-base-tertiary);
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      height: 32px;
+      padding: 0 var(--space-12);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--action-primary-bg);
+      color: var(--action-primary-fg);
+      border-color: var(--action-primary-bg);
+    }
+    .btn-primary:hover { background: var(--action-primary-hover); border-color: var(--action-primary-hover); }
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+    .btn-secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l3); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover { color: var(--text-default-hover); background: var(--bg-overlay-l2); }
+    .btn-danger {
+      background: var(--status-error-surface);
+      color: var(--status-error);
+      border-color: rgba(246, 90, 90, 0.35);
+    }
+    .btn-danger:hover { background: rgba(246, 90, 90, 0.28); }
+    .btn-icon { width: 32px; padding: 0; }
+    .btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Status pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 20px;
+      padding: 0 var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    .pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+    }
+    .pill-ontrack { background: var(--status-success-surface); color: var(--status-success); }
+    .pill-ontrack::before { background: var(--status-success); }
+    .pill-attention { background: var(--status-warning-surface); color: var(--status-warning); }
+    .pill-attention::before { background: var(--status-warning); }
+    .pill-risk { background: rgba(246, 90, 90, 0.16); color: var(--status-error); }
+    .pill-risk::before { background: var(--status-error); }
+    .pill-blocked { background: rgba(246, 90, 90, 0.22); color: #ff8080; }
+    .pill-blocked::before { background: #ff8080; }
+    .pill-unknown { background: var(--bg-overlay-l3); color: var(--text-tertiary); }
+    .pill-unknown::before { background: var(--text-tertiary); }
+    .pill-decision { background: var(--status-primary-surface); color: var(--status-primary); }
+    .pill-decision::before { background: var(--status-primary); }
+
+    /* Form controls */
+    .input {
+      width: 100%;
+      height: 32px;
+      padding: 0 var(--space-10);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .input:focus {
+      border-color: var(--brand-500);
+      box-shadow: 0 0 0 3px rgba(50, 240, 140, 0.10);
+    }
+    .input::placeholder { color: var(--text-tertiary); }
+
+    /* Mini layouts */
+    .mini-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      height: 420px;
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--bg-base-default);
+    }
+    .mini-sidebar {
+      background: var(--bg-base-secondary);
+      border-right: 1px solid var(--border-neutral-l1);
+      padding: var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    .mini-sidebar .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-8) var(--space-10);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      cursor: pointer;
+    }
+    .mini-sidebar .nav-item.active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+    .mini-main { display: flex; flex-direction: column; }
+    .mini-topbar {
+      height: var(--topbar-height);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-16);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+    .mini-content {
+      flex: 1;
+      padding: var(--space-16);
+      overflow: auto;
+    }
+
+    /* Metric card */
+    .metric-card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+    }
+    .metric-card .label { color: var(--text-tertiary); font-size: var(--text-sm); margin-bottom: var(--space-6); }
+    .metric-card .value { font-size: var(--text-2xl); font-weight: 600; color: var(--text-default-hover); }
+    .metric-card .delta { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: var(--space-4); }
+    .metric-card .delta.up { color: var(--status-success); }
+
+    /* Matter / business cards */
+    .matter-card {
+      padding: var(--space-14);
+      border-left: 3px solid transparent;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: var(--bg-base-secondary);
+      border-top: 1px solid var(--border-neutral-l1);
+      border-right: 1px solid var(--border-neutral-l1);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .matter-card.decision { border-left-color: var(--status-primary); }
+    .matter-card.exception { border-left-color: var(--status-warning); }
+    .matter-card.opportunity { border-left-color: var(--brand-500); }
+    .matter-card .title { font-weight: 600; color: var(--text-default-hover); margin-bottom: var(--space-4); }
+    .matter-card .meta { color: var(--text-tertiary); font-size: var(--text-sm); }
+
+    /* Employee node */
+    .org-node {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-12);
+      min-width: 120px;
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-secondary);
+    }
+    .org-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      display: grid;
+      place-items: center;
+      color: var(--text-brand);
+      font-weight: 600;
+      font-size: var(--text-md);
+    }
+    .org-name { color: var(--text-default-hover); font-weight: 500; font-size: var(--text-md); }
+    .org-role { color: var(--text-tertiary); font-size: var(--text-xs); }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: var(--space-24); }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 6px;
+      width: 1px;
+      background: var(--border-neutral-l2);
+    }
+    .timeline-item { position: relative; margin-bottom: var(--space-16); }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 5px;
+      width: 9px;
+      height: 9px;
+      border-radius: var(--radius-full);
+      background: var(--bg-base-tertiary);
+      border: 2px solid var(--border-neutral-l3);
+    }
+    .timeline-item.active::before { background: var(--brand-500); border-color: var(--brand-500); box-shadow: 0 0 10px rgba(50, 240, 140, 0.35); }
+    .timeline-time { color: var(--text-tertiary); font-size: var(--text-xs); }
+    .timeline-title { color: var(--text-default); font-weight: 500; }
+    .timeline-desc { color: var(--text-secondary); font-size: var(--text-sm); }
+
+    /* Drawer */
+    .drawer-demo {
+      width: 320px;
+      height: 360px;
+      border-left: 1px solid var(--border-neutral-l1);
+      background: var(--bg-base-secondary);
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-header {
+      padding: var(--space-14) var(--space-16);
+      border-bottom: 1px solid var(--border-neutral-l1);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    .drawer-body {
+      flex: 1;
+      padding: var(--space-16);
+      overflow: auto;
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+    }
+
+    /* Decision overlay */
+    .decision-overlay {
+      position: relative;
+      padding: var(--space-24);
+      border-radius: var(--radius-xl);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l2);
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* Studio canvas */
+    .studio-canvas {
+      display: grid;
+      grid-template-columns: 160px 1fr 200px;
+      gap: var(--space-12);
+      height: 300px;
+      padding: var(--space-12);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+    }
+    .studio-palette {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      padding: var(--space-10);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-secondary);
+    }
+    .studio-palette .tool {
+      padding: var(--space-8) var(--space-10);
+      border-radius: var(--radius-sm);
+      background: var(--bg-overlay-l1);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      cursor: grab;
+    }
+    .studio-workspace {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background: var(--bg-overlay-l1);
+      border: 1px dashed var(--border-neutral-l2);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+    .studio-checks {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      padding: var(--space-10);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-secondary);
+    }
+    .studio-checks .check {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .studio-checks .check.ok { color: var(--status-success); }
+    .studio-checks .check.warn { color: var(--status-warning); }
+
+    /* Do / Don't */
+    .dodont { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); margin: var(--space-16) 0; }
+    .do, .dont { padding: var(--space-14); border-radius: var(--radius-md); }
+    .do { background: rgba(0, 165, 110, 0.08); border: 1px solid rgba(0, 165, 110, 0.20); }
+    .dont { background: rgba(246, 90, 90, 0.08); border: 1px solid rgba(246, 90, 90, 0.20); }
+    .do h5, .dont h5 { margin: 0 0 var(--space-8); font-size: var(--text-sm); font-weight: 600; }
+    .do h5 { color: var(--status-success); }
+    .dont h5 { color: var(--status-error); }
+    .do p, .dont p { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); }
+
+    /* Utility */
+    .muted { color: var(--text-secondary); }
+    .tertiary { color: var(--text-tertiary); }
+    .mono { font-family: var(--font-mono); }
+    .mt-8 { margin-top: var(--space-8); }
+    .mt-16 { margin-top: var(--space-16); }
+    .mb-16 { margin-bottom: var(--space-16); }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .gap-8 { gap: var(--space-8); }
+    .gap-12 { gap: var(--space-12); }
+    .gap-16 { gap: var(--space-16); }
+    .wrap { flex-wrap: wrap; }
+    .justify-between { justify-content: space-between; }
+
+    /* Focus visible */
+    *:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+
+    /* Print */
+    @media print {
+      .toc { display: none; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="cover-kicker">Curis Visual Design System</div>
+  <h1>CEO 工作空间<br />的视觉语法</h1>
+  <p class="cover-lead">
+    为 Curis 一人 AI 公司系统制定的可执行视觉系统。以 Codex 式深灰和主题相关的 CEO 主动作为基底，
+    适配 CEO 专属办公室与 AI 员工协作空间。安静、有主序、证据优先。
+  </p>
+  <div class="cover-meta">
+    <span><strong>版本</strong> v1.0</span>
+    <span><strong>状态</strong> Review</span>
+    <span><strong>主色调</strong> #32f08c 深林绿</span>
+    <span><strong>基底</strong> #1a1c1f 深灰</span>
+    <span><strong>权威令牌</strong> Curis_Design_System.md</span>
+    <span><strong>字体</strong> SF Pro / SF Pro Text / JetBrains Mono</span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="目录">
+  <a href="#principles">设计原则</a>
+  <a href="#tokens">设计令牌</a>
+  <a href="#layout">布局系统</a>
+  <a href="#components">组件</a>
+  <a href="#pages">页面语法</a>
+  <a href="#icons">图标与图像</a>
+  <a href="#motion">动态与微交互</a>
+  <a href="#a11y">无障碍</a>
+  <a href="#criteria">验收标准</a>
+</nav>
+
+<main>
+
+<!-- 1. Design Principles -->
+<section id="principles">
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <h2>设计原则</h2>
+    <p>Curis 不是 Dashboard，也不是聊天应用。它是 CEO 与 AI 团队共同经营一家公司的空间。</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="panel">
+      <h4>CEO 优先</h4>
+      <p>每个屏幕先回答“CEO 现在该知道什么、该做什么”，再呈现细节。避免把系统内部状态直接铺成面板。</p>
+    </div>
+    <div class="panel">
+      <h4>状态先于动作</h4>
+      <p>先让 CEO 看清当前经营状态、证据与风险，再给出动作。没有状态的动作是噪音。</p>
+    </div>
+    <div class="panel">
+      <h4>证据驱动</h4>
+      <p>所有判断必须能追溯到外部结果、AI 产出或 CEO 决策。 decorative 图表和空指标不被接受。</p>
+    </div>
+    <div class="panel">
+      <h4>AI 即员工</h4>
+      <p>AI 以岗位、责任、容量和交接出现，不是消息气泡列表。每条 AI 输出都绑定 Owner 与下一步。</p>
+    </div>
+    <div class="panel">
+      <h4>Workspace 即房间</h4>
+      <p>Workspace 是具体业务的真实办公空间，不是通用任务列表。不同业务可以拥有不同布局与工具。</p>
+    </div>
+    <div class="panel">
+      <h4>安静但警觉</h4>
+      <p>界面保持低对比、单色表面，只在需要 CEO 注意的地方使用强调色与语义色。</p>
+    </div>
+  </div>
+
+  <h3>视觉禁用项</h3>
+  <div class="dodont">
+    <div class="do">
+      <h5>正确做法</h5>
+      <p>使用中性表面、单一绿色强调、低对比边界、留白分隔区域；状态用小型标签或边线表达。</p>
+    </div>
+    <div class="dont">
+      <h5>禁止做法</h5>
+      <p>紫色渐变、白色背景上的多彩卡片、霓虹背景、纯黑画布、夸张仪表盘、游戏化积分。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Design Tokens -->
+<section id="tokens">
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <h2>设计令牌</h2>
+    <p>所有视觉决策收敛为可复用令牌。组件、页面和 Workspace 都必须引用这些变量，禁止页面私有色板。</p>
+  </div>
+
+  <h3>颜色：语义映射到 Curis 概念</h3>
+  <p class="muted">深色主题以深灰表面和品牌绿为主动作；浅色主题以白色表面和深色主按钮为主动作。绿色仍可作为 AI 就绪与正向信号，蓝色只代表决策与信息；语义色只用于需要警觉的状态。</p>
+
+  <div class="callout">
+    <strong>主题动作映射：</strong>深色主题主按钮使用 <code>#32f08c</code>，hover 使用 <code>#0fdc78</code>，文字使用 <code>#0c0c0d</code>；浅色主题主按钮沿用深色 <code>#30333a</code>，hover 使用 <code>#17181a</code>，文字使用 <code>#ffffff</code>。不要把成功色或状态色替代主按钮。
+  </div>
+
+  <h4>基础表面</h4>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#1a1c1f"></div><div class="swatch-info"><div class="swatch-name">bg-base-default</div><div class="swatch-hex">#1a1c1f</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#222529"></div><div class="swatch-info"><div class="swatch-name">bg-base-secondary</div><div class="swatch-hex">#222529</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#2b2f34"></div><div class="swatch-info"><div class="swatch-name">bg-base-tertiary</div><div class="swatch-hex">#2b2f34</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgba(224,226,242,0.08)"></div><div class="swatch-info"><div class="swatch-name">bg-overlay-l3</div><div class="swatch-hex">#e0e2f2 8%</div></div></div>
+  </div>
+
+  <h4>品牌与 CEO 动作</h4>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#32f08c"></div><div class="swatch-info"><div class="swatch-name">brand-500</div><div class="swatch-hex">#32f08c</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0fdc78"></div><div class="swatch-info"><div class="swatch-name">brand-600 hover</div><div class="swatch-hex">#0fdc78</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0ab861"></div><div class="swatch-info"><div class="swatch-name">brand-700</div><div class="swatch-hex">#0ab861</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#e5fff2"></div><div class="swatch-info"><div class="swatch-name">brand-100</div><div class="swatch-hex">#e5fff2</div></div></div>
+  </div>
+
+  <h4>公司经营语义色</h4>
+  <table class="ds-table">
+    <thead><tr><th>令牌</th><th>色值</th><th>Curis 语义</th><th>使用场景</th></tr></thead>
+    <tbody>
+      <tr><td><code>status-success</code></td><td>#33c192</td><td>公司健康 / 轨道正常 / 已验收</td><td>On Track、已交付、Evidence 采纳</td></tr>
+      <tr><td><code>status-warning</code></td><td>#d27e24</td><td>需要关注 / 容量告警 / 决策临期</td><td>Attention、Exception、检查点到期</td></tr>
+      <tr><td><code>status-error</code></td><td>#f65a5a</td><td>风险 / 阻塞 / 失败 / 破坏性动作</td><td>At Risk、Blocked、失败路径、删除</td></tr>
+      <tr><td><code>status-primary</code></td><td>#387bff</td><td>决策 / 信息 / 待 CEO 确认</td><td>Decision、Opportunity、外部反馈</td></tr>
+      <tr><td><code>text-brand</code></td><td>#32f08c</td><td>CEO 主动作 / AI 就绪 / 正向变化</td><td>主按钮、活跃 Assistant、品牌标识</td></tr>
+    </tbody>
+  </table>
+
+  <h4>文本色阶</h4>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#f3f4f6"></div><div class="swatch-info"><div class="swatch-name">text-default</div><div class="swatch-hex">#f3f4f6</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#f5f9fe"></div><div class="swatch-info"><div class="swatch-name">text-default-hover</div><div class="swatch-hex">#f5f9fe</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#a7adb6"></div><div class="swatch-info"><div class="swatch-name">text-secondary</div><div class="swatch-hex">#a7adb6</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#767e89"></div><div class="swatch-info"><div class="swatch-name">text-tertiary</div><div class="swatch-hex">#767e89</div></div></div>
+  </div>
+
+  <h3>字体</h3>
+  <p class="muted">中文界面使用系统黑体回退；英文对象名与代码使用 JetBrains Mono。</p>
+  <div class="type-scale">
+    <div class="type-row">
+      <div class="type-name">display</div>
+      <div class="type-sample" style="font-size:36px;line-height:44px;font-weight:600">CEO 办公桌</div>
+      <div class="type-spec">36px / 44px / 600<br>SF Pro</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">page-title</div>
+      <div class="type-sample" style="font-size:28px;line-height:36px;font-weight:600">经营概览</div>
+      <div class="type-spec">28px / 36px / 600<br>SF Pro</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">section-title</div>
+      <div class="type-sample" style="font-size:18px;line-height:28px;font-weight:600">待处理事项</div>
+      <div class="type-spec">18px / 28px / 600<br>SF Pro Text</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">card-title</div>
+      <div class="type-sample" style="font-size:15px;line-height:24px;font-weight:600">AI 团队容量</div>
+      <div class="type-spec">15px / 24px / 600<br>SF Pro Text</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">body</div>
+      <div class="type-sample" style="font-size:13px;line-height:20px">CEO 今早需要关注三个异常：外部数据延迟、Research AI 过载、一个决策将在 2 小时后到期。</div>
+      <div class="type-spec">13px / 20px / 400<br>SF Pro Text</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">caption</div>
+      <div class="type-sample" style="font-size:11px;line-height:16px">上次同步：14 分钟前 · 来源：API / 手动录入</div>
+      <div class="type-spec">11px / 16px / 400<br>SF Pro Text</div>
+    </div>
+    <div class="type-row">
+      <div class="type-name">data</div>
+      <div class="type-sample mono" style="font-size:12px;line-height:18px">42.7K · 12.3% ↑ · cycle-2026-08-01</div>
+      <div class="type-spec">12px / 18px / 450<br>JetBrains Mono</div>
+    </div>
+  </div>
+
+  <h3>间距、圆角、阴影与层级</h3>
+  <div class="grid-2">
+    <div class="panel">
+      <h4>间距</h4>
+      <p class="mono" style="color:var(--text-secondary)">4 · 6 · 8 · 12 · 16 · 24 · 32 · 40</p>
+      <p>组件内部用 8/12，卡片之间用 16，页面区块之间用 32/40。</p>
+    </div>
+    <div class="panel">
+      <h4>圆角</h4>
+      <p class="mono" style="color:var(--text-secondary)">2 · 4 · 6 · 8 · 10 · 9999px</p>
+      <p>按钮/输入框 6px，卡片 8px，弹窗/抽屉 10px，头像/标签 9999px。</p>
+    </div>
+    <div class="panel">
+      <h4>阴影</h4>
+      <p>避免大面积投影。抽屉/弹窗使用 shadow-lg/xl；hover 使用细微 overlay 变化。</p>
+    </div>
+    <div class="panel">
+      <h4>层级</h4>
+      <p>使用 overlay-l1 ~ l4 表达悬停、选中、激活状态，不额外加深背景色。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Layout System -->
+<section id="layout">
+  <div class="section-header">
+    <span class="section-number">03</span>
+    <h2>布局系统</h2>
+    <p>Curis Desktop Shell 的 CEO 适配版：固定侧边导航、顶部上下文栏、全宽主内容、按需 Assistant 抽屉。具体令牌以冻结的 Curis_Design_System.md 为准。</p>
+  </div>
+
+  <h3>全局骨架</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">MINI SHELL PREVIEW</span>
+    <div class="mini-shell">
+      <div class="mini-sidebar">
+        <div class="nav-item active"><span>●</span> CEO 办公桌</div>
+        <div class="nav-item"><span>●</span> 经营</div>
+        <div class="nav-item"><span>●</span> 业务</div>
+        <div class="nav-item"><span>●</span> 公司</div>
+        <div class="nav-item"><span>●</span> 工作空间</div>
+        <div style="flex:1"></div>
+        <div class="nav-item"><span>●</span> 设置</div>
+      </div>
+      <div class="mini-main">
+        <div class="mini-topbar">
+          <span>Curis · 金融研究 Workspace</span>
+          <span>同步中 · Assistant 在线</span>
+        </div>
+        <div class="mini-content">
+          <div style="font-size:15px;font-weight:600;color:var(--text-default-hover);margin-bottom:12px">早上好，今日有 3 项需要决策</div>
+          <div class="grid-2" style="margin-bottom:12px">
+            <div class="metric-card"><div class="label">公司脉搏</div><div class="value">5 正常 / 1 关注</div></div>
+            <div class="metric-card"><div class="label">待处理事项</div><div class="value">2 决策 · 1 异常</div></div>
+          </div>
+          <div class="matter-card decision">
+            <div class="title">批准 Q3 内容增长业务扩展</div>
+            <div class="meta">影响：3 个 AI 员工 · 1 个 Workspace · 预计 +¥12K/月</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="ds-table">
+    <thead><tr><th>区域</th><th>尺寸</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>左侧导航</td><td>220px</td><td>CEO Desk、经营、业务、公司、工作空间；底部设置与帮助。显示未读风险/待决策数量，不显示任务总数。</td></tr>
+      <tr><td>顶部上下文栏</td><td>52px 高</td><td>当前公司 · 当前业务/Workspace · 同步时间 · Assistant 状态 · 主题切换。</td></tr>
+      <tr><td>主内容区</td><td>剩余宽度</td><td>每个页面只讲一个主叙事；先状态、后证据、再动作。</td></tr>
+      <tr><td>Assistant 抽屉</td><td>最大 390px</td><td>按需从右侧滑出；CEO Desk 内可默认打开。移动端全屏。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>响应式断点</h3>
+  <table class="ds-table">
+    <thead><tr><th>断点</th><th>布局</th></tr></thead>
+    <tbody>
+      <tr><td>≥ 1280px</td><td>完整桌面：220px 固定侧边栏 + 主内容 + 390px 抽屉</td></tr>
+      <tr><td>1024px ~ 1279px</td><td>紧凑侧边栏（图标 + 文字折叠）或 286px 抽屉导航</td></tr>
+      <tr><td>&lt; 1024px</td><td>抽屉式导航，Assistant 全屏或底部面板</td></tr>
+    </tbody>
+  </table>
+
+  <h3>网格</h3>
+  <p class="muted">主内容区使用 12 列弹性网格，默认间隙 16px。大屏可并排放置 2~4 个信息聚合卡，但避免把页面切割成后台控制台。</p>
+</section>
+
+<!-- 4. Components -->
+<section id="components">
+  <div class="section-header">
+    <span class="section-number">04</span>
+    <h2>组件</h2>
+    <p>组件是经营语义的可复用载体。每个组件必须同时携带默认、hover、focus、禁用、加载和错误状态。</p>
+  </div>
+
+  <h3>按钮</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">BUTTON STATES</span>
+    <div class="flex gap-12 wrap">
+      <button class="btn btn-primary">主按钮</button>
+      <button class="btn btn-secondary">次按钮</button>
+      <button class="btn btn-ghost">文字按钮</button>
+      <button class="btn btn-danger">删除</button>
+      <button class="btn btn-secondary btn-icon">+</button>
+      <button class="btn btn-primary" disabled>禁用</button>
+    </div>
+  </div>
+  <table class="ds-table">
+    <thead><tr><th>类型</th><th>使用</th><th>限制</th></tr></thead>
+    <tbody>
+      <tr><td>Primary</td><td>CEO 主动作：批准、创建、运行模拟、发送决策</td><td>每个视口最多一个主按钮</td></tr>
+      <tr><td>Secondary</td><td>配置、查看详情、切换视图、次要确认</td><td>可成组出现</td></tr>
+      <tr><td>Ghost</td><td>低频次动作：取消、返回、更多选项</td><td>不用于主要转化</td></tr>
+      <tr><td>Danger</td><td>破坏性动作：暂停业务、回滚、移除授权</td><td>必须二次确认</td></tr>
+      <tr><td>Icon</td><td>工具栏、展开、关闭、快捷入口</td><td>必须有 tooltip / aria-label</td></tr>
+    </tbody>
+  </table>
+
+  <h3>卡片</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">CARD FAMILY</span>
+    <div class="grid-3">
+      <div class="metric-card">
+        <div class="label">本月外部结果</div>
+        <div class="value">¥ 127,400</div>
+        <div class="delta up">↑ 12.3% 较上月</div>
+      </div>
+      <div class="matter-card exception">
+        <div class="title">Research AI 容量过载</div>
+        <div class="meta">负责人：Research Lead · 检查点：2 小时后</div>
+      </div>
+      <div class="panel">
+        <h4>工作空间 · 金融研究</h4>
+        <p style="margin:8px 0">阶段：验证中 · 下一检查点：明日 10:00</p>
+        <div class="flex gap-8 mt-16"><span class="pill pill-ontrack">正常</span><span class="pill pill-attention">1 异常</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="muted">卡片只用于聚合一组经营信息，不用于包裹每条消息或事实。事实、观点、决议、承诺使用轻量标签或边线，不做成彩色容器。</p>
+
+  <h3>表格</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">COMPACT TABLE</span>
+    <table class="ds-table">
+      <thead><tr><th>业务</th><th>阶段</th><th>结果</th><th>负责人</th><th>状态</th><th>动作</th></tr></thead>
+      <tbody>
+        <tr><td>金融研究</td><td>验证中</td><td>3 / 5 信号命中</td><td>Research Lead</td><td><span class="pill pill-attention">关注</span></td><td><button class="btn btn-ghost">查看</button></td></tr>
+        <tr><td>内容增长</td><td>运行中</td><td>+2,400 阅读</td><td>Growth AI</td><td><span class="pill pill-ontrack">正常</span></td><td><button class="btn btn-ghost">查看</button></td></tr>
+        <tr><td>研发工作台</td><td>构建中</td><td class="muted">首个任务：Curis 的自研发（完善 Curis）</td><td>Engineering AI</td><td><span class="pill pill-unknown">未知</span></td><td><button class="btn btn-ghost">查看</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>状态标签</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">STATUS PILLS</span>
+    <div class="flex gap-12 wrap">
+      <span class="pill pill-ontrack">正常</span>
+      <span class="pill pill-attention">关注</span>
+      <span class="pill pill-risk">风险</span>
+      <span class="pill pill-blocked">阻塞</span>
+      <span class="pill pill-unknown">未知</span>
+      <span class="pill pill-decision">待决策</span>
+    </div>
+  </div>
+
+  <h3>抽屉</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">ASSISTANT DRAWER</span>
+    <div class="drawer-demo">
+      <div class="drawer-header">Assistant · Curis</div>
+      <div class="drawer-body">
+        <p style="margin:0 0 12px;color:var(--text-default)">早上好。金融研究 Workspace 有 1 项异常需要你决定。</p>
+        <div class="matter-card decision" style="margin-bottom:12px">
+          <div class="title">外部数据源授权过期</div>
+          <div class="meta">影响：今日信号无法更新</div>
+        </div>
+        <button class="btn btn-primary" style="width:100%">处理</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>弹窗 / Decision Room 覆盖层</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">DECISION ROOM OVERLAY</span>
+    <div class="decision-overlay" style="max-width:560px">
+      <div style="font-size:15px;font-weight:600;color:var(--text-default-hover);margin-bottom:8px">批准扩展内容增长业务？</div>
+      <p style="color:var(--text-secondary);margin:0 0 16px">影响 3 个 AI 员工、1 个 Workspace，预计新增月成本 ¥1,200，预期收入 +¥12,000。</p>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="panel"><div class="label" style="color:var(--text-tertiary);font-size:11px">当前状态</div><div style="color:var(--text-default)">运行中 · 正常</div></div>
+        <div class="panel"><div class="label" style="color:var(--text-tertiary);font-size:11px">回滚路径</div><div style="color:var(--text-default)">暂停并保留数据</div></div>
+      </div>
+      <div class="flex gap-12 justify-between">
+        <button class="btn btn-ghost">延后</button>
+        <div class="flex gap-12">
+          <button class="btn btn-secondary">拒绝</button>
+          <button class="btn btn-primary">批准</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>导航</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">TOP BAR + TABS</span>
+    <div style="display:flex;align-items:center;gap:16px;padding:12px 16px;border:1px solid var(--border-neutral-l1);border-radius:8px;background:var(--bg-base-secondary)">
+      <span style="font-weight:600;color:var(--text-default-hover)">Curis</span>
+      <span style="color:var(--border-neutral-l2)">|</span>
+      <span style="color:var(--text-secondary)">金融研究 Workspace</span>
+      <div style="flex:1"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" style="height:28px;font-size:12px">概览</button>
+        <button class="btn btn-secondary" style="height:28px;font-size:12px">证据</button>
+        <button class="btn btn-ghost" style="height:28px;font-size:12px">决策</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>表单 / 输入</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">INPUT & SEARCH</span>
+    <div class="flex gap-12" style="align-items:flex-end">
+      <div style="flex:1"><label style="display:block;font-size:11px;color:var(--text-tertiary);margin-bottom:6px">搜索</label><input class="input" placeholder="搜索公司、业务、员工或证据…" /></div>
+      <div style="width:160px"><label style="display:block;font-size:11px;color:var(--text-tertiary);margin-bottom:6px">过滤</label><select class="input"><option>全部状态</option><option>正常</option><option>关注</option><option>异常</option></select></div>
+    </div>
+  </div>
+
+  <h3>时间线 / Operating Timeline</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">OPERATING TIMELINE</span>
+    <div class="timeline">
+      <div class="timeline-item active">
+        <div class="timeline-time">09:00</div>
+        <div class="timeline-title">AI 团队早报</div>
+        <div class="timeline-desc">Assistant 汇报昨日变化与今日需要决策的事项</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">11:00</div>
+        <div class="timeline-title">外部数据检查点</div>
+        <div class="timeline-desc">Research AI 提交信号证据</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">14:00</div>
+        <div class="timeline-title">Workspace 交接</div>
+        <div class="timeline-desc">Growth AI → Content AI 内容发布交接</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>AI Workforce Map</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">AI WORKFORCE MAP</span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;padding:24px">
+      <div class="org-node">
+        <div class="org-avatar">CEO</div>
+        <div class="org-name">你</div>
+        <div class="org-role">所有者</div>
+      </div>
+      <div style="color:var(--text-tertiary)">→</div>
+      <div class="org-node">
+        <div class="org-avatar" style="color:var(--brand-500)">A</div>
+        <div class="org-name">Curis</div>
+        <div class="org-role">CEO 助理</div>
+      </div>
+      <div style="color:var(--text-tertiary)">→</div>
+      <div class="org-node">
+        <div class="org-avatar" style="color:var(--status-primary)">R</div>
+        <div class="org-name">Research Lead</div>
+        <div class="org-role">专业 AI</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Workspace Studio 画布</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">WORKSPACE STUDIO CANVAS</span>
+    <div class="studio-canvas">
+      <div class="studio-palette">
+        <div class="tool">Stage</div>
+        <div class="tool">Role Slot</div>
+        <div class="tool">Agent</div>
+        <div class="tool">Tool</div>
+        <div class="tool">Evidence</div>
+      </div>
+      <div class="studio-workspace">
+        Blueprint Canvas：拖入节点并连接输入输出
+      </div>
+      <div class="studio-checks">
+        <div class="check ok">✓ Owner 已分配</div>
+        <div class="check ok">✓ Input/Output 明确</div>
+        <div class="check warn">⚠ 缺少外部数据授权</div>
+        <div class="check warn">⚠ Research AI 过载</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Page-specific UI Grammar -->
+<section id="pages">
+  <div class="section-header">
+    <span class="section-number">05</span>
+    <h2>页面级 UI 语法</h2>
+    <p>每个页面都是 CEO 经营路径上的一个阶段，不是独立 Dashboard。</p>
+  </div>
+
+  <h3>CEO Desk / 每日入口</h3>
+  <div class="grid-2">
+    <div class="panel">
+      <h4>上半屏 · Assistant Brief</h4>
+      <p>“早上好，昨天有 3 个变化”。按必须决定 / 建议关注 / 已由团队处理分组。每项可展开来源、置信度、影响和推荐动作。</p>
+    </div>
+    <div class="panel">
+      <h4>上半屏 · Company Pulse</h4>
+      <p>六个状态点：价值、执行、供给、风险、方向、连续性。状态为 On Track / Attention / At Risk / Blocked / Unknown / Stale / Conflict，没有虚假总分。</p>
+    </div>
+    <div class="panel">
+      <h4>下半屏 · Matters</h4>
+      <p>三类事项卡：Decision（蓝色边线）、Exception（琥珀边线）、Opportunity（绿色边线）。底部只有 CEO 动作：决定、调查、委派、召集、等待、静默。</p>
+    </div>
+    <div class="panel">
+      <h4>下半屏 · Timeline / Handoffs</h4>
+      <p>今日会议、AI 交接、Workspace 检查点和结果回报。每条交接显示承担者、当前阶段、预计回报时间和查看证据。</p>
+    </div>
+  </div>
+
+  <h3>AI Organization Control Panel</h3>
+  <div class="grid-3">
+    <div class="panel">
+      <h4>组织地图</h4>
+      <p>CEO → Assistant → 专业 AI / 部门。每个节点显示负责结果、当前承诺数、容量、质量、成本和最近证据。</p>
+    </div>
+    <div class="panel">
+      <h4>责任矩阵</h4>
+      <p>Outcome × AI 员工的二维视图。明确谁对什么结果负责，谁提供输入，谁验收输出。</p>
+    </div>
+    <div class="panel">
+      <h4>升级队列</h4>
+      <p>越权、失败、阻塞和待 CEO 确认的 AI 请求。每条记录显示原因、建议解法和回滚路径。</p>
+    </div>
+  </div>
+
+  <h3>Workspace Studio</h3>
+  <div class="grid-3">
+    <div class="panel">
+      <h4>三栏布局</h4>
+      <p>左侧业务结构（Outcome、Stages、Roles、Agents、Tools、Knowledge）；中央 Blueprint Canvas；右侧配置检查与模拟。</p>
+    </div>
+    <div class="panel">
+      <h4>Blueprint Canvas</h4>
+      <p>节点表示业务阶段，连线表示输入输出关系。每个节点显示 Owner / Input / Output / 成功与失败出口。</p>
+    </div>
+    <div class="panel">
+      <h4>运行模拟台</h4>
+      <p>运行正常、Agent 缺席、工具失败、外部延迟、证据冲突、CEO 拒绝六类场景。未通过检查不能提交 CEO 审批。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Iconography & Imagery -->
+<section id="icons">
+  <div class="section-header">
+    <span class="section-number">06</span>
+    <h2>图标与图像</h2>
+    <p>图标是语义的速记，不是装饰。图像必须服务于 CEO 理解公司经营状态。</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h4>图标风格</h4>
+      <p>使用 1.5px 线框图标，圆角端点，16px / 20px / 24px 三档。默认颜色 icon-secondary，hover / active 升至 icon-default，品牌动作使用 icon-brand。</p>
+    </div>
+    <div class="panel">
+      <h4>图像使用</h4>
+      <p>避免 stock photo 和 generic 3D 插图。必要时使用：办公室空间示意图、AI 员工头像、业务证据截图、外部数据图表。</p>
+    </div>
+    <div class="panel">
+      <h4>AI 员工头像</h4>
+      <p>使用单色几何形状 + 首字母，不采用拟人化照片。CEO 头像可上传照片，AI 员工保持抽象身份标识。</p>
+    </div>
+    <div class="panel">
+      <h4>数据可视化</h4>
+      <p>只允许在 Workspace 运行台使用趋势图，且必须关联真实外部结果。禁止装饰性仪表盘和无来源的数字墙。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Motion & Micro-interactions -->
+<section id="motion">
+  <div class="section-header">
+    <span class="section-number">07</span>
+    <h2>动态与微交互</h2>
+    <p>动画必须有意义：引导注意力、确认状态变化、减少认知负荷。禁止为了“科技感”而炫动。</p>
+  </div>
+
+  <table class="ds-table">
+    <thead><tr><th>场景</th><th>时长</th><th>缓动</th><th>目的</th></tr></thead>
+    <tbody>
+      <tr><td>按钮 hover</td><td>150ms</td><td>ease</td><td>确认可点击，反馈响应</td></tr>
+      <tr><td>抽屉滑入</td><td>250ms</td><td>cubic-bezier(0.16, 1, 0.3, 1)</td><td>自然出现，不抢夺焦点</td></tr>
+      <tr><td>弹窗打开</td><td>200ms</td><td>cubic-bezier(0.16, 1, 0.3, 1)</td><td>强调决策上下文</td></tr>
+      <tr><td>状态变化</td><td>200ms</td><td>ease-out</td><td>让 CEO 注意到状态迁移</td></tr>
+      <tr><td>骨架屏</td><td>循环 1.2s</td><td>ease-in-out</td><td>等待真实数据，不用假内容</td></tr>
+      <tr><td>滚动揭示</td><td>300ms</td><td>ease-out</td><td>长列表分段进入，但不过度</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dodont">
+    <div class="do">
+      <h5>正确做法</h5>
+      <p>使用 subtle 的位移、透明度和缩放变化；状态变化伴随颜色迁移；减少跳动和闪烁。</p>
+    </div>
+    <div class="dont">
+      <h5>禁止做法</h5>
+      <p>霓虹脉冲、无限循环的 decorative 动画、页面整体视差、AI 打字机效果的过度使用。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Accessibility -->
+<section id="a11y">
+  <div class="section-header">
+    <span class="section-number">08</span>
+    <h2>无障碍要求</h2>
+    <p>CEO 可能在任何时间、任何状态下使用 Curis。界面必须可感知、可操作、可理解、可兼容。</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h4>色彩</h4>
+      <p>状态不能仅依赖颜色，必须同时提供文字标签或图标。关键信息对比度不低于 4.5:1，大号文字和 UI 组件不低于 3:1。</p>
+    </div>
+    <div class="panel">
+      <h4>键盘</h4>
+      <p>所有交互元素可通过 Tab 到达，焦点顺序符合视觉顺序。Modal 和 Drawer 打开时焦点陷阱，关闭后回到触发点。</p>
+    </div>
+    <div class="panel">
+      <h4>屏幕阅读器</h4>
+      <p>按钮和链接有明确标签，图标按钮提供 aria-label，动态更新使用 aria-live 区域，表格使用正确的 th/scope。</p>
+    </div>
+    <div class="panel">
+      <h4>动画</h4>
+      <p>尊重 prefers-reduced-motion。在 CEO 设置中提供减少动画选项。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Acceptance Criteria -->
+<section id="criteria">
+  <div class="section-header">
+    <span class="section-number">09</span>
+    <h2>设计验收标准</h2>
+    <p>视觉系统只有在产品流程中走通才算完成。漂亮页面不能替代经营闭环。</p>
+  </div>
+
+  <h3>设计师验收</h3>
+  <table class="ds-table">
+    <thead><tr><th>检查项</th><th>标准</th></tr></thead>
+    <tbody>
+      <tr><td>令牌一致性</td><td>所有屏幕只使用本系统定义的 color / type / space / radius / shadow 令牌，无页面私有色板。</td></tr>
+      <tr><td>CEO 路径</td><td>能从 Welcome → Founding Brief → Company Design → First Business → AI Team → Launch Check → CEO Desk 走通，不依赖口头解释。</td></tr>
+      <tr><td>状态完整性</td><td>每个关键组件都设计了 Empty / Loading / Error / Disabled / Focus / Hover 状态。</td></tr>
+      <tr><td>视觉禁用项</td><td>无紫色渐变、白色背景多彩卡片、纯黑背景、装饰性仪表盘、游戏化元素。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>开发者验收</h3>
+  <table class="ds-table">
+    <thead><tr><th>检查项</th><th>标准</th></tr></thead>
+    <tbody>
+      <tr><td>CSS 变量</td><td>使用本文件定义的 CSS 自定义属性，禁止硬编码十六进制色值。</td></tr>
+      <tr><td>组件复用</td><td>优先使用已有 Button / Card / Table / Drawer / Modal / Input 原语，不创建页面私有组件。</td></tr>
+      <tr><td>响应式</td><td>1280px 以上完整桌面，1024px~1279px 紧凑，1024px 以下抽屉导航。</td></tr>
+      <tr><td>无障碍</td><td>通过键盘 Tab 走通主要流程，焦点可见，状态标签不依赖颜色。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>产品团队验收</h3>
+  <table class="ds-table">
+    <thead><tr><th>检查项</th><th>标准</th></tr></thead>
+    <tbody>
+      <tr><td>经营语义</td><td>每个按钮、标签、状态都对应真实经营动作或状态，不是系统内部字段。</td></tr>
+      <tr><td>证据链</td><td>CEO 能从任何状态追溯到证据、Owner 和下一步。</td></tr>
+      <tr><td>AI 员工存在感</td><td>AI 以员工身份出现，有岗位、容量、责任和交接，不只是聊天记录。</td></tr>
+      <tr><td>Workspace 差异化</td><td>不同业务 Workspace 在保留统一身份与导航的前提下，允许不同布局和组件。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>最终验收路径</h3>
+  <div class="sandbox">
+    <span class="sandbox-label">END-TO-END CHECK</span>
+    <p style="margin:0;color:var(--text-default)">
+      表达意图 → 创建公司 → 配置第一条业务 → 批准 AI 团队 → 启动 Workspace → 查看外部结果 → 做出决策 → 回到下一天
+    </p>
+    <p class="muted" style="margin-top:12px">如果新 CEO 能在无产品经理解释的情况下走完这条路径，视觉系统才算通过。</p>
+  </div>
+</section>
+
+</main>
+
+<footer style="padding:32px 24px;border-top:1px solid var(--border-neutral-l1);text-align:center;color:var(--text-tertiary);font-size:11px">
+  Curis Visual Design System v1.0 · Status: Review · 视觉参考；令牌权威为 Curis_Design_System.md
+</footer>
+
+</body>
+</html>

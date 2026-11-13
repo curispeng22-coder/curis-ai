@@ -1,0 +1,18 @@
+{
+  "main": {
+    "component": "object-list",
+    "title": "内容与脚本制作",
+    "objectType": "ContentWork"
+  },
+  "context": {
+    "component": "object-detail",
+    "title": "当前内容",
+    "objectType": "ContentWork"
+  },
+  "utility": {
+    "component": "object-create-form",
+    "title": "内容依据",
+    "objectType": "ContentWork",
+    "action": "core.domain-object.create"
+  }
+}

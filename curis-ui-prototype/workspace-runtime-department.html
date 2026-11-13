@@ -1,0 +1,514 @@
+<!doctype html>
+<!--
+  ============================================================================
+  Curis 工作空间 Shell — 部门办公室（内容增长部）运行现场
+  ----------------------------------------------------------------------------
+  骨架压力验证用例（第四域）。按 docs/03_Design/Curis_工作空间_Shell.md §9.6
+  克隆清单逐条实操，检验骨架能否承载「非生产管道」形态的域：
+
+    · 与三个生产域的关键差异：卡片实体是「责任项」而非「作品/代码」，
+      且带「所属工作空间」维度（跨空间聚合视图）。
+    · 顶栏 52px、侧栏 220px、完整 12 分组导航、当前页高亮（部门）
+    · 全部令牌走 --ui-*，无私有 accent
+    · 本页是「未装修的通用 工作空间」模板样板，不是运行现场：不得出现任何编造的业务指标数值
+    · 管道：责任承接→路径拆解→分派执行→待验收(CEO)→已结项（只读）
+    · 责任链 / 侧栏面板 / CEO 决策队列齐全
+
+  交互：JS 数据驱动看板、拖拽（生产态可拖）、键盘等价（「移动至下一阶段」）、
+        详情抽屉。mock 数据带「示例数据」徽标。
+  ============================================================================
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <link rel="stylesheet" href="_system/assistant-drawer.css">
+    <script src="_system/theme.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部门办公室 · 内容增长部 · Curis · 工作空间 Shell</title>
+    <style>
+    :root {
+      --ok: var(--ui-success, #10b981); --warn: var(--ui-warning, #f59e0b); --bad: var(--ui-danger, #ef4444);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "PingFang SC", sans-serif;
+      color: var(--ui-text); background: var(--ui-bg);
+    }
+    * { box-sizing: border-box; }
+    html { margin: 0; }
+    body { margin: 0; min-height: 100vh; background: var(--ui-bg); }
+
+    .shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* 侧栏（冻结 220px） */
+    .sidebar { width: 220px; flex: 0 0 220px; padding: var(--ui-sp-5) var(--ui-sp-3); border-right: 1px solid var(--ui-line); background: var(--ui-surface-2); overflow-y: auto; }
+    .brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-2) var(--ui-sp-6); font-size: var(--ui-fs-3); font-weight: 650; }
+    .brand-mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--ui-r-xs); color: var(--ui-action-primary-fg); background: var(--ui-action-primary-bg); font-size: var(--ui-fs-1); font-weight: 800; }
+    .nav-label { margin: 0 var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); letter-spacing: .06em; text-transform: uppercase; }
+    .nav { display: grid; gap: 3px; }
+    .nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); font-size: var(--ui-fs-1); text-decoration: none; }
+    .nav-item:hover, .nav-item.active { color: var(--ui-text); background: rgba(224,226,242,.06); }
+    .nav-icon { width: 14px; color: var(--ui-text-3); text-align: center; }
+    .sidebar-foot { margin-top: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.5; border-top: 1px solid var(--ui-line); }
+
+    /* 主区 */
+    .main { min-width: 0; min-height: 0; flex: 1; display: flex; flex-direction: column; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-sp-4); height: var(--ui-topbar-h); padding: 0 var(--ui-sp-7); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+    .crumbs { display: flex; align-items: center; gap: var(--ui-sp-2); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .crumbs strong { color: var(--ui-text); }
+    .top-right { display: flex; align-items: center; gap: var(--ui-sp-3); }
+    .trust-pill { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .trust-pill::before { content: ""; width: 6px; height: 6px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+    .trust-pill.live { background: rgba(16,185,129,.14); color: var(--ui-success); border-color: rgba(16,185,129,.3); }
+    .trust-pill.live::before { background: var(--ui-success); }
+    .ceo-badge { display: inline-flex; align-items: center; gap: var(--ui-sp-1); padding: var(--ui-sp-1) var(--ui-sp-3); border-radius: var(--ui-r-pill); background: rgba(245,158,11,.14); color: var(--ui-warning); border: 1px solid rgba(245,158,11,.3); font-size: var(--ui-fs-1); font-weight: 600; }
+    .ceo-badge::before { content: ""; width: 7px; height: 7px; border-radius: var(--ui-r-pill); background: var(--ui-warning); }
+    .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+    .theme-btn { border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2); font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease; }
+    .theme-btn:hover { color: var(--ui-text); }
+    .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+
+    .content { max-width: 1440px; margin: 0 auto; padding: var(--ui-sp-6) var(--ui-sp-7) var(--ui-sp-8); width: 100%; overflow-y: auto; flex: 1; min-height: 0; }
+    .banner { margin-bottom: var(--ui-sp-4); padding: var(--ui-sp-3) var(--ui-sp-3); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.6; }
+    .banner strong { color: var(--ui-text); }
+    .mock-badge { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-3); font-size: var(--ui-fs-1); font-weight: 500; vertical-align: middle; }
+
+    /* 槽位 1：结果条 */
+    .section-title { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-2); font-weight: 600; color: var(--ui-text); }
+    .result-bar { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-5); }
+    .metric { padding: var(--ui-sp-3) var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .metric span { display: block; color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+    .metric strong { display: block; margin-top: var(--ui-sp-1); font-size: var(--ui-fs-5); font-weight: 620; }
+    .metric small { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+    .metric small.up { color: var(--ui-success); }
+    .metric small.down { color: var(--ui-warning); }
+    .metric .caliber { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-3); font-size: var(--ui-fs-1); line-height: 1.4; }
+    .result-note { margin: 0 0 var(--ui-sp-3); color: var(--ui-text-3); font-size: var(--ui-fs-1); }
+
+    /* 槽位 2：责任链 */
+    .chain { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-5); }
+    .role { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .role strong { display: block; font-size: var(--ui-fs-1); }
+    .role span { display: block; margin-top: var(--ui-sp-1); color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.45; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: var(--ui-r-pill); margin-right: var(--ui-sp-1); vertical-align: middle; background: var(--ui-text-3); }
+    .dot.run { background: var(--ui-warning); } .dot.done { background: var(--ui-success); } .dot.wait { background: var(--ui-text-3); }
+    .role em { display: inline-block; margin-top: var(--ui-sp-2); font-style: normal; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+
+    /* 两栏：管道 + 侧栏面板 */
+    .work-grid { display: grid; grid-template-columns: 1fr 340px; gap: var(--ui-sp-4); align-items: start; }
+
+    /* 槽位 3：管道看板 */
+    .board-head { display: flex; align-items: center; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-2); }
+    .board { display: flex; gap: var(--ui-sp-3); overflow-x: auto; overflow-y: auto; padding-bottom: var(--ui-sp-1); max-height: calc(100vh - 360px); }
+    .lane { flex: 1 1 0; min-width: 190px; background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); }
+    .lane.review { background: transparent; border-style: dashed; }
+    .lane-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; color: var(--ui-text-2); }
+    .lane-count { color: var(--ui-text-3); font-weight: 400; }
+    .card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2); margin-bottom: var(--ui-sp-2); cursor: grab; }
+    .card:last-child { margin-bottom: 0; }
+    .card.active { border-color: var(--ui-accent); }
+    .card h4 { margin: 0 0 var(--ui-sp-1); font-size: var(--ui-fs-1); font-weight: 600; line-height: 1.4; }
+    .card .meta { display: flex; align-items: center; justify-content: space-between; font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .card .owner { display: flex; align-items: center; gap: var(--ui-sp-1); }
+    .card .avatar { width: 16px; height: 16px; border-radius: var(--ui-r-pill); display: grid; place-items: center; font-size: var(--ui-fs-1); font-weight: 700; color: var(--ui-action-primary-fg); background: var(--ui-accent); }
+    .card .sdot { width: 6px; height: 6px; border-radius: var(--ui-r-pill); display: inline-block; margin-right: var(--ui-sp-1); }
+    .card .sdot.ontrack { background: var(--ui-success); } .card .sdot.attention { background: var(--ui-warning); } .card .sdot.decision { background: var(--ui-accent); } .card .sdot.risk { background: var(--ui-danger); } .card .sdot.done { background: var(--ui-success); }
+    .card .evidence { margin-top: var(--ui-sp-2); padding-top: var(--ui-sp-2); border-top: 1px solid var(--ui-line); font-size: var(--ui-fs-1); color: var(--ui-text-3); line-height: 1.45; }
+    .card .ci { margin-top: var(--ui-sp-1); display: flex; gap: var(--ui-sp-1); flex-wrap: wrap; }
+    .ci-tag { font-size: var(--ui-fs-1); padding: 2px var(--ui-sp-1); border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+    .ci-tag.green { color: var(--ui-success); border-color: rgba(16,185,129,.35); }
+    .ci-tag.amber { color: var(--ui-warning); border-color: rgba(245,158,11,.35); }
+    .card .checkpoint { margin-top: var(--ui-sp-1); display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .card .checkpoint.urgent { color: var(--ui-warning); }
+    .card .move { margin-top: var(--ui-sp-2); font-size: var(--ui-fs-1); color: var(--ui-accent); cursor: pointer; background: none; border: none; padding: 0; }
+    .lane.review .card { cursor: default; opacity: .92; }
+    .empty-stage { padding: var(--ui-sp-4) var(--ui-sp-2); text-align: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); }
+
+    /* 槽位 4：侧栏面板 */
+    .panels { display: grid; gap: var(--ui-sp-3); }
+    .panel { padding: var(--ui-sp-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .panel h3 { margin: 0 0 var(--ui-sp-2); font-size: var(--ui-fs-1); font-weight: 600; }
+    .panel p, .panel li { color: var(--ui-text-2); font-size: var(--ui-fs-1); line-height: 1.55; }
+    .panel ul { margin: 0; padding-left: var(--ui-sp-4); }
+    .panel .note { color: var(--ui-text-3); font-size: var(--ui-fs-1); margin-top: var(--ui-sp-1); }
+    .metrics-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ui-sp-2); }
+    .metrics-2 .m { display: flex; flex-direction: column; gap: 3px; padding: var(--ui-sp-2); background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .metrics-2 .m label { font-size: var(--ui-fs-1); color: var(--ui-text-3); }
+    .metrics-2 .m b { font-size: var(--ui-fs-3); font-weight: 620; }
+    .metrics-2 .m small { font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+    .accept-item { display: flex; gap: var(--ui-sp-2); padding: var(--ui-sp-2); margin-top: var(--ui-sp-2); background: var(--ui-surface-2); border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); }
+    .accept-item .thumb { width: 40px; height: 40px; border-radius: var(--ui-r-xs); background: var(--ui-surface); display: grid; place-items: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); flex-shrink: 0; }
+    .accept-item .info { flex: 1; min-width: 0; }
+    .accept-item .t { font-size: var(--ui-fs-1); font-weight: 600; }
+    .accept-item .s { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin: 3px 0 var(--ui-sp-1); }
+    .accept-item .acts { display: flex; gap: var(--ui-sp-1); }
+    .mini-btn { height: 26px; padding: 0 var(--ui-sp-2); font-size: var(--ui-fs-1); border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-text); cursor: pointer; }
+    .mini-btn:hover { background: var(--ui-surface-2); }
+    .insight { padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); border: 1px solid var(--ui-line); margin-top: var(--ui-sp-2); }
+    .insight .lab { font-size: var(--ui-fs-1); color: var(--ui-text-3); text-transform: uppercase; letter-spacing: .04em; }
+    .insight .ti { font-size: var(--ui-fs-1); font-weight: 600; margin: var(--ui-sp-1) 0 var(--ui-sp-1); }
+    .insight .tx { font-size: var(--ui-fs-1); color: var(--ui-text-2); line-height: 1.5; }
+    .insight .tag { display: inline-flex; margin-top: var(--ui-sp-1); padding: 3px var(--ui-sp-2); border-radius: var(--ui-r-xs); background: rgba(224,226,242,.08); color: var(--ui-text-2); font-size: var(--ui-fs-1); }
+
+    /* 槽位 5：CEO 决策队列 */
+    .queue-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2) var(--ui-sp-2); margin-top: var(--ui-sp-2); background: var(--ui-surface-2); border-left: 3px solid var(--ui-accent); border-radius: var(--ui-r-xs); font-size: var(--ui-fs-1); color: var(--ui-text); cursor: pointer; }
+    .queue-item:hover { background: rgba(224,226,242,.06); }
+    .queue-item .q-status { margin-left: auto; color: var(--ui-warning); font-size: var(--ui-fs-1); }
+
+    .empty-state { padding: var(--ui-sp-5); text-align: center; color: var(--ui-text-3); font-size: var(--ui-fs-1); border: 1px dashed var(--ui-line); border-radius: var(--ui-r-sm); }
+
+    /* 详情抽屉 */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 200; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; top: 0; right: 0; width: 400px; max-width: 100%; height: 100%; background: var(--ui-surface); border-left: 1px solid var(--ui-line); box-shadow: -8px 0 28px rgba(0,0,0,.3); transform: translateX(100%); transition: transform .25s cubic-bezier(.16,1,.3,1); z-index: 201; display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { padding: var(--ui-sp-4); border-bottom: 1px solid var(--ui-line); display: flex; align-items: flex-start; justify-content: space-between; }
+    .drawer-head h2 { margin: 0; font-size: var(--ui-fs-3); font-weight: 600; max-width: 320px; line-height: 1.4; }
+    .drawer-close { width: 28px; height: 28px; border-radius: var(--ui-r-xs); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); cursor: pointer; }
+    .drawer-body { flex: 1; overflow: auto; padding: var(--ui-sp-4); }
+    .drawer-body .sec { margin-bottom: var(--ui-sp-4); }
+    .drawer-body .sec-t { font-size: var(--ui-fs-1); color: var(--ui-text-3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: var(--ui-sp-2); }
+    .drawer-body .field { display: flex; justify-content: space-between; padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-1); }
+    .drawer-body .field:last-child { border-bottom: 0; }
+    .drawer-body .field .l { color: var(--ui-text-2); } .drawer-body .field .v { color: var(--ui-text); font-weight: 500; }
+    .drawer-acts { padding: var(--ui-sp-3) var(--ui-sp-4); border-top: 1px solid var(--ui-line); display: flex; gap: var(--ui-sp-2); }
+    .drawer-acts .btn { flex: 1; height: 32px; border-radius: var(--ui-r-sm); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text); cursor: pointer; font-size: var(--ui-fs-1); }
+    .drawer-acts .btn.primary { background: var(--ui-action-primary-bg); color: var(--ui-action-primary-fg); border-color: var(--ui-action-primary-bg); }
+
+    .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; padding: var(--ui-sp-2) var(--ui-sp-4); border-radius: var(--ui-r-sm); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text); font-size: var(--ui-fs-1); box-shadow: 0 8px 24px rgba(0,0,0,.35); transition: all .2s ease; z-index: 300; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @media (max-width: 1280px) { .work-grid { grid-template-columns: 1fr; } .result-bar { grid-template-columns: repeat(3, 1fr); } .chain { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 760px) {
+      .sidebar { width: 64px; flex-basis: 64px; padding: var(--ui-sp-4) var(--ui-sp-2); }
+      .brand span, .nav-label, .nav-item span:not(.nav-icon), .sidebar-foot { display: none; }
+      .nav-item { justify-content: center; }
+      .topbar, .content { padding-left: var(--ui-sp-4); padding-right: var(--ui-sp-4); }
+      .result-bar, .chain { grid-template-columns: 1fr 1fr; }
+    }
+    </style>
+</head>
+<body data-assistant-context="通用工作空间模板（未装修）">
+
+<div class="shell">
+    <!-- 侧栏：完整 12 分组导航（冻结；部门当前页高亮） -->
+    <aside class="sidebar" role="navigation" aria-label="主导航">
+        <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+        <nav class="nav">
+            <p class="nav-label">公司</p>
+            <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+            <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+            <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+            <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+            <p class="nav-label">工作空间</p>
+            <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+            <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+            <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+            <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+            <p class="nav-label">经营工具</p>
+            <a class="nav-item" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+            <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+            <p class="nav-label">公司资源</p>
+            <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+            <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+            <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+            <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+        </nav>
+        <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="crumbs"><span>Curis</span><span>/</span><span>工作空间</span><span>/</span><strong>通用模板 · 未装修</strong></div>
+            <div class="top-right">
+                <span class="trust-pill" title="这是模板预览，不承载任何真实业务数据">模板预览 · 无真实数据</span>
+                <a class="btn primary" href="workspace-studio.html" style="text-decoration:none;">去 装修台装修 →</a>
+                <label class="cap-switch" style="display:inline-flex;align-items:center;gap:var(--ui-sp-1);">
+                    <span style="font-size:var(--ui-fs-1);color:var(--ui-text-3);">当前能力</span>
+                    <select id="runtimeCapSelect" aria-label="当前能力" style="font-size:var(--ui-fs-1);color:var(--ui-text);background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-sm);padding:var(--ui-sp-1) var(--ui-sp-2);max-width:190px;cursor:pointer;outline:none;"></select>
+                </label>
+                <div class="theme-switch" role="group" aria-label="主题切换"></div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="banner">
+                <strong>这是一个尚未装修的通用工作空间——模板样板，不是运行现场。</strong>
+                一条业务承诺成立后会先落到这样一个空槽位空间，再由 CEO 在 装修台 里装修：声明本业务的北极星指标与口径、指定各阶段负责人、定义 CEO 介入点与失败出口。<strong>装修完成前，这里不会出现任何指标数值</strong>——系统不替业务编造口径。
+            </div>
+
+            <!-- 槽位 1：结果条（模板态：指标位待业务声明，不得预填数值） -->
+            <h2 class="section-title">结果条<span class="mock-badge" style="margin-left:var(--ui-sp-2);">模板占位</span></h2>
+            <p class="result-note">（指标由业务在装修时声明。每个业务的北极星各不相同——软件研发看回归通过率、小红书看收藏率、短视频看完播率——因此模板不提供默认值）</p>
+            <div class="result-bar">
+                <div class="metric"><span>北极星指标</span><strong>—</strong><small>待装修声明</small><span class="caliber">装修时必填：指标名 + 当前值 + 口径说明。口径要写清分子分母与排除项，避免事后解释权争议</span></div>
+                <div class="metric"><span>辅助指标 ①</span><strong>—</strong><small>待装修声明</small><span class="caliber">建议选「产能类」——如本周期产出量 / 目标量</span></div>
+                <div class="metric"><span>辅助指标 ②</span><strong>—</strong><small>待装修声明</small><span class="caliber">建议选「质量类」——如一次通过率 / 返工率</span></div>
+                <div class="metric"><span>辅助指标 ③</span><strong>—</strong><small>待装修声明</small><span class="caliber">建议选「成本类」——如本周期模型与工具成本</span></div>
+                <div class="metric"><span>辅助指标 ④</span><strong>—</strong><small>待装修声明</small><span class="caliber">建议选「价值类」——如 投入产出 或线索价值，须注明是否含人力与投放</span></div>
+            </div>
+
+            <!-- 槽位 2：责任链（模板态：角色待指派） -->
+            <h2 class="section-title">责任链</h2>
+            <p class="result-note">（每个阶段必须有唯一负责人。至少保留一个 CEO 节点——对外发布、花钱、对外承诺、动权限、不可逆操作、扩大范围这六件事 AI 不得静默执行）</p>
+            <div class="chain" role="list">
+                <div class="role" role="listitem"><strong>角色 ①</strong><span>待指派——建议承担「意图澄清与拆解」</span><em><span class="dot wait"></span>未装修</em></div>
+                <div class="role" role="listitem"><strong>角色 ②</strong><span>待指派——建议承担「生产执行」</span><em><span class="dot wait"></span>未装修</em></div>
+                <div class="role" role="listitem"><strong>角色 ③</strong><span>待指派——建议承担「结果回收与异常上报」</span><em><span class="dot wait"></span>未装修</em></div>
+                <div class="role" role="listitem"><strong>CEO</strong><span>必选——对「验收 / 调整 / 暂停」负责，不可省略</span><em><span class="dot wait"></span>待装修确认介入点</em></div>
+            </div>
+
+            <!-- 两栏：管道看板 + 侧栏面板 -->
+            <div class="work-grid">
+                <!-- 槽位 3：管道看板（4 活跃泳道 + 1 只读回顾） -->
+                <section>
+                    <div class="board-head">
+                        <h2 class="section-title" style="margin:0">运行管道<span class="mock-badge" style="margin-left:var(--ui-sp-2);">通用槽位</span></h2>
+                        <div class="filter-group" style="display:flex;gap:var(--ui-sp-1);margin-left:auto">
+                            <button class="mini-btn" data-filter="all">全部</button>
+                            <button class="mini-btn" data-filter="decision">待决策</button>
+                            <button class="mini-btn" data-filter="attention">关注</button>
+                        </div>
+                    </div>
+                    <p class="result-note" style="margin:0 0 var(--ui-sp-2)">（通用 9 槽位骨架：Intake 意图 → Produce 生产 1~N 段 → Deliver 交付 → Collect 结果回收 → Accept CEO 验收 → Review 复盘 → Improve 提升 → Archive 归档。装修时按业务改显示名、增删 Produce 段，槽位语义不变）</p>
+                    <div class="board" role="list" aria-label="通用运行管道（模板）" id="pipeline">
+                        <!-- 泳道由 JS 注入 -->
+                    </div>
+                </section>
+
+                <!-- 槽位 4：侧栏面板 -->
+                <aside class="panels" aria-label="上下文面板">
+                    <div class="panel">
+                        <h3>外部结果与验收</h3>
+                        <div class="metrics-2">
+                            <div class="m"><label>在办</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>待验收</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>已结项</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>返工</label><b>—</b><small>待装修</small></div>
+                        </div>
+                        <p class="note">装修时要接上真实数据源。<strong>没有平台授权时，结果必须由 CEO 补录并标记「待验证」，不会用估算值填满结果窗口。</strong></p>
+                    </div>
+
+                    <div class="panel">
+                        <h3>价值与成本</h3>
+                        <div class="metrics-2">
+                            <div class="m"><label>本周期成本</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>产出价值</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>投入产出</label><b>—</b><small>待装修</small></div>
+                            <div class="m"><label>证据等级</label><b>—</b><small>待装修</small></div>
+                        </div>
+                        <p class="note">投入产出 口径必须在装修时写死并显示出来：分子取什么、是否含人力、是否含投放。只有「已验证」等级的结果才能支持扩大业务；结果异常会冻结扩大权限。</p>
+                    </div>
+
+                    <div class="panel">
+                        <h3>装修这个空间</h3>
+                        <div class="insight">
+                            <div class="lab">下一步</div>
+                            <div class="ti">这个空间还没有业务语义</div>
+                            <div class="tx">去 装修台 完成装修：① 声明北极星指标与口径 ② 按业务改管道各段显示名、增删 Produce 段 ③ 每段指定唯一负责人与 CEO 介入点 ④ 定义失败出口 ⑤ 接上真实数据源。装修后本页会变成该业务的运行现场。</div>
+                            <span class="tag">未装修</span>
+                        </div>
+                        <a class="btn primary" href="workspace-studio.html" style="display:block;text-align:center;text-decoration:none;margin-top:var(--ui-sp-2);">去 装修台装修 →</a>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- 详情抽屉 -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="detailDrawer" aria-label="责任项详情">
+    <div class="drawer-head">
+        <h2 id="drawerTitle">责任项</h2>
+        <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-acts">
+        <button class="btn" id="drawerCancel">关闭</button>
+        <button class="btn">查看证据</button>
+        <button class="btn primary">推进到下一阶段</button>
+    </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="_system/assistant-drawer.js"></script>
+<script>
+/* ── 通用槽位骨架（模板态）
+      这里刻意不放任何业务数据：卡片是「槽位说明」，装修后才替换为真实工作项。
+      槽位语义固定，显示名由业务在 装修台装修时自定义。 ── */
+const stages = [
+    { id: 'intake',   name: 'Intake 意图',        active: true },
+    { id: 'produce',  name: 'Produce 生产',       active: true },
+    { id: 'deliver',  name: 'Deliver 交付',       active: true },
+    { id: 'accept',   name: 'Accept CEO 验收',    active: true },
+    { id: 'review',   name: 'Review 复盘（只读）', active: false }
+];
+
+const items = [
+    { id:'s1', title:'槽位：意图澄清', stage:'intake', owner:'待指派', status:'attention', statusLabel:'未装修',
+      evidence:'输入=CEO 意图 / 外部信号；输出=可执行的工作项（含验收标准）。装修时要写清「什么算说清楚了」，否则后面每一段都在返工。',
+      checkpoint:'装修时定义：本段出口条件', ci:[{k:'',t:'必选槽位'}] },
+    { id:'s2', title:'槽位：生产（可拆 1~N 段）', stage:'produce', owner:'待指派', status:'attention', statusLabel:'未装修',
+      evidence:'业务差异最大的一段。小红书拆成 拆解/分析/产出，软件研发拆成 产品/研发/QA，短视频拆成 脚本/拍摄/剪辑。段数按业务定，语义都是 PRODUCE。',
+      checkpoint:'装修时定义：拆几段、每段负责人', ci:[{k:'',t:'可增删'}] },
+    { id:'s3', title:'槽位：交付', stage:'deliver', owner:'待指派', status:'attention', statusLabel:'未装修',
+      evidence:'对外发布属于「AI 不得静默执行」的六件事之一，本段默认必须挂 CEO 介入点。',
+      checkpoint:'装修时定义：发布前是否强制 CEO 确认', ci:[{k:'amber',t:'含 CEO 红线'}] },
+    { id:'s4', title:'槽位：CEO 验收', stage:'accept', owner:'CEO', status:'decision', statusLabel:'必选',
+      evidence:'不可省略。AI 自报完成不算完成，以 CEO 验收通过为准。超时不自动批准，只升级提醒。',
+      checkpoint:'装修时定义：验收超时小时数', ci:[{k:'green',t:'不可删除'}] },
+    { id:'s5', title:'槽位：复盘与归档', stage:'review', owner:'待指派', status:'done', statusLabel:'只读区',
+      evidence:'把本周期结论沉淀成可复用资产。只读泳道不可拖入，避免把未完成项伪装成已归档。',
+      checkpoint:'装修时定义：沉淀到成果库的条件', ci:[{k:'',t:'只读'}] }
+];
+
+const pipeline = document.getElementById('pipeline');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const detailDrawer = document.getElementById('detailDrawer');
+const drawerTitle = document.getElementById('drawerTitle');
+const drawerBody = document.getElementById('drawerBody');
+const toast = document.getElementById('toast');
+let currentFilter = 'all';
+let draggedCard = null;
+
+function renderPipeline() {
+    pipeline.innerHTML = '';
+    stages.forEach(stage => {
+        const stageItems = items.filter(v => v.stage === stage.id && (currentFilter === 'all' || v.status === currentFilter));
+        const allCount = items.filter(v => v.stage === stage.id).length;
+        const lane = document.createElement('div');
+        lane.className = 'lane' + (stage.active ? '' : ' review');
+        lane.dataset.stage = stage.id;
+        lane.innerHTML = `<div class="lane-head">${stage.name} <span class="lane-count">${allCount}</span></div>`;
+        const zone = document.createElement('div');
+        zone.className = 'stage-dropzone';
+        zone.dataset.stage = stage.id;
+        if (stageItems.length === 0) {
+            zone.innerHTML = '<div class="empty-stage">无匹配责任项</div>';
+        } else {
+            stageItems.forEach(v => zone.appendChild(createCard(v, stage)));
+        }
+        lane.appendChild(zone);
+        pipeline.appendChild(lane);
+    });
+    setupDnD();
+}
+
+function createCard(v, stage) {
+    const card = document.createElement('div');
+    card.className = 'card' + (v.status === 'decision' ? ' active' : '');
+    card.draggable = stage.active;
+    card.dataset.id = v.id;
+    card.dataset.status = v.status;
+    const ciHtml = v.ci.length ? `<div class="ci">${v.ci.map(c => `<span class="ci-tag ${c.k}">${c.t}</span>`).join('')}</div>` : '';
+    card.innerHTML = `
+        <h4>${v.title}</h4>
+        <div class="meta">
+            <div class="owner"><span class="avatar">${v.owner[0]}</span>${v.owner}</div>
+            <div><span class="sdot ${v.status}"></span>${v.statusLabel}</div>
+        </div>
+        <div class="evidence">${v.evidence}</div>
+        ${ciHtml}
+        <div class="checkpoint ${v.urgent ? 'urgent' : ''}">${v.urgent ? '⚠' : '◷'} ${v.checkpoint}</div>
+        ${stage.active ? '<button class="move" data-move>移动至下一阶段 →</button>' : ''}
+    `;
+    if (stage.active) {
+        card.addEventListener('click', () => openDrawer(v));
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+    }
+    return card;
+}
+
+function setupDnD() {
+    pipeline.querySelectorAll('.stage-dropzone').forEach(zone => {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', handleDrop);
+    });
+}
+function handleDragStart(e) { draggedCard = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function handleDragEnd() { this.classList.remove('dragging'); draggedCard = null; pipeline.querySelectorAll('.stage-dropzone').forEach(z => z.classList.remove('drag-over')); }
+function handleDrop(e) {
+    e.preventDefault(); this.classList.remove('drag-over');
+    if (!draggedCard) return;
+    const newStage = this.dataset.stage;
+    const v = items.find(x => x.id === draggedCard.dataset.id);
+    const oldName = stages.find(s => s.id === v.stage).name;
+    const newName = stages.find(s => s.id === newStage).name;
+    v.stage = newStage;
+    showToast(`「${v.title.slice(0,12)}…」已从 ${oldName} 移动到 ${newName}`);
+    renderPipeline();
+}
+
+function openDrawer(v) {
+    const stageName = stages.find(s => s.id === v.stage).name;
+    drawerTitle.textContent = v.title;
+    const ciHtml = v.ci.length ? v.ci.map(c => `<span class="ci-tag ${c.k}">${c.t}</span>`).join(' ') : '—';
+    drawerBody.innerHTML = `
+        <div class="sec"><div class="sec-t">当前状态</div>
+            <div class="field"><span class="l">阶段</span><span class="v">${stageName}</span></div>
+            <div class="field"><span class="l">负责人</span><span class="v">${v.owner}</span></div>
+            <div class="field"><span class="l">状态</span><span class="v">${v.statusLabel}</span></div>
+        </div>
+        <div class="sec"><div class="sec-t">证据</div><div class="insight" style="margin:0"><div class="tx">${v.evidence}</div></div></div>
+        <div class="sec"><div class="sec-t">所属工作空间</div><div class="insight" style="margin:0"><div class="ci">${ciHtml}</div></div></div>
+        <div class="sec"><div class="sec-t">下一检查点</div><div class="insight" style="margin:0"><div class="ti">${v.checkpoint}</div></div></div>`;
+    drawerOverlay.classList.add('open'); detailDrawer.classList.add('open');
+}
+function closeDrawer() { drawerOverlay.classList.remove('open'); detailDrawer.classList.remove('open'); }
+function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
+
+drawerOverlay.addEventListener('click', closeDrawer);
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('drawerCancel').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+/* 键盘等价：移动至下一阶段（替代拖拽） */
+pipeline.addEventListener('click', e => {
+    const btn = e.target.closest('.move');
+    if (btn) {
+        const card = btn.closest('.card');
+        const v = items.find(x => x.id === card.dataset.id);
+        const idx = stages.findIndex(s => s.id === v.stage);
+        if (idx < stages.length - 1) {
+            const next = stages[idx + 1];
+            const oldName = stages[idx].name;
+            v.stage = next.id;
+            showToast(`「${v.title.slice(0,12)}…」已从 ${oldName} 移动到 ${next.name}`);
+            renderPipeline();
+        }
+        return;
+    }
+});
+
+/* 过滤 */
+document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => {
+    currentFilter = b.dataset.filter;
+    renderPipeline();
+}));
+
+renderPipeline();
+</script>
+<script>
+/* 主题切换按钮注入（theme.js 接管实际切换） */
+(function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+        var b = document.createElement('button');
+        b.className = 'theme-btn'; b.setAttribute('data-curis-theme', t); b.textContent = labels[t];
+        sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar');
+    if (host) host.appendChild(sw);
+})();
+</script>
+  <script src="_system/canonical-nav.js"></script>
+  <script src="_system/runtime-capability.js"></script>
+</body>
+</html>

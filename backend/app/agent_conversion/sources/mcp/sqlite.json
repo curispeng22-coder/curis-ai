@@ -1,0 +1,31 @@
+{
+  "server": "sqlite",
+  "name": "SQLite",
+  "description": "Query and inspect a local SQLite database.",
+  "license": "MIT",
+  "tools": [
+    {
+      "name": "run_sql_query",
+      "description": "Execute a parameterized SQL query against the SQLite database.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "db_path": {"type": "string", "description": "Path to the .sqlite file."},
+          "sql": {"type": "string", "description": "The SQL statement to run."}
+        },
+        "required": ["db_path", "sql"]
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "List tables and their schemas in the SQLite database.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "db_path": {"type": "string", "description": "Path to the .sqlite file."}
+        },
+        "required": ["db_path"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curis RD Workspace — High Fidelity v1 (Reference Only)</title>
+<style>
+/* ============================================================
+   PROTOTYPE REFERENCE ONLY
+   视觉验证稿，非前端实现。技术实现（querySelectorAll / classList /
+   事件绑定）不进入 Frozen Shell Contract，仅供实现参考。
+   所有令牌仅引用 Frozen _system/tokens.css 的 --ui-*。
+   ============================================================ */
+:root{
+  --ph-h: 48px;
+  --nav-w: 220px;
+  --ctx-w: 0px;
+  --util-w: 0px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  font-family:var(--ui-font);
+  font-size:var(--ui-fs-3);
+  line-height:var(--ui-lh);
+  background:var(--ui-bg);
+  color:var(--ui-text);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer;color:inherit;}
+
+/* ---- top state bar (demo only) ---- */
+.state-bar{
+  height:52px;display:flex;align-items:center;gap:var(--ui-sp-2);
+  padding:0 var(--ui-sp-3);
+  background:var(--ui-surface);border-bottom:1px solid var(--ui-line);
+}
+.sb-label{font-size:var(--ui-fs-1);color:var(--ui-text-2);margin-right:var(--ui-sp-2);}
+.state-bar button{
+  height:var(--ui-ctl-h-sm);padding:0 var(--ui-sp-3);border-radius:var(--ui-r-sm);
+  border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text-2);
+  font-size:var(--ui-fs-2);
+}
+.state-bar button.active{background:var(--ui-accent);color:var(--ui-action-primary-fg);border-color:var(--ui-accent);}
+.sb-spacer{flex:1;}
+.theme-toggle{border-color:var(--ui-line)!important;}
+
+/* ---- shell grid (Frozen: Top-aligned Independent Pane) ---- */
+.ws-shell{
+  display:grid;
+  grid-template-columns:var(--nav-w) var(--ctx-w) minmax(0,1fr) var(--util-w);
+  height:calc(100vh - 52px);
+  transition:grid-template-columns var(--ui-dur-3) var(--ui-ease-standard);
+}
+.ws-shell.nav-collapsed{--nav-w:0px;}
+.ws-shell.with-context{--ctx-w:280px;}
+.ws-shell.with-utility{--util-w:380px;}
+.ws-shell.util-max{--nav-w:0px;--ctx-w:0px;--util-w:100vw;} /* maximize overlay 覆盖整页 */
+
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;background:var(--ui-bg);}
+.pane-nav{background:var(--ui-surface);border-right:1px solid var(--ui-line);}
+.pane-ctx{background:var(--ui-surface);border-right:1px solid var(--ui-line);}
+.pane-main{background:var(--ui-bg);}
+.pane-util{background:var(--ui-surface-2);border-left:1px solid var(--ui-line);}
+
+/* ---- pane headers (Frozen §1.5) ---- */
+.pane-header{
+  height:var(--ph-h);flex:0 0 var(--ph-h);display:flex;align-items:center;
+  gap:var(--ui-sp-2);padding:0 var(--ui-sp-3);
+  border-bottom:1px solid var(--ui-line);background:var(--ui-surface);
+}
+.nav-head{justify-content:space-between;}
+.win-dots{display:flex;gap:6px;}
+.win-dots span{width:11px;height:11px;border-radius:var(--ui-r-pill);background:var(--ui-surface-2);border:1px solid var(--ui-line);}
+.nav-head-right{display:flex;gap:var(--ui-sp-1);}
+.main-head{justify-content:flex-start;}
+.main-head .crumbs{margin-left:var(--ui-sp-2);display:flex;align-items:center;gap:6px;font-size:var(--ui-fs-2);color:var(--ui-text-2);min-width:0;}
+.crumbs .cur{color:var(--ui-text);font-weight:600;}
+.main-head-right{margin-left:auto;display:flex;gap:var(--ui-sp-1);}
+.ctx-head .ctx-title,.util-head .util-title{font-size:var(--ui-fs-2);font-weight:600;color:var(--ui-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ctx-head-right,.util-head-right{margin-left:auto;display:flex;gap:var(--ui-sp-1);align-items:center;}
+.util-modes{display:flex;gap:4px;margin-left:var(--ui-sp-3);}
+.util-modes button{height:28px;padding:0 10px;border-radius:var(--ui-r-sm);border:1px solid var(--ui-line);background:transparent;color:var(--ui-text-2);font-size:var(--ui-fs-1);}
+.util-modes button.active{background:var(--ui-surface-2);color:var(--ui-text);border-color:var(--ui-text-3);}
+
+.icon-btn{
+  width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:var(--ui-r-sm);border:1px solid transparent;background:transparent;color:var(--ui-text-2);
+  font-size:15px;line-height:1;
+}
+.icon-btn:hover{background:var(--ui-surface-2);color:var(--ui-text);}
+.t1-restore{display:none;}
+.ws-shell.nav-collapsed .t1-restore{display:inline-flex;}
+
+/* ---- nav content ---- */
+.nav-scroll{flex:1;overflow:auto;padding:var(--ui-sp-2);}
+.nav-group{font-size:var(--ui-fs-1);color:var(--ui-text-3);text-transform:uppercase;letter-spacing:.04em;padding:var(--ui-sp-2) var(--ui-sp-2) 4px;}
+.nav-item{display:flex;align-items:center;gap:var(--ui-sp-2);padding:var(--ui-sp-2);border-radius:var(--ui-r-sm);color:var(--ui-text-2);font-size:var(--ui-fs-2);min-height:32px;}
+.nav-item:hover{background:var(--ui-surface-2);color:var(--ui-text);}
+.nav-item.active{background:var(--ui-surface-2);color:var(--ui-text);}
+.nav-item .ni-ico{width:18px;text-align:center;}
+.nav-sub{padding-left:var(--ui-sp-6);position:relative;}
+.nav-sub::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:1px;background:var(--ui-line);}
+.nav-sub .nav-item{font-size:var(--ui-fs-2);}
+.nav-foot{flex:0 0 auto;padding:var(--ui-sp-2);border-top:1px solid var(--ui-line);display:flex;align-items:center;gap:var(--ui-sp-2);}
+.nav-user-ava{width:28px;height:28px;border-radius:var(--ui-r-pill);background:var(--ui-surface-2);display:flex;align-items:center;justify-content:center;font-size:var(--ui-fs-1);color:var(--ui-text-2);}
+.nav-user-meta{font-size:var(--ui-fs-1);color:var(--ui-text-2);line-height:1.3;}
+
+/* ---- main content ---- */
+.main-scroll{flex:1;overflow:auto;min-height:0;}
+.ws-header{padding:var(--ui-sp-4) var(--ui-sp-5);border-bottom:1px solid var(--ui-line);}
+.ws-title{font-size:var(--ui-fs-5);font-weight:600;}
+.ws-meta{font-size:var(--ui-fs-2);color:var(--ui-text-2);margin-top:4px;}
+.ws-meta .attn{color:var(--ui-warning);}
+.ws-statusbar{margin-top:var(--ui-sp-2);font-size:var(--ui-fs-2);color:var(--ui-text-2);display:flex;align-items:center;gap:var(--ui-sp-2);}
+.ws-statusbar .dot{width:8px;height:8px;border-radius:var(--ui-r-pill);background:var(--ui-success);flex:0 0 auto;}
+
+/* decision banner (Frozen §3.3) */
+.decision-banner{display:flex;gap:var(--ui-sp-3);margin:var(--ui-sp-4) var(--ui-sp-5);padding:var(--ui-sp-4);border-radius:var(--ui-r-md);background:color-mix(in srgb,var(--ui-warning) 12%,var(--ui-surface));border:1px solid color-mix(in srgb,var(--ui-warning) 40%,var(--ui-line));}
+.db-icon{font-size:20px;color:var(--ui-warning);}
+.db-title{font-weight:600;font-size:var(--ui-fs-3);}
+.db-desc{font-size:var(--ui-fs-2);color:var(--ui-text-2);margin:4px 0 var(--ui-sp-3);}
+.db-actions{display:flex;gap:var(--ui-sp-2);}
+.btn-primary{height:var(--ui-ctl-h);padding:0 var(--ui-sp-4);border-radius:var(--ui-r-sm);border:none;background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);font-weight:600;font-size:var(--ui-fs-2);}
+.btn-ghost{height:var(--ui-ctl-h);padding:0 var(--ui-sp-4);border-radius:var(--ui-r-sm);border:1px solid var(--ui-line);background:transparent;color:var(--ui-text-2);font-size:var(--ui-fs-2);}
+
+/* employee workstation (Frozen §3.1) */
+.stations{padding:var(--ui-sp-4) var(--ui-sp-5) var(--ui-sp-8);display:flex;flex-direction:column;gap:var(--ui-sp-3);}
+.station{border:1px solid var(--ui-line);border-radius:var(--ui-r-md);background:var(--ui-surface);overflow:hidden;}
+.station-head{display:flex;align-items:center;gap:var(--ui-sp-3);padding:var(--ui-sp-3);cursor:pointer;user-select:none;}
+.avatar{width:32px;height:32px;border-radius:var(--ui-r-pill);display:flex;align-items:center;justify-content:center;font-size:var(--ui-fs-2);font-weight:600;color:#0c0c0d;flex:0 0 auto;}
+.station-id{flex:1;min-width:0;}
+.station-name{font-size:var(--ui-fs-2);font-weight:600;}
+.station-work{font-size:var(--ui-fs-1);color:var(--ui-text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tag{font-size:var(--ui-fs-1);padding:2px 8px;border-radius:var(--ui-r-pill);border:1px solid var(--ui-line);color:var(--ui-text-2);white-space:nowrap;}
+.tag-working{color:var(--ui-success);border-color:color-mix(in srgb,var(--ui-success) 45%,var(--ui-line));}
+.tag-waiting{color:var(--ui-text-2);}
+.tag-needs{color:var(--ui-warning);border-color:color-mix(in srgb,var(--ui-warning) 45%,var(--ui-line));}
+.tag-danger{color:var(--ui-danger);border-color:color-mix(in srgb,var(--ui-danger) 45%,var(--ui-line));}
+.tag-ctx{color:var(--ui-text-3);}
+.resp-chip{font-size:var(--ui-fs-1);font-weight:500;color:var(--ui-text-2);background:var(--ui-surface-2);border:1px solid var(--ui-line);border-radius:var(--ui-r-pill);padding:1px 8px;margin-left:6px;white-space:nowrap;}
+.chevron{transition:transform var(--ui-dur-2) var(--ui-ease-standard);color:var(--ui-text-2);}
+.station.collapsed .chevron{transform:rotate(-90deg);}
+.station-body{display:flex;flex-direction:column;border-top:1px solid var(--ui-line);}
+.station.collapsed .station-body{display:none;}
+.conversation{padding:var(--ui-sp-3) var(--ui-sp-4);display:flex;flex-direction:column;gap:var(--ui-sp-2);max-height:260px;overflow:auto;}
+.msg{font-size:var(--ui-fs-2);color:var(--ui-text);}
+.ref{font-size:var(--ui-fs-2);color:var(--ui-accent);cursor:pointer;padding:6px 10px;border-radius:var(--ui-r-sm);background:color-mix(in srgb,var(--ui-accent) 8%,transparent);width:fit-content;}
+.ref:hover{background:color-mix(in srgb,var(--ui-accent) 16%,transparent);}
+.handoff{font-size:var(--ui-fs-1);color:var(--ui-text-2);padding:6px 10px;border-radius:var(--ui-r-sm);background:var(--ui-surface-2);border:1px solid var(--ui-line);}
+.review-req{font-size:var(--ui-fs-1);color:var(--ui-accent);padding:6px 10px;border-radius:var(--ui-r-sm);background:color-mix(in srgb,var(--ui-accent) 8%,transparent);border:1px dashed color-mix(in srgb,var(--ui-accent) 45%,var(--ui-line));}
+.decision-ref{font-size:var(--ui-fs-1);color:var(--ui-warning);font-weight:600;padding:6px 10px;border-radius:var(--ui-r-sm);background:color-mix(in srgb,var(--ui-warning) 10%,transparent);border:1px solid color-mix(in srgb,var(--ui-warning) 40%,var(--ui-line));width:fit-content;cursor:pointer;}
+.composer{border-top:1px solid var(--ui-line);padding:var(--ui-sp-2) var(--ui-sp-3);display:flex;flex-direction:column;gap:var(--ui-sp-2);background:var(--ui-surface);}
+.composer textarea{width:100%;min-height:44px;resize:vertical;border-radius:var(--ui-r-sm);border:1px solid var(--ui-line);background:var(--ui-bg);color:var(--ui-text);padding:var(--ui-sp-2);font-size:var(--ui-fs-2);font-family:inherit;}
+.composer-bar{display:flex;align-items:center;gap:var(--ui-sp-2);}
+.composer-bar button,.composer-bar select{height:var(--ui-ctl-h-sm);border-radius:var(--ui-r-sm);border:1px solid var(--ui-line);background:var(--ui-surface-2);color:var(--ui-text-2);font-size:var(--ui-fs-1);padding:0 10px;}
+.composer-bar .c-send{background:var(--ui-action-primary-bg);color:var(--ui-action-primary-fg);border:none;font-weight:600;}
+.composer-bar .spacer{flex:1;}
+
+/* ---- context content ---- */
+.ctx-content{flex:1;overflow:auto;padding:var(--ui-sp-3);}
+.ctx-section{font-size:var(--ui-fs-1);color:var(--ui-text-3);text-transform:uppercase;letter-spacing:.04em;margin:var(--ui-sp-3) var(--ui-sp-1) 6px;}
+.ctx-item{padding:6px var(--ui-sp-2);border-radius:var(--ui-r-sm);font-size:var(--ui-fs-2);color:var(--ui-text);}
+.ctx-item:hover{background:var(--ui-surface-2);}
+.tree-file{padding:6px var(--ui-sp-2);border-radius:var(--ui-r-sm);font-size:var(--ui-fs-2);color:var(--ui-text-2);font-family:var(--ui-mono);}
+.tree-file.active{background:var(--ui-surface-2);color:var(--ui-text);}
+.tree-file:hover{background:var(--ui-surface-2);}
+
+/* ---- utility content ---- */
+.util-content{flex:1;overflow:auto;padding:0;}
+.util-tab{display:none;}
+.util-tab.active{display:block;}
+.diff-pre{margin:0;padding:var(--ui-sp-3) 0;font-family:var(--ui-mono);font-size:var(--ui-fs-2);line-height:1.6;}
+.diff-line{padding:0 var(--ui-sp-4);white-space:pre;}
+.diff-line.add{background:color-mix(in srgb,var(--ui-success) 14%,transparent);color:var(--ui-text);}
+.diff-line.del{background:color-mix(in srgb,var(--ui-danger) 14%,transparent);color:var(--ui-text);}
+.diff-line .ln{display:inline-block;width:34px;color:var(--ui-text-3);user-select:none;}
+.diff-line .sign{display:inline-block;width:14px;color:var(--ui-text-3);}
+.kw{color:var(--ui-accent);}
+.cm{color:var(--ui-text-3);}
+.src-pre{margin:0;padding:var(--ui-sp-3) var(--ui-sp-4);font-family:var(--ui-mono);font-size:var(--ui-fs-2);line-height:1.6;color:var(--ui-text);}
+.preview-pane{padding:var(--ui-sp-5);color:var(--ui-text-2);font-size:var(--ui-fs-2);}
+
+/* resize handles */
+.resize-h{position:relative;}
+.resize-h::after{content:"";position:absolute;top:0;bottom:0;width:5px;cursor:col-resize;}
+.pane-ctx .resize-h::after{right:-3px;}
+.pane-util .resize-h::after{left:-3px;}
+.pane-ctx .resize-h::after,.pane-util .resize-h::after{background:transparent;}
+.pane-ctx .resize-h:hover::after,.pane-util .resize-h:hover::after{background:var(--ui-accent);opacity:.4;}
+
+/* search surface */
+.search-surface{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:var(--ui-z-modal);display:none;align-items:flex-start;justify-content:center;padding-top:12vh;}
+.search-surface.open{display:flex;}
+.search-inner{width:min(680px,92vw);background:var(--ui-surface);border:1px solid var(--ui-line);border-radius:var(--ui-r-lg);box-shadow:var(--ui-shadow-3);overflow:hidden;}
+.search-input{width:100%;border:none;background:transparent;color:var(--ui-text);font-size:var(--ui-fs-4);padding:var(--ui-sp-4);border-bottom:1px solid var(--ui-line);outline:none;font-family:inherit;}
+.search-results{padding:var(--ui-sp-2) var(--ui-sp-3);max-height:50vh;overflow:auto;}
+.search-group{font-size:var(--ui-fs-1);color:var(--ui-text-3);text-transform:uppercase;letter-spacing:.04em;padding:var(--ui-sp-2) var(--ui-sp-2) 4px;}
+.search-row{display:flex;align-items:center;gap:var(--ui-sp-2);padding:8px var(--ui-sp-2);border-radius:var(--ui-r-sm);font-size:var(--ui-fs-2);color:var(--ui-text);}
+.search-row:hover{background:var(--ui-surface-2);}
+.search-row .sr-type{margin-left:auto;font-size:var(--ui-fs-1);color:var(--ui-text-3);}
+
+/* footer note */
+.proto-note{position:fixed;bottom:0;left:0;right:0;background:var(--ui-surface);border-top:1px solid var(--ui-line);color:var(--ui-text-3);font-size:var(--ui-fs-1);padding:6px var(--ui-sp-3);text-align:center;z-index:var(--ui-z-toast);}
+</style>
+</head>
+<body>
+
+<!-- ============ STATE PREVIEW BAR (demo only) ============ -->
+<div class="state-bar">
+  <span class="sb-label">STATE PREVIEW · 仅演示切换，不修改设计</span>
+  <button data-state="default" class="active">RD Default</button>
+  <button data-state="context">Context Open</button>
+  <button data-state="utility">Utility / Diff Open</button>
+  <button data-state="parallel">Multi-Employee Working</button>
+  <button data-state="needs-ceo">Needs CEO</button>
+  <span class="sb-spacer"></span>
+  <button class="theme-toggle" id="themeToggle">🌓 主题</button>
+</div>
+
+<!-- ============ SHELL ============ -->
+<div class="ws-shell" id="shell">
+
+  <!-- NAVIGATION PANE -->
+  <aside class="pane pane-nav">
+    <header class="pane-header nav-head">
+      <div class="win-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="nav-head-right">
+        <button class="icon-btn search-trigger" title="公司级对象搜索">🔍</button>
+        <button class="icon-btn t1" title="收起导航">«</button>
+      </div>
+    </header>
+    <div class="nav-scroll">
+      <div class="nav-group">主导航</div>
+      <div class="nav-item"><span class="ni-ico">⌂</span> 首页 / CEO 工作台</div>
+      <div class="nav-item active"><span class="ni-ico">▦</span> 业务空间</div>
+      <div class="nav-sub">
+        <div class="nav-item active"><span class="ni-ico">⚙</span> 研发 · 默认办公室</div>
+        <div class="nav-item"><span class="ni-ico">📕</span> 小红书运营办公室</div>
+      </div>
+      <div class="nav-item"><span class="ni-ico">👥</span> 组织中心</div>
+      <div class="nav-item"><span class="ni-ico">🧭</span> 人才市场</div>
+      <div class="nav-item"><span class="ni-ico">🗂</span> 资料库</div>
+      <div class="nav-item"><span class="ni-ico">💬</span> 会议</div>
+    </div>
+    <div class="nav-foot">
+      <div class="nav-user-ava">CEO</div>
+      <div class="nav-user-meta">总控决策席<br>普通用户 · 本地</div>
+    </div>
+  </aside>
+
+  <!-- CONTEXT PANE (Adaptive, left) -->
+  <aside class="pane pane-ctx resize-h">
+    <header class="pane-header ctx-head">
+      <span class="ctx-title">上下文 · getUserData 性能优化</span>
+      <div class="ctx-head-right">
+        <button class="icon-btn" title="定位当前文件">⌖</button>
+        <button class="icon-btn t2" title="收起上下文">▤</button>
+      </div>
+    </header>
+    <div class="ctx-content">
+      <div class="ctx-section">当前责任</div>
+      <div class="ctx-item">getUserData API 性能优化</div>
+      <div class="ctx-section">相关文件</div>
+      <div class="tree-file active">api/users.ts</div>
+      <div class="tree-file">lib/db/queries.ts</div>
+      <div class="tree-file">types/user.ts</div>
+      <div class="ctx-section">最近对象</div>
+      <div class="ctx-item">查询性能基准报告</div>
+      <div class="ctx-item">lib/db 连接池配置</div>
+    </div>
+  </aside>
+
+  <!-- MAIN PANE -->
+  <main class="pane pane-main">
+    <header class="pane-header main-head">
+      <button class="icon-btn t1-restore" title="展开导航">»</button>
+      <button class="icon-btn t2" title="上下文">▤</button>
+      <nav class="crumbs"><a>业务空间</a><span>/</span><span class="cur">研发 · 默认办公室</span></nav>
+      <div class="main-head-right">
+        <button class="icon-btn t3" title="工具面">▥</button>
+        <button class="icon-btn more" title="更多">⋯</button>
+      </div>
+    </header>
+
+    <div class="main-scroll">
+      <div class="ws-header">
+        <div class="ws-title">研发 · 默认办公室</div>
+        <div class="ws-meta">3 名 AI 员工 · 2 项进行中责任（getUserData 性能优化 · 用户表数据迁移审核）· <span class="attn">1 项需要 CEO 决策</span></div>
+        <div class="ws-statusbar"><span class="dot"></span> R1 getUserData 性能优化 · 陈真 working　|　R2 用户表数据迁移审核 · 李翔 needs_ceo　|　R3 灰度发布 · 王磊 等待 R1/R2 完成</div>
+      </div>
+
+      <!-- Decision Banner (Frozen §3.3 + §3.13 CEO Decision Package · P7 · 不可逆类 Layer0 只提醒) -->
+      <div class="decision-banner" id="decisionBanner" hidden>
+        <div class="db-icon">⚠</div>
+        <div class="db-body">
+          <div class="db-title">需要你拍板：用户数据搬家最后一步（会改动线上结构，不可直接回退）</div>
+          <div class="db-desc">李翔（审核AI）已完成迁移准备，但最后一步会改动线上用户表结构、不可直接回退，需要你确认是否现在执行。我已整理好方案与影响，请查看。</div>
+          <div class="db-actions">
+            <button class="btn-primary">查看方案</button>
+            <button class="btn-ghost">暂缓</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stations" id="stations">
+        <!-- 陈真 -->
+        <section class="station" data-station="chen" data-state="working">
+          <header class="station-head">
+            <span class="avatar" style="background:var(--ui-success)" data-initial="陈">陈</span>
+            <div class="station-id">
+              <div class="station-name">陈真 · 工程AI <span class="resp-chip">R1 · getUserData 性能优化</span></div>
+              <div class="station-work">Current Responsibility：实现批量加载，消除 N+1 · Status：working</div>
+            </div>
+            <span class="tag tag-working">working</span>
+            <span class="tag tag-ctx">branch: perf/users</span>
+            <span class="chevron">▾</span>
+          </header>
+          <div class="station-body">
+            <div class="conversation">
+              <div class="msg">我定位到 <span class="kw">api/users.ts:34</span> 的 N+1 查询，已改为批量加载并加了连接池复用。</div>
+              <div class="ref">📎 api/users.ts · 34-93 · 查看差异 ▸</div>
+              <div class="msg">压测：P95 从 840ms 降到 120ms，已通过 127/127 测试。</div>
+              <div class="ref">✅ 工作结果已就绪 ▸</div>
+              <div class="review-req">🔍 送审请求 · 陈真 → 李翔：请审核 R1 实现代码（责任未转移，陈真仍持 R1 Current Responsibility）· 09:42</div>
+            </div>
+            <div class="composer">
+              <textarea placeholder="继续当前责任 R1 · getUserData 性能优化 · 陈真 · 工程AI"></textarea>
+              <div class="composer-bar">
+                <button class="c-add" title="添加上下文">＋</button>
+                <select class="c-mode" title="执行模式（Provider 支持时）"><option>执行</option><option>计划</option></select>
+                <!-- Model 仅在 Provider 支持切换时显示 -->
+                <select class="c-model" title="模型（Provider 支持切换时显示）"><option>自动</option><option>Claude</option><option>GPT</option></select>
+                <span class="spacer"></span>
+                <button class="c-stop">停止</button>
+                <button class="c-send">发送</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 李翔 -->
+        <section class="station" data-station="li" data-state="needs_ceo">
+          <header class="station-head">
+            <span class="avatar" style="background:var(--ui-warning)" data-initial="李">李</span>
+            <div class="station-id">
+              <div class="station-name">李翔 · 审核AI <span class="resp-chip">R2 · 用户表数据迁移审核</span></div>
+              <div class="station-work">Responsibility Holder：李翔 · Current Executor：none（等待 CEO 执行权）· Current Responsibility：审核迁移脚本 · Status：needs_ceo</div>
+            </div>
+            <span class="tag tag-needs">needs_ceo</span>
+            <span class="tag tag-danger">不可逆</span>
+            <span class="chevron">▾</span>
+          </header>
+          <div class="station-body">
+            <div class="conversation">
+              <div class="msg">我发现这个变更存在不可逆风险，需要你决定。我已经整理了 3 个方案，并给出了推荐。</div>
+              <div class="decision-ref">⚠ 等待你的决定 · 查看决策方案 ▸</div>
+              <div class="msg">另收到陈真 R1 实现送审，已完成代码审核（R1 责任仍归陈真，本轮仅为 Review Handoff）。</div>
+            </div>
+            <div class="composer">
+              <textarea placeholder="为李翔提供指示（可选）· R2 用户表数据迁移审核 · 审核AI"></textarea>
+              <div class="composer-bar">
+                <button class="c-add" title="添加上下文">＋</button>
+                <select class="c-mode" title="执行模式（Provider 支持时）"><option>执行</option><option>计划</option></select>
+                <select class="c-model" title="模型（Provider 支持切换时显示）"><option>自动</option><option>Claude</option><option>GPT</option></select>
+                <span class="spacer"></span>
+                <button class="c-stop">停止</button>
+                <button class="c-send">发送</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 王磊 -->
+        <section class="station" data-station="wang" data-state="waiting">
+          <header class="station-head">
+            <span class="avatar" style="background:var(--ui-text-3)" data-initial="王">王</span>
+            <div class="station-id">
+              <div class="station-name">王磊 · 运行AI <span class="resp-chip">R3 · 灰度发布（下一阶段）</span></div>
+              <div class="station-work">Responsibility Holder：王磊 · Current Executor：none（等待中，未执行）· Current Responsibility：灰度发布 · Status：waiting（等待 R1 性能优化 与 R2 数据迁移审核 完成）</div>
+            </div>
+            <span class="tag tag-waiting">waiting</span>
+            <span class="chevron">▾</span>
+          </header>
+          <div class="station-body">
+            <div class="conversation">
+              <div class="msg">R3 灰度发布流水线已就绪。恢复条件：R1 性能优化 与 R2 数据迁移审核 均完成后，每日 14:00 窗口自动开启，或你手动批准。</div>
+            </div>
+            <div class="composer">
+              <textarea placeholder="继续当前责任 R3 · 灰度发布 · 王磊 · 运行AI"></textarea>
+              <div class="composer-bar">
+                <button class="c-add" title="添加上下文">＋</button>
+                <select class="c-mode" title="执行模式（Provider 支持时）"><option>执行</option><option>计划</option></select>
+                <select class="c-model" title="模型（Provider 支持切换时显示）"><option>自动</option><option>Claude</option><option>GPT</option></select>
+                <span class="spacer"></span>
+                <button class="c-stop">停止</button>
+                <button class="c-send">发送</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- UTILITY PANE (Adaptive, right) -->
+  <aside class="pane pane-util resize-h">
+    <header class="pane-header util-head">
+      <span class="util-title">Diff · api/users.ts</span>
+      <div class="util-modes">
+        <button data-mode="source">Source</button>
+        <button data-mode="diff" class="active">Diff</button>
+        <button data-mode="preview">Preview</button>
+      </div>
+      <div class="util-head-right">
+        <button class="icon-btn maximize" title="最大化">↗</button>
+        <button class="icon-btn t3" title="收起工具面">▥</button>
+      </div>
+    </header>
+    <div class="util-content">
+      <div class="util-tab" data-tab="source">
+<pre class="src-pre"><span class="cm">// api/users.ts — 批量加载用户</span>
+<span class="kw">export async function</span> getUsers(ids: string[]) {
+  <span class="kw">const</span> rows = <span class="kw">await</span> db.query(
+    <span class="kw">'SELECT * FROM users WHERE id = ANY($1)'</span>, [ids]
+  );
+  <span class="kw">return</span> rows;
+}</pre>
+      </div>
+      <div class="util-tab active" data-tab="diff">
+<pre class="diff-pre"><div class="diff-line del"><span class="ln">34</span><span class="sign">-</span> for (const id of ids) {</div><div class="diff-line del"><span class="ln">35</span><span class="sign">-</span>   const u = await db.query('SELECT * FROM users WHERE id=$1', [id]);</div><div class="diff-line del"><span class="ln">36</span><span class="sign">-</span>   results.push(u);</div><div class="diff-line del"><span class="ln">37</span><span class="sign">-</span> }</div><div class="diff-line add"><span class="ln">34</span><span class="sign">+</span> <span class="kw">const</span> results = <span class="kw">await</span> db.query(</div><div class="diff-line add"><span class="ln">35</span><span class="sign">+</span>   'SELECT * FROM users WHERE id = ANY($1)', [ids]</div><div class="diff-line add"><span class="ln">36</span><span class="sign">+</span> );</div><div class="diff-line"><span class="ln"> </span><span class="sign"> </span> <span class="cm">// +34 / -93 行变更 · 批量加载</span></div></pre>
+      </div>
+      <div class="util-tab" data-tab="preview">
+        <div class="preview-pane">运行结果预览（Preview / Result）<br><br>GET /api/users?ids=1,2,3<br>200 OK · 3 users · 118ms<br><span style="color:var(--ui-success)">✓ 工作结果已就绪</span></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- SEARCH SURFACE -->
+<div class="search-surface" id="searchSurface">
+  <div class="search-inner">
+    <input class="search-input" id="searchInput" placeholder="搜索公司对象：Workspace / 员工 / 代码 / 结果 / 决策…">
+    <div class="search-results">
+      <div class="search-group">Workspace</div>
+      <div class="search-row">研发 · 默认办公室 <span class="sr-type">Workspace</span></div>
+      <div class="search-group">代码对象</div>
+      <div class="search-row">api/users.ts <span class="sr-type">File</span></div>
+      <div class="search-row">migration/users_2026.sql <span class="sr-type">File</span></div>
+      <div class="search-group">员工 · 角色</div>
+      <div class="search-row">陈真 · 工程AI <span class="sr-type">Employee</span></div>
+      <div class="search-group">决策</div>
+      <div class="search-row">用户表数据迁移 · 需 CEO 确认 <span class="sr-type">Decision</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="proto-note">PROTOTYPE REFERENCE ONLY · APPROVED VISUAL REFERENCE · 视觉验证稿，非前端实现；技术实现（querySelectorAll / classList / 事件绑定）不进入 Frozen Shell Contract</div>
+
+<script>
+/* ===== PROTOTYPE REFERENCE ONLY（不进入 Frozen Contract） ===== */
+(function(){
+  var shell = document.getElementById('shell');
+
+  /* T1 — Navigation Toggle（双向） */
+  function bindT1(){
+    document.querySelectorAll('.t1, .t1-restore').forEach(function(b){
+      b.addEventListener('click', function(){
+        shell.classList.toggle('nav-collapsed');
+      });
+    });
+  }
+  /* T2 — Context Toggle（双向） */
+  function bindT2(){
+    document.querySelectorAll('.t2').forEach(function(b){
+      b.addEventListener('click', function(){
+        shell.classList.toggle('with-context');
+      });
+    });
+  }
+  /* T3 — Utility Toggle（双向） */
+  function bindT3(){
+    document.querySelectorAll('.main-head .t3, .util-head .t3').forEach(function(b){
+      b.addEventListener('click', function(){
+        shell.classList.toggle('with-utility');
+      });
+    });
+  }
+  bindT1(); bindT2(); bindT3();
+
+  /* Search surface */
+  var ss = document.getElementById('searchSurface');
+  document.querySelectorAll('.search-trigger').forEach(function(b){
+    b.addEventListener('click', function(){ ss.classList.add('open'); document.getElementById('searchInput').focus(); });
+  });
+  ss.addEventListener('click', function(e){ if(e.target===ss) ss.classList.remove('open'); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') ss.classList.remove('open'); });
+
+  /* Utility maximize */
+  document.querySelector('.maximize').addEventListener('click', function(){
+    shell.classList.toggle('util-max');
+  });
+
+  /* Utility mode switch */
+  document.querySelectorAll('.util-modes button[data-mode]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var m = b.getAttribute('data-mode');
+      document.querySelectorAll('.util-modes button[data-mode]').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      document.querySelectorAll('.util-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelector('.util-tab[data-tab="'+m+'"]').classList.add('active');
+    });
+  });
+
+  /* Station expand/collapse（双向，querySelectorAll 绑所有实例） */
+  document.querySelectorAll('.station-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('collapsed');
+    });
+  });
+
+  /* State switcher */
+  var stations = {
+    chen: document.querySelector('[data-station="chen"]'),
+    li:   document.querySelector('[data-station="li"]'),
+    wang: document.querySelector('[data-station="wang"]')
+  };
+  function setExpanded(el, on){ el.classList.toggle('collapsed', !on); }
+  function applyState(s){
+    shell.classList.remove('with-context','with-utility','util-max');
+    document.getElementById('decisionBanner').hidden = true;
+    if(s==='context'){ shell.classList.add('with-context'); setExpanded(stations.chen,true); setExpanded(stations.li,false); setExpanded(stations.wang,false); }
+    else if(s==='utility'){ shell.classList.add('with-utility'); setExpanded(stations.chen,true); setExpanded(stations.li,false); setExpanded(stations.wang,false); }
+    else if(s==='parallel'){ setExpanded(stations.chen,true); setExpanded(stations.li,true); setExpanded(stations.wang,true); }
+    else if(s==='needs-ceo'){ document.getElementById('decisionBanner').hidden=false; setExpanded(stations.li,true); setExpanded(stations.chen,false); setExpanded(stations.wang,false); }
+    else { /* default */ setExpanded(stations.chen,true); setExpanded(stations.li,false); setExpanded(stations.wang,false); }
+  }
+  document.querySelectorAll('.state-bar button[data-state]').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.state-bar button[data-state]').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      applyState(b.getAttribute('data-state'));
+    });
+  });
+
+  /* Theme toggle */
+  var themes=['dark','light','system']; var ti=0;
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    ti=(ti+1)%themes.length; document.documentElement.setAttribute('data-theme', themes[ti]);
+  });
+})();
+</script>
+</body>
+</html>

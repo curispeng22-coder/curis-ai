@@ -1,0 +1,260 @@
+<!doctype html>
+<!--
+  Curis 产品覆盖探索 · D. 人才市场
+  覆盖：D1 首页(专家/技能/连接器) · D2 专家详情(Focus) · D3 招募流程 · D4 Skill/Connector 详情与安装 · D5 已安装状态
+-->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人才市场 · Curis</title>
+<link rel="stylesheet" href="../_system/tokens.css">
+<link rel="stylesheet" href="../_system/shell.css">
+<script src="../_system/theme.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-3); line-height: var(--ui-lh); -webkit-font-smoothing: antialiased; }
+.ws { display: grid; grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.ws.with-context { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.with-utility { grid-template-columns: var(--ui-sidebar-w) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.with-context.with-utility { grid-template-columns: var(--ui-sidebar-w) var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+.ws.nav-collapsed.with-context { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr); }
+.ws.nav-collapsed.with-utility { grid-template-columns: 0 minmax(0, 1fr) var(--util-w, 360px); }
+.ws.nav-collapsed.with-context.with-utility { grid-template-columns: 0 var(--ctx-w, 260px) minmax(0, 1fr) var(--util-w, 360px); }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.pane-header { height: var(--ui-topbar-h); flex: 0 0 var(--ui-topbar-h); display: flex; align-items: center; gap: var(--ui-sp-2); padding: 0 var(--ui-sp-3); border-bottom: 1px solid var(--ui-line); background: var(--ui-surface); }
+.pane-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.pane-nav { background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.pane-nav > .pane-content { padding: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.pane-context { background: var(--ui-surface-2); border-right: 1px solid var(--ui-line); }
+.pane-main { background: var(--ui-bg); }
+.pane-main > .pane-content { padding: var(--ui-sp-6); }
+.pane-utility { background: var(--ui-utility-bg, #181a1d); border-left: 1px solid var(--ui-line); }
+.pane-utility > .pane-content { padding: var(--ui-sp-4); }
+.traffic { display: flex; gap: 6px; align-items: center; } .traffic i { width: 11px; height: 11px; border-radius: var(--ui-r-pill); background: var(--ui-line); display: inline-block; }
+.nav-header-actions { margin-left: auto; display: flex; gap: var(--ui-sp-1); }
+.pane-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-ctl-h); height: var(--ui-ctl-h); border: 1px solid var(--ui-line); background: var(--ui-surface-2); color: var(--ui-text-2); border-radius: var(--ui-r-sm); cursor: pointer; transition: all 150ms ease; }
+.pane-btn:hover { background: var(--ui-bg); color: var(--ui-text); } .pane-btn svg { width: 18px; height: 18px; }
+.main-t1 { display: none; } .ws.nav-collapsed .main-t1 { display: inline-flex; }
+.main-t3 { display: inline-flex; } .ws.with-utility .main-t3 { display: none; }
+.util-t3 { display: none; } .ws.with-utility .util-t3 { display: inline-flex; }
+.crumbs { display: flex; align-items: center; gap: var(--ui-sp-1); font-size: var(--ui-fs-2); color: var(--ui-text-2); }
+.crumbs a { color: var(--ui-text-2); text-decoration: none; } .crumbs a:hover { color: var(--ui-text); } .crumbs .sep { opacity: .5; }
+.spacer { flex: 1; }
+.brand { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-1) var(--ui-sp-2) var(--ui-sp-3); font-weight: 650; font-size: var(--ui-fs-3); }
+.brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: var(--ui-r-xs); background: var(--ui-accent); color: var(--ui-action-primary-fg); font-weight: 700; font-size: var(--ui-fs-2); }
+.nav-zones { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); text-decoration: none; font-size: var(--ui-fs-3); transition: background 150ms ease, color 150ms ease; min-height: var(--ui-tap-min); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.nav-item:hover { background: var(--ui-surface-2); color: var(--ui-text); }
+.nav-item.active { background: var(--ui-surface-2); color: var(--ui-text); font-weight: 600; }
+.nav-item .ico { width: 18px; flex: 0 0 18px; display: grid; place-items: center; opacity: .85; } .nav-item .ico svg { width: 18px; height: 18px; }
+.nav-children { display: flex; flex-direction: column; gap: 2px; padding-left: var(--ui-sp-4); border-left: 1px solid var(--ui-line); margin-left: var(--ui-sp-2); }
+.nav-spacer { flex: 1 1 auto; min-height: var(--ui-sp-4); }
+.nav-user { border-top: 1px solid var(--ui-line); padding-top: var(--ui-sp-2); display: flex; flex-direction: column; gap: 2px; }
+.page-head { margin-bottom: var(--ui-sp-6); }
+.page-head h1 { font-size: var(--ui-fs-6); line-height: 1.15; font-weight: 650; margin: 0 0 var(--ui-sp-2); }
+.page-head .sub { color: var(--ui-text-2); font-size: var(--ui-fs-2); }
+.section { margin-bottom: var(--ui-sp-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-sp-3); margin-bottom: var(--ui-sp-3); }
+.section-title { font-size: var(--ui-fs-5); font-weight: 650; margin: 0; }
+.grid { display: grid; gap: var(--ui-sp-4); }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+@media (max-width: 880px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: var(--ui-sp-1); border-bottom: 1px solid var(--ui-line); }
+.tab { padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-3); color: var(--ui-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; border-top: 0; border-left: 0; border-right: 0; font: inherit; }
+.tab.active { color: var(--ui-text); border-bottom-color: var(--ui-accent); font-weight: 600; }
+.tab-panel { display: none; padding-top: var(--ui-sp-4); } .tab-panel.active { display: block; }
+.ctx-list { display: flex; flex-direction: column; gap: 2px; }
+.ctx-item { display: flex; align-items: center; gap: var(--ui-sp-2); padding: var(--ui-sp-2); border-radius: var(--ui-r-sm); color: var(--ui-text-2); font-size: var(--ui-fs-2); cursor: pointer; }
+.ctx-item:hover { background: var(--ui-surface); color: var(--ui-text); } .ctx-item.active { background: var(--ui-surface); color: var(--ui-text); }
+.ctx-head { font-size: var(--ui-fs-1); color: var(--ui-text-2); padding: var(--ui-sp-2) var(--ui-sp-2) var(--ui-sp-1); }
+.cap-card { border: 1px solid var(--ui-line); border-radius: var(--ui-r-md); padding: var(--ui-sp-4); background: var(--ui-surface); display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.cap-card .name { font-weight: 650; font-size: var(--ui-fs-3); }
+.result-ref { display: inline-flex; align-items: center; gap: var(--ui-sp-1); color: var(--ui-accent); font-size: var(--ui-fs-2); cursor: pointer; text-decoration: none; border: 1px solid var(--ui-line); background: var(--ui-surface-2); padding: var(--ui-sp-1) var(--ui-sp-2); border-radius: var(--ui-r-sm); }
+.detail-field { margin-bottom: var(--ui-sp-3); } .detail-field .k { font-size: var(--ui-fs-1); color: var(--ui-text-2); margin-bottom: var(--ui-sp-1); } .detail-field .v { font-size: var(--ui-fs-3); }
+.dl { display: flex; flex-direction: column; gap: var(--ui-sp-2); }
+.dl-row { display: flex; justify-content: space-between; gap: var(--ui-sp-3); padding: var(--ui-sp-2) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-2); }
+.dl-row .k { color: var(--ui-text-2); }
+.muted { color: var(--ui-text-2); }
+.tag { display: inline-flex; align-items: center; padding: 2px var(--ui-sp-2); border-radius: var(--ui-r-pill); font-size: var(--ui-fs-1); background: var(--ui-surface-2); border: 1px solid var(--ui-line); color: var(--ui-text-2); }
+.steps { display: flex; gap: var(--ui-sp-2); margin-bottom: var(--ui-sp-4); }
+.step { flex: 1; border: 1px solid var(--ui-line); border-radius: var(--ui-r-sm); padding: var(--ui-sp-2) var(--ui-sp-3); font-size: var(--ui-fs-1); color: var(--ui-text-2); }
+.step.active { border-color: var(--ui-accent); color: var(--ui-text); }
+</style>
+</head>
+<body>
+<div class="ws" id="ws">
+  <aside class="pane pane-nav" id="navPane">
+    <header class="pane-header">
+      <div class="traffic"><i></i><i></i><i></i></div>
+      <div class="nav-header-actions">
+        <button class="pane-btn" title="搜索" data-open-utility aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="pane-btn" title="收起导航" data-toggle="nav" aria-label="收起导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      </div>
+    </header>
+    <div class="pane-content">
+      <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+      <nav class="nav-zones" aria-label="主导航">
+        <a class="nav-item" href="01-ceo-desk.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span>首页 / CEO 工作台</span></a>
+        <a class="nav-item" href="02-business-space.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span>业务空间</span></a>
+        <div class="nav-children">
+          <a class="nav-item" href="08-rd-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/><path d="M13 6l-2 12"/></svg></span><span>研发办公室</span></a>
+          <a class="nav-item" href="09-xhs-workspace.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h7M9 17h5"/></svg></span><span>小红书运营办公室</span></a>
+        </div>
+        <a class="nav-item" href="03-org-center.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 8.4v4M12 12.4 6 16M12 12.4 18 16"/></svg></span><span>组织中心</span></a>
+        <a class="nav-item active" href="04-talent-market.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><span>人才市场</span></a>
+        <a class="nav-item" href="05-library.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a2 2 0 0 1 2-2h6v18H7a2 2 0 0 0-2 2z"/><path d="M19 4a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 1 2 2z"/></svg></span><span>资料库</span></a>
+        <a class="nav-item" href="06-meeting.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></span><span>会议</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <a class="nav-item" href="07-settings.html"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9 19 19M19 5l-2.1 2.1M7.1 16.9 5 19"/></svg></span><span>设置</span></a>
+        <button class="nav-item" type="button"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2-2.6 3.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg></span><span>帮助与反馈</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="pane pane-context" id="ctxPane">
+    <header class="pane-header"><div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">分类 / 推荐</div><div class="spacer"></div><button class="pane-btn" title="收起上下文" data-toggle="context" aria-label="收起上下文"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button></header>
+    <div class="pane-content">
+      <div class="ctx-head">类型</div>
+      <div class="ctx-list">
+        <div class="ctx-item active">专家</div>
+        <div class="ctx-item">技能</div>
+        <div class="ctx-item">连接器</div>
+      </div>
+      <div class="ctx-head">推荐</div>
+      <div class="ctx-list">
+        <div class="ctx-item">架构师（研发）</div>
+        <div class="ctx-item">内容策划（增长）</div>
+        <div class="ctx-item">Connector · 小红书</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="pane pane-main" id="mainPane">
+    <header class="pane-header">
+      <button class="pane-btn main-t1" title="展开导航" data-toggle="nav" aria-label="展开导航"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <button class="pane-btn" title="上下文面板" data-toggle="context" aria-label="上下文面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      <div class="crumbs"><a href="index.html">Curis</a><span class="sep">/</span><span>人才市场</span></div>
+      <div class="spacer"></div>
+      <button class="pane-btn main-t3" title="专业工具面板" data-toggle="utility" aria-label="专业工具面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="page-head">
+        <h1>人才市场</h1>
+        <div class="sub">D. 专家 / 技能 / 连接器 浏览、详情、招募流程、已安装状态</div>
+      </div>
+
+      <div class="tabs" data-tab-group="tm">
+        <button class="tab active" data-tab="browse">浏览</button>
+        <button class="tab" data-tab="recruit">招募流程</button>
+        <button class="tab" data-tab="installed">已安装</button>
+      </div>
+
+      <!-- D1 浏览 -->
+      <div class="tab-panel active" data-tab-panel="tm" data-tab-id="browse">
+        <div class="tabs" data-tab-group="tmtype" style="margin-top:var(--ui-sp-4);border-bottom:0">
+          <button class="tab active" data-tab="expert">专家</button>
+          <button class="tab" data-tab="skill">技能</button>
+          <button class="tab" data-tab="connector">连接器</button>
+        </div>
+        <div class="tab-panel active" data-tab-panel="tmtype" data-tab-id="expert">
+          <div class="grid cols-auto" style="margin-top:var(--ui-sp-3)">
+            <div class="cap-card"><div class="name">架构师 · 林涛</div><div class="helper">职业方向：系统架构 / 技术选型 · 擅长：高并发、微服务 · 来源：内置专家库</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看详情 ▸</button></div>
+            <div class="cap-card"><div class="name">内容策划 · 李翔</div><div class="helper">职业方向：内容策略 / 选题 · 擅长：小红书种草 · 来源：人才市场</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看详情 ▸</button></div>
+            <div class="cap-card"><div class="name">数据分析师 · 何川</div><div class="helper">职业方向：增长分析 / BI · 擅长：归因、看板 · 来源：人才市场</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看详情 ▸</button></div>
+          </div>
+        </div>
+        <div class="tab-panel" data-tab-panel="tmtype" data-tab-id="skill">
+          <div class="grid cols-auto" style="margin-top:var(--ui-sp-3)">
+            <div class="cap-card"><div class="name">技术文档生成</div><div class="helper">适用岗位：开发 / 架构 · 依赖：代码读取 · 版本 v2.1</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看 / 安装 ▸</button></div>
+            <div class="cap-card"><div class="name">竞品监测</div><div class="helper">适用岗位：运营 / 策划 · 依赖：Connector · 小红书 · 版本 v1.4</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看 / 安装 ▸</button></div>
+          </div>
+        </div>
+        <div class="tab-panel" data-tab-panel="tmtype" data-tab-id="connector">
+          <div class="grid cols-auto" style="margin-top:var(--ui-sp-3)">
+            <div class="cap-card"><div class="name">Connector · 小红书</div><div class="helper">连接范围：笔记发布 / 数据回传 · 风险：需账号授权 (UNK)</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看 / 授权 ▸</button></div>
+            <div class="cap-card"><div class="name">Connector · GitHub</div><div class="helper">连接范围：代码读写 / CI · 风险：需 OAuth</div><button class="result-ref" data-open-utility style="align-self:flex-start;margin-top:var(--ui-sp-2)">查看 / 授权 ▸</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D3 招募流程 -->
+      <div class="tab-panel" data-tab-panel="tm" data-tab-id="recruit">
+        <div class="steps" style="margin-top:var(--ui-sp-4)">
+          <div class="step active">1 · 选择专家</div>
+          <div class="step">2 · 身份 / 岗位 / 责任</div>
+          <div class="step">3 · 业务 / Workspace</div>
+          <div class="step">4 · 能力 / 资料 / 授权</div>
+          <div class="step">5 · 确认</div>
+        </div>
+        <div class="card">
+          <div class="card-title">招募：架构师 · 林涛</div>
+          <div class="dl" style="margin-top:var(--ui-sp-3)">
+            <div class="dl-row"><span class="k">公司身份 / 岗位</span><span>研发办公室 · 架构师</span></div>
+            <div class="dl-row"><span class="k">责任</span><span>系统架构、技术评审</span></div>
+            <div class="dl-row"><span class="k">归属业务 / Workspace</span><span>产品平台 · 研发办公室</span></div>
+            <div class="dl-row"><span class="k">能力 / 资料 / 授权</span><span>Codex · 架构决策记录 · 代码读写</span></div>
+          </div>
+          <div style="margin-top:var(--ui-sp-3)"><button class="btn btn-primary">确认招募</button> <button class="btn btn-ghost">上一步</button></div>
+        </div>
+      </div>
+
+      <!-- D5 已安装 -->
+      <div class="tab-panel" data-tab-panel="tm" data-tab-id="installed">
+        <div class="grid cols-2" style="margin-top:var(--ui-sp-4)">
+          <div class="cap-card"><div class="name">已招募专家</div><div class="helper" style="margin-top:var(--ui-sp-2)">林涛（架构师）· 陈真（运营）· 苏晴（视觉）· 何川（数据）· 周岚（开发）— 健康：正常</div></div>
+          <div class="cap-card"><div class="name">已安装 Skill / Connector</div><div class="helper" style="margin-top:var(--ui-sp-2)">技术文档生成 v2.1 · 竞品监测 v1.4 · Connector 小红书（已授权）· Connector GitHub（已授权）</div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <aside class="pane pane-utility" id="utilPane">
+    <header class="pane-header">
+      <div class="pane-title" style="font-size:var(--ui-fs-3);font-weight:600">专家 / 能力详情</div>
+      <div class="spacer"></div>
+      <button class="pane-btn" title="最大化" aria-label="最大化"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="pane-btn util-t3" title="收起面板" data-toggle="utility" aria-label="收起面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </header>
+    <div class="pane-content">
+      <div class="detail-field"><div class="k">身份</div><div class="v">架构师 · 林涛</div></div>
+      <div class="detail-field"><div class="k">擅长</div><div class="v">系统架构、技术选型、微服务、高并发</div></div>
+      <div class="detail-field"><div class="k">能力</div><div class="v"><span class="tag">Codex</span> <span class="tag">技术评审</span> <span class="tag">架构决策</span></div></div>
+      <div class="detail-field"><div class="k">案例</div><div class="v">登录模块重构、订单服务拆分（示例）</div></div>
+      <div class="detail-field"><div class="k">来源</div><div class="v">内置专家库</div></div>
+      <div class="detail-field"><div class="k">招募</div><div class="v"><button class="btn btn-primary" style="margin-top:var(--ui-sp-1)">招募到研发办公室</button></div></div>
+      <div class="detail-field"><div class="k">许可 / 授权</div><div class="v"><span class="tag">MIT（示例）</span> <span class="tag">需账号授权</span></div></div>
+    </div>
+  </aside>
+</div>
+<script>
+(function () {
+  var shell = document.getElementById('ws');
+  function on(sel, fn) { document.querySelectorAll(sel).forEach(function (el) { el.addEventListener('click', fn); }); }
+  on('[data-toggle="nav"]', function () { shell.classList.toggle('nav-collapsed'); });
+  on('[data-toggle="context"]', function () { shell.classList.toggle('with-context'); });
+  on('[data-toggle="utility"]', function () { shell.classList.toggle('with-utility'); });
+  on('[data-open-utility]', function () { shell.classList.add('with-utility'); });
+  on('[data-tab-group]', function () {
+    var group = this, name = group.getAttribute('data-tab-group');
+    group.querySelectorAll('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        group.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-tab-panel="' + name + '"]').forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-tab-id') === btn.getAttribute('data-tab'));
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

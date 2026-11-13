@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-09-22T06:33:13.982Z",
+  "cleanRunStartedAt": "2026-09-22T06:22:59.851Z",
+  "errors": [],
+  "warnings": [],
+  "resolvedDuringTesting": [
+    {
+      "level": "error",
+      "message": "TypeError: filters.metrics is not iterable\n    at metricRows (http://127.0.0.1:8768/business.js:3:82)\n    at businessStats (http://127.0.0.1:8768/business.js:5:34)\n    at Object.overview (http://127.0.0.1:8768/business.js:6:218)\n    at render (http://127.0.0.1:8768/app.js:32:34)\n    at http://127.0.0.1:8768/app.js:130:1",
+      "timestamp": "2026-09-22T06:14:24.467Z",
+      "url": "http://127.0.0.1:8768/business.js"
+    }
+  ],
+  "note": "Initial filters.metrics typo fixed; clean rerun covered overview, market, reference, direction, release, performance, learning. Manual sample data, no external publishing."
+}

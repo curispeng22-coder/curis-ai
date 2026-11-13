@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="stylesheet" href="_system/tokens.css">
+    <link rel="stylesheet" href="_system/shell.css">
+    <script src="_system/theme.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>会议工作台 · 外部合作方周会 · Curis</title>
+  <style>
+    :root { --bg:var(--ui-bg); --panel:var(--ui-surface); --panel2:var(--ui-surface-2); --text:var(--ui-text); --muted:var(--ui-text-2); --faint:var(--ui-text-3); --line:var(--ui-line); --primary:var(--ui-action-primary-bg); --primaryText:var(--ui-action-primary-fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); background:var(--bg);--bg-base-default:var(--ui-bg)}
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--bg); }
+    .shell { display:flex; min-height:100vh; }
+    .sidebar { width:220px; flex:0 0 220px; padding:var(--ui-sp-5) var(--ui-sp-3); border-right:1px solid var(--line); background:#1c1d20; }
+    .brand { display:flex; align-items:center; gap:var(--ui-sp-2); padding:0 var(--ui-sp-2) var(--ui-sp-6); font-size: var(--ui-fs-3); font-weight:650; }
+    .brand-mark { display:grid; place-items:center; width:22px; height:22px; border-radius:var(--ui-r-xs); color:var(--primaryText); background:var(--primary); font-size: var(--ui-fs-1); font-weight:800; }
+    .nav-label { margin:0 var(--ui-sp-2) var(--ui-sp-2); color:var(--faint); font-size: var(--ui-fs-1); letter-spacing:.06em; text-transform:uppercase; }
+    .nav { display:grid; gap:3px; }
+    .nav-item { display:flex; align-items:center; gap:var(--ui-sp-2); padding:var(--ui-sp-2) var(--ui-sp-2); color:var(--muted); border-radius:var(--ui-r-sm); font-size: var(--ui-fs-1); text-decoration:none; }
+    .nav-item:hover,.nav-item.active { color:var(--text); background:rgba(224,226,242,.06); }
+    .nav-icon { width:14px; color:var(--faint); text-align:center; }
+    .nav-item.active .nav-icon { color:var(--text); }
+    .sidebar-foot { position:absolute; bottom:20px; width:190px; color:var(--faint); font-size: var(--ui-fs-1); line-height:1.5; }
+    .main { min-width:0; flex:1; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:var(--ui-sp-4); height: var(--ui-topbar-h); padding:0 var(--ui-sp-7); border-bottom:1px solid var(--line); }
+    .crumbs { display:flex; align-items:center; gap:var(--ui-sp-2); color:var(--muted); font-size: var(--ui-fs-1); }
+    .crumbs strong { color:var(--text); font-weight:600; }
+    .top-meta { color:var(--faint); font-size: var(--ui-fs-1); }
+    .content { max-width:1240px; margin:0 auto; padding:var(--ui-sp-7); }
+    .page-header { display:flex; justify-content:space-between; gap:var(--ui-sp-5); margin-bottom:var(--ui-sp-6); }
+    .eyebrow { margin:0 0 var(--ui-sp-2); color:var(--muted); font-size: var(--ui-fs-1); letter-spacing:.08em; text-transform:uppercase; }
+    h1 { margin:0; font-size: var(--ui-fs-6); font-weight:620; letter-spacing:-.02em; }
+    .subtitle { max-width:650px; margin:var(--ui-sp-2) 0 0; color:var(--muted); font-size: var(--ui-fs-1); line-height:1.6; }
+    .status { align-self:flex-start; padding:var(--ui-sp-1) var(--ui-sp-2); color:#a8c8b8; border:1px solid rgba(168,200,184,.25); border-radius:var(--ui-r-pill); font-size: var(--ui-fs-1); white-space:nowrap; }
+    @media (max-width:760px) { .sidebar { width:64px; flex-basis:64px; padding:var(--ui-sp-4) var(--ui-sp-2); } .brand span,.nav-label,.nav-item span:not(.nav-icon),.sidebar-foot { display:none; } .nav-item { justify-content:center; } .topbar,.content { padding-left:var(--ui-sp-4); padding-right:var(--ui-sp-4); } .page-header { flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+      <aside class="sidebar" role="navigation" aria-label="主导航">
+    <div class="brand"><span class="brand-mark">C</span><span>Curis</span></div>
+    <nav class="nav">
+      <p class="nav-label">公司</p>
+      <a class="nav-item" href="ceo-desk.html"><span class="nav-icon">◆</span><span>CEO 工作台</span></a>
+      <a class="nav-item" href="operating.html"><span class="nav-icon">◎</span><span>经营</span></a>
+      <a class="nav-item" href="business.html"><span class="nav-icon">◇</span><span>业务</span></a>
+      <a class="nav-item" href="ai-organization.html"><span class="nav-icon">□</span><span>AI 团队</span></a>
+      <p class="nav-label">工作空间</p>
+      <a class="nav-item" href="workspace-portal.html"><span class="nav-icon">▣</span><span>工作空间门户</span></a>
+      <a class="nav-item" href="workspace-runtime-software.html"><span class="nav-icon">⌨</span><span>软件工作室</span></a>
+      <a class="nav-item" href="workspace-runtime-shortvideo.html"><span class="nav-icon">▶</span><span>短视频</span></a>
+      <a class="nav-item" href="workspace-runtime-xhs.html"><span class="nav-icon">✎</span><span>小红书</span></a>
+      <p class="nav-label">经营工具</p>
+      <a class="nav-item active" href="meeting.html"><span class="nav-icon">⌘</span><span>会议工作台</span></a>
+      <a class="nav-item" href="decision-room.html"><span class="nav-icon">⚖</span><span>决策室</span></a>
+      <p class="nav-label">公司资源</p>
+      <a class="nav-item" href="assets.html"><span class="nav-icon">▦</span><span>成果库</span></a>
+      <a class="nav-item" href="knowledge.html"><span class="nav-icon">§</span><span>知识库</span></a>
+      <a class="nav-item" href="finance.html"><span class="nav-icon">¥</span><span>财务</span></a>
+      <a class="nav-item" href="calendar.html"><span class="nav-icon">❑</span><span>日历</span></a>
+    </nav>
+    <div class="sidebar-foot">事实先于观点。<br />共识必须回到责任与结果。</div>
+  </aside>
+    <div class="main">
+      <header class="topbar">
+        <div class="crumbs"><span>Curis</span><span>/</span><span>经营</span><span>/</span><strong>会议工作台</strong></div>
+        <div class="top-meta">CEO · 本地桌面 · 助理在线</div>
+      </header>
+      <main class="content">
+        <header class="page-header">
+          <div><p class="eyebrow">11:00 · Operating Day</p><h1>外部合作方周会</h1><p class="subtitle">把必须讨论的事情留在一场有边界的对话里。AI 员工负责准备背景、标记事实与未知，CEO 负责确认最后的承诺和决议。</p></div>
+          <span class="status">进行中 · 3 位参与者</span>
+        </header>
+        <div class="meeting-anchor"></div>
+      </main>
+    </div>
+  </div>
+  <script src="_system/canonical-nav.js"></script><script src="curis-prototype.js"></script>
+  <style id="curis-frozen-patch">
+  /* Frozen alignment patch (Palette-B) — single source = _system/tokens.css (--ui-*) */
+  /* root vars merged into head single source (--ui-*) */
+  .theme-switch { display: inline-flex; gap: var(--ui-sp-1); align-items: center; }
+  .theme-btn {
+    border: 1px solid var(--ui-line); background: var(--ui-surface-2);
+    color: var(--ui-text-2); border-radius: var(--ui-r-xs); padding: var(--ui-sp-1) var(--ui-sp-2);
+    font-size: var(--ui-fs-1); cursor: pointer; transition: all 150ms ease;
+  }
+  .theme-btn:hover { color: var(--ui-text); }
+  .theme-btn.active { background: var(--ui-accent); color: var(--ui-action-primary-fg); border-color: var(--ui-accent); }
+  .sidebar, .topbar { background: var(--ui-surface); }
+  .sidebar { border-right-color: var(--ui-line); }
+  .topbar { border-bottom-color: var(--ui-line); }
+  </style>
+  <script>
+  (function () {
+    if (document.querySelector('[data-curis-theme]')) return;
+    var sw = document.createElement('div');
+    sw.className = 'theme-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', '主题切换');
+    var labels = { dark: '深色', light: '浅色', system: '自动' };
+    ['dark', 'light', 'system'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'theme-btn';
+      b.setAttribute('data-curis-theme', t);
+      b.textContent = labels[t];
+      sw.appendChild(b);
+    });
+    var host = document.querySelector('.topbar') || document.querySelector('.sidebar');
+    if (host) host.appendChild(sw);
+  })();
+  </script>
+</body>
+</html>

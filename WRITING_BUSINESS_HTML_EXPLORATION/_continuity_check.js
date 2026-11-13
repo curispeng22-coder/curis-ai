@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const views={};['learning.library','learning.detail','audience.performance','audience.entry','audience.revenue'].forEach(k=>views[k]={});
+const WB={esc:String,ui:{},analysisDimensions:[['rhythm','节奏']],S:{learnings:[]},on:{},act:{},views,book:()=>({platform:'未验证平台'}),clone:x=>JSON.parse(JSON.stringify(x)),now:()=> 'test'};
+vm.runInNewContext(fs.readFileSync(__dirname+'/views-reflection.js','utf8'),{WB});
+assert(WB.validObservation('','人'));assert(WB.validObservation('0','人'));assert(!WB.validObservation('-1','人'));assert(!WB.validObservation('101','%'));assert(!WB.validObservation('NaN','人'));
+const a={id:'A',bookId:'B',dimensions:{rhythm:{method:'不机械复用'}}};assert.equal(WB.confirmDimension(a,'rhythm'),null);
+Object.assign(a.dimensions.rhythm,{observation:'观察',evidence:'来源',hypothesis:'可能原因',alternatives:'其他解释',scope:'本书',kind:'负向'});
+const l=WB.confirmDimension(a,'rhythm');assert.equal(l.accepted,'author');assert.equal(l.verified,0);assert.equal(l.used,0);assert.equal(l.bookId,'B');assert.equal(l.kind,'负向');
+a.dimensions.rhythm.updatedAt='later';assert.equal(WB.confirmDimension(a,'rhythm'),l);assert.equal(WB.S.learnings.length,1);
+a.dimensions.rhythm.method='修改后的判断';assert.equal(l.sourceSnapshot.method,'不机械复用');
+console.log('PASS: unknown/zero/numeric boundaries; evidence gate; explicit acceptance; no fake verification; immutable source; repeat-confirm idempotency');

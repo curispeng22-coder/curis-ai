@@ -1,0 +1,22 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('path'),crypto=require('crypto');
+const dir=__dirname,html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
+const ctx={addEventListener(){},console,Date,Map,Set,setTimeout,clearTimeout,indexedDB:{open:()=>({})},document:{addEventListener(){},getElementById(){return null;}}};ctx.window=ctx;vm.createContext(ctx);
+for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))vm.runInContext(m[1],ctx);
+const C=ctx.CG,w=C.work('W-202'),st=C.exCheck.state; C.render=()=>{};C.toast=()=>{};
+const act=(a,k='')=>C.H[a]({dataset:{k}});
+const c={scope:'step',area:'production',workId:w.id,empId:'e-xu',step:'script'};
+assert.equal(st('script').st,'review');for(const k of ['script','dh','synth','edit','sub','qa']){C.exCheck.select(k);assert(C.page().main.length>100);}
+act('ex-pass');assert.notEqual(w.status,'ready');act('ex-finish','synth');assert(!/^v\d/.test(st('synth').artV));
+let before=JSON.stringify(C.WF[w.id]);C.discussionResult('先不要改，检查前 3 秒',{...c,empId:'e-gao',step:'synth'});assert.equal(JSON.stringify(C.WF[w.id]),before);
+const r=C.discussionResult('重写前 3 秒',c);assert.equal(st('script').artV,'v4');assert(r.result);assert.equal(st('dh').st,'done');assert(!st('dh').affects);assert(st('synth').stale);assert.notEqual(st('script').versions[0].content[0][1],st('script').versions[1].content[0][1]);
+act('ex-accept');assert.equal(st('synth').st,'working');assert.equal(st('synth').inputVersions.script,'v4');
+for(const k of ['synth','edit','sub'])act('ex-finish',k);assert(C.exCheck.qaEligible());
+act('ex-check');assert.equal(w.exQA.decision,'REWORK');
+C.openConv=o=>{C.S.conv={key:'test'};C.SESS.test={ctx:o,msgs:[]};};act('ex-rework');assert.equal(C.work('W-202-R1').owner,'e-xu');act('ex-rework');assert.equal(C.WORKS.filter(x=>x.id==='W-202-R1').length,1);
+C.discussionResult('修改当前版本：补充样本限定条件',c);assert.equal(st('script').artV,'v5');assert.equal(st('dh').artV,'v2');assert(!st('dh').stale);
+C.exResultAction('ex-continue','script|v4');assert.equal(st('script').st,'review');act('ex-accept');assert.equal(C.work('W-202-R1').status,'done');for(const k of ['synth','edit','sub'])act('ex-finish',k);
+act('ex-check');assert.equal(w.exQA.decision,'NEEDS_REVIEW');act('ex-pass');assert.notEqual(w.status,'ready');w.exQA.human=true;act('ex-pass');assert.equal(w.status,'ready');assert.equal(w.exQA.decision,'PASS');assert.equal(st('synth').inputVersions.script,'v5');assert.equal(st('synth').artV,'v2');assert(st('script').versions.some(v=>v.v==='v3'));
+const scriptHistory=st('script').versions;assert(scriptHistory.every(v=>v.step==='script'));C.discussionResult('重写开头',c);assert.notEqual(w.status,'ready');assert.equal(w.exQA.decision,'BLOCKED');
+const specific={scope:'employee',empId:'e-gao',workId:w.id,area:'production',step:'synth'};assert.equal(C.routeConv(specific).empId,'e-gao');assert(C.discussionResult('重写脚本',specific).say.includes('需要徐白'));
+const hashes=JSON.parse(fs.readFileSync(path.join(dir,'baseline-sha256.json'))),changed=[];for(const [name,hash] of Object.entries(hashes)){const p=path.join(dir,'..',name);if(!fs.existsSync(p)||crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')!==hash)changed.push(name);}assert.deepEqual(changed,[]);
+console.log('PASS: read-only discussion; v3/v4/v5 history; dependency-only impact; same Employee; idempotent QA rework Work; fresh input reprocessing; human gate; PASS→Ready; revision revokes PASS; 46 original files unchanged');

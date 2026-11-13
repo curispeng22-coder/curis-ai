@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "writing.book/v1",
+  "title": "写作作品",
+  "type": "object",
+  "initialState": "DRAFT",
+  "required": [
+    "title",
+    "status"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "作品名称",
+      "maxLength": 160
+    },
+    "status": {
+      "type": "string",
+      "title": "作品记录状态",
+      "enum": [
+        "DRAFT",
+        "ARCHIVED"
+      ],
+      "default": "DRAFT"
+    }
+  }
+}

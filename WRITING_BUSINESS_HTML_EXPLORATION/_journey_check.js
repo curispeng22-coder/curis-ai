@@ -1,0 +1,15 @@
+// Isolated contract tests: no real localStorage or browser data.
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const books=[{id:'B-01',title:'A'},{id:'B-12',title:'B'}],cs={};
+const WB={reviewRuleSnapshot:()=>"rules",ui:{},esc:String,views:{},register(k,v){this.views[k]=v;},on:{},act:{},S:{books,__scope:{bookId:'B-01'},__ui:{},chapters:{ch1:{bookId:'B-01'}},discussProps:{}},clone:x=>JSON.parse(JSON.stringify(x)),now:()=> 'test',save:()=>{},render:()=>{},toast:()=>{},book:id=>books.find(b=>b.id===id),craftOf(id){return cs[id]||(cs[id]={positioning:{},characters:[{id:'P',weakness:'警惕'}],world:[],outline:[],arc:{},scenes:{}});},chapterFrame:()=>'',bookHome:()=>'',msOf:()=>null};
+const context=vm.createContext({WB,document:{getElementById:()=>null}});
+for(const file of ['views-craft.js','views-journey.js'])vm.runInContext(fs.readFileSync(__dirname+'/'+file,'utf8'),context);
+assert(WB.validWritingPlan({total:100000,chapter:4000}));assert(!WB.validWritingPlan({total:0,chapter:4000}));assert(!WB.validWritingPlan({total:100000,chapter:4000,minimum:5000,minimumSource:'记录'}));assert(!WB.validWritingPlan({total:100000,chapter:4000,minimum:1000}));
+assert.equal(WB.writingScale({total:100000,chapter:4000}).chapters,25);assert.equal(WB.writingScale({total:1000000,chapter:4000}).chapters,250);assert.notEqual(WB.writingScale({total:100000,chapter:4000}).text,WB.writingScale({total:3000000,chapter:4000}).text);
+let r=WB.discussEngine('E-01','B-01','题材：悬疑；全书100万字，每章4000字。',{}),p=WB.S.discussProps[r.propId];assert.equal(p.items.find(x=>x.key==='total').after,'1000000');p.items.forEach(i=>assert(WB.discussApply(p,i)));assert.equal(WB.S.__journeyDrafts['B-01'].chapter,'4000');assert.equal(WB.craftOf('B-01').positioning.writingPlan,undefined,'discussion fills preparation, not confirmed plan');
+r=WB.discussEngine('E-01','char:B-01:P:weakness','改为：警惕但愿意救人',{});p=WB.S.discussProps[r.propId];assert(WB.discussApply(p,p.items[0]));assert.equal(WB.craftOf('B-01').characters[0].weakness,'警惕但愿意救人');assert(!WB.discussApply(p,p.items[0]),'old before-text cannot overwrite newer state');assert.equal(WB.craftOf('B-12').characters[0].weakness,'警惕','other book unchanged');
+// Exercise actual key/resolver source, including dynamically created book IDs.
+const app=fs.readFileSync(__dirname+'/app.js','utf8');const key=app.slice(app.indexOf('  function convKey('),app.indexOf('  function keepConvDraft('));const resolver=app.slice(app.indexOf('  function objBookId('),app.indexOf('  /* 完整 Conversation',app.indexOf('  function objBookId(')));
+vm.runInContext('var S=WB.S;var book=WB.book;'+resolver+key,context);
+assert.equal(vm.runInContext("convKey('E-01','char:B-12:P:weakness')",context),vm.runInContext("convKey('E-01','outline:B-12:O:purpose')",context));assert.notEqual(vm.runInContext("convKey('E-01','B-01')",context),vm.runInContext("convKey('E-01','B-12')",context));
+console.log('PASS: plan validation, scale differences, discussion→preparation, local confirmation, stale guard, book isolation, shared book conversation keys');

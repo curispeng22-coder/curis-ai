@@ -1,0 +1,31 @@
+{
+  "packageId": "com.curis.local.writing-authoring",
+  "version": "0.1.0",
+  "digest": "2f4c37d6b579d8db31f88f7626acec44b9f630164ba8c9909e217a5f41e2d66e",
+  "decision": {
+    "path": "docs/reviews/CURIS_V1_DELIVERY_WRITING_CHAPTER_REVIEW.md",
+    "sha256": "efb41f8a01b71a5c4dfa271811d6671dd70b7ce9909aa97388adea83345fb4da",
+    "owner": "Curis V1 Delivery Owner",
+    "approvalSourceThread": "019ff1ba-f696-7002-8a6c-2b357ded819c",
+    "approval": "CEO 同意，批准",
+    "candidateSHA256": "9890cc7f086b78e6f3fdb795a25d6dbd267eed3391465cc634aa027c2e3878c7"
+  },
+  "approvedScope": [
+    "LOCAL_BOOK_CHAPTER",
+    "AUTHOR_MANUAL_FORMAL",
+    "LOCAL_DOWNLOAD"
+  ],
+  "retention": "retain-business-data-read-only",
+  "migration": "NO_AUTOMATIC_MIGRATION",
+  "support": "Exact version and validated Core/App combination only",
+  "publicRelease": false,
+  "providerFeeGrant": false,
+  "nativeAcceptance": "UNVERIFIED",
+  "entryAcceptance": "PENDING_INDEPENDENT_QA_OWNER_REVIEW",
+  "files": {
+    "manifest.json": "1c102888024e541de7f08f37d2c02ee10acc661da56f3779b43ced94049a96c2",
+    "surfaces.json": "f18dbf61bf2b945f063f1479256fabcb6cf63052fff2b6cc937e1ce9005804e6",
+    "schemas/book.json": "60397b885ffb4e8e7fd4f04b4293d4517999a82274b5bda5c38362e959ea32db",
+    "schemas/chapter.json": "e9fe9cf8f06f3da7f53c04790410029409660d906fbdefb4b2ca99a9e410239e"
+  }
+}

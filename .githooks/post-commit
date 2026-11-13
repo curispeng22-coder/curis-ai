@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch=$(git branch --show-current)
+upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null || true)
+
+if [ -z "$upstream" ]; then
+  echo "[post-commit] $branch 没有远程跟踪分支，跳过自动推送。"
+  exit 0
+fi
+
+git diff --check HEAD^ HEAD
+git push
+echo "[post-commit] 已推送 $branch -> $upstream"

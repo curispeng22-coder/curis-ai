@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Content Growth · 场景A 经营方式（中保真结构稿）</title>
+<style>
+  :root{
+    --surface-1:#ffffff; --surface-2:#f3f4f5; --bg:#eef0f1;
+    --border:#e0e3e5; --text-1:#1c2126; --text-2:#4a525a; --text-3:#8a929a;
+    --accent:#1f7a4d; --accent-soft:#e6f3ec; --warn:#b4642a; --warn-soft:#fbeede;
+    --r2:8px; --r3:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text-1);font-family:system-ui,-apple-system,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.5}
+  .topbar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface-1);border-bottom:1px solid var(--border)}
+  .lights{display:flex;gap:6px}
+  .lights i{width:10px;height:10px;border-radius:50%;background:#d3d7da;display:inline-block}
+  .nav{display:flex;gap:14px;color:var(--text-2);font-size:12px}
+  .nav b{color:var(--text-1)}
+  .shell{display:grid;grid-template-columns:200px 1fr 240px;gap:10px;padding:10px;align-items:start}
+  .pane{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:10px;min-height:300px}
+  .ph{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .main{grid-column:2}
+  .card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r3);padding:12px;margin-bottom:10px}
+  .card.hi{border-color:var(--accent);background:var(--accent-soft)}
+  .grp{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;margin:6px 0}
+  .row{display:flex;align-items:center;gap:8px}
+  .t{font-weight:600;margin:0}
+  .d{color:var(--text-2);margin:4px 0 0}
+  .btn{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r2);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text-1)}
+  .btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.sm{padding:3px 8px;font-size:11px}
+  .pill{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+  .pill.green{background:var(--accent-soft);color:var(--accent);border-color:#bfe3cf}
+  .pill.warn{background:var(--warn-soft);color:var(--warn);border-color:#f0d4b0}
+  .mini{font-size:11px;color:var(--text-3)}
+  .hide{display:none}
+  .legend{font-size:11px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r3);padding:10px;margin:10px}
+  code{background:#eef1f2;padding:1px 5px;border-radius:5px;font-size:11px}
+  .tagcg{font-size:10px;color:var(--accent);border:1px solid #bfe3cf;background:var(--accent-soft);padding:1px 6px;border-radius:999px}
+  .drill{border-left:2px solid var(--accent);padding-left:10px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="lights"><i></i><i></i><i></i></div>
+  <div class="nav"><span>业务空间</span> › <b>内容增长</b> › <span>Curis AI 经营方向</span></div>
+</div>
+
+<div class="shell">
+  <!-- Navigation Pane (SHELL·T1) -->
+  <div class="pane">
+    <div class="ph">Navigation · SHELL · T1</div>
+    <div style="font-size:12px;color:var(--text-2)">
+      六区导航固定<br/><br/>
+      · 概览<br/>
+      · <b>内容增长</b><br/>
+      · 任务<br/>
+      · 数据<br/>
+      · 设置<br/>
+      · 帮助
+    </div>
+  </div>
+
+  <!-- Main Pane (SHELL + CG) -->
+  <div class="pane main">
+    <div class="ph">Main · SHELL（承载 CG 经营策略体验）</div>
+
+    <!-- 经营方式 轻量入口（Home 顶部常驻一行） -->
+    <div class="card hi">
+      <div class="row">
+        <span class="tagcg">经营方式</span>
+        <div class="t" style="margin:0;">今天怎么运行</div>
+        <button class="btn sm accent" id="openWay" style="margin-left:auto">查看经营方式 →</button>
+      </div>
+      <div class="d">收集 3 轮 · 计划 2 条 · 抖音 20:30 / 小红书 20:00 自动发布 · 目标：建立 AI 科普影响力</div>
+    </div>
+
+    <!-- 渐进披露面板（点开后第一层摘要） -->
+    <div class="card hide" id="wayPanel">
+      <div class="row"><div class="t" style="margin:0">Curis AI 经营方向 · 经营方法</div><button class="btn sm" id="closeWay">收起</button></div>
+
+      <div class="grp">为什么这样经营</div>
+      <div class="d">目标驱动：主目标「建立 AI 科普影响力」，次目标「沉淀关注」。当前重点：把复杂 AI 工具讲成人话。</div>
+
+      <div class="grp">今天怎么运行</div>
+      <div class="d">信息收集 3 轮（09:00 / 15:00 / 21:00）· 内容生产每天 2 条 · 各账号按各自时间自动发布。</div>
+
+      <div class="grp">哪些账号有自己的特殊规则</div>
+      <div class="d">
+        抖音：每天 2 条 12:30 / 20:30（默认）<br/>
+        小红书：每天 1 篇 20:00（默认）<br/>
+        B站：周二 / 周六 19:00（默认）<br/>
+        TikTok：暂不自动发布
+      </div>
+
+      <div class="grp">最近 AI 调整过什么（留痕 · 可查看 · 可回滚 · 均在授权时间范围内）</div>
+      <div class="d">· 08-14 在时段矩阵内把抖音下午档从 12:30 微调至 12:00（依据：近 7 日该时段播放偏高）<span class="mini">（示例数据）</span> — <span class="pill green">已自动微调</span><br/>
+        · 08-10 临时为「AI 浏览器」活动期加了一个热点源（活动结束后自动降频）<span class="mini">（示例数据）</span> — <span class="pill green">已自动微调</span>
+      </div>
+
+      <div class="grp">策略建议（轻量 · 非审批）</div>
+      <div class="d">· 教程类内容收藏/关注转化更高，建议提高占比 — <span class="pill">观察中</span> · <a style="color:var(--accent)" href="#">看证据</a></div>
+
+      <div class="drill">
+        <div class="grp">下钻：单账号特殊规则（点某账号）</div>
+        <div class="d">→ 小红书：每天 1 篇 20:00；平台特殊要求：图文首图须含封面文字（Platform Facts：VERIFIED）；最近表现：收藏率周二晚偏高<span class="mini">（示例数据，仅用于说明策略学习体验）</span>。</div>
+      </div>
+
+      <div style="margin-top:10px"><button class="btn accent sm">调整经营方式</button></div>
+    </div>
+
+    <!-- 其余 Home 模块示意（沿用已批准结构） -->
+    <div class="grp">今天值得做（机会面 · 非审批队列）</div>
+    <div class="card"><div class="t" style="margin:0">🔥 AI 浏览器正在改变办公方式 — 值得做</div><div class="d">符合经营方向，已自动进入制作。点「做这个」也可主动采用。</div></div>
+
+    <div class="grp">正在生产 / 即将自动发布</div>
+    <div class="card"><div class="row"><span class="pill green">进行中</span><div class="t" style="margin:0">AI 浏览器 · 抖音制作中</div></div><div class="d">小红书 · 今晚 20:00 自动发布 + [调整]</div></div>
+  </div>
+
+  <!-- Context Pane (SHELL·T2 · CG) -->
+  <div class="pane">
+    <div class="ph">Context · SHELL · T2（CG 选题库 / 信号 · 按需）</div>
+    <div class="mini">默认收起；点某选题卡或 <code>T2</code> 展开。<br/><br/>本场景展示：经营方向的目标 / 重点 / Mix 均来自同一份方法。</div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>Pane 标注</b>：<code>Navigation (SHELL·T1)</code> 六区导航 · <code>Main (SHELL)</code> 承载 CG 经营策略体验（经营方式渐进披露）· <code>Context (SHELL·T2)</code> CG 选题库 / 信号。<br/>
+  <b>渐进披露</b>：Home 顶部「经营方式」轻量入口 → 点开第一层摘要（为什么/重点/今天/账号特殊规则/AI 留痕/策略建议）→ 下钻单账号规则。不一次展示所有内容。<br/>
+  <b>不画配置树</b>：经营方式不是「经营方向配置 / 账号配置」两棵设置树，而是自然语言 + 下钻。<br/>
+  <b>纪律</b>：内部术语全隐藏（无 Office / Target Account Set / Policy inheritance）；Platform Facts 用四态不写死数字；套用 Frozen Shell 四 Pane、无 Global Topbar。<br/>
+  <b>示例数据</b>：本结构稿中所有数字 / 表现（如「收藏率周二晚偏高」「近 7 日播放偏高」）均为 <b>Illustrative / Demo Evidence</b>，仅用于说明策略学习体验；真实产品仅在 Analytics / Platform Evidence 真实可用时显示真实数字，UNAVAILABLE / UNKNOWN 时不伪造 Learning Evidence。
+</div>
+
+<script>
+  document.getElementById('openWay').onclick=()=>{document.getElementById('wayPanel').classList.remove('hide');};
+  document.getElementById('closeWay').onclick=()=>{document.getElementById('wayPanel').classList.add('hide');};
+</script>
+</body>
+</html>

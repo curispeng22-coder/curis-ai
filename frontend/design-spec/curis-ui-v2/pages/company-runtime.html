@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司运行视图 — Curis CEO Office</title>
+    <style id="theme-vars">
+/* Curis CEO Office — Terra Warm Cream + Forest Green */
+/* Brand Prefix: curis */
+
+:root {
+  /* ── Brand Primary ── */
+  --curis-primary: #4a7c59;
+  --curis-primary-dark: #2f523b;
+  --curis-primary-light: #e8f0e8;
+  --curis-primary-soft: #f0f6f0;
+
+  /* ── Accent (CEO Decision) ── */
+  --curis-accent: #705c30;
+  --curis-accent-light: #f5efe3;
+
+  /* ── Background ── */
+  --curis-bg: #faf6f0;
+  --curis-surface: #fffefb;
+  --curis-surface-2: #f7f2ea;
+  --curis-surface-3: #f0ebe0;
+
+  /* ── Text ── */
+  --curis-txt: #1f241c;
+  --curis-txt-2: #4a5346;
+  --curis-txt-3: #7a8273;
+
+  /* ── Line / Border ── */
+  --curis-line: #e8e2d8;
+  --curis-line-2: #d9d2c6;
+
+  /* ── State Colors ── */
+  --state-success: #15935a;
+  --state-success-surface: #e8f5ed;
+  --state-info: #3f7d6e;
+  --state-warning: #a8742a;
+  --state-warning-surface: #f9f0e0;
+  --state-error: #b83230;
+  --state-error-surface: #fae8e7;
+
+
+  /* ── Capability Category Colors (earthy, §4.2) ── */
+  /* 低饱和、暖调为主；和谐落在 #faf6f0 奶油底。状态色优先于类目色。 */
+  --cat-agent: #3f6b4a;
+  --cat-agent-surface: #eaf1eb;
+  --cat-model: #5a7a8a;
+  --cat-model-surface: #eaf0f3;
+  --cat-skill: #b8893b;
+  --cat-skill-surface: #f7f0e3;
+  --cat-tool: #b5563f;
+  --cat-tool-surface: #f7ede9;
+  --cat-workflow: #7a6b8a;
+  --cat-workflow-surface: #f1eef3;
+
+  /* ── Semantic Aliases (for apply-html-head-contract) ── */
+  --curis-background: #faf6f0;
+  --curis-foreground: #1f241c;
+  --curis-card: #fffefb;
+  --curis-card-foreground: #1f241c;
+  --curis-popover: #fffefb;
+  --curis-popover-foreground: #1f241c;
+  --curis-primary-foreground: #ffffff;
+  --curis-muted: #f0ebe0;
+  --curis-muted-foreground: #7a8273;
+  --curis-border: #e8e2d8;
+  --curis-input: #e8e2d8;
+  --curis-ring: #4a7c59;
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --curis-radius-sm: 8px;
+  --curis-radius-md: 12px;
+  --curis-radius-lg: 16px;
+  --curis-radius-small: 8px;
+  --curis-radius-medium: 12px;
+  --curis-radius-large: 16px;
+
+  /* ── Shadow ── */
+  --shadow-sm: 0 1px 2px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.05);
+  --shadow-md: 0 2px 4px rgba(74,85,66,.04), 0 4px 12px rgba(74,85,66,.06);
+  --shadow-lg: 0 8px 24px rgba(74,85,66,.08);
+  --shadow-float: 0 8px 24px rgba(74,85,66,.05);
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* ── Typography ── */
+  --font-serif: 'Literata', 'Noto Serif SC', 'Songti SC', serif;
+  --font-sans: 'Nunito Sans', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* Page Title */
+  .ph-title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--curis-txt);
+  }
+
+  /* Card Title */
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--curis-txt);
+  }
+
+  /* Module Card Name */
+  .module-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--curis-txt);
+  }
+
+  /* Navigation */
+  .nav-1 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--curis-txt);
+  }
+  .nav-2 {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+  }
+
+  /* Body */
+  .body-text {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--curis-txt);
+  }
+
+  /* Label / Data */
+  .label-text {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+  }
+
+  /* Helper */
+  .helper-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--curis-txt-3);
+  }
+
+  /* Button */
+  .btn-text {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.0;
+    font-weight: 700;
+  }
+
+  /* ── Component Base Styles ── */
+  .card {
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .card-hd {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--curis-line);
+  }
+  .card-bd {
+    padding: var(--space-4);
+  }
+  .card-ft {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--curis-line);
+    background: var(--curis-surface-2);
+  }
+
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--curis-primary);
+    color: var(--curis-primary-foreground);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-new:hover {
+    background: var(--curis-primary-dark);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--curis-txt-2);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-ghost:hover {
+    background: var(--curis-surface-2);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: var(--curis-primary-light);
+    color: var(--curis-primary-dark);
+    border-radius: var(--radius-full);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+  .icon-box.green { background: var(--state-success-surface); }
+  .icon-box.cyan { background: #e8f0f0; }
+  .icon-box.amber { background: var(--state-warning-surface); }
+  .icon-box.red { background: var(--state-error-surface); }
+  .icon-box.primary { background: var(--curis-primary-light); }
+  .icon-box.surface { background: var(--curis-surface-2); }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--curis-txt-3);
+  }
+  .search-box svg { flex-shrink: 0; }
+  .search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--curis-txt);
+    width: 100%;
+  }
+
+  .empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-6);
+    color: var(--curis-txt-3);
+    text-align: center;
+  }
+  .empty-box svg { opacity: 0.4; margin-bottom: var(--space-3); }
+  .empty-box p { font-size: 13px; line-height: 1.5; }
+
+  .boundary {
+    padding: var(--space-3) var(--space-4);
+    background: var(--curis-surface-2);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--curis-line);
+  }
+  .boundary p {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--curis-txt-3);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--curis-txt-3);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--curis-primary); }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-dot.green { background: var(--state-success); }
+  .status-dot.amber { background: var(--state-warning); }
+  .status-dot.red { background: var(--state-error); }
+
+  .cat-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) 0;
+    overflow-x: auto;
+  }
+  .cat-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px;
+    background: var(--curis-surface);
+    border: 1px solid var(--curis-line);
+    border-radius: var(--radius-full);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--curis-txt-2);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cat-chip:hover { background: var(--curis-surface-2); }
+  .cat-chip.active {
+    background: var(--curis-primary);
+    color: var(--curis-primary-foreground);
+    border-color: var(--curis-primary);
+  }
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js">
+  // ── Mobile nav drawer (P0-04) ──
+  (function() {
+    var toggle = document.querySelector('.mobile-nav-toggle');
+    var sidebar = document.querySelector('.sidebar');
+    var backdrop = document.querySelector('.sidebar-backdrop');
+    if (!toggle || !sidebar) return;
+    function openDrawer() {
+      sidebar.classList.add('open');
+      if (backdrop) backdrop.classList.add('open');
+    }
+    function closeDrawer() {
+      sidebar.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+    toggle.addEventListener('click', function() {
+      if (sidebar.classList.contains('open')) closeDrawer(); else openDrawer();
+    });
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+  })();
+
+</script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--curis-background);
+    --color-foreground: var(--curis-foreground);
+    --color-card: var(--curis-card);
+    --color-card-foreground: var(--curis-card-foreground);
+    --color-popover: var(--curis-popover);
+    --color-popover-foreground: var(--curis-popover-foreground);
+    --color-primary: var(--curis-primary);
+    --color-primary-foreground: var(--curis-primary-foreground);
+    --color-muted: var(--curis-muted);
+    --color-muted-foreground: var(--curis-muted-foreground);
+    --color-accent: var(--curis-accent);
+    --color-border: var(--curis-border);
+    --color-input: var(--curis-input);
+    --color-ring: var(--curis-ring);
+    --radius-sm: var(--curis-radius-sm);
+    --radius-md: var(--curis-radius-md);
+    --radius-lg: var(--curis-radius-lg);
+  }
+  @layer base {
+    body { background: var(--curis-background); color: var(--curis-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--curis-background); }
+      .text-background { color: var(--curis-background); }
+      .border-background { border-color: var(--curis-background); }
+      .ring-background { --tw-ring-color: var(--curis-background); }
+      .bg-foreground { background-color: var(--curis-foreground); }
+      .text-foreground { color: var(--curis-foreground); }
+      .border-foreground { border-color: var(--curis-foreground); }
+      .ring-foreground { --tw-ring-color: var(--curis-foreground); }
+      .bg-card { background-color: var(--curis-card); }
+      .text-card { color: var(--curis-card); }
+      .border-card { border-color: var(--curis-card); }
+      .ring-card { --tw-ring-color: var(--curis-card); }
+      .bg-card-foreground { background-color: var(--curis-card-foreground); }
+      .text-card-foreground { color: var(--curis-card-foreground); }
+      .border-card-foreground { border-color: var(--curis-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--curis-card-foreground); }
+      .bg-popover { background-color: var(--curis-popover); }
+      .text-popover { color: var(--curis-popover); }
+      .border-popover { border-color: var(--curis-popover); }
+      .ring-popover { --tw-ring-color: var(--curis-popover); }
+      .bg-popover-foreground { background-color: var(--curis-popover-foreground); }
+      .text-popover-foreground { color: var(--curis-popover-foreground); }
+      .border-popover-foreground { border-color: var(--curis-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--curis-popover-foreground); }
+      .bg-primary { background-color: var(--curis-primary); }
+      .text-primary { color: var(--curis-primary); }
+      .border-primary { border-color: var(--curis-primary); }
+      .ring-primary { --tw-ring-color: var(--curis-primary); }
+      .bg-primary-foreground { background-color: var(--curis-primary-foreground); }
+      .text-primary-foreground { color: var(--curis-primary-foreground); }
+      .border-primary-foreground { border-color: var(--curis-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--curis-primary-foreground); }
+      .bg-muted { background-color: var(--curis-muted); }
+      .text-muted { color: var(--curis-muted); }
+      .border-muted { border-color: var(--curis-muted); }
+      .ring-muted { --tw-ring-color: var(--curis-muted); }
+      .bg-muted-foreground { background-color: var(--curis-muted-foreground); }
+      .text-muted-foreground { color: var(--curis-muted-foreground); }
+      .border-muted-foreground { border-color: var(--curis-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--curis-muted-foreground); }
+      .bg-accent { background-color: var(--curis-accent); }
+      .text-accent { color: var(--curis-accent); }
+      .border-accent { border-color: var(--curis-accent); }
+      .ring-accent { --tw-ring-color: var(--curis-accent); }
+      .bg-border { background-color: var(--curis-border); }
+      .text-border { color: var(--curis-border); }
+      .border-border { border-color: var(--curis-border); }
+      .ring-border { --tw-ring-color: var(--curis-border); }
+      .bg-input { background-color: var(--curis-input); }
+      .text-input { color: var(--curis-input); }
+      .border-input { border-color: var(--curis-input); }
+      .ring-input { --tw-ring-color: var(--curis-input); }
+      .bg-ring { background-color: var(--curis-ring); }
+      .text-ring { color: var(--curis-ring); }
+      .border-ring { border-color: var(--curis-ring); }
+      .ring-ring { --tw-ring-color: var(--curis-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+  <script src="../assets/navigation-ia.js" defer></script>
+  <link rel="stylesheet" href="../assets/navigation-ia.css">
+</head>
+<body>
+<div class="canvas">
+
+  <!-- ═══════ NO SIDEBAR — Company Runtime View ═══════ -->
+  <div class="runtime-main">
+
+    <!-- ── Top Bar ── -->
+    <div class="runtime-topbar">
+      <a class="back-link" href="ceo-home.html">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        返回总部驾驶舱
+      </a>
+      <div class="runtime-topbar-right">
+        <div class="freshness-indicator">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M6 3.5v3l2 1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>上次同步：实时</span>
+        </div>
+        <div class="conn-status">
+          <div class="status-dot green"></div>
+          <span>已连接</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Row 1: Title Banner ── -->
+    <div class="runtime-header">
+      <h1 class="ph-title">公司运行视图</h1>
+      <p class="runtime-subtitle">Curis AI Company — 实时部门运行态势总览</p>
+    </div>
+
+    <!-- ── Row 2 (480px): 左侧空间 + 右侧事实 ── -->
+    <div class="runtime-row2" style="margin-bottom:14px">
+
+      <!-- Left span9: 公司实时空间 -->
+      <div class="runtime-space card" style="grid-column:span 9">
+        <div class="card-hd">
+          <div class="card-hd-left">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="1" width="14" height="14" rx="3" stroke="var(--curis-txt-3)" stroke-width="1.2"/>
+              <rect x="4" y="4" width="3" height="3" rx="1" fill="var(--curis-primary)" fill-opacity=".3"/>
+              <rect x="9" y="4" width="3" height="3" rx="1" fill="var(--curis-accent)" fill-opacity=".3"/>
+              <rect x="4" y="9" width="3" height="3" rx="1" fill="var(--state-info)" fill-opacity=".3"/>
+              <rect x="9" y="9" width="3" height="3" rx="1" fill="var(--curis-line)" fill-opacity=".5"/>
+            </svg>
+            <span class="card-title">公司实时空间</span>
+          </div>
+          <span class="helper-text">9 部门节点</span>
+        </div>
+        <div class="card-bd" style="padding:20px">
+          <svg width="100%" viewBox="0 0 800 380" style="display:block">
+            <defs>
+              <marker id="arrowGreen" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+                <path d="M0 0L6 2L0 4" fill="var(--state-success)" fill-opacity=".5"/>
+              </marker>
+              <marker id="arrowAmber" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+                <path d="M0 0L6 2L0 4" fill="var(--state-warning)" fill-opacity=".6"/>
+              </marker>
+            </defs>
+
+            <!-- Connection lines (behind nodes) -->
+            <!-- CEO -> 研发部 -->
+            <line x1="400" y1="100" x2="180" y2="190" stroke="var(--curis-primary)" stroke-width="1.5" stroke-opacity=".25" marker-end="url(#arrowGreen)"/>
+            <!-- CEO -> 商务部 -->
+            <line x1="400" y1="100" x2="400" y2="190" stroke="var(--curis-primary)" stroke-width="1.5" stroke-opacity=".25" marker-end="url(#arrowGreen)"/>
+            <!-- CEO -> 运营部 -->
+            <line x1="400" y1="100" x2="620" y2="190" stroke="var(--curis-primary)" stroke-width="1.5" stroke-opacity=".25" marker-end="url(#arrowGreen)"/>
+            <!-- 研发部 -> 测试部 -->
+            <line x1="180" y1="240" x2="180" y2="310" stroke="var(--curis-primary)" stroke-width="1.2" stroke-opacity=".2" marker-end="url(#arrowGreen)"/>
+            <!-- 商务部 -> 客户部 -->
+            <line x1="400" y1="240" x2="400" y2="310" stroke="var(--curis-primary)" stroke-width="1.2" stroke-opacity=".2" marker-end="url(#arrowGreen)"/>
+            <!-- 运营部 -> 市场部 -->
+            <line x1="620" y1="240" x2="620" y2="310" stroke="var(--curis-primary)" stroke-width="1.2" stroke-opacity=".2" marker-end="url(#arrowGreen)"/>
+            <!-- 研发部 <-> 商务部 blocker -->
+            <line x1="230" y1="215" x2="350" y2="215" stroke="var(--state-warning)" stroke-width="1.8" stroke-opacity=".45" stroke-dasharray="4 3" marker-end="url(#arrowAmber)"/>
+            <!-- 运营部 -> 战略部 -->
+            <line x1="620" y1="240" x2="740" y2="190" stroke="var(--curis-primary)" stroke-width="1.2" stroke-opacity=".15"/>
+
+            <!-- CEO node (center top) -->
+            <g transform="translate(400,90)">
+              <rect x="-48" y="-24" width="96" height="48" rx="12" fill="var(--curis-primary)" fill-opacity=".1" stroke="var(--curis-primary)" stroke-width="1.5"/>
+              <text x="0" y="5" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="700" fill="var(--curis-primary)">总裁办公室</text>
+            </g>
+
+            <!-- 研发部 -->
+            <g transform="translate(180,215)">
+              <rect x="-48" y="-24" width="96" height="48" rx="10" fill="var(--state-success-surface)" stroke="var(--state-success)" stroke-width="1.2"/>
+              <circle cx="-32" cy="0" r="4" fill="var(--state-success)"/>
+              <text x="4" y="5" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="600" fill="var(--curis-txt)">研发部</text>
+            </g>
+
+            <!-- 商务部 -->
+            <g transform="translate(400,215)">
+              <rect x="-48" y="-24" width="96" height="48" rx="10" fill="var(--state-warning-surface)" stroke="var(--state-warning)" stroke-width="1.2"/>
+              <circle cx="-32" cy="0" r="4" fill="var(--state-warning)"/>
+              <text x="4" y="5" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="600" fill="var(--curis-txt)">商务部</text>
+            </g>
+
+            <!-- 运营部 -->
+            <g transform="translate(620,215)">
+              <rect x="-48" y="-24" width="96" height="48" rx="10" fill="var(--state-success-surface)" stroke="var(--state-success)" stroke-width="1.2"/>
+              <circle cx="-32" cy="0" r="4" fill="var(--state-success)"/>
+              <text x="4" y="5" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="600" fill="var(--curis-txt)">运营部</text>
+            </g>
+
+            <!-- 测试部 -->
+            <g transform="translate(180,340)">
+              <rect x="-42" y="-22" width="84" height="44" rx="10" fill="var(--state-success-surface)" stroke="var(--state-success)" stroke-width="1" stroke-opacity=".6"/>
+              <text x="0" y="4" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="600" fill="var(--curis-txt-2)">测试部</text>
+            </g>
+
+            <!-- 客户部 -->
+            <g transform="translate(400,340)">
+              <rect x="-42" y="-22" width="84" height="44" rx="10" fill="var(--state-success-surface)" stroke="var(--state-success)" stroke-width="1" stroke-opacity=".6"/>
+              <text x="0" y="4" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="600" fill="var(--curis-txt-2)">客户部</text>
+            </g>
+
+            <!-- 市场部 -->
+            <g transform="translate(620,340)">
+              <rect x="-42" y="-22" width="84" height="44" rx="10" fill="var(--state-success-surface)" stroke="var(--state-success)" stroke-width="1" stroke-opacity=".6"/>
+              <text x="0" y="4" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="600" fill="var(--curis-txt-2)">市场部</text>
+            </g>
+
+            <!-- 战略部 -->
+            <g transform="translate(740,165)">
+              <rect x="-42" y="-22" width="84" height="44" rx="10" fill="var(--curis-primary-light)" stroke="var(--curis-primary)" stroke-width="1" stroke-opacity=".5"/>
+              <text x="0" y="4" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="600" fill="var(--curis-txt-2)">战略部</text>
+            </g>
+
+            <!-- Blocker indicator -->
+            <g transform="translate(290,195)">
+              <rect x="-28" y="-10" width="56" height="20" rx="6" fill="var(--state-warning-surface)" stroke="var(--state-warning)" stroke-width=".8"/>
+              <text x="0" y="4" text-anchor="middle" font-family="var(--font-sans)" font-size="9" font-weight="700" fill="var(--state-warning)">阻塞</text>
+            </g>
+
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right span3: 运行事实侧栏 -->
+      <div style="grid-column:span 3;display:flex;flex-direction:column;gap:14px">
+
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title">运行事实</span>
+          </div>
+          <div class="card-bd">
+            <div class="fact-card">
+              <div class="fact-icon green">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="fact-body">
+                <div class="fact-label">健康评分</div>
+                <div class="fact-value">92</div>
+              </div>
+            </div>
+            <div class="fact-card" style="margin-top:10px">
+              <div class="fact-icon amber">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 2l6 10H2L8 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                  <path d="M8 6v3M8 10.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="fact-body">
+                <div class="fact-label">异常事件</div>
+                <div class="fact-value" style="color:var(--state-error)">2</div>
+              </div>
+            </div>
+            <div class="fact-card" style="margin-top:10px">
+              <div class="fact-icon primary">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                  <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </div>
+              <div class="fact-body">
+                <div class="fact-label">正常运行天数</div>
+                <div class="fact-value">45</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ── Row 3 (360px): 部门运行带 ── -->
+    <div class="runtime-row3" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="14" height="14" rx="3" stroke="var(--curis-txt-3)" stroke-width="1.2"/>
+          <rect x="4" y="4" width="3" height="3" rx="1" fill="var(--curis-primary)" fill-opacity=".3"/>
+          <rect x="9" y="4" width="3" height="3" rx="1" fill="var(--curis-accent)" fill-opacity=".3"/>
+          <rect x="4" y="9" width="3" height="3" rx="1" fill="var(--state-info)" fill-opacity=".3"/>
+          <rect x="9" y="9" width="3" height="3" rx="1" fill="var(--curis-line)" fill-opacity=".5"/>
+        </svg>
+        <span class="card-title">部门运行带</span>
+      </div>
+
+      <div class="dept-band-row">
+        <!-- 研发部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">研发部</div>
+            <div class="dept-band-status normal"><div class="status-dot green" style="width:6px;height:6px"></div>正常</div>
+          </div>
+          <div class="dept-band-info">产品 v2.4 开发冲刺中</div>
+          <div class="dept-band-progress"><div class="dept-band-bar" style="width:72%"></div></div>
+        </div>
+        <!-- 商务部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">商务部</div>
+            <div class="dept-band-status caution"><div class="status-dot amber" style="width:6px;height:6px"></div>阻塞</div>
+          </div>
+          <div class="dept-band-info">等待合同签署</div>
+          <div class="dept-band-progress"><div class="dept-band-bar amber" style="width:45%"></div></div>
+        </div>
+        <!-- 运营部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">运营部</div>
+            <div class="dept-band-status normal"><div class="status-dot green" style="width:6px;height:6px"></div>正常</div>
+          </div>
+          <div class="dept-band-info">流程自动化稳步推进</div>
+          <div class="dept-band-progress"><div class="dept-band-bar" style="width:60%"></div></div>
+        </div>
+        <!-- 战略部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">战略部</div>
+            <div class="dept-band-status normal"><div class="status-dot green" style="width:6px;height:6px"></div>正常</div>
+          </div>
+          <div class="dept-band-info">Q3 战略分析调研</div>
+          <div class="dept-band-progress"><div class="dept-band-bar" style="width:30%"></div></div>
+        </div>
+        <!-- 测试部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">测试部</div>
+            <div class="dept-band-status normal"><div class="status-dot green" style="width:6px;height:6px"></div>正常</div>
+          </div>
+          <div class="dept-band-info">回归测试执行中</div>
+          <div class="dept-band-progress"><div class="dept-band-bar" style="width:55%"></div></div>
+        </div>
+        <!-- 市场部 -->
+        <div class="dept-band-card">
+          <div class="dept-band-top">
+            <div class="dept-band-name">市场部</div>
+            <div class="dept-band-status caution"><div class="status-dot amber" style="width:6px;height:6px"></div>阻塞</div>
+          </div>
+          <div class="dept-band-info">预算审批等待中</div>
+          <div class="dept-band-progress"><div class="dept-band-bar amber" style="width:20%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- ── Row 3.5 (160px): 运行指标 + 异常事件 ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <!-- 运行指标 -->
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-title">运行指标</span>
+        </div>
+        <div class="card-bd">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="padding:10px 12px;background:var(--curis-surface-2);border-radius:var(--radius-sm)">
+              <div style="font-size:10px;color:var(--curis-txt-3)">任务执行成功率</div>
+              <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--curis-primary);margin-top:2px">94.5%</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--curis-surface-2);border-radius:var(--radius-sm)">
+              <div style="font-size:10px;color:var(--curis-txt-3)">平均响应时间</div>
+              <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--curis-txt);margin-top:2px">1.2s</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--curis-surface-2);border-radius:var(--radius-sm)">
+              <div style="font-size:10px;color:var(--curis-txt-3)">活跃 Agent</div>
+              <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--curis-primary);margin-top:2px">8 个</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--curis-surface-2);border-radius:var(--radius-sm)">
+              <div style="font-size:10px;color:var(--curis-txt-3)">Token 消耗 (本月)</div>
+              <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--curis-accent);margin-top:2px">125k</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 异常事件 -->
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-title">异常事件</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--state-error-surface);color:var(--state-error);border-radius:var(--radius-full);font-size:10px;font-weight:600">2</span>
+        </div>
+        <div class="card-bd" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--state-error-surface);border-radius:var(--radius-sm);border-left:3px solid var(--state-error)">
+            <div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--state-error)"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600;color:var(--curis-txt)">供应链项目外部 API 超时</div>
+              <div style="font-size:10px;color:var(--curis-txt-3);margin-top:2px">运营部 · 2 小时前</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--state-warning-surface);border-radius:var(--radius-sm);border-left:3px solid var(--state-warning)">
+            <div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--state-warning)"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600;color:var(--curis-txt)">Agent capacity-monitor 健康检查失败</div>
+              <div style="font-size:10px;color:var(--curis-txt-3);margin-top:2px">系统告警 · 30 分钟前</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Row 4 (90px): Runtime Boundary ── -->
+    <div class="runtime-boundary-box">
+      <div class="boundary-left">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="1" width="12" height="12" rx="2" stroke="var(--curis-txt-3)" stroke-width="1.2"/>
+          <path d="M4 7h6M7 4v6" stroke="var(--curis-txt-3)" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        <p>以上数据为 <strong>运行时边界</strong> 的实时快照，数据截止至生成时刻。跨模块交互数据请通过各中心模块获取。</p>
+      </div>
+      <div class="boundary-ts">上次同步：实时</div>
+    </div>
+
+  </div><!-- /runtime-main -->
+</div><!-- /canvas -->
+
+    <style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#e8e2d8;
+    display:flex;justify-content:center;align-items:flex-start;
+    min-height:100vh;
+    font-family:var(--font-sans);
+    color:var(--curis-txt);
+  }
+  /* ── Canvas ── */
+  .canvas{
+    width:100%;max-width:1536px;min-height:100vh;
+    background:var(--curis-bg);
+    display:flex;overflow:hidden;
+    margin-top:0;
+    box-shadow:0 0 60px rgba(0,0,0,.08);
+  }
+
+  /* ── Runtime Main (no sidebar) ── */
+  .runtime-main{
+    flex:1;overflow-y:auto;overflow-x:hidden;
+    padding:24px 24px 20px;
+  }
+
+  /* ── Top Bar ── */
+  .runtime-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--curis-line);
+  }
+  .runtime-topbar-right{
+    display:flex;align-items:center;gap:16px;
+  }
+  .freshness-indicator{
+    display:flex;align-items:center;gap:6px;
+    font-size:12px;color:var(--curis-txt-3);
+  }
+  .freshness-indicator svg{opacity:.5;flex-shrink:0}
+  .conn-status{
+    display:flex;align-items:center;gap:5px;
+    font-size:12px;color:var(--curis-txt-3);
+  }
+
+  /* ── Header ── */
+  .runtime-header{margin-bottom:20px}
+  .runtime-subtitle{font-size:13px;color:var(--curis-txt-3);margin-top:4px}
+
+  /* ── Row 2 Grid ── */
+  .runtime-row2{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:14px;
+  }
+
+  /* ── Row 3 ── */
+  .runtime-row3{}
+
+  /* ── Fact Cards ── */
+  .fact-card{
+    display:flex;align-items:center;gap:12px;
+    padding:12px;
+    background:var(--curis-surface-2);
+    border-radius:var(--radius-md);
+  }
+  .fact-icon{
+    display:flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:var(--radius-sm);flex-shrink:0;
+  }
+  .fact-icon.green{background:var(--state-success-surface)}
+  .fact-icon.green svg{color:var(--state-success)}
+  .fact-icon.amber{background:var(--state-warning-surface)}
+  .fact-icon.amber svg{color:var(--state-warning)}
+  .fact-icon.primary{background:var(--curis-primary-light)}
+  .fact-icon.primary svg{color:var(--curis-primary)}
+  .fact-body{}
+  .fact-label{font-size:11px;color:var(--curis-txt-3);margin-bottom:2px}
+  .fact-value{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--curis-txt);line-height:1.1}
+
+  /* ── Dept Band ── */
+  .dept-band-row{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+  }
+  .dept-band-card{
+    padding:14px;
+    background:var(--curis-surface);border:1px solid var(--curis-line);
+    border-radius:var(--radius-md);box-shadow:var(--shadow-sm);
+  }
+  .dept-band-top{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:8px;
+  }
+  .dept-band-name{
+    font-family:var(--font-serif);font-size:13px;font-weight:700;color:var(--curis-txt);
+  }
+  .dept-band-status{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 8px;border-radius:var(--radius-full);
+    font-size:10px;font-weight:600;
+  }
+  .dept-band-status.normal{background:var(--state-success-surface);color:var(--state-success)}
+  .dept-band-status.caution{background:var(--state-warning-surface);color:var(--state-warning)}
+  .dept-band-info{font-size:11px;color:var(--curis-txt-3);margin-bottom:8px}
+  .dept-band-progress{
+    width:100%;height:5px;border-radius:3px;background:var(--curis-line);overflow:hidden;
+  }
+  .dept-band-bar{height:100%;border-radius:3px;background:var(--curis-primary)}
+  .dept-band-bar.amber{background:var(--state-warning)}
+
+  /* ── Runtime Boundary ── */
+  .runtime-boundary-box{
+    padding:10px 18px;
+    background:var(--curis-surface-2);
+    border:1px dashed var(--curis-line);
+    border-radius:var(--radius-md);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .boundary-left{display:flex;align-items:center;gap:8px}
+  .boundary-left svg{opacity:.35;flex-shrink:0}
+  .boundary-left p{font-size:11px;color:var(--curis-txt-3);line-height:1.5}
+  .boundary-left p strong{font-weight:600;color:var(--curis-txt-2)}
+  .boundary-ts{
+    font-size:11px;color:var(--curis-txt-3);
+    font-family:var(--font-sans);font-variant-numeric:tabular-nums;
+  }
+
+  /* ── Responsive (P0-04) ── */
+  .mobile-nav-toggle { display: none; }
+  .sidebar-backdrop { display: none; }
+
+  @media (max-width: 1439px) {
+    .canvas {
+      width: 100% !important;
+      max-width: 1536px;
+      height: auto !important;
+      min-height: 100vh;
+    }
+  }
+  @media (max-width: 1023px) {
+    .canvas {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 56px;
+      padding: 16px 0 12px;
+    }
+    .sidebar-brand span { display: none; }
+    .sidebar-brand { justify-content: center; padding: 0 8px 14px; }
+    .sidebar-nav { padding: 0 4px; }
+    .nav-item { justify-content: center; padding: 9px 8px; }
+    .nav-item .nav-label { display: none; }
+    .nav-item .nav-chevron { display: none; }
+    .sub-nav { display: none !important; }
+    .main { padding: 16px; }
+  }
+  @media (max-width: 767px) {
+    body { background: var(--curis-bg, #faf6f0); }
+    .canvas {
+      display: block;
+      box-shadow: none;
+      overflow: visible;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 220px;
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      padding: 20px 0 16px;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-brand span { display: inline; }
+    .sidebar-brand { justify-content: flex-start; padding: 0 18px 18px; }
+    .sidebar-nav { padding: 0 8px; }
+    .nav-item { justify-content: flex-start; padding: 9px 12px; }
+    .nav-item .nav-label { display: inline; }
+    .nav-item .nav-chevron { display: block; }
+    .sub-nav { display: block !important; max-height: none !important; padding: 2px 0 !important; }
+    .main { padding: 14px; }
+    .mobile-nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px; height: 38px;
+      background: var(--curis-surface, #fffefb);
+      border: 1px solid var(--curis-line, #e8e2d8);
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(31,36,28,.4);
+      z-index: 999;
+    }
+    .sidebar-backdrop.open { display: block; }
+    .grid {
+      grid-template-columns: 1fr !important;
+    }
+    .grid > * { grid-column: span 1 !important; }
+    .pulse-row { flex-direction: column; }
+  }
+
+</
+
+  .btn-new[disabled], .btn-primary[disabled], button[disabled].btn-new, button[disabled].btn-primary {
+    background: var(--curis-surface-3) !important;
+    color: var(--curis-txt-3) !important;
+    cursor: not-allowed !important;
+    opacity: 0.75;
+    position: relative;
+  }
+  .btn-new[disabled]::after, .btn-primary[disabled]::after {
+    content: '未接入';
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: var(--curis-line);
+    color: var(--curis-txt-3);
+    line-height: 1.4;
+  }
+  .btn-new[disabled]:hover, .btn-primary[disabled]:hover {
+    background: var(--curis-surface-3) !important;
+  }
+  .btn-new[disabled] svg, .btn-primary[disabled] svg {
+    opacity: 0.5;
+  }
+style>
+</body>
+</html>

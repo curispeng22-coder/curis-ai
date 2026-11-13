@@ -1,0 +1,47 @@
+classDiagram
+    class RealRDExecutor {
+        +event_log: EvolutionEventLog
+        +model: ModelGatewayAdapter
+        +__init__(event_log, model=None)
+        +run(issue_spec: dict) dict
+        -_claim_once(issue_id) void
+        -_build_prompt(issue_spec, reads, last_failure) str
+        -_parse_diff(text) str
+        -_build_scopes(issue_spec) tuple
+        -_build_command_registry(issue_spec) dict
+        -_record_run_summary(issue_id, status, meta) void
+    }
+    class RealRDExecutorError {
+        +failure_code: str
+        +__init__(failure_code, message)
+    }
+    class LocalRDToolset {
+        +read_file(raw) dict
+        +apply_diff(raw) dict
+        +_apply_diff_transactional(raw) tuple
+        +run_test(raw) dict
+        +git_read(raw) dict
+        +command_registry: dict
+        +allowed_paths: frozenset
+    }
+    class LocalRDToolScope {
+        +tenant_id: str
+        +project_id: str
+        +task_id: str
+        +run_id: str
+        +allowed_paths: tuple
+    }
+    class ModelGatewayAdapter {
+        +execute(prompt) dict
+    }
+    class EvolutionEventLog {
+        +record(correlation_id, event_type, tenant_id, idempotency_key, payload) void
+        +database
+    }
+    RealRDExecutor ..> LocalRDToolset : 组合(read/write/git 三实例)
+    RealRDExecutor ..> ModelGatewayAdapter : 调用真实网关(execute)
+    RealRDExecutor ..> EvolutionEventLog : 审计 + 汇总事件
+    RealRDExecutor ..> LocalRDToolScope : 构造作用域
+    RealRDExecutorError --|> RuntimeError
+    LocalRDToolset "1" *-- "1" LocalRDToolScope : scope
+    LocalRDToolset ..> EvolutionEventLog : 每次调用自动审计(_audit)

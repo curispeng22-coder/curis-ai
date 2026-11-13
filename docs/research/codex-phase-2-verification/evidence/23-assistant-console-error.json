@@ -1,0 +1,8 @@
+[
+  {
+    "level": "error",
+    "message": "ReferenceError: ico is not defined\n    at renderAssistant (http://127.0.0.1:3120/js/app.js:212:111)\n    at cycleAssistant (http://127.0.0.1:3120/js/app.js:223:5)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:3120/js/app.js:310:25)",
+    "timestamp": "2026-09-12T18:04:54.260Z",
+    "url": "http://127.0.0.1:3120/js/app.js"
+  }
+]

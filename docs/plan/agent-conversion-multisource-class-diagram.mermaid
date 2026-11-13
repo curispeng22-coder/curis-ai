@@ -1,0 +1,94 @@
+classDiagram
+    class CanonicalAgentSpec {
+        +str spec_version
+        +SourceMeta source
+        +LicenseInfo license
+        +DivisionInfo division
+        +Identity identity
+        +Mission mission
+        +Persona persona
+        +WorkflowSpec workflow
+        +CapabilityCandidates capability_candidates
+        +SecurityScan security_scan
+        +ConversionDisposition conversion_disposition
+        +asset_slug() str
+    }
+    class SourceAdapter {
+        <<abstract>>
+        +discover(source_root)* Iterable~SourceEntry~
+        +fetch(entry)* Any
+        +parse(raw, entry)* CanonicalAgentSpec
+        +extract_capabilities(spec)* CanonicalAgentSpec
+        +get_metadata()* SourceMetadata
+    }
+    class AgencyMarkdownAdapter {
+        +discover(source_root) Iterable~SourceEntry~
+        +fetch(entry) str
+        +parse(raw, entry) CanonicalAgentSpec
+        +extract_capabilities(spec) CanonicalAgentSpec
+    }
+    class CrewYamlAdapter {
+        +discover(source_root) Iterable~SourceEntry~
+        +fetch(entry) str
+        +parse(raw, entry) CanonicalAgentSpec
+        +extract_capabilities(spec) CanonicalAgentSpec
+        -_split_agents(yaml) list
+    }
+    class SkillRepoAdapter {
+        +discover(source_root) Iterable~SourceEntry~
+        +fetch(entry) str
+        +parse(raw, entry) CanonicalAgentSpec
+        +extract_capabilities(spec) CanonicalAgentSpec
+        -_parse_skill_md(text) dict
+    }
+    class MCPManifestAdapter {
+        +discover(source_root) Iterable~SourceEntry~
+        +fetch(entry) str
+        +parse(raw, entry) CanonicalAgentSpec
+        +extract_capabilities(spec) CanonicalAgentSpec
+        -_split_servers(json) list
+    }
+    class SeedMapper {
+        <<reuse>>
+        +map_persona(entry) tuple
+        +map_employee(entry) tuple
+        +map_skill(row) tuple
+        +map_tool(row) tuple
+        +map_workflow(entry) tuple
+    }
+    class MultiSourceManifests {
+        <<module: seed_multisource.py>>
+        +CREWAI_MANIFEST list~dict~
+        +SKILL_MANIFEST list~dict~
+        +MCP_MANIFEST list~dict~
+        +build_multisource_rows() dict
+    }
+    class Database {
+        +seed_crewai() void
+        +seed_skill_repo() void
+        +seed_mcp() void
+        +rollback_crewai() void
+        +rollback_skill_repo() void
+        +rollback_mcp() void
+    }
+
+    SourceAdapter <|-- AgencyMarkdownAdapter
+    SourceAdapter <|-- CrewYamlAdapter
+    SourceAdapter <|-- SkillRepoAdapter
+    SourceAdapter <|-- MCPManifestAdapter
+    CanonicalAgentSpec *-- SourceMeta
+    CanonicalAgentSpec *-- LicenseInfo
+    CanonicalAgentSpec *-- DivisionInfo
+    CanonicalAgentSpec *-- Identity
+    CanonicalAgentSpec *-- Mission
+    CanonicalAgentSpec *-- Persona
+    CanonicalAgentSpec *-- WorkflowSpec
+    CanonicalAgentSpec *-- CapabilityCandidates
+    CanonicalAgentSpec *-- SecurityScan
+    CanonicalAgentSpec *-- ConversionDisposition
+    CrewYamlAdapter ..> CanonicalAgentSpec : produces
+    SkillRepoAdapter ..> CanonicalAgentSpec : produces
+    MCPManifestAdapter ..> CanonicalAgentSpec : produces
+    MultiSourceManifests ..> SeedMapper : uses map_*
+    Database ..> MultiSourceManifests : build_multisource_rows()
+    Database ..> SeedMapper : map_*

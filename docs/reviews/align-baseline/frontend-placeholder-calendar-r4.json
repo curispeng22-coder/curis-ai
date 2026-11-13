@@ -1,0 +1,7 @@
+{
+  "route": "/ceo-office/calendar",
+  "hasTerraEmpty": true,
+  "hasPlanningCopy": true,
+  "blueprintNote": true,
+  "consoleErrors": []
+}

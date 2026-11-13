@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-create-curis-backup"
+description = "Enables the create_curis_backup command without any pre-configured scope."
+commands.allow = ["create_curis_backup"]
+
+[[permission]]
+identifier = "deny-create-curis-backup"
+description = "Denies the create_curis_backup command without any pre-configured scope."
+commands.deny = ["create_curis_backup"]

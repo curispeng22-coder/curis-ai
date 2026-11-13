@@ -1,0 +1,23 @@
+graph LR
+    subgraph CURIS["Curis OS（编排中枢）"]
+        WF[内容部门 Workflow<br/>wl_ai_content_* / wt_ai_content_*]
+        PP[发布包 Schema 契约<br/>ContentPublishPackage]
+        CON[Curis Connector<br/>backend/app/connectors/]
+        VL[(单用户 Vault<br/>local-dev<br/>cookie + AI key)]
+    end
+    subgraph SELF["自托管服务（本机 docker compose）"]
+        AIT[AiToEarn MIT<br/>生产地基：Create/Publish/Engage<br/>禁 Relay · 自有 AI key]
+        SAU[social-auto-upload MIT<br/>发布执行端：patchright 浏览器<br/>cookie 登录各平台]
+    end
+    PLAT[平台：抖音/小红书/视频号/B站/...]
+
+    WF -->|① 生成请求| CON
+    CON -->|HTTP 内网| AIT
+    AIT -->|结构化结果| PP
+    PP -->|② 发布包| CON
+    CON -->|③ 发布请求| SAU
+    VL -->|cookie| SAU
+    VL -->|AI key| AIT
+    SAU -->|④ 真实发布| PLAT
+    style SELF fill:#fff4e6
+    style CURIS fill:#e8f0fe

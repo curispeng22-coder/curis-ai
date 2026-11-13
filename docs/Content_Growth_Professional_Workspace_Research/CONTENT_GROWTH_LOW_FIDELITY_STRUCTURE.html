@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Growth · 低保真结构稿（IA Round 1 · Final Alignment）</title>
+<style>
+  :root{ --line:#ddd; --bg:#fafafa; --card:#fff; --ink:#222; --mut:#777; --red:#c0392b; --yel:#b8860b; --grn:#2e7d32; --gry:#666; }
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;}
+  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px;z-index:10;}
+  header .crumb{color:var(--mut);font-size:13px;}
+  header .title{font-weight:600;}
+  header .teamlink{margin-left:auto;font-size:12px;color:var(--mut);cursor:pointer;text-decoration:none;}
+  header .teamlink:hover{text-decoration:underline;}
+  .demo{background:#fff;border-bottom:1px solid var(--line);padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .demo b{font-size:12px;color:var(--mut);margin-right:4px;}
+  .demo button{font-size:12px;}
+  main{padding:16px;max-width:760px;margin:0 auto 90px;}
+  .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;}
+  .nav button{flex:1;padding:12px 4px;background:none;border:none;border-right:1px solid var(--line);font-size:13px;color:var(--ink);cursor:pointer;}
+  .nav button:last-child{border-right:none;}
+  .nav button.on{background:#f0f0f0;font-weight:600;}
+  .nav button small{display:block;color:var(--mut);font-size:10px;}
+  button{background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;color:var(--ink);font-size:13px;}
+  button:hover{background:#f5f5f5;}
+  button.primary{background:#222;color:#fff;border-color:#222;}
+  button.ghost{background:none;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:10px 0;}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .bucket{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--line);margin-right:6px;}
+  .b-now{color:var(--red);border-color:var(--red);}
+  .b-know{color:var(--yel);border-color:var(--yel);}
+  .b-run{color:var(--gry);border-color:var(--gry);}
+  .b-quiet{color:var(--grn);border-color:var(--grn);}
+  .muted{color:var(--mut);}
+  .small{font-size:12px;}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:4px;border:1px solid var(--line);margin:2px;}
+  .t-verified{color:var(--grn);border-color:var(--grn);}
+  .t-conditional{color:var(--yel);border-color:var(--yel);}
+  .t-partial{color:#8a5a00;border-color:#8a5a00;}
+  .t-unknown{color:var(--gry);border-color:var(--gry);}
+  .t-unavailable{color:var(--red);border-color:var(--red);}
+  h2{font-size:17px;margin:18px 0 8px;}
+  h3{font-size:14px;margin:14px 0 6px;}
+  .note{background:#fffbe6;border:1px solid #f0e0a0;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:13px;}
+  .note.warn{background:#fdecea;border-color:#f5c6c2;}
+  .kv{font-size:13px;margin:3px 0;}
+  .kv b{display:inline-block;width:90px;color:var(--mut);}
+  .chatbox{border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px;min-height:90px;margin:8px 0;}
+  .msg{margin:6px 0;padding:8px 10px;border-radius:8px;max-width:85%;}
+  .msg.ai{background:#f0f0f0;}
+  .msg.me{background:#222;color:#fff;margin-left:auto;}
+  ul.tight{margin:6px 0;padding-left:18px;}
+  ul.tight li{margin:3px 0;}
+  .breadcrumb{color:var(--mut);font-size:12px;margin-bottom:6px;cursor:pointer;}
+  .breadcrumb:hover{text-decoration:underline;}
+  table.cap{border-collapse:collapse;width:100%;font-size:12px;margin:6px 0;}
+  table.cap th,table.cap td{border:1px solid var(--line);padding:5px 6px;text-align:left;}
+  table.cap th{background:#f7f7f7;}
+</style>
+</head>
+<body>
+<header>
+  <span class="title">Content Growth</span>
+  <span class="crumb" id="crumb">· 经营结果</span>
+  <!-- 团队入口由 Shared Workspace Shell 提供（按需可达），非 Content Growth 自有 Tab -->
+  <a href="javascript:void(0)" class="teamlink" onclick="go('team')">团队</a>
+</header>
+
+<div class="demo" id="demoBar">
+  <b>演示核心路径 ▸</b>
+  <button onclick="runJourney(1)">① 开始经营</button>
+  <button onclick="runJourney(2)">② 今天值得做？</button>
+  <button onclick="runJourney(3)">③ 为何推荐？</button>
+  <button onclick="runJourney(4)">④ 直接写内容</button>
+  <button onclick="runJourney(5)">⑤ 发出去</button>
+  <button onclick="runJourney(6)">⑥ 做得怎样？</button>
+</div>
+
+<main id="app"></main>
+
+<div class="nav" aria-label="Shared Workspace Shell capabilities">
+  <!-- 仅展示 Shared Workspace Shell 的结构 fixture，不冻结 Content Growth 自有 Tab；
+       Content Growth 贡献领域默认 Surface（经营结果）与专业对象视图。入口位置由 Shell 决定。 -->
+  <button id="nav-home" onclick="go('home')">Shell · 经营结果<small>Shared capability · 默认 Surface</small></button>
+  <button id="nav-chat" onclick="go('chat')">Shell · 对话<small>Shared capability · Universal Conversation</small></button>
+</div>
+
+<script>
+// ---------- 状态 ----------
+var historyStack = [];
+var ctx = {}; // 跨视图携带的上下文
+var quietMode = false;
+var currentView = 'home';
+
+// 角标说明：需我点/需我决定/值得看/就绪 仅为 DESIGN FIXTURE（设计示意），
+// 不得成为 IA Contract；真实分桶/排序由 Runtime 决定，本轮不定义。
+var BADGE_FIXTURE = '（角标为 DESIGN FIXTURE 示意，非 IA Contract；真实分桶/排序由 Runtime 决定）';
+
+// ---------- 数据（研究 mock，非生产；团队为 DESIGN FIXTURE / EXAMPLE TEAM） ----------
+var employees = [
+  {id:'zhouming', name:'周明', role:'Strategist 策略', responsibility:'经营方向 / 评估', work:'正在制定本期内容方向与选题策略'},
+  {id:'wangying', name:'王颖', role:'Research & Intel 研究', responsibility:'监控 / 选题 / 研究', work:'监控若干来源，发现选题机会'},
+  {id:'lixiang', name:'李想', role:'Producer 内容生产', responsibility:'内容生产', work:'基于批准选题生成内容草稿'},
+  {id:'chenfan', name:'陈帆', role:'Channel Operator 渠道', responsibility:'渠道经营', work:'维护渠道能力，准备发布（能力当前未连接）'}
+];
+// 注意：上方 4 人为 DESIGN FIXTURE / EXAMPLE TEAM，仅为示例承担人；IA 冻结 Responsibility，不冻结 Headcount。
+
+// 经营结果 Main = 「最值得关注」单列表（按重要度排序，最多展示 3 件，运行态仅轻量一行）
+var attentionItems = [
+  {type:'action', who:'陈帆（渠道，示例）', conclusion:'小红书发布能力当前未连接（Publish=CONDITIONAL，无 VERIFIED），今日 1 篇内容暂无法真实发布。',
+    value:'需先连接/授权渠道能力后再发布。', advice:'连接渠道能力后继续发布。',
+    actions:[{label:'连接渠道能力',primary:true,fn:"go('channel')"},{label:'暂缓',fn:"toast('已记下，稍后处理')"}]},
+  {type:'decision', who:'周明（策略，示例）', conclusion:'建议本周期主攻「AI 工具实测」方向（Goal：涨粉→接广告）。',
+    advice:'确认即开始执行，或调整侧重。',
+    actions:[{label:'确认方向',primary:true,fn:"toast('已确认，团队开始执行')"},{label:'问周明',fn:"go('chat',{emp:'zhouming'})"},{label:'调整',fn:"toast('已记录调整意见')"}]},
+  {type:'watch', who:'王颖（研究，示例）', conclusion:'发现一个值得做的选题：「GPT-5.6 办公实测」。',
+    value:'与涨粉目标一致，预计收藏率偏高。', risk:'社区对准确性有争议，UNKNOWN 已标注。',
+    actions:[{label:'查看依据',fn:"go('topic',{id:'t1'})"},{label:'问王颖',fn:"go('chat',{emp:'wangying'})"},{label:'按建议继续',primary:true,fn:"go('topic',{id:'t1',act:'continue'})"}]},
+  {type:'ready', who:'李想（内容，示例）', conclusion:'「AI 周报」内容已生成，可作草案。',
+    actions:[{label:'查看',fn:"go('content',{id:'c1'})"},{label:'问李想',fn:"go('chat',{emp:'lixiang'})"}]}
+];
+
+// ---------- 路由 ----------
+function go(view, data){
+  historyStack.push(currentView);
+  currentView = view;
+  if(data) Object.assign(ctx, data);
+  render();
+  window.scrollTo(0,0);
+}
+function back(){
+  if(historyStack.length){ currentView = historyStack.pop(); render(); window.scrollTo(0,0); }
+}
+
+function setNav(){
+  ['home','chat'].forEach(function(v){
+    var el=document.getElementById('nav-'+v); if(el) el.className = (currentView===v)?'on':'';
+  });
+  var crumbMap={home:'· 经营结果',chat:'· 对话',team:'· 团队（Shell 按需）',employee:'· 团队 › 员工',
+    topic:'· 经营结果 › 选题/研究',result:'· 经营结果 › 详情',content:'· 经营结果 › 内容',
+    channel:'· 渠道与账号（能力真相）',quiet:'· 经营结果（安静态）'};
+  document.getElementById('crumb').textContent = crumbMap[currentView]||'·';
+}
+
+function render(){
+  setNav();
+  var app=document.getElementById('app');
+  if(currentView==='home') app.innerHTML = viewHome();
+  else if(currentView==='chat') app.innerHTML = viewChat();
+  else if(currentView==='team') app.innerHTML = viewTeam();
+  else if(currentView==='employee') app.innerHTML = viewEmployee();
+  else if(currentView==='topic') app.innerHTML = viewTopic();
+  else if(currentView==='result') app.innerHTML = viewResult();
+  else if(currentView==='content') app.innerHTML = viewContent();
+  else if(currentView==='channel') app.innerHTML = viewChannel();
+  else if(currentView==='quiet') app.innerHTML = viewQuiet();
+}
+
+// ---------- 视图：经营结果（默认）= 最值得关注单列表 ----------
+function renderAttnCard(it){
+  var badge = {action:['需我点','b-now'],decision:['需我决定','b-now'],watch:['值得看','b-know'],ready:['就绪','b-know']}[it.type];
+  var acts = (it.actions||[]).map(function(a){
+    var cls = a.primary?'primary':(a.ghost?'ghost':'');
+    return `<button class="${cls}" onclick="${a.fn}">${a.label}</button>`;
+  }).join(' ');
+  return `<div class="card">
+    <div><span class="bucket ${badge[1]}">${badge[0]}</span> <span class="muted small">${it.who}</span></div>
+    <div class="kv" style="margin-top:4px;"><b>结论</b>${it.conclusion}</div>
+    ${it.value?`<div class="kv"><b>价值</b>${it.value}</div>`:''}
+    ${it.risk?`<div class="kv"><b>风险/Unknown</b>${it.risk}</div>`:''}
+    ${it.advice?`<div class="kv"><b>建议</b>${it.advice}</div>`:''}
+    <div class="row" style="margin-top:8px;">${acts}</div>
+  </div>`;
+}
+function viewHome(){
+  if(quietMode) return viewQuiet();
+  var shown = attentionItems.slice(0,3);
+  var extra = attentionItems.length - shown.length;
+  var cardsHtml = shown.map(renderAttnCard).join('');
+  var extraHtml = extra>0 ? `<div class="kv muted small" style="margin-top:6px;">还有 ${extra} 件值得关注（如内容就绪），可在「对话」或下钻查看。</div>` : '';
+  return `
+  <div class="note">这是普通用户每天打开 Content Growth 看到的默认主页（Domain-scoped 默认 Surface，由 Content Growth 贡献；Shell 提供框架）。后台的 Work / Signal / Research / Publication 都不直接展示，只压缩成「现在最值得你关注的事」。经营结果与对话仅在此作为 <b>Shared Workspace Shell</b> 结构 fixture 展示，非 Content Growth 自有 Tab；入口位置与数量由 Shell 决定。</div>
+  <div class="kv"><b style="width:auto;">最近值得你关注的 ${attentionItems.length} 件事</b></div>
+  ${cardsHtml}
+  ${extraHtml}
+  <div class="kv muted small" style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px;">团队正在进行 3 项工作（调研 / 发布准备 / 数据检查），完成后会在这里出现结果。你无需等待；这不表示平台已真实发布或已有实时数据。</div>
+  <div class="kv muted small" style="margin-top:4px;">${BADGE_FIXTURE}</div>
+  <div class="row" style="margin-top:10px;">
+    <button class="ghost" onclick="toggleQuiet()">切换：安静态演示</button>
+    <button class="ghost" onclick="go('chat')">去对话 / 快捷生成</button>
+  </div>`;
+}
+
+function viewQuiet(){
+  return `
+  <div class="card" style="border-color:var(--grn);">
+    <div class="kv"><span class="bucket b-quiet">QUIET · 一切正常</span></div>
+    <h3 style="margin-top:6px;">团队正在正常运行，目前没有需要你处理的事情。</h3>
+    <div class="kv muted">3 项工作进行中，好了会在这里出现结果。你可以随时去「对话」直接让团队做事，或点右上「团队」看看大家在忙什么。</div>
+  </div>
+  <div class="row" style="margin-top:12px;">
+    <button class="ghost" onclick="toggleQuiet()">返回正常态</button>
+    <button onclick="go('chat')">去对话</button>
+  </div>`;
+}
+function toggleQuiet(){ quietMode=!quietMode; render(); }
+
+// ---------- 视图：对话（Universal Input + Quick Path，由 Shared Shell 提供） ----------
+function viewChat(){
+  var empName = ctx.emp ? (employees.find(function(e){return e.id===ctx.emp})||{}).name : '团队';
+  var banner = ctx.emp ? `<div class="note">正在与 <b>${empName}</b> 对话 · 上下文已自动携带（当前结果 / 选题 / 研究 / 证据引用），你无需重述背景。</div>` : '';
+  return `
+  ${banner}
+  <h2>对话</h2>
+  <div class="note">这里既是对话入口，也是 <b>Quick Path</b>（由 Shared Workspace Shell 提供的通用能力，非 Content Growth 自有）：一句话即可让团队做事，不需要进选题池 / 研究 / 经营结果。</div>
+  <div class="chatbox" id="chatbox">
+    <div class="msg ai">你好，我是你的内容团队。想做什么，直接说就行。</div>
+  </div>
+  <div class="row">
+    <button onclick="quickGen()">帮我写一篇 GPT-5.6 小红书</button>
+    <button onclick="quickSetup()">我想开始做 AI 科技内容</button>
+    <button onclick="sendChat('以后重点看这个网站（openai.com）')">以后重点看这个网站</button>
+  </div>
+  <div class="row" style="margin-top:8px;">
+    <input id="chatInput" style="flex:1;padding:8px;border:1px solid var(--line);border-radius:6px;" placeholder="说点什么…（例如：这个结论不对，再查一下）">
+    <button class="primary" onclick="sendChat(document.getElementById('chatInput').value)">发送</button>
+  </div>
+  <div class="kv muted small" style="margin-top:8px;">Quick Path 验证：一句话 → 推荐成品 → 一句修改 → 发布建议（含当前能力状态诚实标注）→ 保存草案。不走复杂 Surface。</div>`;
+}
+
+function quickGen(){
+  var box=document.getElementById('chatbox');
+  box.innerHTML += `<div class="msg me">帮我写一篇 GPT-5.6 小红书</div>
+  <div class="msg ai"><b>李想（内容，示例）</b> 已生成草稿《GPT-5.6 到底能帮打工人省多少时间·实测》：
+  「开头：每天加班到 9 点？我用 GPT-5.6 把这 3 件事全自动了…」（正文约 380 字，含 3 个实测场景）
+  <br><br><span class="tag t-unknown">发布能力：Publish=CONDITIONAL（五平台均无 VERIFIED）</span> 当前不能真实发布；草稿先存为内容草案。
+  <br><br>你可以：① 一句修改（如「第二段更口语」）② 保存为草案，待真实能力就绪后再发布。</div>`;
+  box.innerHTML += `<div class="msg ai">草案已生成。发布能力当前 Publish=CONDITIONAL（未连接/未验证），建议先保存为内容草案。 <button class="ghost" onclick="toast('已存为内容草案')">保存草案</button> <button class="ghost" onclick="toast('已记录修改意见')">改一句</button></div>`;
+  window.scrollTo(0,document.body.scrollHeight);
+}
+function quickSetup(){
+  var box=document.getElementById('chatbox');
+  box.innerHTML += `<div class="msg me">我想开始做 AI 科技内容</div>
+  <div class="msg ai"><b>周明（策略，示例）</b> 好的。先确认一个目标即可，其余我来研究：
+  你想主要达到什么？① 涨粉 ② 带货 ③ 接广告 ④ 卖自己的产品 ⑤ 做个人 IP
+  <br><br>有没有想参考的账号 / 视频 / 帖子链接？（没有也可以）</div>`;
+  box.innerHTML += `<div class="msg me">主要涨粉，以后接广告。很喜欢这个账号（链接）</div>
+  <div class="msg ai"><b>周明</b> 收到。我让王颖分析这个账号、做市场与对标研究，明天给你「我们建议这样经营」的方案。你什么都不用配。</div>`;
+  window.scrollTo(0,document.body.scrollHeight);
+}
+function sendChat(t){
+  if(!t||!t.trim()) return;
+  var box=document.getElementById('chatbox');
+  box.innerHTML += `<div class="msg me">${t.replace(/</g,'&lt;')}</div>`;
+  var ai = '收到，已交给对应员工处理，结果会回到「经营结果」。';
+  if(t.indexOf('再查')>=0) ai='<b>王颖</b> 已继续原研究 Work（不新建），补充证据后更新结果。';
+  else if(t.indexOf('重点看')>=0) ai='<b>王颖</b> 已把这个来源加入长期监控（专业管理由她完成，你无需配置）。';
+  else if(t.indexOf('为什么')>=0) ai='可在对应结果卡点「查看依据」进入研究与证据。';
+  else if(t.indexOf('改')>=0) ai='<b>李想</b> 已按你的意见修改当前版本（保留上一版可恢复）。';
+  box.innerHTML += `<div class="msg ai">${ai}</div>`;
+  document.getElementById('chatInput').value='';
+  window.scrollTo(0,document.body.scrollHeight);
+}
+
+// ---------- 视图：团队（由 Shared Shell 提供，按需，非一级强制；DESIGN FIXTURE） ----------
+function viewTeam(){
+  var cards = employees.map(function(e){
+    return `<div class="card">
+      <div class="kv"><b>${e.name}</b> · ${e.role}</div>
+      <div class="kv muted">承担 Responsibility：${e.responsibility}</div>
+      <div class="kv muted small">当前工作：${e.work}</div>
+      <div class="row" style="margin-top:8px;">
+        <button onclick="go('employee',{emp:'${e.id}'})">查看 / 对话</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<h2>团队 <span class="bucket b-run">Shell 提供 · 按需可达（非一级强制入口）</span></h2>
+  <div class="note">AI 员工承担专业研究、配置、经营与执行。你主要消费他们的结果、价值与建议。点任一员工进入资料 / 当前工作 / 对话。<br><b>注意：</b>以下 4 人为 <b>DESIGN FIXTURE / EXAMPLE TEAM（示例）</b>。IA Contract 冻结的是 Responsibility，不冻结 4 人 Headcount；真实团队构成由运行时确定。团队入口由 Shared Workspace Shell 提供，避免每个 Professional Workspace 重复建设。</div>
+  ${cards}`;
+}
+
+function viewEmployee(){
+  var e = employees.find(function(x){return x.id===ctx.emp})||employees[0];
+  return `
+  <div class="breadcrumb" onclick="back()">← 团队</div>
+  <h2>${e.name} · ${e.role}</h2>
+  <div class="card">
+    <div class="kv"><b>承担 Responsibility</b>${e.responsibility}</div>
+    <div class="kv"><b>当前工作</b>${e.work}</div>
+    <div class="kv muted small">Surface 声明专业 Responsibility；${e.name} 为<b>示例承担人（DESIGN FIXTURE）</b>，非冻结 Headcount。</div>
+    <div class="row" style="margin-top:8px;">
+      <button class="primary" onclick="go('chat',{emp:'${e.id}'})">直接对话</button>
+      <button onclick="toast('展示当前工作详情（对象视图）')">当前工作</button>
+      <button class="ghost" onclick="toast('展示员工资料')">资料</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="kv muted">其工作区（进入其<b>承担 Responsibility 的 Surface</b> 对象视图，非「员工专属 Surface」）：</div>
+    <div class="row"><span class="tag">${e.responsibility}</span></div>
+    <div class="row" style="margin-top:8px;">
+      <button onclick="go('topic',{id:'t1'})">进入选题/研究</button>
+      <button onclick="go('channel')">进入渠道/账号</button>
+    </div>
+  </div>`;
+}
+
+// ---------- 视图：选题 + 研究（代表性专业面） ----------
+function viewTopic(){
+  var cont = ctx.act==='continue' ? `<div class="note">你点了「按建议继续」：系统已生成下一 Work（先调研），你仍留在经营结果，调研完成后会回到这里出现结果。</div>` : '';
+  return `
+  <div class="breadcrumb" onclick="back()">← 经营结果</div>
+  <h2>选题：GPT-5.6 办公实测 <span class="bucket b-know">值得看</span></h2>
+  <div class="card">
+    <div class="kv"><b>谁推荐</b>王颖（研究，示例）</div>
+    <div class="kv"><b>为什么值得做</b>与「涨粉→接广告」目标一致；同类实测内容历史收藏率偏高。</div>
+    <div class="kv"><b>价值（经营含义）</b>积累影响力资产，为后续接广告铺路（非单篇赞藏）。</div>
+    <div class="kv"><b>风险 / Unknown</b>社区对准确性有争议 → 标 <span class="tag t-unknown">UNKNOWN</span>，已要求在内容中注明「以官方文档为准」。</div>
+    <div class="kv"><b>建议下一步</b>先调研（轻量），再决定是否生产。</div>
+  </div>
+  <div class="card">
+    <h3>研究依据（Research · Evidence · 研究证据置信）</h3>
+    <ul class="tight">
+      <li>来源 A（官方文档）：GPT-5.6 新增批量工具调用 — <span class="tag t-conditional">证据·官方</span></li>
+      <li>来源 B（社区讨论）：实测可省 30% 重复劳动 — <span class="tag t-unknown">证据·单源</span>（需 ≥2 独立源）</li>
+      <li>对标账号同类选题近 30 天收藏率高于均值 — <span class="tag t-unknown">证据·待验证</span></li>
+    </ul>
+    <div class="kv muted small">研究证据置信 ≠ 平台能力 VERIFIED；平台能力见「渠道与账号」（无 VERIFIED）。</div>
+  </div>
+  <div class="row" style="margin-top:8px;">
+    <button class="primary" onclick="toast('已生成调研 Work，完成后回经营结果')">先调研</button>
+    <button onclick="go('chat',{emp:'wangying'})">问王颖</button>
+    <button class="ghost" onclick="toast('已记录不同意见，补充研究')">这个结论我不同意</button>
+  </div>
+  ${cont}`;
+}
+
+// ---------- 视图：结果详情（下钻示例） ----------
+function viewResult(){
+  return `
+  <div class="breadcrumb" onclick="back()">← 经营结果</div>
+  <h2>结果详情</h2>
+  <div class="card">
+    <div class="kv"><b>谁完成</b>王颖（研究，示例）</div>
+    <div class="kv"><b>结论</b>「GPT-5.6 办公实测」值得做，建议先调研。</div>
+    <div class="kv"><b>价值</b>涨粉路径资产积累。</div>
+    <div class="kv"><b>建议</b>查看依据 → 先调研 → 生产。</div>
+    <div class="row" style="margin-top:8px;">
+      <button onclick="go('topic',{id:'t1'})">查看依据（进入研究）</button>
+      <button onclick="go('chat',{emp:'wangying'})">问王颖</button>
+    </div>
+  </div>`;
+}
+
+// ---------- 视图：内容详情 ----------
+function viewContent(){
+  return `
+  <div class="breadcrumb" onclick="back()">← 经营结果</div>
+  <h2>内容：AI 周报 <span class="bucket b-know">草案就绪</span></h2>
+  <div class="card">
+    <div class="kv"><b>生产者</b>李想（内容，示例）</div>
+    <div class="kv"><b>版本</b>当前 v2（v1 可恢复）；说话修改 = 在当前版本上 Patch，不无限生成。</div>
+    <div class="kv"><b>审核</b>品牌 / 事实 / 合规 / AI 标识 / 渠道规则 已通过 → 标记「可发布」。</div>
+    <div class="kv"><b>素材</b>封面由李想生成并选为推荐版。</div>
+    <div class="kv"><b>发布能力</b><span class="tag t-conditional">Publish=CONDITIONAL</span> 五平台均无 VERIFIED，当前不能真实发布。</div>
+    <div class="row" style="margin-top:8px;">
+      <button class="ghost" onclick="toast('目标发布流演示：待能力验证后确认（当前不可用）')">准备发布（目标演示）</button>
+      <button onclick="go('chat',{emp:'lixiang'})">问李想</button>
+      <button class="ghost" onclick="toast('回到上一版')">恢复上一版</button>
+    </div>
+  </div>`;
+}
+
+// ---------- 视图：渠道与账号（能力真相，诚实消费真实 Audit） ----------
+function viewChannel(){
+  // 真实结论（Channel Capability Evidence Audit 已执行）：五平台均无任何 audited VERIFIED capability。
+  // 按能力如实消费 PARTIAL / CONDITIONAL / UNKNOWN / UNAVAILABLE（来自 Audit §2 原样）。
+  var capRows = [
+    ['XHS 小红书','PARTIAL','CONDITIONAL','PARTIAL','PARTIAL','UNAVAILABLE','PARTIAL'],
+    ['Douyin 抖音','PARTIAL','CONDITIONAL','UNKNOWN','UNKNOWN','CONDITIONAL','UNKNOWN'],
+    ['TikTok','PARTIAL','CONDITIONAL','UNKNOWN','UNKNOWN','CONDITIONAL','UNKNOWN'],
+    ['YouTube','PARTIAL','CONDITIONAL','UNKNOWN','UNKNOWN','CONDITIONAL','UNKNOWN'],
+    ['Bilibili','PARTIAL','CONDITIONAL','UNKNOWN','UNKNOWN','CONDITIONAL','UNKNOWN']
+  ];
+  var cls = function(s){ return s==='VERIFIED'?'t-verified':s==='CONDITIONAL'?'t-conditional':s==='PARTIAL'?'t-partial':s==='UNKNOWN'?'t-unknown':'t-unavailable'; };
+  var head = `<tr><th>Channel</th><th>Auth</th><th>Publish</th><th>Schedule</th><th>Pub Status</th><th>Receipt/URL</th><th>Analytics</th><th>Comments</th></tr>`;
+  var body = capRows.map(function(r){
+    var tds = r.map(function(s,i){ return i===0?`<td><b>${s}</b></td>`:`<td><span class="tag ${cls(s)}">${s}</span></td>`; }).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+  return `
+  <div class="breadcrumb" onclick="back()">← 经营结果</div>
+  <h2>渠道与账号 <span class="bucket b-run">能力真相（真实 Audit）</span></h2>
+  <div class="note warn"><b>诚实标注（Channel Capability Evidence Audit 已执行）：</b>五平台（XHS / Douyin / TikTok / YouTube / Bilibili）<b>均无任何 audited VERIFIED capability</b>。下表按能力如实消费 PARTIAL / CONDITIONAL / UNKNOWN / UNAVAILABLE（来自 Audit §2，原样）。<br>
+  <b>读法：</b>Auth=PARTIAL 仅指 Curis 侧凭据管线，<u>不等于平台 OAuth/账号归属已验证</u>；Publish=CONDITIONAL 指可提交通用 bridge 但无 live publication 证据，<u>不得显示为默认可用</u>；XHS Schedule/Status/Receipt/Comments=PARTIAL 为内部/人工未验证态；XHS Analytics=UNAVAILABLE；Multi-account=UNAVAILABLE（无 Channel Account 对象）。<br>
+  <b>不出现：</b>已连接账号 / 真实 Published URL / 真实 Analytics / 真实 Comments / 多账号能力。</div>
+  <table class="cap">${head}${body}</table>
+  <div class="kv muted small">Multi-account = <span class="tag t-unavailable">UNAVAILABLE</span>（当前无 Channel Account 对象与按账号 resolver）；Read Content / Search-Research = <span class="tag t-unknown">UNKNOWN</span>（受控研究不等于平台读取）。</div>
+  <div class="card" style="border-style:dashed;">
+    <div class="kv muted"><b>目标发布流（TARGET SCENARIO，非当前能力）</b></div>
+    <div class="kv">未来陈帆将基于内容 + 渠道策略 + 账号定位推荐发布目标与时间点，带「为什么」。当前因能力无 VERIFIED（Publish=CONDITIONAL 未连接），发布动作不可用，仅展示结构。</div>
+    <div class="row" style="margin-top:8px;">
+      <button class="ghost" onclick="toast('目标结构演示：发布确认（Human-in-loop）— 当前能力未验证，不可用')">确认发布（目标演示）</button>
+    </div>
+  </div>`;
+}
+
+// ---------- 路径演示 ----------
+var journeys = {
+1:['对话：说「我想开始做 AI 科技内容」','周明确认唯一目标（涨粉→接广告）','可贴参考链接或跳过','团队后台研究，次日给「我们建议这样经营」卡','经营结果出现方案 → 采用/调整/讨论'],
+2:['经营结果主页（单列表「最近值得你关注的 N 件事」）','看最值得关注项','点「查看依据」或「按建议继续」','进入选题/研究下钻','返回经营结果'],
+3:['经营结果卡「查看依据」','进入选题 + 研究证据','看为什么值得做 / Evidence','点「问王颖」带上下文对话','返回'],
+4:['对话输入「帮我写一篇 GPT-5.6 小红书」','李想生成推荐成品（能力状态诚实标注）','一句修改 / 保存草案','不走选题池/研究','完成入历史'],
+5:['内容卡「准备发布」（TARGET SCENARIO / NOT CURRENT CAPABILITY）','渠道与账号能力真相（真实 Audit 矩阵）','陈帆推荐账号（目标结构）+ 为什么','确认发布（TARGET SCENARIO / NOT CURRENT CAPABILITY）','回经营结果'],
+6:['经营结果「值得看」Evaluation','看结论（Goal 锚定）+ 建议','点「按建议继续」','下一周期启动','回经营结果']
+};
+function runJourney(n){
+  var steps = journeys[n]||[];
+  var html = `<div class="note"><b>路径 ${n} 步骤（点击任一步跳转体验）：</b><ol>`+
+    steps.map(function(s,i){ return `<li><a href="javascript:void(0)" style="color:#222;" onclick="jumpStep(${n},${i})">${s}</a></li>`; }).join('')+
+    `</ol><div class="muted small">说明：本低保真稿可自由点击导航；以上为推荐路径提示。</div></div>`;
+  document.getElementById('app').insertAdjacentHTML('afterbegin', html);
+  window.scrollTo(0,0);
+}
+function jumpStep(n,i){
+  var map={1:'chat',2:'home',3:'topic',4:'chat',5:'content',6:'home'};
+  go(map[n]||'home');
+}
+function toast(m){ alert(m); }
+
+// ---------- 启动 ----------
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+/* ============================================================
+   Curis Design Tokens — Frozen (Curis_Design_System.md)
+   Single source of truth. Replaces ALL page-private palettes.
+   Light = gray canvas (#f5f5f7) + white cards (#ffffff);
+   Dark = #1a1c1f surface (never pure black).
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --ui-bg: #1a1c1f;
+  --ui-surface: #222529;
+  --ui-surface-2: #2b2f34;
+
+  /* Lines & text */
+  --ui-line: #343940;
+  --ui-text: #f3f4f6;
+  --ui-text-2: #a7adb6;
+  --ui-text-3: #7e8792;
+
+  /* Primary action (dark theme: brand green) */
+  --ui-action-primary-bg: #32f08c;
+  --ui-action-primary-hover: #0fdc78;
+  --ui-action-primary-fg: #0c0c0d;
+
+  /* Accent (active AI state / focus / brand signal) */
+  --ui-accent: #32f08c;
+
+  /* Semantic (small text / icon / label / indicator line ONLY) */
+  --ui-success: #2bb673;
+  --ui-warning: #d89a3a;
+  --ui-danger: #d95757;
+
+  /* Shell metrics */
+  --ui-sidebar-w: 220px;
+  --ui-topbar-h: 52px;
+
+  /* Radius & elevation (calm, low-contrast) */
+  --ui-radius: 12px;
+  --ui-radius-sm: 8px;
+  --ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+  /* Type */
+  --ui-font: "Inter", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Stronger surface contrast than the original spec table: gray canvas,
+     white cards, subtle secondary surface. Prevents cards from disappearing
+     into the page background. */
+  --ui-bg: #f5f5f7;
+  --ui-surface: #ffffff;
+  --ui-surface-2: #f7f8fa;
+
+  --ui-line: #e5e7eb;
+  --ui-text: #1a1c1f;
+  --ui-text-2: #626b76;
+  --ui-text-3: #8a929d;
+
+  /* Light theme: primary action = dark solid (never large green) */
+  --ui-action-primary-bg: #30333a;
+  --ui-action-primary-hover: #17181a;
+  --ui-action-primary-fg: #ffffff;
+
+  --ui-accent: #1a1c1f;
+
+  --ui-success: #21895d;
+  --ui-warning: #b87922;
+  --ui-danger: #c43f3f;
+
+  --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+}
+
+/* System mode follows OS when html has no explicit data-theme
+   (theme.js sets data-theme="dark|light"; this block is the fallback). */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --ui-bg: #f5f5f7; --ui-surface: #ffffff; --ui-surface-2: #f7f8fa;
+    --ui-line: #e5e7eb; --ui-text: #1a1c1f; --ui-text-2: #626b76; --ui-text-3: #8a929d;
+    --ui-action-primary-bg: #30333a; --ui-action-primary-hover: #17181a; --ui-action-primary-fg: #ffffff;
+    --ui-accent: #1a1c1f;
+    --ui-success: #21895d; --ui-warning: #b87922; --ui-danger: #c43f3f;
+    --ui-shadow: 0 1px 2px rgba(15, 18, 35, 0.05);
+  }
+}

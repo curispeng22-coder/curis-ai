@@ -1,0 +1,1496 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>决策室 · 抖音 / TikTok 运营 Workspace Blueprint v0.3 → Runtime v1.1 · Curis</title>
+    <style id="theme-vars">
+/* Curis Visual Design System v1.0 — Tailwind v4 theme bridge
+   Semantic tokens + legacy page tokens for high-fidelity pages. */
+
+:root {
+  /* ── Semantic tokens required by canvas head contract ── */
+  --background: #1a1b1d;
+  --foreground: #d1d3db;
+  --card: #222427;
+  --card-foreground: #d1d3db;
+  --popover: #2a2d31;
+  --popover-foreground: #f5f9fe;
+  --primary: #32f08c;
+  --primary-foreground: #0c0c0d;
+  --secondary: #2a2d31;
+  --secondary-foreground: #f5f9fe;
+  --muted: #9599a6;
+  --muted-foreground: #9599a6;
+  --accent: #387bff;
+  --accent-foreground: #f5f9fe;
+  --destructive: #f65a5a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(224, 226, 242, 0.10);
+  --input: rgba(224, 226, 242, 0.16);
+  --ring: #32f08c;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ── Legacy tokens used by existing high-fidelity pages ── */
+  --bg-base-default: #1a1b1d;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2a2d31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+  --brand-500: #32f08c;
+  --brand-600: #0fdc78;
+  --brand-900: #02743b;
+
+  --text-default: #d1d3db;
+  --text-default-hover: #f5f9fe;
+  --text-secondary: #9599a6;
+  --text-tertiary: #666b75;
+  --text-onbrand: #0c0c0d;
+  --text-brand: #32f08c;
+  --icon-brand: #32f08c;
+
+  --border-neutral-l1: rgba(224, 226, 242, 0.10);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.20);
+  --border-brand: #32f08c;
+
+  --status-error: #f65a5a;
+  --status-error-surface: rgba(246, 70, 70, 0.18);
+  --status-warning: #d27e24;
+  --status-warning-surface: rgba(210, 126, 36, 0.16);
+  --status-success: #33c192;
+  --status-success-surface: rgba(0, 165, 110, 0.18);
+  --status-primary: #387bff;
+  --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+  --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="decision-title">
+  <div class="decision-panel">
+
+    <div class="panel-header">
+      <a class="back-link" href="workspace-studio.html" aria-label="返回 Workspace Studio" data-dom-id=".back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        返回 Workspace Studio
+      </a>
+      <div class="panel-actions">
+        <span class="pill pill-decision">待决策</span>
+        <button class="btn btn-ghost" aria-label="关闭决策室" onclick="window.location.href='workspace-studio.html'">关闭</button>
+      </div>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- 1. Decision Question -->
+      <section class="section" aria-labelledby="q-title">
+        <div class="decision-kicker">Decision Room / 决策室</div>
+        <h1 id="decision-title">批准抖音 / TikTok 运营 Workspace Blueprint v0.3 → Runtime v1.1</h1>
+        <div class="topic-meta">
+          <span>来源：Workspace Studio · Business Engineering AI</span>
+          <span>提交时间：2026-08-01 14:32</span>
+          <span>决策到期：2026-08-02 10:00</span>
+        </div>
+        <p class="lead" id="q-title">
+          <strong>CEO 需要决定：是否批准将抖音 / TikTok 运营 Workspace 从 Blueprint v0.3 发布为 Runtime v1.1，并立即让 AI 团队按新责任矩阵运行？</strong>
+        </p>
+        <div class="card">
+          <p style="margin:0;color:var(--text-secondary);line-height:var(--leading-lg);">
+            该决策会立即改变运行中的责任与交接，但保留可追溯的回滚路径。批准后，Content AI、Growth AI 与 Engineering AI 将承担新 Stage 责任，旧 Runtime v1.0 保留 14 天；拒绝或延后将把 Blueprint 退回 Studio，并影响 Q3 内容增长 Cycle 的检查点。
+          </p>
+        </div>
+      </section>
+
+      <!-- 2. Facts -->
+      <section class="section" aria-labelledby="facts-title">
+        <h2 class="section-title" id="facts-title"><span class="num">01</span>事实与证据</h2>
+        <ul class="fact-list">
+          <li class="fact-item">
+            <span class="fact-icon">✓</span>
+            <div class="fact-content">
+              <div class="fact-title">Blueprint v0.3 已覆盖 Runtime v1.1 全部 Stage</div>
+              <div class="fact-source">来源：<a href="#">Workspace Studio commit #a4f9c2</a> · 负责人：Business Engineering AI · 2 小时前</div>
+            </div>
+          </li>
+          <li class="fact-item">
+            <span class="fact-icon">✓</span>
+            <div class="fact-content">
+              <div class="fact-title">6 类运行模拟全部通过</div>
+              <div class="fact-source">来源：<a href="#">模拟控制台</a> · 正常路径 / Agent 缺席 / 外部延迟 / CEO 拒绝 / 工具失败 / 证据冲突 · 14:32</div>
+            </div>
+          </li>
+          <li class="fact-item">
+            <span class="fact-icon">✓</span>
+            <div class="fact-content">
+              <div class="fact-title">Content AI 与 Growth AI 的责任矩阵已对齐</div>
+              <div class="fact-source">来源：<a href="#">AI 团队办公室</a> · Owner：Content Lead · 11:08</div>
+            </div>
+          </li>
+          <li class="fact-item">
+            <span class="fact-icon">✓</span>
+            <div class="fact-content">
+              <div class="fact-title">外部平台授权均在有效期内</div>
+              <div class="fact-source">来源：<a href="#">Credential Vault</a> · 抖音 / 小红书 / 视频号 · 1 小时前到期检查通过</div>
+            </div>
+          </li>
+          <li class="fact-item">
+            <span class="fact-icon">✓</span>
+            <div class="fact-content">
+              <div class="fact-title">财务估算已生成：月成本 +¥1,200，预期外部结果 +¥18,000</div>
+              <div class="fact-source">来源：<a href="#">财务模拟</a> · 置信度：中 · 基于过去 30 天内容增长数据</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 3. Unknowns -->
+      <section class="section" aria-labelledby="unknowns-title">
+        <h2 class="section-title" id="unknowns-title"><span class="num">02</span>已知未知</h2>
+        <ul class="unknown-list">
+          <li class="unknown-item">
+            <span class="unknown-icon">?</span>
+            <div class="fact-content">
+              <div class="fact-title">视频号新 API 限流策略未实测</div>
+              <div class="fact-source">风险：发布初期可能触发单日调用上限，导致数据回流延迟 1–2 天。</div>
+            </div>
+          </li>
+          <li class="unknown-item">
+            <span class="unknown-icon">?</span>
+            <div class="fact-content">
+              <div class="fact-title">剪辑 Agent 在 4K 素材上的处理时长缺少真实数据</div>
+              <div class="fact-source">风险：若素材规格升级，可能超出当前容量预算，需临时扩容。</div>
+            </div>
+          </li>
+          <li class="unknown-item">
+            <span class="unknown-icon">?</span>
+            <div class="fact-content">
+              <div class="fact-title">CEO 对“品牌安全审核”标准的具体阈值未最终确认</div>
+              <div class="fact-source">建议：在 Runtime v1.1 中保留人工检查点，待 CEO 确认后写入规则库。</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 4. Options -->
+      <section class="section" aria-labelledby="options-title">
+        <h2 class="section-title" id="options-title"><span class="num">03</span>可选方案</h2>
+        <div class="options-list" role="radiogroup" aria-label="决策选项">
+          <div class="option-card" role="radio" tabindex="0" aria-checked="false" data-option="approve" onclick="selectOption('approve')" data-dom-id=".option-card">
+            <span class="option-radio" aria-hidden="true"></span>
+            <div class="option-body">
+              <div class="option-title">A. 批准并发布 Runtime v1.1 <span class="option-tag">推荐</span></div>
+              <p class="option-desc">立即从 Blueprint v0.3 发布 Runtime v1.1；AI 团队按新责任矩阵运行；旧 Runtime v1.0 保留 14 天可回滚；首周检查点设为 8 月 5 日。</p>
+            </div>
+          </div>
+          <div class="option-card" role="radio" tabindex="0" aria-checked="false" data-option="defer" onclick="selectOption('defer')" data-dom-id=".option-card">
+            <span class="option-radio" aria-hidden="true"></span>
+            <div class="option-body">
+              <div class="option-title">B. 延后 3 天</div>
+              <p class="option-desc">待视频号限流实测与 CEO 确认品牌安全阈值后再决策；Blueprint 保持待发布状态，当前 v1.0 继续运行。</p>
+            </div>
+          </div>
+          <div class="option-card" role="radio" tabindex="0" aria-checked="false" data-option="revise" onclick="selectOption('revise')" data-dom-id=".option-card">
+            <span class="option-radio" aria-hidden="true"></span>
+            <div class="option-body">
+              <div class="option-title">C. 要求修改</div>
+              <p class="option-desc">退回 Studio，要求补充 4K 剪辑基准测试、品牌安全审核清单，以及视频号限流应对策略；完成后重新提交。</p>
+            </div>
+          </div>
+          <div class="option-card" role="radio" tabindex="0" aria-checked="false" data-option="reject" onclick="selectOption('reject')" data-dom-id=".option-card">
+            <span class="option-radio" aria-hidden="true"></span>
+            <div class="option-body">
+              <div class="option-title">D. 拒绝并保留 v1.0</div>
+              <p class="option-desc">维持当前 Runtime v1.0 继续运行；Blueprint v0.3 归档为待办，不触发额外成本，不更改 AI 责任矩阵。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Impact Analysis -->
+      <section class="section" aria-labelledby="impact-title">
+        <h2 class="section-title" id="impact-title"><span class="num">04</span>影响分析</h2>
+        <div class="impact-grid">
+          <div class="metric-card">
+            <div class="label">经营周期</div>
+            <div class="value">Q3 内容增长</div>
+            <div class="delta warn">延后 3 天将推后检查点至 8/8</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">AI 容量变化</div>
+            <div class="value">+1 交接节点</div>
+            <div class="delta">Content AI +20% · Growth AI +1 handoff</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">财务影响</div>
+            <div class="value">ROI 约 15:1</div>
+            <div class="delta up">+¥18K/月 预期结果 · +¥1.2K/月 成本</div>
+          </div>
+        </div>
+        <div class="impact-notes">
+          <div class="impact-note cycle">
+            <strong>经营周期：</strong>批准后将把“抖音 / TikTok 运营”纳入 2026-Q3 内容增长周期；若延后，下一检查点从 8/5 推至 8/8，外部演示材料需同步调整。
+          </div>
+          <div class="impact-note capacity">
+            <strong>AI 容量：</strong>Content AI 增加脚本到发布全链路责任；Growth AI 新增数据回流验收节点；Engineering AI 承担部署、监控与告警配置。
+          </div>
+          <div class="impact-note risk">
+            <strong>承诺风险：</strong>若 48 小时内未接入真实账号数据，外部结果无法验证，该 Workspace 风险等级将从“正常”升至“关注”。
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Simulation Results -->
+      <section class="section" aria-labelledby="sim-title">
+        <h2 class="section-title" id="sim-title"><span class="num">05</span>模拟结果</h2>
+        <div class="sim-tabs" role="tablist" aria-label="模拟场景">
+          <button class="sim-tab active" role="tab" aria-selected="true" aria-controls="sim-normal" id="tab-normal" onclick="showSim('normal')" data-dom-id=".sim-tab">正常路径</button>
+          <button class="sim-tab" role="tab" aria-selected="false" aria-controls="sim-absent" id="tab-absent" onclick="showSim('absent')" data-dom-id=".sim-tab">Agent 缺席</button>
+          <button class="sim-tab" role="tab" aria-selected="false" aria-controls="sim-delay" id="tab-delay" onclick="showSim('delay')" data-dom-id=".sim-tab">外部延迟</button>
+          <button class="sim-tab" role="tab" aria-selected="false" aria-controls="sim-reject" id="tab-reject" onclick="showSim('reject')" data-dom-id=".sim-tab">CEO 拒绝</button>
+        </div>
+
+        <div id="sim-normal" class="sim-panel active" role="tabpanel" aria-labelledby="tab-normal">
+          <div class="sim-title">正常路径：Runtime v1.1 按期上线</div>
+          <p class="sim-outcome">所有 Agent 在线、外部授权有效、素材规格保持 1080p。首周稳定产出 12 条视频，数据回流正常，CEO 检查点 8/5 通过。</p>
+          <div class="sim-metrics">
+            <div class="sim-metric"><div class="key">首周产出</div><div class="val">12 条视频</div></div>
+            <div class="sim-metric"><div class="key">数据回流延迟</div><div class="val">&lt; 2 小时</div></div>
+            <div class="sim-metric"><div class="key">风险状态</div><div class="val">正常</div></div>
+          </div>
+        </div>
+
+        <div id="sim-absent" class="sim-panel" role="tabpanel" aria-labelledby="tab-absent">
+          <div class="sim-title">Agent 缺席：剪辑 Agent 不可用</div>
+          <p class="sim-outcome">脚本产出继续堆积，剪辑队列在 18 小时后超过阈值。系统将向 CEO 升级，建议临时购买外部剪辑服务或延后发布。</p>
+          <div class="sim-metrics">
+            <div class="sim-metric"><div class="key">升级时间</div><div class="val">18 小时内</div></div>
+            <div class="sim-metric"><div class="key">待剪积压</div><div class="val">6 条</div></div>
+            <div class="sim-metric"><div class="key">CEO 动作</div><div class="val">委派 / 延后</div></div>
+          </div>
+        </div>
+
+        <div id="sim-delay" class="sim-panel" role="tabpanel" aria-labelledby="tab-delay">
+          <div class="sim-title">外部延迟：平台授权临时失效</div>
+          <p class="sim-outcome">发布节点阻塞，数据回流中断 1–2 天。Growth AI 无法验证外部结果，Workspace 状态自动标记为“关注”，直至授权恢复。</p>
+          <div class="sim-metrics">
+            <div class="sim-metric"><div class="key">阻塞时长</div><div class="val">1–2 天</div></div>
+            <div class="sim-metric"><div class="key">影响结果</div><div class="val">数据无法验证</div></div>
+            <div class="sim-metric"><div class="key">风险状态</div><div class="val">关注</div></div>
+          </div>
+        </div>
+
+        <div id="sim-reject" class="sim-panel" role="tabpanel" aria-labelledby="tab-reject">
+          <div class="sim-title">CEO 拒绝：保留 Runtime v1.0</div>
+          <p class="sim-outcome">当前内容流水线继续运行，Blueprint v0.3 进入“待修改”状态，不触发额外成本，AI 责任矩阵保持不变。</p>
+          <div class="sim-metrics">
+            <div class="sim-metric"><div class="key">额外成本</div><div class="val">¥0</div></div>
+            <div class="sim-metric"><div class="key">产出节奏</div><div class="val">维持现状</div></div>
+            <div class="sim-metric"><div class="key">下一步</div><div class="val">Studio 修改后重提</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 & 8. CEO Decision area + after state -->
+      <section class="section" aria-labelledby="decision-area-title" style="border-bottom:0;padding-bottom:0;">
+        <h2 class="section-title" id="decision-area-title"><span class="num">06</span>CEO 决策</h2>
+        <p class="muted" style="margin-bottom:var(--space-16);">选择后，系统将自动记录决策至 Evidence / Truth 层，并向责任主体派发生效指令。</p>
+
+        <div id="afterDecision" class="after-decision" aria-live="polite">
+          <div class="after-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="afterTitle">决策已记录</span>
+          </div>
+          <div class="after-body" id="afterBody"></div>
+          <div class="evidence-record">
+            <div class="header">
+              <strong>Evidence / Truth 层记录</strong>
+              <span class="id mono" id="evidenceId">decision://2026-08-01/</span>
+            </div>
+            <div class="trace" id="evidenceTrace"></div>
+          </div>
+          <div style="margin-top: var(--space-16);">
+            <button class="btn btn-primary" onclick="window.location.href='ceo-desk.html'" data-dom-id="#afterDecision .btn-primary">返回 CEO 工作台</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-toolbar">
+        <div class="decision-hint">
+          <strong>生效条件：</strong>批准后即时生效 · <strong>回滚路径：</strong>14 天内可回退至 v1.0
+        </div>
+        <div class="btn-group" id="decisionButtons">
+          <button class="btn btn-primary" data-dom-id="#decisionButtons .btn-primary" onclick="makeDecision('approve')">批准</button>
+          <button class="btn btn-secondary" onclick="makeDecision('defer')">延后</button>
+          <button class="btn btn-secondary" onclick="makeDecision('revise')">要求修改</button>
+          <button class="btn btn-danger" onclick="makeDecision('reject')">拒绝并保留 v1.0</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const outcomes = {
+    approve: {
+      title: '已批准：抖音 / TikTok 运营 Workspace Runtime v1.1 正式发布',
+      body: '<strong>下一步：</strong>Business Engineering AI 将在 10 分钟内完成部署；Content AI 接管选题到发布全链路；首条检查点设为 2026-08-05 09:00。旧 Runtime v1.0 保留 14 天作为回滚路径。',
+      action: '批准并发布 Runtime v1.1',
+      next: '部署 → 责任矩阵生效 → 首周检查点 8/5'
+    },
+    defer: {
+      title: '已延后：3 天后重新决策',
+      body: '<strong>下一步：</strong>Business Engineering AI 安排视频号限流实测；Assistant 将在 CEO 确认品牌安全阈值后重新生成 Approval Packet；当前 v1.0 继续运行，检查点顺延至 8/8。',
+      action: '延后 3 天',
+      next: '完成实测 → 重新提交 → 再次进入决策室'
+    },
+    revise: {
+      title: '已退回：要求修改 Blueprint v0.3',
+      body: '<strong>下一步：</strong>Blueprint 退回 Workspace Studio；需补充 4K 剪辑基准测试、品牌安全审核清单及视频号限流应对策略；修改完成后重新提交 CEO 审批。',
+      action: '要求修改',
+      next: 'Studio 修改 → 重新模拟 → 重新提交审批'
+    },
+    reject: {
+      title: '已拒绝：保留 Runtime v1.0',
+      body: '<strong>下一步：</strong>继续运行当前 Runtime v1.0，不更改 AI 责任矩阵；Blueprint v0.3 归档为“待办”，不触发额外成本；Engineering AI 关闭相关部署准备。',
+      action: '拒绝并保留 v1.0',
+      next: '维持现状 → Blueprint 归档 → 按需重新设计'
+    }
+  };
+
+  function selectOption(option) {
+    document.querySelectorAll('.option-card').forEach(card => {
+      const active = card.dataset.option === option;
+      card.classList.toggle('selected', active);
+      card.setAttribute('aria-checked', active);
+    });
+  }
+
+  function showSim(id) {
+    document.querySelectorAll('.sim-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('sim-' + id).classList.add('active');
+
+    document.querySelectorAll('.sim-tab').forEach(t => {
+      const active = t.id === 'tab-' + id;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', active);
+    });
+  }
+
+  function makeDecision(choice) {
+    const data = outcomes[choice];
+    if (!data) return;
+
+    selectOption(choice);
+
+    const now = new Date();
+    const ts = now.toISOString().replace('T', ' ').slice(0, 19);
+    const id = 'decision://' + now.toISOString().slice(0, 10) + '/' + choice + '-' + now.getTime();
+
+    document.getElementById('afterTitle').textContent = data.title;
+    document.getElementById('afterBody').innerHTML = data.body;
+    document.getElementById('evidenceId').textContent = id;
+    document.getElementById('evidenceTrace').innerHTML = `
+      <div><span class="tertiary">决策动作：</span>${data.action}</div>
+      <div><span class="tertiary">执行路径：</span>${data.next}</div>
+      <div><span class="tertiary">记录时间：</span><span class="mono">${ts}</span></div>
+      <div><span class="tertiary">来源页面：</span>决策室 / decision-room.html</div>
+      <div><span class="tertiary">写入层：</span>Evidence / Truth Layer · 状态：不可篡改</div>
+    `;
+
+    document.getElementById('afterDecision').classList.add('active');
+    document.getElementById('afterDecision').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    const buttons = document.querySelectorAll('#decisionButtons .btn');
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      if (!btn.classList.contains('btn-primary') && !btn.classList.contains('btn-danger')) {
+        btn.style.opacity = '0.45';
+      }
+    });
+
+    const pill = document.querySelector('.pill-decision');
+    if (pill) {
+      pill.className = 'pill pill-ontrack';
+      pill.textContent = '已决策';
+    }
+  }
+</script>
+
+
+    <style>
+    /* ────────────────────────────────────────────────
+       Curis Decision Room / 决策室
+       Tokens: TRAE dark command center, adapted for CEO
+       ──────────────────────────────────────────────── */
+
+    :root {
+      --bg-base-default: #1a1b1d;
+      --bg-base-secondary: #222427;
+      --bg-base-tertiary: #2a2d31;
+      --bg-tooltip: #1a1b1d;
+      --bg-menu: #202123;
+      --bg-invert: #dadde5;
+      --bg-invert-hover: #edeff2;
+
+      --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+      --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+      --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+      --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+
+      --brand-100: #e5fff2;
+      --brand-200: #b4fdd9;
+      --brand-300: #85fabf;
+      --brand-400: #5cf5a8;
+      --brand-500: #32f08c;
+      --brand-600: #0fdc78;
+      --brand-700: #0ab861;
+      --brand-800: #05994f;
+      --brand-900: #02743b;
+
+      --text-default: #d1d3db;
+      --text-default-hover: #f5f9fe;
+      --text-secondary: #9599a6;
+      --text-secondary-hover: #d1d3db;
+      --text-tertiary: #666b75;
+      --text-disabled: #666b75;
+      --text-onbrand: #0c0c0d;
+      --text-brand: #32f08c;
+      --text-brand-hover: #0fdc78;
+
+      --icon-default: #d1d3db;
+      --icon-secondary: #9599a6;
+      --icon-tertiary: #666b75;
+      --icon-brand: #32f08c;
+
+      --border-neutral-l1: rgba(224, 226, 242, 0.10);
+      --border-neutral-l2: rgba(224, 226, 242, 0.16);
+      --border-neutral-l3: rgba(224, 226, 242, 0.20);
+      --border-contrast: #ffffff;
+      --border-brand: #32f08c;
+
+      --status-error: #f65a5a;
+      --status-error-surface: rgba(246, 70, 70, 0.18);
+      --status-warning: #d27e24;
+      --status-warning-surface: rgba(210, 126, 36, 0.16);
+      --status-alert: #d29d00;
+      --status-alert-surface: rgba(210, 157, 0, 0.16);
+      --status-success: #33c192;
+      --status-success-surface: rgba(0, 165, 110, 0.18);
+      --status-primary: #387bff;
+      --status-primary-surface: rgba(53, 121, 255, 0.18);
+
+      --font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-heading: "SF Pro", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      --text-xs: 10px;
+      --text-sm: 11px;
+      --text-md: 12px;
+      --text-base: 13px;
+      --text-lg: 15px;
+      --text-xl: 18px;
+      --text-2xl: 22px;
+      --text-3xl: 28px;
+      --text-4xl: 36px;
+
+      --leading-xs: 14px;
+      --leading-sm: 16px;
+      --leading-md: 18px;
+      --leading-base: 20px;
+      --leading-lg: 24px;
+      --leading-xl: 28px;
+      --leading-2xl: 32px;
+      --leading-3xl: 36px;
+      --leading-4xl: 44px;
+
+      --space-0: 0px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --space-40: 40px;
+      --space-64: 64px;
+
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 10px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+      --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.48);
+      --shadow-glow: 0 0 20px rgba(50, 240, 140, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 80% 10%, rgba(50, 240, 140, 0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 15% 90%, rgba(56, 123, 255, 0.06) 0%, transparent 40%),
+        var(--bg-base-default);
+      color: var(--text-default);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--text-brand); text-decoration: none; }
+    a:hover { color: var(--text-brand-hover); }
+    code, .mono { font-family: var(--font-mono); font-size: var(--text-md); }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-neutral-l3); }
+
+    *:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+
+    /* Modal / Context Mode */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: var(--space-24);
+      background: rgba(12, 12, 13, 0.78);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      animation: backdropIn 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (max-width: 980px) {
+      .modal-backdrop {
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0;
+      }
+    }
+
+    .decision-panel {
+      width: 100%;
+      max-width: 760px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      animation: panelIn 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 980px) {
+      .decision-panel {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+    }
+
+    @keyframes backdropIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .panel-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-16);
+      padding: var(--space-16) var(--space-24);
+      background: rgba(34, 36, 39, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      color: var(--text-secondary);
+      font-size: var(--text-md);
+      transition: color 0.15s ease;
+    }
+    .back-link:hover { color: var(--text-default-hover); }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .panel-body {
+      padding: var(--space-24) var(--space-32) var(--space-32);
+      flex: 1;
+    }
+
+    @media (max-width: 640px) {
+      .panel-body { padding: var(--space-20) var(--space-16) var(--space-24); }
+    }
+
+    /* Header block */
+    .decision-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-brand);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .decision-kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--brand-500);
+      box-shadow: 0 0 12px var(--brand-500);
+    }
+
+    h1 {
+      margin: var(--space-16) 0 var(--space-8);
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      line-height: var(--leading-2xl);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-default-hover);
+    }
+
+    .topic-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-12);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-24);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 20px;
+      padding: 0 var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    .pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-full);
+    }
+    .pill-decision { background: var(--status-primary-surface); color: var(--status-primary); }
+    .pill-decision::before { background: var(--status-primary); }
+    .pill-ontrack { background: var(--status-success-surface); color: var(--status-success); }
+    .pill-ontrack::before { background: var(--status-success); }
+    .pill-attention { background: var(--status-warning-surface); color: var(--status-warning); }
+    .pill-attention::before { background: var(--status-warning); }
+    .pill-risk { background: rgba(246, 90, 90, 0.16); color: var(--status-error); }
+    .pill-risk::before { background: var(--status-error); }
+    .pill-unknown { background: var(--bg-overlay-l3); color: var(--text-tertiary); }
+    .pill-unknown::before { background: var(--text-tertiary); }
+
+    /* Sections */
+    .section {
+      padding: var(--space-24) 0;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .section:last-of-type { border-bottom: 0; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      margin: 0 0 var(--space-16);
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      line-height: var(--leading-lg);
+      font-weight: 600;
+      color: var(--text-default-hover);
+    }
+    .section-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-overlay-l2);
+      color: var(--text-brand);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    .lead {
+      margin: 0 0 var(--space-16);
+      color: var(--text-secondary);
+      font-size: var(--text-lg);
+      line-height: var(--leading-lg);
+    }
+
+    /* Cards / panels */
+    .card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--border-neutral-l2); }
+
+    .fact-list,
+    .unknown-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .fact-item,
+    .unknown-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-12);
+      padding: var(--space-12) var(--space-16);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+
+    .fact-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-full);
+      background: rgba(50, 240, 140, 0.12);
+      color: var(--brand-500);
+      display: grid;
+      place-items: center;
+      font-size: var(--text-xs);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .unknown-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3);
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      font-size: var(--text-xs);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .fact-content { flex: 1; }
+    .fact-title {
+      color: var(--text-default);
+      font-weight: 500;
+      margin-bottom: var(--space-4);
+    }
+    .fact-source {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+    .fact-source a { color: var(--text-secondary); }
+    .fact-source a:hover { color: var(--text-brand); }
+
+    /* Options */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+    }
+    .option-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-16);
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+    .option-card:hover {
+      border-color: var(--border-neutral-l2);
+      background: var(--bg-overlay-l1);
+    }
+    .option-card.selected {
+      border-color: var(--border-brand);
+      background: rgba(50, 240, 140, 0.06);
+      box-shadow: var(--shadow-glow);
+    }
+    .option-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--border-neutral-l2);
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: grid;
+      place-items: center;
+    }
+    .option-card.selected .option-radio {
+      border-color: var(--brand-500);
+      background: var(--brand-500);
+    }
+    .option-radio::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--bg-base-default);
+      opacity: 0;
+    }
+    .option-card.selected .option-radio::after { opacity: 1; }
+
+    .option-body { flex: 1; }
+    .option-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      color: var(--text-default-hover);
+      font-weight: 600;
+      margin-bottom: var(--space-6);
+    }
+    .option-tag {
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-sm);
+      background: var(--bg-overlay-l2);
+      color: var(--text-tertiary);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    .option-desc {
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: var(--leading-lg);
+    }
+
+    /* Impact */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-16);
+      margin-bottom: var(--space-16);
+    }
+    @media (max-width: 760px) {
+      .impact-grid { grid-template-columns: 1fr; }
+    }
+    .metric-card {
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+    }
+    .metric-card .label {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-6);
+    }
+    .metric-card .value {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--text-default-hover);
+      line-height: var(--leading-xl);
+    }
+    .metric-card .delta {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-top: var(--space-6);
+    }
+    .metric-card .delta.up { color: var(--status-success); }
+    .metric-card .delta.down { color: var(--status-error); }
+    .metric-card .delta.warn { color: var(--status-warning); }
+
+    .impact-notes {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-10);
+    }
+    .impact-note {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-10);
+      padding: var(--space-12) var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+    }
+    .impact-note.risk { border-left-color: var(--status-error); }
+    .impact-note.cycle { border-left-color: var(--status-primary); }
+    .impact-note.capacity { border-left-color: var(--brand-500); }
+
+    /* Simulation tabs */
+    .sim-tabs {
+      display: flex;
+      gap: var(--space-8);
+      margin-bottom: var(--space-16);
+      flex-wrap: wrap;
+    }
+    .sim-tab {
+      padding: var(--space-8) var(--space-12);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sim-tab:hover { background: var(--bg-overlay-l1); color: var(--text-default); }
+    .sim-tab.active { background: var(--bg-overlay-l3); color: var(--text-default-hover); border-color: var(--border-neutral-l2); }
+
+    .sim-panel {
+      display: none;
+      padding: var(--space-16);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-lg);
+      background: var(--bg-base-default);
+      animation: fadeIn 180ms ease-out;
+    }
+    .sim-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sim-title {
+      color: var(--text-default-hover);
+      font-weight: 600;
+      margin-bottom: var(--space-8);
+    }
+    .sim-outcome {
+      color: var(--text-secondary);
+      line-height: var(--leading-lg);
+      margin-bottom: var(--space-16);
+    }
+    .sim-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-12);
+    }
+    @media (max-width: 640px) {
+      .sim-metrics { grid-template-columns: 1fr; }
+    }
+    .sim-metric {
+      padding: var(--space-12);
+      border-radius: var(--radius-md);
+      background: var(--bg-overlay-l1);
+    }
+    .sim-metric .key { color: var(--text-tertiary); font-size: var(--text-sm); margin-bottom: var(--space-4); }
+    .sim-metric .val { color: var(--text-default); font-weight: 500; }
+
+    /* Decision area */
+    .decision-area {
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      padding: var(--space-20) var(--space-32);
+      background: rgba(34, 36, 39, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+    @media (max-width: 640px) {
+      .decision-area { padding: var(--space-16); }
+    }
+
+    .decision-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-16);
+      flex-wrap: wrap;
+    }
+    .decision-hint {
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      max-width: 320px;
+    }
+    .decision-hint strong { color: var(--text-secondary); font-weight: 500; }
+
+    .btn-group {
+      display: flex;
+      gap: var(--space-10);
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      height: 34px;
+      padding: 0 var(--space-14);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--brand-500);
+      color: var(--text-onbrand);
+      border-color: var(--brand-500);
+    }
+    .btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
+    .btn-secondary {
+      background: var(--bg-base-tertiary);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l2);
+    }
+    .btn-secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l3); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover { color: var(--text-default-hover); background: var(--bg-overlay-l2); }
+    .btn-danger {
+      background: var(--status-error-surface);
+      color: var(--status-error);
+      border-color: rgba(246, 90, 90, 0.35);
+    }
+    .btn-danger:hover { background: rgba(246, 90, 90, 0.28); }
+    .btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* After-decision state */
+    .after-decision {
+      display: none;
+      margin-top: var(--space-24);
+      padding: var(--space-20);
+      border: 1px solid var(--border-brand);
+      border-radius: var(--radius-lg);
+      background: rgba(50, 240, 140, 0.06);
+      box-shadow: var(--shadow-glow);
+      animation: fadeIn 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .after-decision.active { display: block; }
+
+    .after-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-10);
+      color: var(--text-brand);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-12);
+    }
+    .after-body {
+      color: var(--text-secondary);
+      line-height: var(--leading-lg);
+      margin-bottom: var(--space-16);
+    }
+    .after-body strong { color: var(--text-default); font-weight: 500; }
+
+    .evidence-record {
+      padding: var(--space-14);
+      border-radius: var(--radius-md);
+      background: var(--bg-base-default);
+      border: 1px solid var(--border-neutral-l1);
+    }
+    .evidence-record .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-12);
+      margin-bottom: var(--space-10);
+      flex-wrap: wrap;
+    }
+    .evidence-record .id {
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+    }
+    .evidence-record .trace {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .muted { color: var(--text-secondary); }
+    .tertiary { color: var(--text-tertiary); }
+    .mono { font-family: var(--font-mono); }
+  </style>
+<script>
+/**
+ * Curis Hi-Fi Prototype — shared interaction layer
+ * Handles cross-page navigation, active nav state, toast feedback,
+ * and common button affordances for the click-through demo.
+ */
+(function () {
+  'use strict';
+
+  // ── Navigation map (label text → page file)
+  const NAV_MAP = {
+    'CEO 工作台': 'ceo-desk.html',
+    'CEO 办公桌': 'ceo-desk.html',
+    '经营': 'operating.html',
+    '经营概览': 'operating.html',
+    '业务': 'business.html',
+    '业务空间': 'business.html',
+    '公司': 'ai-organization.html',
+    'AI 团队': 'ai-organization.html',
+    '工作空间': 'workspace-portal.html',
+    '决策': 'decision-room.html',
+    '决策室': 'decision-room.html',
+    '设置': '#',
+    '帮助': '#',
+    '帮助与反馈': '#',
+    '员工目录': '#',
+    '能力中心': '#'
+  };
+
+  // ── Wire sidebar nav items
+  function initNavigation() {
+    const currentPage = (window.location.pathname.split('/').pop() || 'ceo-desk.html');
+
+    document.querySelectorAll('.sidebar .nav-item, aside.sidebar .nav-item, .nav-list .nav-item').forEach(item => {
+      // Skip if already a link
+      if (item.tagName === 'A') return;
+
+      // Determine target from data-href or text content
+      let target = item.dataset.href;
+      if (!target) {
+        const text = item.textContent.trim().split(/\s+/).join(' ');
+        for (const [label, href] of Object.entries(NAV_MAP)) {
+          if (text.includes(label)) {
+            target = href;
+            break;
+          }
+        }
+      }
+
+      if (target) {
+        item.style.cursor = 'pointer';
+        item.setAttribute('role', 'link');
+        item.setAttribute('tabindex', '0');
+        item.dataset.href = target;
+
+        const navigate = () => {
+          if (target === '#') {
+            showToast('该入口将在设置中心接入；当前工作上下文已保留');
+            return;
+          }
+          window.location.href = target;
+        };
+
+        item.addEventListener('click', navigate);
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate();
+          }
+        });
+      }
+
+      // Active state
+      const href = item.dataset.href;
+      if (href && href !== '#') {
+        const active = currentPage === href || currentPage.endsWith('/' + href);
+        item.classList.toggle('active', active);
+      }
+    });
+  }
+
+  // ── Toast
+  function showToast(message, duration = 2200) {
+    let toast = document.getElementById('proto-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'proto-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = `
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-base-secondary, #222427);
+        color: var(--text-default-hover, #f5f9fe);
+        border: 1px solid var(--border-neutral-l2, rgba(224,226,242,.16));
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+        z-index: 9999;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration);
+  }
+
+  // ── Button click feedback (where no specific handler exists)
+  function initButtonFeedback() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button, .btn');
+      if (!btn) return;
+
+      // Specific Curis handlers own marked actions; only fallback for unbound controls.
+      if (btn.dataset.curisHandled === 'true') return;
+      // If button already has onclick or bound listener, skip generic feedback
+      if (btn.onclick) return;
+      if (btn.closest('a')) return;
+
+      const label = btn.textContent.trim();
+      if (!label) return;
+
+      // Capture a few generic actions across pages
+      if (/^(决策|查看|调查|委派|暂缓|修复问题|运行模拟|提交审批|批准|拒绝|延后|要求修改|预览|编辑|发送|保存|查看影响)$/.test(label)) {
+        e.preventDefault();
+        showToast(`${label}已记录，CEO 助理会继续跟进`);
+      }
+    });
+  }
+
+  // ── Expose globals for inline onclick handlers that may be missing
+  window.showToast = showToast;
+
+  // ── Auto-init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initButtonFeedback();
+    });
+  } else {
+    initNavigation();
+    initButtonFeedback();
+  }
+})();
+
+</script>
+  <script src="curis-prototype.js"></script>
+</body>
+</html>

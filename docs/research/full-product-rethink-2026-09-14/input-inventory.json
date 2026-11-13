@@ -1,0 +1,111 @@
+{
+  "start": "2026-09-13T12:06:26+08:00",
+  "end": "2026-09-14T12:06:26+08:00",
+  "files": [
+    {
+      "path": "docs/01_Product/CURIS_CONTENT_GROWTH_PRODUCT_LANGUAGE_DERIVATION.md",
+      "mtime": 1789346210.9442787,
+      "sha256": "ee26f2495242b2bf94e34454ca8244da934550c7afa99f7900c49087dab2a480",
+      "lines": 362,
+      "chars": 15117
+    },
+    {
+      "path": "docs/01_Product/CURIS_FULL_PRODUCT_STRUCTURE_AND_INTERACTION_INVENTORY.md",
+      "mtime": 1789309995.5628498,
+      "sha256": "8dc944d8d870fe565d17b73d332c448e2cc9ed58c50baea0b96a0da2568d02d5",
+      "lines": 336,
+      "chars": 19215
+    },
+    {
+      "path": "docs/01_Product/CURIS_BUSINESS_TO_PRODUCT_TRANSLATION_LEDGER.md",
+      "mtime": 1789342258.185609,
+      "sha256": "8efd212cfe573bacbef73ccdf03f2c137aa20b2cfcc703725bf86fae27561554",
+      "lines": 137,
+      "chars": 13285
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_DERIVATION_ROUND1_CORRECTION.md",
+      "mtime": 1789324677.7591064,
+      "sha256": "17d923c44be3f65a6b5fc740e316cd5757ed12062287a7c8879e54ddfdc600e0",
+      "lines": 77,
+      "chars": 9545
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_DERIVATION_METHOD_V2_VALIDATION.md",
+      "mtime": 1789326125.762951,
+      "sha256": "86c69008e1fc9c21b0b93e4d2576b9793794e999fe7ea230d04ab72b905cd3c1",
+      "lines": 518,
+      "chars": 40813
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_DERIVATION_GAP_REGISTER.md",
+      "mtime": 1789329088.3294184,
+      "sha256": "c012d65ac4d9a68b7f7ed6718339fac7163398a792704c0ea65fc5df0af70300",
+      "lines": 47,
+      "chars": 10548
+    },
+    {
+      "path": "docs/01_Product/CURIS_DOUYIN_REAL_PLATFORM_OPERATING_DEEP_DIVE.md",
+      "mtime": 1789342219.4921138,
+      "sha256": "3de5954dc7c119257aa0a96ed875bed6e65a7009e94de7293f942c50770bf549",
+      "lines": 999,
+      "chars": 51186
+    },
+    {
+      "path": "docs/01_Product/CURIS_CONTENT_GROWTH_BUSINESS_TO_PRODUCT_TRANSLATION.md",
+      "mtime": 1789332304.8493469,
+      "sha256": "7434612b601ec14cd511f375ca85aa4ee39e70db45c01b6286f805c24308b633",
+      "lines": 414,
+      "chars": 19151
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_DERIVATION_REBUILD.md",
+      "mtime": 1789324659.986727,
+      "sha256": "6e17f699cf31e0e267fc289a6ce6bf6fddf89c9055acf8dbf143f112d446f686",
+      "lines": 344,
+      "chars": 26702
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_CAPABILITY_DERIVATION_LEDGER.md",
+      "mtime": 1789329031.1750433,
+      "sha256": "6c95083da071548165b59b19dedad8179fe7fabac5cecef219e3f94afea66a76",
+      "lines": 82,
+      "chars": 9321
+    },
+    {
+      "path": "docs/01_Product/CURIS_CONTENT_GROWTH_AI_USER_OPERATING_BOUNDARY.md",
+      "mtime": 1789349177.1252868,
+      "sha256": "ec30ddcfc8712295f092f9a0a942a074ab4b0607a3e8624361379d7370dc3ecf",
+      "lines": 235,
+      "chars": 12386
+    },
+    {
+      "path": "docs/01_Product/CURIS_CONTENT_GROWTH_FULL_PRODUCT_CAPABILITY_DERIVATION.md",
+      "mtime": 1789342246.2385604,
+      "sha256": "6a4714fd2b849b7cb50cb766932fed21284321f94dade7e6fbf8ea56f0750d23",
+      "lines": 454,
+      "chars": 29813
+    },
+    {
+      "path": "docs/01_Product/CURIS_PRODUCT_DEFINITION_REBUILD.md",
+      "mtime": 1789324607.649816,
+      "sha256": "1c34fde95d888ae1d69db850d0191103476821187fcd37dc094072696a940302",
+      "lines": 375,
+      "chars": 20020
+    },
+    {
+      "path": "docs/01_Product/CURIS_CONTENT_GROWTH_BUSINESS_LOGIC_V2.md",
+      "mtime": 1789332985.234483,
+      "sha256": "a44e9cc106b0a127e78363cd995277683b7e2bfa5f2dc3680e4acacdc2368087",
+      "lines": 171,
+      "chars": 8657
+    },
+    {
+      "path": "docs/prototypes/full-product-html/CURIS_HTML_RECONCILIATION_REVIEW.md",
+      "mtime": 1789307071.5177865,
+      "sha256": "f453081723396792e20064f68f287868d7149a1c45d8b0a1c099da8a4904c3f7",
+      "lines": 89,
+      "chars": 6533
+    }
+  ]
+}

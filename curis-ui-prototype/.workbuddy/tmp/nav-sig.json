@@ -1,0 +1,194 @@
+[
+  {
+    "f": "ai-organization.html",
+    "sig": "fdaf28e6e8",
+    "count": 0,
+    "canonical": true,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "assets.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "business.html",
+    "sig": "fdaf28e6e8",
+    "count": 0,
+    "canonical": true,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "calendar.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "ceo-day-demo.html",
+    "sig": "NO-SIDEBAR",
+    "count": 0,
+    "canonical": false,
+    "groups": [],
+    "tag": "-"
+  },
+  {
+    "f": "ceo-desk.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "decision-room.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "finance.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "founding-flow.html",
+    "sig": "NO-SIDEBAR",
+    "count": 0,
+    "canonical": false,
+    "groups": [],
+    "tag": "-"
+  },
+  {
+    "f": "index.html",
+    "sig": "NO-SIDEBAR",
+    "count": 0,
+    "canonical": false,
+    "groups": [],
+    "tag": "-"
+  },
+  {
+    "f": "knowledge.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "meeting.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "operating.html",
+    "sig": "906cd3876d",
+    "count": 13,
+    "canonical": true,
+    "tag": "aside",
+    "groups": [
+      "公司::CEO 工作台|ceo-desk.html,经营|operating.html,业务|business.html,AI 团队|ai-organization.html,工作空间|workspace-portal.html",
+      "经营工具::会议工作台|meeting.html,决策室|decision-room.html",
+      "公司资源::成果库|assets.html,知识库|knowledge.html,财务|finance.html,日历|calendar.html"
+    ]
+  },
+  {
+    "f": "workspace-portal.html",
+    "sig": "fdaf28e6e8",
+    "count": 0,
+    "canonical": true,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-runtime-department.html",
+    "sig": "fdaf28e6e8",
+    "count": 14,
+    "canonical": false,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-runtime-shortvideo.html",
+    "sig": "fdaf28e6e8",
+    "count": 14,
+    "canonical": false,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-runtime-software.html",
+    "sig": "fdaf28e6e8",
+    "count": 14,
+    "canonical": false,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-runtime-xhs.html",
+    "sig": "fdaf28e6e8",
+    "count": 14,
+    "canonical": false,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-shell-reference.html",
+    "sig": "fdaf28e6e8",
+    "count": 14,
+    "canonical": false,
+    "tag": "aside",
+    "groups": []
+  },
+  {
+    "f": "workspace-studio.html",
+    "sig": "fdaf28e6e8",
+    "count": 0,
+    "canonical": true,
+    "tag": "aside",
+    "groups": []
+  }
+]

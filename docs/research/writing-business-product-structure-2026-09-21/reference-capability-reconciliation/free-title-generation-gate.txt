@@ -1,0 +1,56 @@
+ generic: 会员专属
+    - button:
+      - paragraph: 新书卖点包装
+      - paragraph: 提炼书籍最大差异化卖点，生成平台投稿、读者推荐等多场景宣传文本
+      - generic: 会员专属
+    - button:
+      - paragraph: 小说宣传文案
+      - paragraph: 生成短视频口播稿、书友圈推荐语、微博热文多种宣传格式文案
+      - generic: 会员专属
+    - generic: 解锁 5 个专属工具，开通会员即享全功能
+    - button:
+      - text: 立即开通
+- contentinfo:
+  - generic: 妍语网
+  - link:
+    - /url: /privacy
+    - text: 隐私政策
+  - link:
+    - /url: /terms
+    - text: 用户协议
+  - generic: © 2026 霸州妍语科技有限公司 版权所有
+  - generic: "|"
+  - link:
+    - /url: https://beian.miit.gov.cn/
+    - text: 冀ICP备2026026097号
+  - generic: "|"
+  - link:
+    - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13108102000680
+    - text: 冀公网安备13108102000680号
+- region "Notifications alt+T"
+- dialog "书名助手":
+  - heading "书名助手" [level=2]
+  - generic: 上限 1,200 字
+  - paragraph: 根据题材和风格一键生成多组精炼书名，含点评与卖点分析
+  - generic: 题材类型
+  - combobox:
+    - generic: 请选择
+  - generic: 核心关键词
+  - textbox "如：废材逆袭、星际战争、古风虐恋…": 港口档案员、未来来信、悬疑
+  - generic: 书名风格（可选）
+  - textbox "如：硬核、霸气、清新、悬念感强": 克制、悬念，只需两个书名
+  - generic: 目标平台（可选）
+  - combobox:
+    - generic: 通用
+  - generic: 选择模型
+  - generic: · 使用大模型会消耗创作额度
+  - combobox:
+    - generic: 文心 Speed 128K
+    - generic: 免费
+    - generic: 1.0×
+  - generic: 开通会员即可使用全部AI工具
+  - button "立即开通"
+  - button "开始生成" [active]:
+    - text: 开始生成
+  - button "Close":
+    - generic: Close

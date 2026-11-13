@@ -1,0 +1,710 @@
+- region "Notifications alt+T"
+- link:
+  - /url: /pricing?tab=credits#pricing-table-video-gen
+  - generic: 公告
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+  - generic: AitoEarn将于9月份开始使用云账户发放提现奖励
+- button:
+- complementary:
+  - link:
+    - /url: /
+  - navigation:
+    - link:
+      - /url: /zh-CN
+      - generic: 淘金广场
+    - link:
+      - /url: /zh-CN/task/team/managed
+      - generic: 我的团队
+    - link:
+      - /url: /zh-CN/agent
+      - generic: AI Agent
+    - link:
+      - /url: /zh-CN/draft-box
+      - generic: 内容管理
+    - link:
+      - /url: /zh-CN/publish
+      - generic: AI发布
+    - link:
+      - /url: /zh-CN/hot-content
+      - generic: 热门内容
+    - link:
+      - /url: /zh-CN/data-statistics
+      - generic: 数据统计
+    - link:
+      - /url: /zh-CN/brand-promotion
+      - generic: AI打卡
+    - link:
+      - /url: /zh-CN/xhs-data/note-comment-search
+      - generic: AI互动
+    - link:
+      - /url: /pricing
+      - generic: 产品定价
+  - button:
+    - generic: 我的频道
+  - button:
+    - generic: 浏览器插件
+    - generic: 未安装
+  - button:
+  - link:
+    - /url: https://docs.aitoearn.ai/zh/home
+  - link:
+    - /url: /developer/api-keys
+  - button:
+    - generic: U
+    - generic: user_FBVvPDQC
+- main:
+  - tablist:
+    - tab [selected]:
+      - generic: 创作者
+      - generic: 接任务赚钱
+    - tab:
+      - generic: 广告主
+      - generic: 发布任务
+  - link:
+    - /url: https://docs.aitoearn.ai/zh/help/guide
+    - generic: 新手指南
+  - link:
+    - /url: /task/earnings-leaderboard
+    - generic: 赚钱龙虎榜
+  - button:
+    - generic: 创作者余额
+    - generic: 可提现
+    - generic: ¥
+    - generic: "0.00"
+  - button:
+    - generic: 待结算
+    - generic: ¥
+    - generic: "0.00"
+  - button:
+    - generic: 累计收益
+    - generic: ¥
+    - generic: "0.00"
+  - button:
+    - generic: 全网粉丝
+    - generic: "0"
+  - link:
+    - /url: /task/my-tasks?tab=accepted
+    - text: 查看我的任务
+  - textbox:
+    - /placeholder: 搜索关键词…
+  - combobox:
+    - generic: 全部平台
+  - combobox:
+    - generic: 全部标签
+  - combobox:
+    - generic: 默认排序
+  - button:
+    - generic: 选择日期范围
+  - button [disabled]: 重置
+  - button:
+  - link:
+    - /url: /playlet
+    - generic: 出海短剧小说任务
+    - heading [level=3]:
+      - generic: 出海短剧小说任务
+    - generic: 新任务
+    - generic: 短剧任务
+    - generic: 最高70%分佣
+    - generic: 去接任务
+  - link:
+    - /url: /task/yka
+    - heading [level=3]: 腾讯游戏任务
+    - paragraph: 探索腾讯游戏创作任务，完成账号报备后参与活动并赚取收益。
+    - generic: 游戏内容任务
+    - text: 查看任务
+  - link:
+    - /url: /task/nextOne
+    - heading [level=3]: 互动任务
+    - paragraph: 自动接取高奖励任务，流程短、完成快，提交后继续下一单。
+    - generic: ¥
+    - generic: "5.70"
+    - generic: 总共可赚
+    - generic: 6 个任务待接
+    - generic: 立即开始
+  - link:
+    - /url: https://wj.qq.com/s2/26515574/4e08/
+    - generic: 即梦推广任务
+    - heading [level=3]:
+      - generic: 即梦推广任务
+    - generic: 置顶
+    - generic: CPE 结算任务
+    - paragraph: 按有效互动量（点赞、收藏、评论）结算
+    - generic: ¥0.8
+    - generic: 每次互动
+    - generic: 单条封顶 ¥20,000
+    - generic: 立即参与
+  - link:
+    - /url: /task/6aa00039907a7c6d1f8777f8
+    - heading [level=3]: AiToEarn小红书推广
+    - text: 一键发
+    - generic: 2026/9/8
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "200"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "85"
+    - progressbar
+    - generic: 17/50人
+  - link:
+    - /url: /task/6aa26033aabdc5be968f898b
+    - heading [level=3]: 抖音任务推广
+    - text: 一键发
+    - generic: 2026/9/10
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "2.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥2.00
+    - generic: AI推荐分
+    - generic: "70"
+    - progressbar
+    - generic: 14/15人
+  - link:
+    - /url: /task/6aa78d8b4be4348e34c7a147
+    - heading [level=3]: 微信小程序“卡证管家”推广
+    - text: 一键发
+    - generic: 2026/9/14
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "0.50"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥0.50
+    - generic: AI推荐分
+    - generic: "60"
+    - progressbar
+    - generic: 1/200人
+  - link:
+    - /url: /task/6a9b74ca51701bd98767e41e
+    - heading [level=3]: 抖音推广任务
+    - generic: 2026/9/5
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "5.00"
+    - generic: 粉丝限制
+    - generic: "5"
+    - generic: 最多可赚
+    - generic: ¥5.00
+    - generic: AI推荐分
+    - generic: "50"
+    - progressbar
+    - generic: 10/20人
+  - link:
+    - /url: /task/6a968e5f9e37b270ac1429ff
+    - heading [level=3]: 抖音任务推广
+    - generic: 2026/9/1
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "5.00"
+    - generic: 粉丝限制
+    - generic: "5"
+    - generic: 最多可赚
+    - generic: ¥5.00
+    - generic: AI推荐分
+    - generic: "50"
+    - progressbar
+    - generic: 9/10人
+  - link:
+    - /url: /task/6a8d2f4f0e104b15c51e2087
+    - heading [level=3]: 抖音任务推广
+    - generic: 2026/8/25
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "5.00"
+    - generic: 粉丝限制
+    - generic: "10"
+    - generic: 最多可赚
+    - generic: ¥5.00
+    - generic: AI推荐分
+    - generic: "48"
+    - progressbar
+    - generic: 12/20人
+  - link:
+    - /url: /task/6a638e5a422054816b0ab94a
+    - heading [level=3]: 小红书任务推广
+    - generic: 2026/7/24
+    - generic: 固定奖励
+    - generic: ¥
+    - generic: "2.00"
+    - generic: 阶梯奖励
+    - generic: 3 种奖励
+    - generic: CPE
+    - generic: ¥
+    - text: "20.00"
+    - generic: 里程碑
+    - generic: ¥
+    - text: "14.00"
+    - generic: 粉丝限制
+    - generic: "120"
+    - generic: 最多可赚
+    - generic: ¥16.00
+    - generic: AI推荐分
+    - generic: "45"
+    - progressbar
+    - generic: 4/18人
+  - link:
+    - /url: /task/6a9699cb9e37b270ac142a58
+    - heading [level=3]: 抖音任务推广
+    - generic: 2026/9/1
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "5.00"
+    - generic: 粉丝限制
+    - generic: "5"
+    - generic: 最多可赚
+    - generic: ¥5.00
+    - generic: AI推荐分
+    - generic: "45"
+    - progressbar
+    - generic: 4/20人
+  - link:
+    - /url: /task/6a86ca134b7de81bcc67f4d9
+    - heading [level=3]: 拾光记 GrowLine 网站推广宣传
+    - generic: 2026/8/20
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "20.00"
+    - generic: 粉丝限制
+    - generic: "100"
+    - generic: 最多可赚
+    - generic: ¥30.00
+    - generic: AI推荐分
+    - generic: "30"
+    - progressbar
+    - generic: 1/5人
+  - link:
+    - /url: /task/6a73060a9c7f83d28ebf886e
+    - heading [level=3]: 小依错题app本推广
+    - generic: 2026/8/5
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "5.00"
+    - generic: 粉丝限制
+    - generic: "100"
+    - generic: 最多可赚
+    - generic: ¥5.00
+    - generic: AI推荐分
+    - generic: "30"
+    - progressbar
+    - generic: 3/10人
+  - link:
+    - /url: /task/6a6a0da48502fde85d6f2efd
+    - heading [level=3]: 生图小程序推广
+    - generic: 2026/7/29
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "1.50"
+    - generic: 粉丝限制
+    - generic: "3"
+    - generic: 最多可赚
+    - generic: ¥1.50
+    - generic: AI推荐分
+    - generic: "20"
+    - progressbar
+    - generic: 22/106人
+  - link:
+    - /url: /task/6a60938c37469408e5e0a6bd
+    - heading [level=3]: 南京及周边创作者招募｜免费体验＋成交高佣
+    - generic: 2026/7/22
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "0.50"
+    - generic: 粉丝限制
+    - generic: 1k
+    - generic: 最多可赚
+    - generic: ¥0.50
+    - generic: AI推荐分
+    - generic: "20"
+    - progressbar
+    - generic: 1/5人
+  - link:
+    - /url: /task/6a60997b37469408e5e0bdef
+    - heading [level=3]: 南京及周边创作者招募｜免费体验＋成交高佣
+    - generic: 2026/7/22
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "0.50"
+    - generic: 粉丝限制
+    - generic: 1k
+    - generic: 最多可赚
+    - generic: ¥0.50
+    - generic: AI推荐分
+    - generic: "12"
+    - progressbar
+    - generic: 1/5人
+  - link:
+    - /url: /task/6aa6c0794be4348e34c79924
+    - heading [level=3]: AitoEarn小红书任务推广
+    - text: 一键发
+    - generic: 2026/9/13
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "200"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: 暂无
+    - progressbar
+    - generic: 1/10人
+  - link:
+    - /url: /task/6aa7b898597de2a406a2242d
+    - heading [level=3]: 抖音任务推广
+    - generic: 2026/9/14
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "10.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥10.00
+    - generic: AI推荐分
+    - generic: 暂无
+    - progressbar
+    - generic: 0/2人
+  - link:
+    - /url: /task/6a90f64d7a012b2f74664599
+    - generic: 已抢光
+    - heading [level=3]: AiToEarn小红书任务推广
+    - text: 一键发
+    - generic: 2026/8/28
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "200"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "95"
+    - progressbar
+    - generic: 50/50人
+  - link:
+    - /url: /task/6a9eb33aebae4bafb5dabf5c
+    - generic: 已抢光
+    - heading [level=3]: AitoEarn小红书任务推广
+    - text: 一键发
+    - generic: 2026/9/7
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "200"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "88"
+    - progressbar
+    - generic: 10/10人
+  - link:
+    - /url: /task/6a016509e83823f44c71792a
+    - generic: 已抢光
+    - heading [level=3]: 小红书任务推广
+    - text: 一键发
+    - generic: 2026/5/11
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "50.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "85"
+    - progressbar
+    - generic: 30/30人
+  - link:
+    - /url: /task/6a9f7cd1ebae4bafb5dac5a0
+    - generic: 已抢光
+    - heading [level=3]: 抖音任务推广
+    - generic: 2026/9/8
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "10.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥10.00
+    - generic: AI推荐分
+    - generic: "60"
+    - progressbar
+    - generic: 4/4人
+  - link:
+    - /url: /task/6a2639d7cbc99e28fe6ba42a
+    - generic: 已抢光
+    - heading [level=3]: 小红书任务推广
+    - generic: 2026/6/8
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "20.00"
+    - generic: 粉丝限制
+    - generic: 100w
+    - generic: 最多可赚
+    - generic: ¥10.00
+    - generic: AI推荐分
+    - generic: "50"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69d7611f39fae21835b551af
+    - generic: 已抢光
+    - heading [level=3]: Aitoearn哔哩哔哩cpe
+    - generic: 2026/4/9
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "32"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/6a436dbc2176876dae14ab53
+    - generic: 已抢光
+    - heading [level=3]: Hibrush AI出图工作台 小红书封面体验官招募
+    - generic: 2026/6/30
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "40.00"
+    - generic: 粉丝限制
+    - generic: "100"
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "30"
+    - progressbar
+    - generic: 5/5人
+  - link:
+    - /url: /task/69e770d7705256a210693a2d
+    - generic: 已抢光
+    - heading [level=3]: atioearn推广-b站
+    - generic: 2026/4/21
+    - generic: 千次播放
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "30"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69e76eb2705256a2106939a4
+    - generic: 已抢光
+    - heading [level=3]: 推广我的家
+    - generic: 2026/4/21
+    - generic: 千次播放
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "30"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69e74d9495f9f336d02d471b
+    - generic: 已抢光
+    - heading [level=3]: 推广我的店铺
+    - generic: 2026/4/21
+    - generic: 千次播放
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "25"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69d9055b997b243fd9ec2a75
+    - generic: 已抢光
+    - heading [level=3]: 薯片推广任务
+    - generic: 2026/4/10
+    - generic: 千次播放
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "25"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69e74e6995f9f336d02d480c
+    - generic: 已抢光
+    - heading [level=3]: 推广我的店铺-b站-cpe
+    - generic: 2026/4/21
+    - generic: 千次互动
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: "20"
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69dc51b9b92649359bd5aaee
+    - generic: 已抢光
+    - heading [level=3]: 推广我的餐厅
+    - text: 一键发
+    - generic: 2026/4/13
+    - generic: 千次播放
+    - generic: ¥
+    - generic: "2.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥50.00
+    - generic: AI推荐分
+    - generic: 暂无
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69d66d3817afc39cd8c2dca5
+    - generic: 已抢光
+    - heading [level=3]: 哔哩哔哩一口价测试
+    - text: 一键发
+    - generic: 2026/4/8
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥1.00
+    - generic: AI推荐分
+    - generic: 暂无
+    - progressbar
+    - generic: 1/1人
+  - link:
+    - /url: /task/69c1f2b2727d0265a2853be6
+    - generic: 已抢光
+    - heading [level=3]: 发布一个遛娃好去处
+    - text: 一键发
+    - generic: 2026/3/24
+    - generic: 每篇可赚
+    - generic: ¥
+    - generic: "1.00"
+    - generic: 粉丝限制
+    - generic: 不限
+    - generic: 最多可赚
+    - generic: ¥1.00
+    - generic: AI推荐分
+    - generic: 暂无
+    - progressbar
+    - generic: 1/1人
+  - generic: 没有更多了
+  - button:
+  - link:
+    - /url: https://beian.miit.gov.cn
+    - text: 京ICP备19059131号-15
+  - link:
+    - /url: https://beian.mps.gov.cn/#/query/webSearch?code=11010502060417
+    - generic: 京公网安备11010502060417号
+- alert: AiToEarn - 付费推广任务 - 用社交媒体赚钱
+- dialog "频道管理":
+  - heading "频道管理" [level=2]
+  - button "我的频道 1" [active]:
+    - generic: 我的频道
+    - generic: "1"
+  - button "抖音 抖音 1":
+    - img "抖音"
+    - generic: 抖音
+    - generic: "1"
+  - generic: 可连接的平台
+  - button "小红书 小红书":
+    - img "小红书"
+    - generic: 小红书
+  - button "微信视频号 微信视频号":
+    - img "微信视频号"
+    - generic: 微信视频号
+  - button "快手 快手":
+    - img "快手"
+    - generic: 快手
+  - button "微信公众号 微信公众号":
+    - img "微信公众号"
+    - generic: 微信公众号
+  - button "哔哩哔哩 哔哩哔哩":
+    - img "哔哩哔哩"
+    - generic: 哔哩哔哩
+  - button "YouTube YouTube 仅国际站":
+    - img "YouTube"
+    - generic: YouTube
+    - generic: 仅国际站
+  - button "Pinterest Pinterest 仅国际站":
+    - img "Pinterest"
+    - generic: Pinterest
+    - generic: 仅国际站
+  - button "Twitter（X） Twitter（X） 仅国际站":
+    - img "Twitter（X）"
+    - generic: Twitter（X）
+    - generic: 仅国际站
+  - button "TikTok TikTok 仅国际站":
+    - img "TikTok"
+    - generic: TikTok
+    - generic: 仅国际站
+  - button "Facebook Facebook 仅国际站":
+    - img "Facebook"
+    - generic: Facebook
+    - generic: 仅国际站
+  - button "Instagram Instagram 仅国际站":
+    - img "Instagram"
+    - generic: Instagram
+    - generic: 仅国际站
+  - button "Threads Threads 仅国际站":
+    - img "Threads"
+    - generic: Threads
+    - generic: 仅国际站
+  - button "LinkedIn LinkedIn 仅国际站":
+    - img "LinkedIn"
+    - generic: LinkedIn
+    - generic: 仅国际站
+  - button "连接新频道":
+    - text: 连接新频道
+  - generic: 刷新粉丝数
+  - generic: 每个平台 1 小时内只能刷新一次，登录过期账号会自动跳过。
+  - button "刷新全部平台":
+    - text: 刷新全部平台
+  - button "新建分组":
+    - text: 新建分组
+  - generic: 默认空间
+  - generic: 1 个频道
+  - button "添加频道":
+    - generic: 添加频道
+  - img "熙熙壤壤"
+  - generic: 熙熙壤壤
+  - img "抖音"
+  - generic: 抖音
+  - text: 离线
+  - button "插件未同步 · 未安装插件":
+    - generic: 插件未同步 · 未安装插件
+  - button "千粉以上自动获取，千粉以下需先在AiToEarn发布作品；历史授权账号可能需重新授权，新授权数据建议次日查看。":
+    - generic: "粉丝: 0"
+  - button "重新授权":
+    - generic: 重新授权
+  - button:
+  - button "Close":
+    - generic: Close

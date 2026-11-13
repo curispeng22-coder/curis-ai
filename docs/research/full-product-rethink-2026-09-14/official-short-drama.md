@@ -1,0 +1,143 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://docs.aitoearn.ai/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 短剧任务指南
+
+> 从任务准备、账号报备和智能剪辑，到发布、复盘与结算前检查。
+
+本指南带你完成一次短剧任务。操作时以任务详情页显示的剧集、平台、内容要求、提交时限和结算规则为准。
+
+## 开始前准备
+
+先准备好可正常登录的 AiToEarn 账号，以及用于发布内容的社媒账号。账号报备需要用到账号昵称或频道名称、账号 ID 和主页链接；请提前确认这些信息可以准确获取。
+
+<CardGroup cols={3}>
+  <Card title="完成账号报备" icon="badge-check" href="/zh/help/account-reporting">
+    查看需要填写的账号资料、审核状态和常见问题。
+  </Card>
+
+  <Card title="准备云工作区" icon="monitor-cog" href="/zh/help/cloud-workspace">
+    授权海外账号或管理多账号时，保持账号环境稳定。
+  </Card>
+
+  <Card title="查看分成规则" icon="badge-dollar-sign" href="/zh/help/revenue-sharing#短剧">
+    了解 CPS 的计算口径；实际比例以任务页为准。
+  </Card>
+</CardGroup>
+
+<Tip>
+  如使用 Facebook 发布，还需准备一个可管理的 Facebook 公共主页，并确保可以完成必要的安全验证。不同平台的账号准备方式，请查看对应的平台运营指南。
+</Tip>
+
+<Warning>
+  请保持账号、云工作区和网络环境稳定，避免频繁切换登录环境、代理、时区或语言。第三方平台会独立进行安全和内容审核，AiToEarn 无法保证账号不会被验证、限制或封禁。
+</Warning>
+
+## 完成短剧任务
+
+### 1. 进入短剧任务
+
+进入淘金广场，选择 **短剧任务**。
+
+<img src="https://mintcdn.com/aitoearn/rUpmKCRAl2nHR17B/assets/help/short_0.png?fit=max&auto=format&n=rUpmKCRAl2nHR17B&q=85&s=cef0189ab2839f3de8eaea30ce651771" alt="在淘金广场选择短剧任务" width="1920" height="869" data-path="assets/help/short_0.png" />
+
+### 2. 选择短剧
+
+在任务列表中选择想推广的短剧，进入详情页后，先查看支持的发布平台、内容要求、提交时限、账号报备状态和结算说明。
+
+<img src="https://mintcdn.com/aitoearn/S-M6Z7DGfKvo9v5v/assets/help/short_1.png?fit=max&auto=format&n=S-M6Z7DGfKvo9v5v&q=85&s=b6d0a9ae2678edecd14e5e3e493ced7b" alt="选择需要推广的短剧" width="1920" height="911" data-path="assets/help/short_1.png" />
+
+### 3. 完成账号报备
+
+在短剧详情页检查账号报备状态。需要报备时，点击顶部的 [**账号报备**](/zh/help/account-reporting)，按页面提示提交账号资料。
+
+仅在任务页显示可以继续，或报备状态显示已通过后，再点击 **选择剧集剪辑**。如果任务页提示加白、额外报备或其他前置条件，请先完成相应操作。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_6.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=e3e1faa1b24e4188ad8886a9d17147fe" alt="完成账号报备并选择剧集剪辑" width="1920" height="911" data-path="assets/help/short_6.png" />
+
+### 4. 选择剧集
+
+选择任务详情页允许推广的剧集，然后进入智能剪辑页面。不要使用任务范围外的剧集、素材或推广信息。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_7.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=aba29d72a2b3067199af2d99cd33eb4c" alt="选择剧集并进入智能剪辑" width="1389" height="911" data-path="assets/help/short_7.png" />
+
+### 5. 配置智能剪辑
+
+根据需要在提示词中补充情节、人物或节奏要求，并设置画面比例、生成片段数和视频时长。确认配置后，点击页面右侧的 **智能剪辑**。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_8.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=657d97cc75d8e857e1b4ed28c216bc21" alt="配置提示词和智能剪辑参数" width="1920" height="911" data-path="assets/help/short_8.png" />
+
+<Note>
+  智能剪辑生成后仍需人工检查。发布前请确认视频内容、标题、封面、音乐、字体和推广信息符合任务要求及目标平台规则。
+</Note>
+
+### 6. 查看剪辑结果
+
+等待智能剪辑完成，检查生成的视频片段是否完整、符合所选剧集和任务要求。需要调整时返回剪辑页面修改；确认无误后，点击 **一键发布**。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_9.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=7bb58ef3fa019196725b55cddc921065" alt="从智能剪辑结果进入一键发布" width="1920" height="911" data-path="assets/help/short_9.png" />
+
+### 7. 选择账号并发布
+
+在发布页选择与本次报备一致的平台账号，检查视频和配文内容后，点击 **立即发布** 或设置 **定时发布**。
+
+发布前请再次确认：
+
+* 使用的是任务允许的剧集、素材和推广信息；
+* 推广链接、口令或其他转化信息与所选剧集和任务要求一致；
+* 未冒用版权方身份、名称或标识；
+* 内容不含违反目标平台规则的画面、标题或描述。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_10.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=c6b1fd75d135a2b493c2c989b59841a0" alt="选择发布账号并立即或定时发布" width="1920" height="911" data-path="assets/help/short_10.png" />
+
+### 8. 查看发布结果
+
+提交发布后，打开 [AI 发布](https://aitoearn.ai/zh-CN/publish)，查看内容的发布状态和结果。若发布失败，先根据页面提示检查账号授权、账号状态和发布内容。
+
+<img src="https://mintcdn.com/aitoearn/6tsD7uYaxs5lXlhN/assets/help/short_11.png?fit=max&auto=format&n=6tsD7uYaxs5lXlhN&q=85&s=6fa96d65fdd203d03b7b81c40fb54965" alt="在 AI 发布中查看短剧发布结果" width="1920" height="911" data-path="assets/help/short_11.png" />
+
+## 发布后复盘
+
+发布成功后，继续查看任务页和目标平台的数据表现。播放量、受众地区和转化表现需要结合判断；高播放不等于一定有高转化。
+
+* 保留任务页面要求的内容和数据记录，等待统计与结算；
+* 根据平台数据观察内容表现，再调整后续选剧、剪辑和发布时间；
+* 收到版权提示、下架或限制时，先停止重复发布同一内容，并按任务页或平台当前指引处理。
+
+<Note>
+  发布完成不代表任务已经结算。请继续遵守任务页面中的内容保留时间、数据统计和结算要求。
+</Note>
+
+## 完成标准
+
+完成以下检查后，表示本次短剧任务的主要操作已经完成：
+
+* 目标账号已按任务要求完成报备或其他前置条件；
+* 已选择任务允许的剧集并生成可用的视频片段；
+* 已使用正确的平台账号、内容和推广信息提交发布；
+* 可以在 AI 发布中查看对应内容的发布状态；
+* 已了解任务的内容保留、数据统计和结算要求。
+
+## 常见问题
+
+### 报备一直显示审核中，可以继续剪辑或发布吗？
+
+以任务页提示为准。任务要求报备通过时，请等待状态通过后再发布；如果页面明确显示提交资料后即可继续，则按页面指引操作。审核期间不要修改已提交账号的昵称、ID 或主页链接。
+
+### 收到版权投诉、禁播或内容限制怎么办？
+
+不要重复发布同一内容。先保留任务信息、发布记录和平台提示，再按照任务页或平台当前指引处理。不同剧集和平台的处理方式可能不同，不要套用其他任务的规则。
+
+### 发布后在哪里查看结果？
+
+打开 [AI 发布](https://aitoearn.ai/zh-CN/publish)，查找本次发布的内容并查看当前状态。如果发布没有成功，请先根据页面提示检查平台账号授权和发布内容。
+
+## 相关指南
+
+* [账号报备流程及教程](/zh/help/account-reporting)
+* [云工作区图文教程](/zh/help/cloud-workspace)
+* [Facebook 账号运营指南](/zh/help/facebook-account-operations)
+* [TikTok 账号运营指南](/zh/help/tiktok-account-operations)
+* [YouTube 账号运营指南](/zh/help/youtube-account-operations)
+* [短剧分成规则](/zh/help/revenue-sharing#短剧)

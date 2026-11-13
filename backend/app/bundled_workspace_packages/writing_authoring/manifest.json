@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "curis.workspace-package/v1",
+  "packageId": "com.curis.local.writing-authoring",
+  "version": "0.1.0",
+  "coreCompatibility": ">=0.1.0 <0.2.0",
+  "workspace": {
+    "name": "本地写作工作空间",
+    "navigation": {
+      "label": "写作作品",
+      "icon": "i-file"
+    }
+  },
+  "surfaces": "surfaces.json",
+  "domainSchemas": {
+    "WritingBook": "schemas/book.json",
+    "WritingChapter": "schemas/chapter.json"
+  },
+  "actions": [
+    "core.domain-object.create"
+  ],
+  "capabilityRequirements": [],
+  "retention": "retain-business-data-read-only"
+}

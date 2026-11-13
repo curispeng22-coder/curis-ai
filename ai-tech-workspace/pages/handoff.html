@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 科技 · 员工工作与交接</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/shell.css">
+</head>
+<body data-page="handoff">
+  <div class="prototype-frame">
+    <div class="prototype-controls">
+      <button data-dom-id="theme-toggle" class="icon-btn" title="切换主题" aria-label="切换主题">🌗</button>
+      <span>页面:</span>
+      <button data-page="overview">Overview</button>
+      <button data-page="research">Research</button>
+      <button data-page="content">Content</button>
+      <button data-page="calendar">Calendar</button>
+      <button data-page="growth">Growth</button>
+      <button data-page="feedback">Feedback</button>
+      <button data-page="commercial">Commercial</button>
+      <button data-page="team">Team</button>
+      <button data-page="handoff" class="active">Handoff</button>
+      <button data-page="utility">Utility</button>
+      <button data-page="assistant">Assistant</button>
+      <button data-page="collapsed">Collapsed</button>
+      <button data-page="1280">1280</button>
+      <button data-page="rdcheck">RD Check</button>
+    </div>
+    <div class="window-chrome">
+      <div class="ms-shell with-context" style="--win-w:1440px; --win-h:900px;">
+        <aside class="ms-pane ms-pane-nav">
+          <header class="ms-pane-header ms-nav-head">
+            <div class="win-dots"><span></span><span></span><span></span></div>
+            <div class="pane-title">Curis</div>
+            <button class="icon-btn nav-toggle" data-dom-id="nav-toggle" aria-label="切换导航">≡</button>
+            <button class="icon-btn t1-restore" data-dom-id="nav-restore" aria-label="展开导航">»</button>
+          </header>
+          <nav class="nav-scroll">
+            <div class="nav-group">工作区</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⌂</span>CEO 工作台</a>
+            <a href="#" class="nav-item active"><span class="ni-ico">◈</span>业务空间</a>
+            <div class="nav-sub">
+              <a href="#" class="nav-item active">AI 科技</a>
+            </div>
+            <div class="nav-group">组织与运营</div>
+            <a href="#" class="nav-item"><span class="ni-ico">⊞</span>组织中心</a>
+            <a href="#" class="nav-item"><span class="ni-ico">♟</span>人才与能力</a>
+            <a href="#" class="nav-item"><span class="ni-ico">📊</span>经营洞察</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗂</span>资料库</a>
+            <a href="#" class="nav-item"><span class="ni-ico">🗒</span>会议</a>
+          </nav>
+          <footer class="nav-foot">
+            <div class="nav-user-ava">林</div>
+            <div>
+              <div class="station-name">林薇</div>
+              <div class="station-work">内容增长部负责人</div>
+            </div>
+          </footer>
+        </aside>
+
+        <aside class="ms-pane ms-pane-ctx resize-h">
+          <header class="ms-pane-header ms-ctx-head">
+            <div class="pane-title">AI 科技</div>
+            <button class="pane-toggle" data-action="toggle-context" aria-label="切换上下文" title="切换上下文">◀</button>
+          </header>
+          <div class="ctx-content">
+            <div class="ctx-section">Surface</div>
+            <div class="ctx-nav">
+              <!-- CONFLICT C7 FIX：Handoff 不属于 Workspace-level Domain Surface，故不高亮任何 Domain（不得伪装成 Domain 导航入口）。 -->
+              <a href="overview.html" class="ctx-nav-item">经营总览</a>
+              <a href="research.html" class="ctx-nav-item">研究与洞察</a>
+              <a href="content.html" class="ctx-nav-item">内容运营</a>
+              <a href="growth.html" class="ctx-nav-item">增长与评估</a>
+              <a href="feedback.html" class="ctx-nav-item">反馈</a>
+              <a href="commercial.html" class="ctx-nav-item">商业化</a>
+            </div>
+
+          </div>
+        </aside>
+
+        <main class="ms-pane ms-pane-main">
+          <header class="ms-pane-header ms-main-head">
+            <button class="icon-btn" data-action="toggle-context" aria-label="切换上下文">☰</button>
+            <nav class="crumbs" aria-label="面包屑">
+              <a href="#">业务空间</a><span>/</span><a href="#">内容增长部</a><span>/</span><span class="cur">员工工作与交接</span>
+            </nav>
+
+            <div class="main-head-right">
+              <button class="icon-btn" data-action="toggle-assistant" aria-label="CEO 助理" title="CEO 助理">🞋</button>
+              <button class="icon-btn" data-action="toggle-utility" aria-label="切换工具" title="切换工具">◧</button>
+              
+            </div>
+          </header>
+
+          <div class="ms-scroll">
+            <div class="ms-header">
+              <h1 class="ms-title">员工工作 / 交接</h1>
+              <div class="ms-meta">AI 科技 · 同一员工身份，受当前专业上下文约束</div>
+              <div class="ms-statusbar"><span class="dot"></span>当前：陈真负责内容创作 · 交接给李然 1 项待发布</div>
+            </div>
+
+            <div class="operating-context">
+              <div class="oc-col"><span class="oc-label">当前员工</span><span class="oc-value">陈真 · 内容创作</span></div>
+              <div class="oc-col"><span class="oc-label">负责对象</span><span class="oc-value">小红书 AI 绘画教程 #3</span></div>
+              <div class="oc-col"><span class="oc-label">交接对象</span><span class="oc-value">李然 · 待发布</span></div>
+              <div class="oc-col"><span class="oc-label">阻塞</span><span class="oc-value">AIGC 变现选题待确认</span></div>
+            </div>
+
+            <section class="surface-section">
+              <div class="section-head"><span class="section-title">员工工作站</span><span class="section-action">身份跨 Surface 一致，责任受当前上下文约束</span></div>
+              <div class="stations">
+                <article class="station">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-accent);">陈</div>
+                    <div class="station-id"><div class="station-name">陈真 · 内容创作</div><div class="station-work">负责：小红书 AI 绘画教程 #3 / OpenAI 新模型选题</div></div>
+                    <span class="resp-chip">内容运营</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body">
+                    <div class="conversation">
+                      <div class="msg">陈真正在制作「小红书 AI 绘画教程 #3」，预计 8月21日 发布。</div>
+                      <div class="handoff">上一轮交接：陈真 ← 王颖 · 研究洞察</div>
+                      <div class="review-req">下一轮交接：陈真 → 李然 · 发布前检查</div>
+                    </div>
+                    <div class="composer"><textarea placeholder="向陈真发送指令或补充上下文..."></textarea><div class="composer-bar"><select><option>执行</option><option>追问</option><option>交接</option></select><button class="c-send">发送</button><span class="spacer"></span><button>引用</button><button>决策</button></div></div>
+                  </div>
+                </article>
+                <article class="station collapsed">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-text-2);">李</div>
+                    <div class="station-id"><div class="station-name">李然 · 内容策划</div><div class="station-work">负责：AI 硬件测评 / 发布排期</div></div>
+                    <span class="resp-chip">内容运营</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body">
+                    <div class="conversation">
+                      <div class="msg">李然等待陈真完成教程后接手发布前检查。</div>
+                      <div class="handoff">等待交接：陈真 → 李然</div>
+                    </div>
+                  </div>
+                </article>
+                <article class="station collapsed">
+                  <div class="station-head">
+                    <div class="avatar" style="background:var(--ui-warning);">王</div>
+                    <div class="station-id"><div class="station-name">王颖 · 研究</div><div class="station-work">负责：选题研究 / 趋势跟踪</div></div>
+                    <span class="resp-chip">研究与洞察</span><span class="chevron">⌄</span>
+                  </div>
+                  <div class="station-body">
+                    <div class="conversation">
+                      <div class="msg">王颖发现 AIGC 变现选题存在合规风险，已标记为待决策。</div>
+                      <div class="decision-ref">需要你确认：AIGC 变现选题是否继续</div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <div class="ms-assistant-drawer collapsed">
+            <header class="assistant-head">
+              <div class="assistant-ava">AI</div>
+              <div><div class="assistant-title">CEO 助理</div><div class="assistant-role">战略决策支持</div></div>
+              <button class="icon-btn" data-action="close-assistant" aria-label="关闭助理">✕</button>
+            </header>
+            <div class="assistant-body">
+              <div class="assistant-context">当前位置：AI 科技 · 员工工作与交接</div>
+              <div class="assistant-msg">陈真正在内容运营中负责 2 个对象，1 项交接给李然待完成。</div>
+            </div>
+            <footer class="assistant-foot">
+              <input type="text" placeholder="向 CEO 助理提问...">
+              <button class="btn-secondary btn-sm">发送</button>
+            </footer>
+          </div>
+
+        </main>
+        <aside class="ms-pane ms-pane-util resize-h">
+          <header class="ms-pane-header ms-util-head">
+            <div class="pane-title">工具</div>
+            <button class="pane-toggle" data-action="toggle-utility" aria-label="切换工具区" title="切换工具区">▶</button>
+          </header>
+          <div class="util-content">
+            <div class="preview-cover">选择对象查看详情</div>
+            <div class="preview-title">未选中对象</div>
+            <div class="preview-body">点击任意内容对象、洞察或反馈项，可在此处展开详情与操作。</div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+  <script>window.__CURIS_PAGE__ = "handoff";</script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

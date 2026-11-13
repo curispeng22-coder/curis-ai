@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1536, initial-scale=1.0">
+<title>Curis · CEO 总部驾驶舱（Terra 紧凑 V5）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet">
+<style>
+  :root{
+    --sidebar:#4a7c59;
+    --sidebar-hover:#3d6649;
+    --sidebar-active:#3a5f45;
+    --bg:#faf6f0;
+    --surface:#fffefb;
+    --surface-2:#f7f2ea;
+    --surface-3:#f0ebe0;
+    --txt:#1f241c;
+    --txt-2:#4a5346;
+    --txt-3:#7a8273;
+    --line:#e8e2d8;
+    --line-2:#d9d2c6;
+    --primary:#4a7c59;
+    --primary-dark:#2f523b;
+    --primary-light:#e8f0e8;
+    --primary-soft:#f0f6f0;
+    --accent:#705c30;
+    --accent-light:#f5efe3;
+    --cyan:#3f7d6e;
+    --green:#15935a;
+    --green-soft:#e8f5ed;
+    --amber:#a8742a;
+    --amber-soft:#f9f0e0;
+    --red:#b83230;
+    --red-soft:#fae8e7;
+    --gold:#8a6d2f;
+    --shadow:0 1px 2px rgba(74,85,66,.04),0 4px 12px rgba(74,85,66,.05);
+    --radius:12px;
+    --radius-sm:8px;
+    --font-serif:'Literata','Noto Serif SC','Songti SC',serif;
+    --font-sans:'Nunito Sans','Inter','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--font-sans)}
+  .app{display:flex;width:100vw;height:100vh;overflow:hidden}
+
+  /* Sidebar */
+  .sidebar{
+    width:176px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;
+    padding:16px 0;color:#fff;overflow:hidden
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:0 18px 18px;font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.3px}
+  .brand .logo{width:28px;height:28px;border:2px solid rgba(255,255,255,.7);border-radius:7px;display:grid;place-items:center;font-size:12px}
+  .nav{flex:1;overflow-y:auto;padding:0 10px}
+  .nav-group{margin-bottom:8px}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.9);cursor:pointer;transition:background .15s;white-space:nowrap}
+  .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+  .nav-item.active{background:var(--sidebar-active);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .nav-item .icon{font-size:18px;font-variation-settings:'FILL' 1;flex-shrink:0}
+  .nav-item .chevron{margin-left:auto;font-size:14px;opacity:.7;font-variation-settings:'FILL' 1}
+  .nav-item.secondary{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.8);padding:7px 10px 7px 38px}
+  .nav-item.secondary .icon{font-size:16px}
+  .nav-item.secondary.active{background:rgba(255,255,255,.12);box-shadow:none}
+  .side-foot{padding:12px 16px;margin:0 10px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7)}
+  .side-foot .ava{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700;font-size:11px}
+
+  /* Main */
+  .main{
+    flex:1;display:grid;grid-template-columns:repeat(12,1fr);
+    grid-template-rows:56px minmax(150px,1.2fr) minmax(140px,1fr) minmax(120px,1fr) minmax(72px,auto);
+    gap:14px 14px;padding:16px 20px 16px;min-width:0;overflow:hidden
+  }
+  .span-5{grid-column:span 5}
+  .span-7{grid-column:span 7}
+  .span-3{grid-column:span 3}
+  .span-2{grid-column:span 2}
+  .span-12{grid-column:span 12}
+
+  /* Header */
+  .page-header{grid-column:span 12;display:flex;align-items:flex-end;justify-content:space-between;min-height:56px;flex-shrink:0;padding-bottom:0}
+  .header-left{display:flex;flex-direction:column;gap:5px}
+  .page-title{font-family:var(--font-serif);font-size:32px;font-weight:700;margin:0;letter-spacing:-0.015em;line-height:1.05;color:var(--txt)}
+  .page-sub{font-size:12px;color:var(--txt-2);line-height:1.5;display:flex;align-items:center;gap:10px}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(21,147,90,.12)}
+  .header-right{text-align:right}
+  .header-right .label{font-size:10px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+  .header-right .value{font-size:13px;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:5px;justify-content:flex-end}
+  .header-right .value .icon{font-size:15px;color:var(--amber);font-variation-settings:'FILL' 1}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+  .card-hd{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;min-height:40px}
+  .card-title{font-family:var(--font-serif);font-size:14px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+  .icon-box{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex-shrink:0}
+  .icon-box.green{background:var(--green-soft);color:var(--green)}
+  .icon-box.cyan{background:#e8f4f1;color:var(--cyan)}
+  .icon-box.amber{background:var(--amber-soft);color:var(--amber)}
+  .icon-box.red{background:var(--red-soft);color:var(--red)}
+  .icon-box.primary{background:var(--primary-light);color:var(--primary-dark)}
+  .icon-box.surface{background:var(--surface-2);color:var(--txt-3)}
+  .icon{font-size:17px;font-variation-settings:'FILL' 1}
+  .tag{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--primary-light);color:var(--primary-dark)}
+  .card-bd{flex:1;padding:12px 14px;position:relative;overflow:hidden}
+  .card-bd.scrollable{overflow-y:auto}
+  .card-bd.scrollable::-webkit-scrollbar{width:5px}
+  .card-bd.scrollable::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+  .card-ft{padding:7px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--txt-3);flex-shrink:0;min-height:26px;display:flex;align-items:center}
+
+  /* Pulse module */
+  .pulse-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;height:100%;align-items:stretch}
+  .pulse-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+  .pulse-card .top{display:flex;align-items:center;gap:10px}
+  .pulse-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+  .pulse-icon.green{background:var(--green-soft);color:var(--green)}
+  .pulse-icon.cyan{background:#e8f4f1;color:var(--cyan)}
+  .pulse-icon.amber{background:var(--amber-soft);color:var(--amber)}
+  .pulse-icon .icon{font-size:22px}
+  .pulse-card h4{font-size:13px;font-weight:700;margin:0;color:var(--txt);font-family:var(--font-serif)}
+  .pulse-card p{font-size:11px;margin:0;color:var(--txt-3);line-height:1.35}
+  .pulse-line{position:absolute;bottom:10px;left:14px;right:14px;height:18px;opacity:.35}
+
+  /* Live office stage */
+  .office-stage{display:flex;flex-direction:column;min-height:0}
+  .stage-canvas{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0;padding:6px 0}
+  .stage-canvas svg{height:100%;width:auto;max-width:100%;max-height:170px}
+  .stage-labels{position:absolute;right:12px;bottom:10px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+  .stage-label{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt-2);display:flex;align-items:center;gap:5px}
+  .stage-label .dot{width:6px;height:6px;border-radius:50%}
+  .stage-label .dot.green{background:var(--green)}
+  .stage-label .dot.cyan{background:var(--cyan)}
+  .stage-entry{position:absolute;left:12px;bottom:10px;font-size:12px;font-weight:700;color:var(--cyan);display:flex;align-items:center;gap:4px;cursor:pointer}
+  .stage-entry .icon{font-size:14px}
+
+  /* Empty states */
+  .empty-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;text-align:center;color:var(--txt-3);padding:10px}
+  .icon-box-big{width:56px;height:56px;border-radius:16px;background:var(--surface-2);display:grid;place-items:center;margin-bottom:2px}
+  .empty-box .icon{font-size:32px;color:var(--line-2);font-variation-settings:'FILL' 0}
+  .empty-box h4{font-size:16px;font-weight:700;color:var(--txt);margin:0;font-family:var(--font-serif)}
+  .empty-box p{font-size:12px;margin:0;max-width:85%;line-height:1.45}
+  .empty-action{font-size:12px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px;cursor:pointer;margin-top:4px}
+  .progress-mini{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:4px}
+  .progress-mini .step{width:7px;height:7px;border-radius:50%;background:var(--line-2)}
+  .progress-mini .step.active{background:var(--primary)}
+
+  /* Health metrics */
+  .metric-list{display:flex;flex-direction:column;gap:5px}
+  .metric-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .metric-row:last-child{border-bottom:none}
+  .metric-row .k{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt-2)}
+  .metric-row .k .icon{font-size:14px;font-variation-settings:'FILL' 1}
+  .metric-row .v{font-size:18px;font-weight:800;color:var(--primary-dark);font-family:var(--font-serif)}
+
+  /* Department row */
+  .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;height:100%}
+  .dept-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);display:flex;overflow:hidden}
+  .dept-visual{width:120px;border-right:1px solid var(--line);padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(180deg,var(--surface),var(--surface-2))}
+  .dept-visual .icon-box{width:42px;height:42px;border-radius:12px;background:var(--primary-light);display:grid;place-items:center}
+  .dept-visual .icon{font-size:24px;color:var(--primary-dark);font-variation-settings:'FILL' 1}
+  .dept-visual h4{font-size:13px;font-weight:700;margin:0;color:var(--txt);font-family:var(--font-serif)}
+  .dept-meta{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+  .dept-line{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .dept-line:last-child{border-bottom:none}
+  .dept-line .k{display:flex;align-items:center;gap:6px;color:var(--txt-2)}
+  .dept-line .k .dot{width:6px;height:6px;border-radius:50%;background:var(--line-2)}
+  .dept-line .k .dot.green{background:var(--green)}
+  .dept-line .k .dot.cyan{background:var(--cyan)}
+  .dept-line .k .dot.amber{background:var(--amber)}
+  .dept-line .v{color:var(--txt-3);font-size:10px}
+  .dept-avatars{display:flex;gap:-6px}
+  .dept-avatars .avatar{width:20px;height:20px;border-radius:50%;background:var(--primary-soft);border:2px solid var(--surface);color:var(--primary-dark);display:grid;place-items:center;font-size:8px;font-weight:800;margin-left:-6px}
+  .dept-avatars .avatar:first-child{margin-left:0}
+
+  /* Boundary / data */
+  .boundary-row{display:grid;grid-template-columns:2fr 4fr 2fr;gap:14px;align-items:center;height:100%;padding:0 6px}
+  .boundary-chart{height:54px;display:flex;align-items:flex-end;gap:3px;opacity:.5}
+  .boundary-bar{flex:1;background:var(--line-2);border-radius:2px 2px 0 0;min-height:5px}
+  .boundary-text{text-align:center;font-size:12px;color:var(--txt-3);line-height:1.45}
+  .boundary-text strong{color:var(--txt-2);font-weight:700}
+  .boundary-snap{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+  .snap-item{font-size:11px;color:var(--txt-3);display:flex;align-items:center;gap:6px}
+  .snap-item .dot{width:6px;height:6px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">C</div><span>Curis</span></div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-item active">
+          <span class="icon material-symbols-rounded">home</span>
+          总裁办公室
+          <span class="chevron material-symbols-rounded">expand_less</span>
+        </div>
+        <div class="nav-item secondary active"><span class="icon material-symbols-rounded">analytics</span>决策中心</div>
+        <div class="nav-item secondary"><span class="icon material-symbols-rounded">chat</span>重要汇报</div>
+        <div class="nav-item secondary"><span class="icon material-symbols-rounded">meeting_room</span>战略会议室</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><span class="icon material-symbols-rounded">folder_open</span>项目中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">groups</span>组织中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">widgets</span>能力中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">monitoring</span>经营分析</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">lightbulb</span>头脑风暴室</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">school</span>知识中心</div>
+        <div class="nav-item"><span class="icon material-symbols-rounded">checklist</span>执行工作台</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-item"><span class="icon material-symbols-rounded">settings</span>公司设置</div>
+      </div>
+    </nav>
+    <div class="side-foot"><div class="ava">A</div><span>阿历克斯 · CEO</span></div>
+  </aside>
+
+  <main class="main">
+    <!-- Page header (span 12) -->
+    <header class="page-header">
+      <div class="header-left">
+        <h1 class="page-title">总裁办公室</h1>
+        <div class="page-sub">
+          <span style="display:flex;align-items:center;gap:8px"><span class="status-dot"></span>公司运行正常</span>
+          <span>一人掌舵，AI 团队持续运行</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="label">当前核心项目目标</div>
+        <div class="value"><span class="icon material-symbols-rounded">target</span>尚未建立核心项目</div>
+      </div>
+    </header>
+
+    <!-- Company Pulse (5 cols) - fixed content -->
+    <section class="card span-5">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box primary"><span class="icon material-symbols-rounded">activity_zone</span></span>
+          今日公司脉搏
+        </div>
+        <span class="tag">LIVE</span>
+      </div>
+      <div class="card-bd">
+        <div class="pulse-row">
+          <div class="pulse-card">
+            <div class="top">
+              <span class="pulse-icon green"><span class="icon material-symbols-rounded">trending_up</span></span>
+              <h4>项目推进</h4>
+            </div>
+            <p>暂无已读取事实</p>
+          </div>
+          <div class="pulse-card">
+            <div class="top">
+              <span class="pulse-icon cyan"><span class="icon material-symbols-rounded">share</span></span>
+              <h4>部门运行</h4>
+            </div>
+            <p>暂无已读取事实</p>
+          </div>
+          <div class="pulse-card">
+            <div class="top">
+              <span class="pulse-icon amber"><span class="icon material-symbols-rounded">warning</span></span>
+              <h4>明确阻塞</h4>
+            </div>
+            <p>暂无已读取事实</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Office (7 cols) - fixed content -->
+    <section class="card span-7">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box cyan"><span class="icon material-symbols-rounded">view_in_ar</span></span>
+          实时办公室
+        </div>
+        <span class="tag">SPATIAL</span>
+      </div>
+      <div class="card-bd office-stage">
+        <div class="stage-canvas">
+          <svg viewBox="0 0 360 160" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="iso" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#e8f0e8"/>
+                <stop offset="100%" style="stop-color:#f0e8d8"/>
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <g transform="translate(50,30)">
+              <polygon points="0,30 130,0 260,30 130,60" fill="url(#iso)" stroke="var(--line-2)" stroke-width="1"/>
+              <polygon points="0,30 0,70 130,100 130,60" fill="#f5f0e6" stroke="var(--line-2)" stroke-width="1"/>
+              <polygon points="130,60 130,100 260,70 260,30" fill="#ede8dc" stroke="var(--line-2)" stroke-width="1"/>
+              <rect x="35" y="35" width="34" height="26" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="82" y="20" width="34" height="26" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="158" y="20" width="34" height="26" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <rect x="205" y="35" width="34" height="26" rx="3" fill="#fff" stroke="var(--line-2)" filter="url(#glow)"/>
+              <circle cx="52" cy="48" r="2.5" fill="var(--green)" filter="url(#glow)"/>
+              <circle cx="99" cy="33" r="2.5" fill="var(--cyan)" filter="url(#glow)"/>
+              <circle cx="175" cy="33" r="2.5" fill="var(--green)" filter="url(#glow)"/>
+              <circle cx="222" cy="48" r="2.5" fill="var(--amber)" filter="url(#glow)"/>
+            </g>
+          </svg>
+          <div class="stage-labels">
+            <span class="stage-label"><span class="dot green"></span>AI 研发中心</span>
+            <span class="stage-label"><span class="dot cyan"></span>AI 内容中心</span>
+          </div>
+          <div class="stage-entry"><span class="icon material-symbols-rounded">arrow_forward</span>进入公司运行视图</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Project (7) - scrollable -->
+    <section class="card span-7">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box primary"><span class="icon material-symbols-rounded">rocket_launch</span></span>
+          核心项目推进
+        </div>
+        <span class="tag">EMPTY</span>
+      </div>
+      <div class="card-bd scrollable">
+        <div class="empty-box">
+          <div class="icon-box-big"><span class="icon material-symbols-rounded">folder_off</span></div>
+          <h4>尚未建立核心项目</h4>
+          <p>建立首个项目后，项目作战室、任务队列与成果中心将在此聚合呈现。</p>
+          <div class="empty-action"><span class="material-symbols-rounded" style="font-size:14px">add</span>创建首个项目</div>
+          <div class="progress-mini">
+            <div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-ft">当前核心项目目标：暂无</div>
+    </section>
+
+    <!-- Pending Reports (2.5) - scrollable -->
+    <section class="card span-3">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box amber"><span class="icon material-symbols-rounded">inbox</span></span>
+          待处理汇报
+        </div>
+      </div>
+      <div class="card-bd scrollable">
+        <div class="empty-box">
+          <div class="icon-box-big"><span class="icon material-symbols-rounded">mail</span></div>
+          <h4>暂无待处理汇报</h4>
+        </div>
+      </div>
+      <div class="card-ft">无 Contract 时不伪装为可处理功能</div>
+    </section>
+
+    <!-- Org Health (2.5) - scrollable -->
+    <section class="card span-2">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box green"><span class="icon material-symbols-rounded">cardiology</span></span>
+          组织健康
+        </div>
+      </div>
+      <div class="card-bd scrollable">
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="k"><span class="icon-box primary"><span class="icon material-symbols-rounded">group</span></span>部门</span>
+            <span class="v">2</span>
+          </div>
+          <div class="metric-row">
+            <span class="k"><span class="icon-box primary"><span class="icon material-symbols-rounded">smart_toy</span></span>AI 员工</span>
+            <span class="v">4</span>
+          </div>
+          <div class="metric-row">
+            <span class="k"><span class="icon-box red"><span class="icon material-symbols-rounded">error</span></span>阻塞</span>
+            <span class="v">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-ft">只读真实事实</div>
+    </section>
+
+    <!-- Department Space (12) - scrollable -->
+    <section class="card span-12">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box primary"><span class="icon material-symbols-rounded">apartment</span></span>
+          部门空间
+        </div>
+        <span class="tag">2 DEPTS</span>
+      </div>
+      <div class="card-bd scrollable">
+        <div class="dept-grid">
+          <div class="dept-card">
+            <div class="dept-visual">
+              <span class="icon-box"><span class="icon material-symbols-rounded">memory</span></span>
+              <h4>AI 研发中心</h4>
+            </div>
+            <div class="dept-meta">
+              <div class="dept-line"><span class="k"><span class="dot green"></span>当前项目</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot cyan"></span>工作状态</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot amber"></span>依赖关系</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot green"></span>AI 员工</span>
+                <div class="dept-avatars"><span class="avatar">灵</span><span class="avatar">墨</span><span class="avatar">砺</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dept-card">
+            <div class="dept-visual">
+              <span class="icon-box"><span class="icon material-symbols-rounded">auto_stories</span></span>
+              <h4>AI 内容中心</h4>
+            </div>
+            <div class="dept-meta">
+              <div class="dept-line"><span class="k"><span class="dot green"></span>当前项目</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot cyan"></span>工作状态</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot amber"></span>依赖关系</span><span class="v">暂无已读取事实</span></div>
+              <div class="dept-line"><span class="k"><span class="dot green"></span>AI 员工</span>
+                <div class="dept-avatars"><span class="avatar">知</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-ft">只显示真实 Department；缺失 Owner 时不推测</div>
+    </section>
+
+    <!-- Operating Data Boundary (12) - scrollable -->
+    <section class="card span-12">
+      <div class="card-hd">
+        <div class="card-title">
+          <span class="icon-box amber"><span class="icon material-symbols-rounded">show_chart</span></span>
+          经营数据边界
+        </div>
+        <span class="tag">BOUNDARY</span>
+      </div>
+      <div class="card-bd scrollable">
+        <div class="boundary-row">
+          <div class="boundary-chart">
+            <div class="boundary-bar" style="height:40%"></div><div class="boundary-bar" style="height:60%"></div><div class="boundary-bar" style="height:35%"></div>
+            <div class="boundary-bar" style="height:70%"></div><div class="boundary-bar" style="height:50%"></div><div class="boundary-bar" style="height:80%"></div>
+            <div class="boundary-bar" style="height:45%"></div><div class="boundary-bar" style="height:65%"></div>
+          </div>
+          <div class="boundary-text">
+            <strong>当前尚未接入真实经营数据。</strong><br>
+            未来展示任务完成率、成本效率、成果转化率等 CEO 指标。无批准 Contract 时不显示、不补零、不估算。
+          </div>
+          <div class="boundary-snap">
+            <div class="snap-item"><span class="dot" style="background:var(--green)"></span>任务完成率：待接入</div>
+            <div class="snap-item"><span class="dot" style="background:var(--cyan)"></span>成本效率：待接入</div>
+            <div class="snap-item"><span class="dot" style="background:var(--amber)"></span>ROI：待接入</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

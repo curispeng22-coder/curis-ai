@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "claim_ttl_seconds": 300,
+  "claim_heartbeat_interval_seconds": 60,
+  "wake_ttl_seconds": 3600,
+  "session_ttl_seconds": 3600,
+  "reap_interval_seconds": 60
+}

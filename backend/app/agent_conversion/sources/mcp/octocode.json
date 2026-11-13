@@ -1,0 +1,15 @@
+{
+  "server": "octocode",
+  "name": "Octocode",
+  "description": "语义代码索引器：GraphRAG 知识图谱 + MCP，tree-sitter AST 解析、ast-grep 结构化搜索、代码签名视图，13+ 语言，local-first。",
+  "license": "Apache-2.0",
+  "_source_url": "https://github.com/Muvon/octocode",
+  "_original_name": "octocode (Muvon)",
+  "_scan_batch": "2026-08-31 持续扫描第三批",
+  "_overlap_note": "与 codebase-memory-mcp 同赛道（代码知识图谱），登记为增量候选；若后续评估重复，保留其一。",
+  "tools": [
+    {"name": "index_codebase", "description": "索引代码库构建 GraphRAG 知识图谱。"},
+    {"name": "semantic_search", "description": "基于语义与 AST 的结构化代码搜索。"},
+    {"name": "signature_view", "description": "查看代码签名视图。"}
+  ]
+}

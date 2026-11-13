@@ -1,0 +1,866 @@
+- banner:
+  - link:
+    - /url: /
+    - generic: 妍语网
+  - navigation:
+    - link:
+      - /url: /tools
+      - button:
+        - text: 创意工作台
+    - link:
+      - /url: /my-works
+      - button:
+        - text: 我的作品
+    - button:
+      - text: 小说工作流
+    - button:
+      - text: 剧本工作流
+    - link:
+      - /url: /advisor
+      - button:
+        - text: 智能体
+    - link:
+      - /url: /prompts
+      - button:
+        - text: 素材库
+    - link:
+      - /url: /pricing
+      - button:
+        - text: 会员中心
+  - button:
+    - generic: 12,905
+  - button:
+    - generic: "8"
+    - generic: 861****8781
+- main:
+  - complementary:
+    - generic: CURIS-RESEARCH-TEST 雾港来信
+    - paragraph: 创作流程
+    - button:
+      - generic: 创作方向
+    - button:
+      - generic: 搭建框架
+    - button:
+      - generic: 世界观细化
+    - button:
+      - generic: 角色设定
+    - button:
+      - generic: 主线剧情
+    - button:
+      - generic: 分卷及亮点
+    - button:
+      - generic: 锁定框架
+    - button:
+      - generic: 章节大纲
+    - button [disabled]:
+      - generic: 确认大纲
+    - button [disabled]:
+      - generic: 正文写作
+    - paragraph: AI 模型
+    - combobox:
+      - generic: MiniMax 快速
+      - generic: 免费
+      - generic: 1.0×
+    - button:
+      - text: 保存进度
+    - button:
+    - button:
+  - heading [level=1]: CURIS-RESEARCH-TEST 雾港来信
+  - paragraph: 步骤 9/10 · 确认大纲
+  - heading [level=2]: 确认大纲
+  - generic: 大纲未锁定
+  - paragraph:
+    - text: 完整通读全书叙事脉络进行最终审核；如需修改剧情，请先解锁大纲再
+    - button: 返回章节大纲
+    - text: 编辑；锁定后正文写作将以此版本为固定基准。
+  - button:
+    - text: 全部展开
+  - paragraph: CURIS-RESEARCH-TEST 雾港来信
+  - paragraph: 书名
+  - generic: "2"
+  - generic: 分卷数
+  - generic: "13"
+  - generic: 章节数
+  - generic: 短篇 (10-15章)
+  - generic: 目标字数(万)
+  - generic: 男频
+  - generic: 第三人称
+  - generic: 起点风
+  - generic: 都市战神
+  - generic: 穿越
+  - generic: 逆袭
+  - generic: 复仇
+  - generic: 领地建设
+  - button:
+    - generic: "1"
+    - generic: 《雾港迷局》
+    - generic: 7 章
+  - button:
+    - generic: "2"
+    - generic: 《暗潮涌动》
+    - generic: 6 章
+  - button:
+  - button:
+  - button:
+    - text: 上一步
+  - button:
+    - text: 确认锁定大纲
+  - button [disabled]:
+    - text: 开始写正文
+- contentinfo:
+  - generic: 妍语网
+  - link:
+    - /url: /privacy
+    - text: 隐私政策
+  - link:
+    - /url: /terms
+    - text: 用户协议
+  - generic: © 2026 霸州妍语科技有限公司 版权所有
+  - generic: "|"
+  - link:
+    - /url: https://beian.miit.gov.cn/
+    - text: 冀ICP备2026026097号
+  - generic: "|"
+  - link:
+    - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13108102000680
+    - text: 冀公网安备13108102000680号
+- region "Notifications alt+T"
+- dialog "人物动态档案 12 位角色":
+  - heading "人物动态档案 12 位角色" [level=2]:
+    - text: 人物动态档案
+    - generic: 12 位角色
+  - button [active]:
+  - button:
+  - button:
+  - button "全部 12":
+    - text: 全部
+    - generic: "12"
+  - button "核心人物 5":
+    - text: 核心人物
+    - generic: "5"
+  - button "配角 7":
+    - text: 配角
+    - generic: "7"
+  - button "林 林夜 核心 境界未设定 · 无伤" [expanded]:
+    - generic: 林
+    - paragraph: 林夜
+    - generic "点击切换核心/配角": 核心
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 林夜
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：主角/隐藏身份逆转爽点核心载体
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：都市战神流隐藏大佬主角
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：揪出十年前海啸真相与幕后黑手，完成对雾港权力的最终掌控，建立属于自己的领地势力
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 沉默寡言，谨小慎微，行事低调到近乎透明，在档案室角落如隐形人般存在，从不参与任何派系纷争，与整个港区的暗流涌动格格不入
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：手中握有来自五年后的信件，信上字迹与自身笔迹完全一致，内容指向一场即将席卷雾港的惊天剧变；十年前那场吞噬数千人的诡异海啸并非天灾，而是某次失控的"接引"仪式
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 沈达年：对立+生死博弈的宿敌，彼此都想将对方彻底埋葬；苏婉清：暧昧+战友情谊/档案室唯一信任的同事，暗中多次出手
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "沈 沈达年 核心 境界未设定 · 无伤" [expanded]:
+    - generic: 沈
+    - paragraph: 沈达年
+    - generic "点击切换核心/配角": 核心
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 沈达年
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：反派/终极boss候选
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：权谋型核心反派
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：彻底整合雾港所有利益链条，让港务委员会成为凌驾于一切势力之上的唯一权力核心，消除任何敢于挑战其权威的势力
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 老谋深算，城府极深，永远一副和气生财的官场做派，笑容背后是从不出错的冷酷算计，对任何可能威胁权力根基的存在都斩草除根
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：十年前海啸的真正推手，当年为争夺港口控制权与某股境外势力达成交易，允许对方在港区进行"接引"仪式换取资本支持，事发后联手将真相封存于档案最深处；失踪案是他重启"接引"的试探棋子
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：对立+生死博弈的宿敌，将其视为最危险的变数却一度轻；顾长风：竞争+彼此试探的棋局对手，明面合作暗地拆台；赵海昌：表面对立实则暗中勾连的利益盟友
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "苏 苏婉清 核心 境界未设定 · 无伤" [expanded]:
+    - generic: 苏
+    - paragraph: 苏婉清
+    - generic "点击切换核心/配角": 核心
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 苏婉清
+  - button "编辑":
+  - generic: 性别
+  - generic: 女
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：盟友/恋人/隐藏身份知情者
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：情感线核心女主
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：找到父亲失踪的真正原因，让那些刻意掩盖真相的人付出代价，在雾港这个吃人的地方为父亲和自己讨回公道
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 温和善良，善于交际，是档案室里难得的人气担当，对谁都笑脸相迎，从不与人结怨，实则是用亲和力掩护自己的调查目的
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：十年前父亲失踪前曾反复叮嘱她"永远别进档案室"，但她还是选择成为档案员；父亲留下的遗物中藏有一枚刻有特殊符号的船锚吊坠，她一直佩戴却不知其含义
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：暧昧+战友/暗中互生情愫的档案室同事，数次濒临暴露；赵海昌：潜在对立+父亲失踪可能与渔业协会有关，她对赵海昌存
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "顾 顾长风 核心 境界未设定 · 无伤" [expanded]:
+    - generic: 顾
+    - paragraph: 顾长风
+    - generic "点击切换核心/配角": 核心
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 顾长风
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：对手/盟友/利益交换方
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：亦敌亦友的资本势力代表
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：吞并雾港传统渔业产业链，让新港集团成为凌驾于渔业协会之上的新势力，同时挖出十年前海啸真相作为要挟旧势力的王牌
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 风流倜傥，玩世不恭，出入必有美女相伴，举止轻佻得像不学无术的纨绔子弟，实则对港区内每一条利益脉络都了如指掌
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：集团内部有一支秘密调查团队，专门追查雾港十年前那场灾难的真相，已经掌握部分关键证据；与境外某资本势力存在隐秘合作，那股势力正是十年前"接引"仪式的幕后推手
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：交易+彼此利用的信息合作伙伴，他看重林夜在档案室的；沈达年：竞争+权力博弈的棋局对手，新旧势力此消彼长的对抗
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "赵 赵海昌 核心 境界未设定 · 无伤" [expanded]:
+    - generic: 赵
+    - paragraph: 赵海昌
+    - generic "点击切换核心/配角": 核心
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 赵海昌
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：反派/潜在敌人/阶段性对手
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：本土渔业势力话事人
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：彻底掌控雾港近海渔权，将外来资本势力驱逐出传统渔业领域，让渔业协会成为只听命于自己的独立王国
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 豪爽义气，江湖气重，开口闭口"兄弟情谊"与"乡里乡亲"，对渔民疾苦表现出真诚的关切，是雾港本土势力的标志性人物
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：十年前海啸前夕曾接到神秘警告信，信中明确告知海啸发生时间与波及范围，他选择只通知亲近之人撤离而对数千普通渔民隐瞒，导致死亡人数剧增；与沈达年存在隐秘的利益输送链条
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 沈达年：表面对立实则暗中勾连的"政商盟友"，共同分赃港区利；苏婉清：深层忌惮+潜在敌意，她的父亲曾握有他不愿公开的证据；林夜：微妙忌惮+试探，隐约感觉这个档案员身上有股让他不安
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "周 周德福 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 周
+    - paragraph: 周德福
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 周德福
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：盟友/情报提供者
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：档案室老职员
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：安稳度过职业生涯最后几年，远离任何可能危及身家的政治风波，安然退休
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 随和圆滑，在档案室工作二十年，与世无争，熟悉每一份档案的存放位置，从不参与任何纷争
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：十年前海啸后曾亲眼看见有人深夜从档案室取走一箱编号连续的卷宗，那批档案此后从未归还
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：友好+老同事的默契配合；苏婉清：友好+曾暗中帮她查阅过其父亲的人事调动记录
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "陈 陈海生 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 陈
+    - paragraph: 陈海生
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 陈海生
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：棋子/情报源
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：码头帮派小头目
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：取代现任帮主成为港区原住民帮派真正的话事人，将灰色生意做成半公开的垄断
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 豪爽好义，满口江湖义气，是码头苦力们公认的大哥，罩着手底下一帮穷苦兄弟
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：三个月前曾在深夜目击赵海昌在码头仓库秘密进行某种交易，事后被帮内老人警告"别看、别问"
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 赵海昌：忌惮+底层对上层的不满与畏惧；林夜：中立+曾无意间帮过他一次小忙
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "吴 吴建国 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 吴
+    - paragraph: 吴建国
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 吴建国
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：棋子/双面间谍
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：港务委员会档案管理员
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：熬到退休年龄，安稳领取养老金离开这个是非之地，从未奢望升迁
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 唯唯诺诺，官场老油条，善于察言观色，对沈主任的命令从不打折扣，是最听话的下属
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：无意中瞥见沈达年办公桌上某份标注"绝密"的文件，内容涉及十年前一次夜间大规模人员调度
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 沈达年：服从+表面唯命是从；林夜：中立+曾礼貌性帮他化解过一次查阅乌龙事件
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "陈 陈伯 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 陈
+    - paragraph: 陈伯
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 陈伯
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：伏笔承载者/线索提供者
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：灯塔看守人
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：找出航标钟鸣响时刻与历次海难发生时间高度吻合的真正原因
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 沉默寡言，不苟言笑，在灯塔独居三十年，很少与人交流，是港区最孤独的老人
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：十年前海啸发生时在灯塔亲眼目睹海面下浮现的巨大黑影，那东西的出现与航标钟的沉默几乎同步
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：信任+破例向他透露灯塔异常现象；港区渔民：友好+是他们的精神寄托与海上守护者
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "方 方远 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 方
+    - paragraph: 方远
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 方远
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：打手/阶段性对手
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：渔业协会调查科科长
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：借渔业协会的平台上位成为核心层人物，未来取代赵海昌成为港区渔业的新话事人
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 精明强干，执行力强，办事利落，对赵会长唯命是从，是协会里最可靠的执行者
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：偶然发现赵海昌与港务委员会之间存在秘密资金往来账单，但选择装作不知作为自保筹码
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 赵海昌：服从+忠实马前卒；顾长风：对立+新港集团在渔货定价权上的死敌；林夜：忌惮+隐约感觉这个档案员不简单
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "李 李秀兰 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 李
+    - paragraph: 李秀兰
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 李秀兰
+  - button "编辑":
+  - generic: 性别
+  - generic: 女
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：线索提供者/悲情角色
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：失踪船员遗孀
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：让造成丈夫失踪的真正凶手受到法律制裁，哪怕那个真相会让她彻底崩溃
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 温柔坚韧，独自抚养幼子，对生活仍抱有希望，不愿在孩子面前流露太多悲伤
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：丈夫失踪当夜曾紧急来电说"船进入了一片奇怪的水域，海面下好像有光"，此后信号中断
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：信任+唯一愿意认真倾听她的人；苏婉清：同情+两个失去亲人的女人在档案室偶遇产生共鸣
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "钟 钟老海 配角 境界未设定 · 无伤" [expanded]:
+    - generic: 钟
+    - paragraph: 钟老海
+    - generic "点击切换核心/配角": 配角
+    - paragraph: 境界未设定 · 无伤
+    - button "删除角色":
+  - text: 静态固定资料
+  - generic: 只读
+  - generic: 姓名
+  - generic: 钟老海
+  - button "编辑":
+  - generic: 性别
+  - generic: 男
+  - button "编辑":
+  - generic: 外貌
+  - generic: 身份：海下羁绊者/伏笔核心
+  - button "编辑":
+  - generic: 种族 / 血脉
+  - generic: 角色定位：老渔民
+  - button "编辑":
+  - generic: 出身背景
+  - generic: 目标：找到十年前失踪的儿子钟海生，哪怕他已经不再是"人"也想知道答案
+  - button "编辑":
+  - generic: 原生性格
+  - generic: 沉默寡言，眼神深邃，对出海有着本能的恐惧，常年独居在港区最偏僻的角落
+  - button "编辑":
+  - generic: 初始血脉
+  - generic: 秘密：海啸中被"接引"过，虽然被吐出但身体已发生某种不可逆改变，能感知海底深处的异常波动
+  - button "编辑":
+  - text: 动态实时属性
+  - generic: AI可更新
+  - generic: 境界 / 修为
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 异能 / 技能
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 伤势状态
+  - generic: 无伤
+  - button "编辑":
+  - button:
+  - generic: 持有宝物
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 人际关系
+  - generic: 林夜：信任+将真相的片段透露给他；苏婉清：共情+她的
+  - button "编辑":
+  - button:
+  - generic: 当前任务
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - generic: 性格波动
+  - generic: 未填写
+  - button "编辑":
+  - button:
+  - button "添加角色":
+    - text: 添加角色
+  - paragraph: 章节生成后可自动解析正文并追加更新动态属性（不删旧数据）。锁定字段可避免被AI覆盖。角色卡上的「核心/配角」标签可点击切换。
+  - checkbox "开启章节生成后自动更新动态档案" [checked]:
+  - generic: 开启章节生成后自动更新动态档案
+  - button "查看更新日志":
+    - text: 查看更新日志
+  - button "取消"
+  - button "保存变更"
+  - button "Close":
+    - generic: Close
+- text: 从当前章节快速同步动态档案（追加模式，不覆盖已有内容）
+- tooltip "从当前章节快速同步动态档案（追加模式，不覆盖已有内容）"
+- button:
+- generic: "    lines: words:     "

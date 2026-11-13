@@ -1,0 +1,119 @@
+classDiagram
+    %% ── 能力层 ──
+    class CapabilityCatalog {
+        +Database database
+        +EvolutionEventLog event_log
+        +create(capability_key, type, name, provider_id, auth_type, gateway_ref, status, runtime_meta) dict
+        +set_status(key, status) dict
+        +get(key) dict
+        +list(type_filter, include_inactive) list
+    }
+    class CapabilityResolver {
+        +CapabilityCatalog catalog
+        +Database database
+        +resolve(requirement: CapabilityRequirement) CapabilityHandle
+        -_availability(cap) bool
+        -_backup_chain(cap) list~str~
+    }
+    class CapabilityRequirement {
+        +cap_type: str
+        +io_schema: dict
+        +permissions: list~str~
+        +prefer_employee_bindings: list~str~
+    }
+    class CapabilityHandle {
+        +key: str
+        +type: str
+        +adapter: DevAgent
+        +backup_keys: list~str~
+        +cost: float
+        +execute(prompt) dict
+    }
+    class DevAgent {
+        <<Protocol>>
+        +execute(prompt) dict
+    }
+
+    %% ── 运行层：DAG ──
+    class TaskGraph {
+        +nodes: dict~str, TaskNode~
+        +add_node(node) void
+        +add_edge(from, to) void
+        +ready_nodes(done: set) list~TaskNode~
+        +topo_order() list~str~
+        +is_complete() bool
+    }
+    class TaskNode {
+        +id: str
+        +goal: str
+        +deps: list~str~
+        +input_refs: list~str~
+        +output_ref: str
+        +trigger: TriggerSpec
+        +cap_requirement: CapabilityRequirement
+        +status: str
+    }
+    class TriggerSpec {
+        +mode: str
+        +at: str
+        +on_event: str
+        +condition: str
+    }
+
+    %% ── 运行层：调度/闭环 ──
+    class Scheduler {
+        +TaskGraph graph
+        +Database database
+        +start() void
+        +stop() void
+        -_loop() void
+        -_dispatch_ready() void
+    }
+    class PipelineRuntime {
+        +ResultReviewer reviewer
+        +CapabilityResolver resolver
+        +run_node(node, graph) NodeResult
+        -_verify(result) bool
+        -_rework_or_escalate(node, attempt) Decision
+        -_replan(node) TaskGraph
+    }
+    class ResultReviewer {
+        +review(task) dict
+    }
+
+    %% ── 组织/沉淀层 ──
+    class ProjectState {
+        +project_id: str
+        +progress: float
+        +health: str
+        +aggregate(graph) void
+        +persist(database) void
+    }
+    class LessonMemory {
+        +Database database
+        +record(lesson: Lesson) void
+        +query(signature: str) list~Lesson~
+    }
+    class Lesson {
+        +signature: str
+        +cap_path: list~str~
+        +outcome: str
+        +reason: str
+        +reused_count: int
+    }
+
+    %% ── 关系 ──
+    CapabilityResolver --> CapabilityCatalog : 查
+    CapabilityResolver --> CapabilityHandle : 构造
+    CapabilityHandle ..|> DevAgent : 包装
+    CapabilityRequirement <.. CapabilityResolver : 输入
+    TaskGraph "1" *-- "many" TaskNode : 包含
+    TaskNode --> CapabilityRequirement : 需
+    Scheduler --> TaskGraph : 扫描就绪
+    Scheduler --> PipelineRuntime : 派发
+    PipelineRuntime --> ResultReviewer : 验收
+    PipelineRuntime --> CapabilityResolver : 换能力
+    PipelineRuntime --> TaskGraph : 重规划
+    PipelineRuntime --> ProjectState : 更新
+    PipelineRuntime --> LessonMemory : 沉淀
+    ProjectState ..> TaskGraph : 聚合源
