@@ -7,9 +7,9 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TerraPaneContent } from "../terra/TerraShell.js";
 import { TerraIcon } from "../terra/TerraIcons.js";
-import growthImage from "../../../artifacts/tasks/CURIS-V1-RENDER-BASED-PROTOTYPE-002/public/assets/global-business-growth.png";
-import writingImage from "../../../artifacts/tasks/CURIS-V1-RENDER-BASED-PROTOTYPE-002/public/assets/global-business-writing.png";
-import musicImage from "../../../artifacts/tasks/CURIS-V1-RENDER-BASED-PROTOTYPE-002/public/assets/global-business-music.png";
+import growthImage from "../../public/assets/business/global-business-growth.png";
+import writingImage from "../../public/assets/business/global-business-writing.png";
+import musicImage from "../../public/assets/business/global-business-music.png";
 import styles from "./BusinessCatalogSurface.module.css";
 
 export const BUSINESS_DIRECTIONS = Object.freeze([
