@@ -14,10 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: backend
-      CURIS_DB: ${{ runner.temp }}/curis-tests.sqlite
-      CURIS_DB_PATH: ${{ runner.temp }}/curis-tests.sqlite
-      CURIS_WORKSPACE_DB: ${{ runner.temp }}/curis-tests.sqlite
     steps:
+      - name: Set test database paths
+        run: |
+          echo "CURIS_DB=$RUNNER_TEMP/curis-tests.sqlite" >> "$GITHUB_ENV"
+          echo "CURIS_DB_PATH=$RUNNER_TEMP/curis-tests.sqlite" >> "$GITHUB_ENV"
+          echo "CURIS_WORKSPACE_DB=$RUNNER_TEMP/curis-tests.sqlite" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
