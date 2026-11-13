@@ -431,7 +431,8 @@ def test_real_gateway_checks_before_credentials_and_running_continue_stop_on_rev
         raise AllowanceReached()
     monkeypatch.setattr(CompanyExecutionPolicy, "require_agent_execution", allowance)
     context = {"source": "tenant_private", "type": "agent", "id": AGENT["capability_id"],
-               "employee_id": employee, "company_id": COMPANY, "task_id": "synthetic-task"}
+               "employee_id": employee, "company_id": COMPANY, "task_id": "synthetic-task",
+               "work_ref": "synthetic-agent-work"}
     env["credential_vault"] = SimpleNamespace(resolve=lambda *args: pytest.fail("credential read"))
     with scope(), RuntimeCapabilityContext.scope(context):
         with pytest.raises(ModelGatewayExecutionError, match="执行许可"):
@@ -442,9 +443,17 @@ def test_real_gateway_checks_before_credentials_and_running_continue_stop_on_rev
         with pytest.raises(AllowanceReached):
             env["execute_model_gateway"]("self-made prompt")
         assert calls == ["allowance"]
+        # 补齐停止检查读取的原 Work；仍使用真实 RuntimeFoundation.get。
+        # 这是隔离库内的合成上下文，不代表真实 Agent 执行证据。
+        with db.connect() as con:
+            con.execute("insert into runtime_entities(entity_id,tenant_id,entity_type,company_id,"
+                "owner_ref,lifecycle_status,data_json,created_at,updated_at) "
+                "values (?,?,'WORK',?,?,'ACTIVE','{}',current_timestamp,current_timestamp)",
+                (context["work_ref"], "selfuse", COMPANY, employee))
         env.update(runtime_capability=context, agent_employee=employee, agent_task="synthetic-task",
             agent_binding=granted["bindings"][0]["id"], metadata={"kind": "codex-cli"},
             allowance={"revision": "allow"}, event_log=None,
+            reservation_state={"attempted": False, "confirmed": False},
             agent_policy=SimpleNamespace(agent_rows=lambda *args: [{"enabled": True, "revision": "allow"}]),
             TaskExecutionControlService=lambda *args: SimpleNamespace(get_state=lambda _: {"task_status": "RUNNING"}))
         assert env["agent_stopped"]() is False
@@ -538,6 +547,16 @@ def test_same_text_or_status_does_not_spoof_codex_hold(monkeypatch):
     assert result["output"] == "fallback"
 
 
+@pytest.fixture
+def position_policy_clock(monkeypatch):
+    """授权行为测试固定在价格依据有效期内，不修改生产价格或过期围栏。"""
+    from datetime import datetime, timedelta
+    from app import company_execution_policy
+
+    fixture_now = datetime.fromisoformat(company_execution_policy.PRICE["checked_at"]) + timedelta(minutes=1)
+    monkeypatch.setattr(company_execution_policy, "now", lambda: fixture_now)
+
+
 def writing_model_position(tmp_path, package="writing_authoring"):
     """An already materialized default-deny author, with metadata-only model consent."""
     import hashlib
@@ -566,7 +585,7 @@ def writing_model_position(tmp_path, package="writing_authoring"):
     return db, service, employee, key, workspace
 
 
-def test_writing_model_consent_never_grants_read_or_exec(tmp_path):
+def test_writing_model_consent_never_grants_read_or_exec(tmp_path, position_policy_clock):
     from app.capability_authorizer import CapabilityAuthorizer
     db, service, employee, key, _ = writing_model_position(tmp_path)
     with scope():
@@ -586,7 +605,7 @@ def test_writing_model_consent_never_grants_read_or_exec(tmp_path):
 
 @pytest.mark.parametrize("identity", [{"tenant_id": "foreign"}, {"company_id": "foreign"},
                                       {"ceo_id": "foreign"}, {"role": "employee"}])
-def test_writing_model_consent_rejects_foreign_identity(tmp_path, identity):
+def test_writing_model_consent_rejects_foreign_identity(tmp_path, identity, position_policy_clock):
     from app.capability_authorizer import CapabilityAuthorizer
     db, _, employee, key, _ = writing_model_position(tmp_path)
     with scope(**identity):
@@ -599,7 +618,7 @@ def test_writing_model_consent_rejects_foreign_identity(tmp_path, identity):
 
 @pytest.mark.parametrize("invalid", ["revoked", "expired", "model-disabled", "destination", "credential-disabled",
                                      "team-tampered", "explicit-deny", "malformed", "trial-unknown"])
-def test_writing_model_consent_rechecks_current_gate(tmp_path, invalid):
+def test_writing_model_consent_rechecks_current_gate(tmp_path, invalid, position_policy_clock):
     from app.capability_authorizer import CapabilityAuthorizer
     db, service, employee, key, workspace = writing_model_position(tmp_path)
     with scope():
@@ -636,7 +655,7 @@ def test_writing_model_consent_rechecks_current_gate(tmp_path, invalid):
 
 
 @pytest.mark.parametrize("package", ["content_growth_v02", "music"])
-def test_other_official_author_model_binding_preserves_default_deny(tmp_path, package):
+def test_other_official_author_model_binding_preserves_default_deny(tmp_path, package, position_policy_clock):
     from app.capability_authorizer import CapabilityAuthorizer
     db, service, employee, key, _ = writing_model_position(tmp_path, package)
     with scope():
