@@ -579,7 +579,7 @@ def test_writing_model_consent_never_grants_read_or_exec(tmp_path):
         assert service.list_employee_capability_bindings(employee)["bindings"] == []
         with db.connect() as con:
             assert con.execute("select allowed_effect_classes_json from employee_instances where id=?", (employee,)).fetchone()[0] == "[]"
-            assert con.execute("select allowed_effect_classes_json from employee_templates where id='official.employee.writing.author'").fetchone()[0] == "[]"
+            assert con.execute("select allowed_effect_classes_json from employee_templates where id=(select template_id from employee_instances where id=?)", (employee,)).fetchone()[0] == "[]"
             assert con.execute("select count(*) from tasks").fetchone()[0] == 0
             assert con.execute("select count(*) from ai_usage_records").fetchone()[0] == 0
 
