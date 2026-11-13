@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "0.1.0",
+  "title": "歌曲",
+  "type": "object",
+  "initialState": "DRAFT",
+  "required": [
+    "title",
+    "intention"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "歌名",
+      "maxLength": 240
+    },
+    "intention": {
+      "type": "string",
+      "title": "创作意图",
+      "maxLength": 2000,
+      "multiline": true
+    },
+    "status": {
+      "type": "string",
+      "title": "状态",
+      "enum": [
+        "DRAFT"
+      ],
+      "default": "DRAFT"
+    }
+  }
+}

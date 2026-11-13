@@ -17,9 +17,10 @@ from .result_attention import ResultAttention
 from .runtime import RuntimeScopeError
 from .tenant_context import TenantContext
 
-# Official CNY/USD pricing pages rechecked at checked_at; retain the seven-day expiry fence.
+# Official CNY/USD pricing verified 2026-11-13T16:20:00+00:00; see runs/T-015/price_evidence.md.
+# Rates unchanged; retain the seven-day expiry fence.
 PRICE = {"model_name": "deepseek-flash", "model_version": "DeepSeek-V4.1-Flash-1017",
-         "checked_at": "2026-11-05T11:52:26+00:00", "valid_until": "2026-11-12T11:52:26+00:00",
+         "checked_at": "2026-11-13T16:20:00+00:00", "valid_until": "2026-11-20T16:20:00+00:00",
          "source_cny": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
          "source_usd": "https://api-docs.deepseek.com/quick_start/pricing/",
          "input_cny_per_million": 2, "output_cny_per_million": 8,
@@ -28,6 +29,8 @@ PRICE = {"model_name": "deepseek-flash", "model_version": "DeepSeek-V4.1-Flash-1
 TRIAL_AUTHORIZATION = "ceo-deepseek-synthetic-20261105-two-calls-cny-0.10"
 TRIAL_BUDGET_MICRO_CNY = 100000
 CONTINUOUS_TEST_AUTHORIZATION = "ceo-v1-continuous-synthetic-20261106"
+PRICE_NOTICE = ("价格待核实：许可范围和预算已保存，但尚不能进行付费模型执行；"
+                "请由维护者更新经核验的价格依据后，重新核对并确认公司许可。原输入会保留，不会自动调用或计费。")
 
 PACKAGES = {"com.curis.local.writing-authoring", "com.curis.local.content-growth", "com.curis.local.music"}
 PREFIX = "company.text_policy."
@@ -494,7 +497,16 @@ class CompanyExecutionPolicy:
         return {**options, "continuity": continuity,
                 "preview_token": digest([options["preview_token"], continuity["token"]])}
 
-    def model_snapshot(self, key):
+    @staticmethod
+    def price_is_current():
+        try:
+            checked = datetime.fromisoformat(PRICE["checked_at"])
+            expiry = datetime.fromisoformat(PRICE["valid_until"])
+            return checked <= now() < expiry
+        except (KeyError, TypeError, ValueError):
+            return False
+
+    def model_snapshot(self, key, *, allow_unverified_price=False):
         model = self.models._require_eligible_model(TenantContext.current_tenant_id(), key)
         if model["source"] == "tenant_private":
             metadata = self.db.get_tenant_private_capability(TenantContext.current_tenant_id(), "model", key)["metadata"]
@@ -510,7 +522,7 @@ class CompanyExecutionPolicy:
         if (model["model_name"] != PRICE["model_name"] or base not in {"https://api.deepseek.com", "https://api.deepseek.com/v1"}
                 or url.username or url.password or protocol != "openai_chat" or chat_path not in {"/chat/completions", "/v1/chat/completions"}):
             raise RuntimeScopeError("当前模型或发送目的地没有经核验的适用价格依据。")
-        if not datetime.fromisoformat(PRICE["checked_at"]) <= now() < datetime.fromisoformat(PRICE["valid_until"]):
+        if not allow_unverified_price and not self.price_is_current():
             raise RuntimeScopeError("模型价格依据已过期或时间不可确认，请先更新经核验的价格。")
         return {**model, "destination": base, "protocol": protocol, "chat_path": chat_path, "price": PRICE.copy()}
 
@@ -530,12 +542,15 @@ class CompanyExecutionPolicy:
         models = []
         for item in self.models.available_models():
             try:
-                models.append(self.model_snapshot(item["model_key"]))
+                models.append(self.model_snapshot(item["model_key"], allow_unverified_price=True))
             except (ValueError, RuntimeScopeError):
                 pass
+        price_current = self.price_is_current()
         value = {"company_id": company, "workspaces": workspaces, "models": models, "price": PRICE.copy(),
+                 "price_status": "CURRENT" if price_current else "VERIFICATION_REQUIRED",
+                 "price_notice": "" if price_current else PRICE_NOTICE,
                  "max_input_bytes": MAX_INPUT, "max_output_tokens": MAX_OUTPUT,
-                 "per_request_ceiling_cny": str(Decimal(RESERVE_MICRO_CNY) / 1000000), "data_scope": DATA_SCOPE}
+                 "per_request_ceiling_cny": str(Decimal(RESERVE_MICRO_CNY) / 1000000) if price_current else None, "data_scope": DATA_SCOPE}
         return {**value, "preview_token": digest(value)}
 
     def totals(self, con, company):
@@ -651,11 +666,17 @@ class CompanyExecutionPolicy:
                 if type(valid_hours) is not int or not 1 <= valid_hours <= 168:
                     raise ValueError("许可有效期应在1小时至7天内。")
                 expiry = now() + timedelta(hours=valid_hours)
-                if expiry > datetime.fromisoformat(PRICE["valid_until"]):
+                price_current = options["price_status"] == "CURRENT"
+                if price_current and expiry > datetime.fromisoformat(PRICE["valid_until"]):
                     raise ValueError("所选有效期超过当前价格依据的有效期。")
                 totals = {"reserved_micro_cny": 0, "estimated_micro_cny": 0} if continuity["needs_reconfirmation"] else self.totals(con, company)
                 if not continuous and budget < sum(totals[k] for k in ("reserved_micro_cny", "estimated_micro_cny")):
                     raise ValueError("预算不能低于已占额与已有估算；可直接撤销未来执行。")
+                # Saving intent is not a paid execution grant. Never refresh evidence
+                # or automatically activate pending consent when a price is updated.
+                if not price_current:
+                    policy.update(price_status="VERIFICATION_REQUIRED", execution_state="AWAITING_PRICE_VERIFICATION",
+                                  price_notice=PRICE_NOTICE)
                 policy.update(workspace_ids=workspace_ids, models=[m for m in options["models"] if m["model_key"] in model_keys],
                               budget_micro_cny=budget, currency="CNY", expires_at=expiry.isoformat(), consent=True, data_scope=DATA_SCOPE,
                               execution_limits={"max_input_bytes": MAX_INPUT, "max_output_tokens": MAX_OUTPUT, "reserve_micro_cny": RESERVE_MICRO_CNY})
@@ -714,6 +735,8 @@ class CompanyExecutionPolicy:
             policy = self.latest(con, company)
             if not policy or not policy["enabled"] or now() >= datetime.fromisoformat(policy["expires_at"]):
                 raise RuntimeScopeError("请到公司设置明确同意本工作空间的文字外发与预算；输入会保留。")
+            if policy.get("execution_state") == "AWAITING_PRICE_VERIFICATION":
+                raise RuntimeScopeError(PRICE_NOTICE)
             model = self.model_snapshot(model_key)
             if policy.get("data_scope") != DATA_SCOPE or policy.get("execution_limits") != {"max_input_bytes": MAX_INPUT, "max_output_tokens": MAX_OUTPUT, "reserve_micro_cny": RESERVE_MICRO_CNY}:
                 raise RuntimeScopeError("文字外发范围或单次执行上限已变化，请重新确认公司许可。")

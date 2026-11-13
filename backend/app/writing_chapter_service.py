@@ -650,10 +650,18 @@ class WritingChapterService:
                 "context": binding["context"], "binding_id": policy["binding"]["id"], "model": policy["selected"]["model"],
                 "grant": policy["grant"], "book_context_basis_sha256": basis_hash, "source_class": policy["grant"].get("source_class", "PROVIDER_EXECUTOR")}
         if work_ref:
-            if execution_selection is None or retry_no:
-                raise WritingConflict("Explicit Work requires a selected model; never retry an uncertain Work")
+            if execution_selection is None:
+                raise WritingConflict("Explicit Work requires a selected model")
             execution_selection["work_ref"] = work_ref
             execution_selection["work_instruction"] = body.strip()
+            if retry_no:
+                previous = self.conversations.read_request(company, binding["conversation_ref"], request_id)["attempts"]
+                original = previous[0] if previous else {}
+                if (retry_no != 1 or original.get("status") != "FAILED"
+                        or original.get("effect_status") != "SETTLED" or original.get("task_ref")
+                        or (original.get("execution_selection") or {}).get("work_ref") != work_ref):
+                    raise WritingConflict("Only a proven pre-Task Writing failure can be retried once")
+                execution_selection["retry_of_attempt"] = original["attempt_id"]
             with self.db.connect() as con:
                 work = self.validate_model_work(con, execution_selection)
                 cycle_ref = json.loads(work["data_json"])["cycleRef"]
@@ -734,9 +742,33 @@ class WritingChapterService:
                 or source.get("context") != selection["context"] or data.get("writingBasis") != expected
                 or binding != {"bindingRef": selection["binding_id"], "model": selection["model"]}
                 or route.get("currentAssignmentRef") != selection["context"]["assignment_ref"]
-                or any(key != attempt_id for key in route.get("executions", {}))):
+                or any(key != attempt_id and not self._safe_work_retry(con, selection, key, execution)
+                       for key, execution in route.get("executions", {}).items())):
             raise WritingConflict("Original Work chapter, responsibility, model or execution differs")
         return dict(row)
+
+    @staticmethod
+    def _safe_work_retry(con, selection, key, execution):
+        # A stopped/unknown physical call is never retried. Only an original
+        # attempt that failed before Task creation may share this Work.
+        if (selection.get("retry_of_attempt") != key or execution.get("status") != "FAILED"
+                or execution.get("taskRef")):
+            return False
+        scope = selection["scope"]
+        rows = con.execute("select payload from evolution_events where tenant_id=? "
+            "and event_type='conversation.attempt.finished' and json_extract(payload,'$.attempt_id')=?",
+            (scope["tenant_id"], key)).fetchall()
+        if len(rows) != 1:
+            return False
+        finished = json.loads(rows[0][0])
+        prior = finished.get("execution_selection") or {}
+        if (finished.get("status") != "FAILED" or finished.get("effect_status") != "SETTLED"
+                or finished.get("task_ref") or prior.get("work_ref") != selection["work_ref"]
+                or prior.get("scope") != scope or prior.get("context") != selection["context"]
+                or prior.get("binding_id") != selection["binding_id"] or prior.get("model") != selection["model"]):
+            return False
+        return con.execute("select 1 from tasks where tenant_id=? and execution_ref=? limit 1",
+                           (scope["tenant_id"], key)).fetchone() is None
 
     def validate_execution_selection(self, selection, *, attempt_id=None, connection=None):
         if self.entry is None or selection.get("purpose") != "WRITING_CHAPTER_REPLY":

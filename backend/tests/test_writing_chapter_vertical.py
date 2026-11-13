@@ -19,7 +19,7 @@ from app.writing_chapter_service import WritingChapterService, WritingConflict, 
 
 COMPANY = "writing-test-company"
 CEO = "writing-test-author"
-SOURCE = Path(__file__).resolve().parents[2] / "artifacts/tasks/CURIS-V1-DELIVERY-WRITING-001/package-source"
+SOURCE = Path(__file__).resolve().parents[1] / "app/bundled_workspace_packages/writing_authoring"
 
 
 def scope(**overrides):

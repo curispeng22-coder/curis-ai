@@ -7,14 +7,14 @@ from app.writing_chapter_service import WritingChapterService
 from backend.tests.test_writing_chapter_vertical import setup, scope, COMPANY, CEO, local_chain, team, command
 
 
-def app(db):
+def app(db, shared=None):
     value = FastAPI()
     @value.middleware("http")
     async def identity(request: Request, call_next):
         with scope(ceo_id=request.headers.get("X-Test-CEO", CEO)):
             return await call_next(request)
     async def forbidden(task): raise AssertionError("Real Provider is not authorized")
-    shared = ConversationService(db)
+    shared = shared if shared is not None else ConversationService(db)
     value.include_router(build_conversation_router(db, forbidden, service=shared))
     value.include_router(build_writing_router(db, forbidden, conversation_service=shared))
     return value, shared
@@ -48,17 +48,23 @@ def test_api_chain_strict_body_scope_replay_and_download(tmp_path):
         assert response.json()["snapshot"]["text"] == "原创 API 章节"
 
 
-def test_shared_router_does_not_mark_inflight_unverified(tmp_path):
-    db, _, w, b, c = setup(tmp_path); application, shared = app(db)
+def test_shared_router_does_not_mark_inflight_unverified(tmp_path, monkeypatch):
+    # 完整合成模型/员工授权夹具；只 prepare，不执行或调用 Provider。
+    from backend.tests.test_writing_selected_execution import ready
+    db, _, entry, service, calls, w, b, c, binding = ready(tmp_path, monkeypatch)
+    shared = entry.conversations
+    application, _ = app(db, shared=shared)
     with scope():
-        employee, assignment = team(db, w)
-        topic = shared.create(COMPANY, request_id="shared-router", employee_ref=employee)
-        claim, _ = shared.prepare(COMPANY, employee, body="只验证在途读取", request_id="inflight", assignment_ref=assignment, conversation_id=topic["conversation_id"])
+        topic = {"conversation_id": binding["conversation_ref"]}
+        claim, _ = service.prepare_message(COMPANY, w, b, c,
+            binding_ref=binding["ref"], body="只验证在途读取", request_id="inflight",
+            model_key="model.writing-entry")
     with TestClient(application) as client:
         result = client.get(f'/api/workspace/v1/companies/{COMPANY}/conversations/{topic["conversation_id"]}')
         assert result.status_code == 200
         assert result.json()["attempts"][0]["status"] == "RUNNING"
     assert claim["attempt_id"] in shared.running
+    assert calls == []
 
 
 def test_chapter_api_source_projection_missing_link_target_no_writes(tmp_path):

@@ -94,6 +94,7 @@ class SharedWorkspaceProjection:
 
         entities = [self._entity(row) for row in rows]
         team_entities = self._general_assignment_entities(company_id, workspace_id, entities)
+        team_entities = self._writing_assignment_entities(company_id, workspace_id, team_entities)
         by_type: dict[str, list[dict[str, Any]]] = {}
         by_id = {item["entity_id"]: item for item in team_entities}
         for item in team_entities:
@@ -156,6 +157,47 @@ class SharedWorkspaceProjection:
             "results": result_index,
             "updated_at": workspace["updated_at"],
         }
+
+    def _writing_assignment_entities(self, company_id, workspace_id, entities):
+        """Project the explicitly assigned Company author without moving identity."""
+        assignments = [item for item in entities if item["entity_type"] == "RESPONSIBILITY_ASSIGNMENT"
+            and item["lifecycle_status"] == "ACTIVE"
+            and item["data"].get("responsibilityKey") == "WRITING_CHAPTER_AUTHOR"
+            and item["data"].get("scopeType") == "WORKSPACE"
+            and item["data"].get("scopeRef") == workspace_id]
+        if len(assignments) != 1:
+            return entities
+        assignment = assignments[0]["data"]
+        role = next((item for item in entities if item["entity_id"] == assignment.get("roleRef")
+                     and item["entity_type"] == "ROLE_SLOT"
+                     and item["lifecycle_status"] in {"ASSIGNED", "OPERATING"}), None)
+        if not role or role["data"].get("assignedEmployeeRef") not in (None, "", assignment.get("employeeRef")):
+            return entities
+        with self.db.connect() as connection:
+            row = connection.execute("select * from runtime_entities where tenant_id=? and company_id=? "
+                "and entity_id=? and entity_type='AI_EMPLOYEE' and (workspace_id is null or workspace_id=?)",
+                (self.tenant_id, company_id, assignment.get("employeeRef"), workspace_id)).fetchone()
+            if row is None:
+                return entities
+            employee = self._entity(row)
+            bridge = employee["data"].get("identityBridge") or {}
+            company_ref = employee["data"].get("companyEmployeeRef")
+            if (employee["lifecycle_status"] not in {"AVAILABLE", "OPERATING"}
+                    or not company_ref or bridge.get("status") != "VERIFIED"
+                    or bridge.get("companyEmployeeRef") != company_ref):
+                return entities
+            identity = connection.execute("select i.id from employee_instances i join employee_capability_bindings b "
+                "on b.tenant_id=i.tenant_id and b.employee_id=i.id where i.tenant_id=? and i.company_id=? "
+                "and i.id=? and i.enabled=1 and i.deleted_at is null and i.status in ('idle','assigned') "
+                "and b.id=? and b.enabled=1", (self.tenant_id, company_id, company_ref,
+                bridge.get("verifiedByEmployeeCapabilityBindingRef"))).fetchone()
+            if identity is None:
+                return entities
+        projected = {
+            role["entity_id"]: {**role, "data": {**role["data"], "assignedEmployeeRef": employee["entity_id"]}},
+            employee["entity_id"]: {**employee, "data": {**employee["data"], "roleSlotRef": role["entity_id"]}},
+        }
+        return [projected.pop(item["entity_id"], item) for item in entities] + list(projected.values())
 
     def _general_assignment_entities(self, company_id, workspace_id, entities):
         """Read current General responsibility links without moving Company Employees."""
