@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { workspaceFetch } from "../../lib/api.js";
 import { usePathname } from "next/navigation";
 
 import { getRuntimeBootstrap, runtimeErrorMessage } from "../../lib/runtimeApi.js";
@@ -26,7 +27,16 @@ export function RuntimeProvider({ children }) {
     if (!usesRuntime(pathname)) return;
     setState((current) => ({ ...current, status: "loading", error: "" }));
     try {
-      const result = await getRuntimeBootstrap();
+      let result = await getRuntimeBootstrap();
+      if (pathname === "/welcome" || pathname === "/onboarding" || pathname === "/ceo-office") {
+        try {
+          await workspaceFetch("/api/workspace/v1/first-launch", { method: "POST" });
+          result = await getRuntimeBootstrap();
+        } catch (error) {
+          // A failed or unauthorized initialization must not hide an accessible Company.
+          if (!result.snapshot || error?.status !== 403) throw error;
+        }
+      }
       setState({
         status: result.snapshot ? "ready" : "empty",
         companyId: result.companyId,

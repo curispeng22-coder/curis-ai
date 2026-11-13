@@ -5,6 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
+import threading
+import weakref
+from functools import wraps
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -13,6 +17,26 @@ from ..employee_templates import EmployeeTemplateContract, professional_team_con
 from .business_spine import BusinessSpineError, CanonicalBusinessSpine
 from .foundation import RuntimeFoundation
 from .registry import get_registered_machine
+
+
+# Concurrent HTTP requests in this process must observe the committed receipt,
+# rather than mistaking another service instance for an abandoned process.
+_activation_locks = weakref.WeakValueDictionary()
+_activation_locks_guard = threading.Lock()
+
+
+def serialized_activation(method):
+    @wraps(method)
+    def invoke(self, founding_run_id, *args, **kwargs):
+        key = (str(Path(self.db.path).resolve()), self.foundation.tenant_id, founding_run_id)
+        with _activation_locks_guard:
+            lock = _activation_locks.get(key)
+            if lock is None:
+                lock = threading.RLock()
+                _activation_locks[key] = lock
+        with lock:
+            return method(self, founding_run_id, *args, **kwargs)
+    return invoke
 
 
 @dataclass(frozen=True)
@@ -323,6 +347,7 @@ class FirstRunDelivery:
                 result["creation_result"]["initial_team"] = run["data"]["initialTeam"]
         return result
 
+    @serialized_activation
     def materialize_package_for_existing_company(self, founding_run_id, draft, *, package_runtime,
                                                 source, definition, department_id, proposal_sha256, retry_no=0):
         """Persist the original confirmed proposal and Package instance in the same canonical transaction."""

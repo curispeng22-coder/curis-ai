@@ -29,15 +29,15 @@ test('lost initial run permits empty-run retry but one Company, no invented requ
 test('unreadable same run prevents another transition or Company',async()=>{
  const f=fixture();f.operation.runId='run';f.api.getFoundingRun=async()=>{throw Error('offline');};await assert.rejects(complete(f.operation,()=>{},f.api));assert.equal(f.stats().moves.length,0);assert.equal(f.stats().companies,0);
 });
-test('skip refusal releases actual synchronous gate and shows error',async()=>{
- let writes=0;const h=load({saveV1Presentation:async()=>{writes++;throw Error('save refused');}});h.render();await new Promise(setImmediate);let tree=h.render();await tree.props.onSkip();tree=h.render();assert.equal(tree.props.busy,false);assert.match(tree.props.error,/save refused/);await tree.props.onSkip();assert.equal(writes,2);
+test('first launch bypasses welcome without saving dismissal even when saves refuse',async()=>{
+ const {api,calls}=uiApi();api.saveV1Presentation=async()=>{calls.profiles.push('unexpected');throw Error('save refused');};const h=load({...api,runtime:{status:'empty',snapshot:null},getV1Presentation:async()=>({welcome_dismissed:false})});h.render();await new Promise(setImmediate);const tree=h.render();assert.equal(tree.type.name,'EmptyCuris');assert.equal(tree.props.onSkip,undefined);assert.equal(calls.profiles.length,0);assert.equal(calls.runs,0);assert.equal(h.store.size,0);h.unmount();
 });
 
 test('corrupt stored operation fails closed instead of offering another Company',async()=>{
  const storage=new Map([['curis.company-setup.v1','{broken']]);const h=load({storage});h.render();const tree=h.render();const flatten=v=>v==null?'':typeof v==='object'?(Array.isArray(v)?v.map(flatten).join(''):flatten(v.props?.children)):String(v);assert.match(flatten(tree),/原建公司记录暂不可读取/);assert.equal(tree.props.onCreate,undefined);
 });
-test('actual skip synchronous gate rejects a second click before React rerenders',async()=>{
- let finish,calls=0;const gate=new Promise(resolve=>finish=resolve),h=load({saveV1Presentation:()=>{calls++;return gate;}});h.render();await new Promise(setImmediate);const tree=h.render(),first=tree.props.onSkip(),second=tree.props.onSkip();assert.equal(calls,1);finish();await Promise.all([first,second]);assert.equal(h.render().props.onSkip,undefined);
+test('manual setup synchronous gate rejects a second submit before React rerenders',async()=>{
+ const {api,calls}=uiApi();let finish;const gate=new Promise(resolve=>finish=resolve);api.saveV1Presentation=()=>{calls.profiles.push('saved');return gate;};const h=await setupParent(api);const tree=h.render(),first=tree.props.onSubmit({preventDefault(){}}),second=tree.props.onSubmit({preventDefault(){}});assert.equal(calls.profiles.length,1);assert.equal(calls.runs,0);finish();await Promise.all([first,second]);assert.equal(calls.runs,1);assert.equal(calls.companies.length,1);h.unmount();
 });
 
 const flatten=v=>v==null?'':typeof v==='object'?(Array.isArray(v)?v.map(flatten).join(''):flatten(v.props?.children)):String(v);
@@ -101,11 +101,11 @@ test('empty Company after Skip or saved dismissal uses the shared shell and keep
  for(const dismissed of [false,true]){
   const {api,calls}=uiApi(),h=load({...api,runtime:{status:'empty',companyId:'',snapshot:null,refresh:async()=>{}},getV1Presentation:async()=>({welcome_dismissed:dismissed})});
   h.render();await new Promise(setImmediate);
-  if(!dismissed)await h.render().props.onSkip();
+  assert.equal(h.render().type.name,'EmptyCuris');assert.equal(h.render().props.onSkip,undefined);
   const empty=h.render(),shell=empty.type(empty.props);
   assert.equal(shell.type,h.shell);assert.equal(shell.props.topCrumb,'CEO 工作台');assert.equal(shell.props.assistantContext.page,'ceo-office');assert.equal(shell.props.assistantContext.company_id,undefined);
   assert.match(flatten(shell),/这里还没有公司/);assert.equal(nodes(shell,n=>n.type==='main').length,0);
   const create=nodes(shell,n=>typeof n.type==='function'&&n.type.name==='PrimaryButton'&&flatten(n)==='创建我的 AI 公司')[0];assert.ok(create);create.props.onClick();
-  const setup=h.render();assert.equal(setup.type.name,'Setup');assert.equal(setup.props.recovering,false);assert.equal(calls.runs,0);assert.equal(calls.companies.length,0);assert.equal(calls.profiles.length,dismissed?0:1);assert.equal(h.store.size,0);h.unmount();
+  const setup=h.render();assert.equal(setup.type.name,'Setup');assert.equal(setup.props.recovering,false);assert.equal(calls.runs,0);assert.equal(calls.companies.length,0);assert.equal(calls.profiles.length,0);assert.equal(h.store.size,0);h.unmount();
  }
 });

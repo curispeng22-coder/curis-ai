@@ -112,7 +112,7 @@ export default function AppEntry() {
       if (saved !== null && (!saved || typeof saved.companyId !== "string" || !saved.companyId || typeof saved.runId !== "string" || !saved.values || typeof saved.values.company_name !== "string" || !saved.values.company_name.trim() || typeof saved.values.display_name !== "string" || !saved.values.display_name.trim() || typeof saved.values.avatar_ref !== "string")) throw new Error("原建公司记录不完整。");
       if (saved) { operation.current = saved; setForm(saved.values); setRecovering(true); setStage("setup"); }
     } catch { setError("暂时无法读取原建公司记录，请保留本机数据并恢复存储后重试。"); setStage("recovery-error"); return; }
-    getV1Presentation().then(value => { if (!active) return; setPresentation(value); if (!operation.current) { setForm(current => ({ ...current, display_name: value.display_name || "", avatar_ref: value.avatar_ref || "" })); setStage(value.welcome_dismissed ? "empty" : "welcome"); } }).catch(() => { if (active && !operation.current) setStage("welcome"); });
+    getV1Presentation().then(value => { if (!active) return; setPresentation(value); if (!operation.current) { setForm(current => ({ ...current, display_name: value.display_name || "", avatar_ref: value.avatar_ref || "" })); setStage("empty"); } }).catch(() => { if (active && !operation.current) setStage("empty"); });
     return () => { active = false; };
   }, []);
   useEffect(() => { if (!operation.current && runtime.status === "ready" && runtime.snapshot?.company) window.location.replace("/ceo-office"); }, [runtime.snapshot, runtime.status]);
@@ -140,7 +140,7 @@ export default function AppEntry() {
   if (runtime.status === "error" || runtime.status === "forbidden") return <main className="grid min-h-screen place-items-center bg-ui-bg px-6"><section className="max-w-md rounded-2xl border border-ui-line bg-ui-surface p-7"><h1 className="text-xl font-semibold text-ui-txt">暂时无法读取 Curis</h1><p className="mt-2 text-sm text-ui-txt-2">{runtime.error}</p><button onClick={runtime.refresh} className="mt-5 text-sm font-semibold text-ui-primary-text">重新读取</button></section></main>;
   if (stage === "recovery-error") return <main className="grid min-h-screen place-items-center bg-ui-bg px-6"><section role="alert"><h1>原建公司记录暂不可读取</h1><p>{error}</p><button onClick={() => window.location.reload()}>重新读取</button></section></main>;
   if (stage === "loading" || runtime.status === "loading") return <main className="grid min-h-screen place-items-center bg-ui-bg text-sm text-ui-txt-2">正在打开 Curis…</main>;
-  if (stage === "setup") return <Setup value={form} setValue={value => { if (!pending.current && !operation.current) setForm(value); }} onSubmit={createCompany} busy={busy} error={error} recovering={recovering} onBack={() => setStage("welcome")} />;
+  if (stage === "setup") return <Setup value={form} setValue={value => { if (!pending.current && !operation.current) setForm(value); }} onSubmit={createCompany} busy={busy} error={error} recovering={recovering} onBack={() => setStage("empty")} />;
   if (stage === "empty") return <EmptyCuris onCreate={() => setStage("setup")} />;
-  return <Welcome onCreate={() => setStage("setup")} onSkip={skip} busy={busy} error={error} />;
+  return <EmptyCuris onCreate={() => setStage("setup")} />;
 }
