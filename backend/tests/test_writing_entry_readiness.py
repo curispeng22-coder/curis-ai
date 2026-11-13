@@ -522,7 +522,7 @@ raise SystemExit('boundary was not reached')
         for table in ('canonical_businesses', 'workspaces', 'workspace_package_instances'):
             assert con.execute('select count(*) from ' + table).fetchone()[0] == count
         assert con.execute("select count(*) from employee_instances where template_id='official.employee.writing.author'").fetchone()[0] == count
-        assert con.execute("select count(*) from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchone()[0] == count * 2
+        assert con.execute("select count(*) from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchone()[0] == count * 3
         assert con.execute('pragma foreign_key_check').fetchall() == []
         assert con.execute('pragma integrity_check').fetchone()[0] == 'ok'
     retained = list(Path(runtime.store_root).glob('*/*/*'))
@@ -538,14 +538,14 @@ def test_b_team_identity_no_key_edit_and_multiple_instances(tmp_path):
         run, draft, proposal = confirmed(db)
         first = materialize(FirstRunDelivery(db), runtime, run, draft, proposal)
         team = first['creation_result']['initial_team']
-        assert team['leaderRef'] == team['employeeRef']
-        assert len(team['assignments']) == 2
+        assert len({team['leaderRef'], team['employeeRef'], team['reviewerRef']}) == 3
+        assert len(team['assignments']) == 3
         assert team['templateRef'] == 'official.employee.writing.author'
         assert team['executionVerification'] == 'UNVERIFIED'
         assert WritingEntryService(db).metadata(COMPANY, team['workspaceRef'])['execution']['status'] == 'UNAVAILABLE'
         with db.connect() as con:
             employee = con.execute('select * from employee_instances where id=?', (team['employeeRef'],)).fetchone()
-            assert employee['company_id'] == COMPANY and employee['name'] == '章节作者'
+            assert employee['company_id'] == COMPANY and employee['name'] == '作者'
             runtime_employee = con.execute('select * from runtime_entities where entity_id=?', (team['employeeRef'],)).fetchone()
             assert json.loads(runtime_employee['data_json'])['companyEmployeeRef'] == employee['id']
             assert 'identityBridge' not in json.loads(runtime_employee['data_json'])
@@ -554,7 +554,7 @@ def test_b_team_identity_no_key_edit_and_multiple_instances(tmp_path):
             for index, ref in enumerate(team['assignments']):
                 assignment = con.execute('select * from runtime_entities where entity_id=?', (ref['assignmentRef'],)).fetchone()
                 data = json.loads(assignment['data_json'])
-                assert data['employeeRef'] == employee['id'] and data['scopeType'] == ('BUSINESS' if index == 0 else 'WORKSPACE')
+                assert data['employeeRef'] == [team['leaderRef'], employee['id'], team['reviewerRef']][index] and data['scopeType'] == ('BUSINESS' if index == 0 else 'WORKSPACE')
                 assert data['scopeRef'] == (team['businessRef'] if index == 0 else team['workspaceRef'])
                 assert data['isLeader'] is (index == 0)
                 assert len(con.execute('select * from runtime_links where source_id=?', (ref['assignmentRef'],)).fetchall()) == 2

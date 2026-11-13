@@ -204,11 +204,14 @@ class WritingEntryService:
                 if current[0]["data"]["employeeRef"] != runtime_ref:
                     self.routing.update_assignment(current[0]["entity_id"], employee_ref=runtime_ref)
             else:
+                preset = self.publication()["initial_team_contract"]["members"][1]
                 role = self.foundation.create("ROLE_SLOT", company_id=company, workspace_id=workspace,
                     lifecycle_status="ASSIGNED", data={"name": "章节作者", "role": "章节写作", "responsibility": "按作者依据讨论章节修改"})
                 self.routing.create_assignment(company_id=company, workspace_id=workspace, scope_type="WORKSPACE", scope_ref=workspace,
                     role_ref=role["entity_id"], employee_ref=runtime_ref, responsibility_key=AUTHOR,
-                    responsibility="按作者保存的正文与选文依据讨论章节修改", output_contract={"resultType": "EMPLOYEE_REPLY", "requiresResult": False})
+                    responsibility="按作者保存的正文与选文依据讨论章节修改",
+                    input_contract=preset["inputContract"],
+                    output_contract=preset["outputContract"])
             self.employees.update_employee_instance(employee_id, {"status": "assigned"})
         return self._configure(company, workspace, operation)
 

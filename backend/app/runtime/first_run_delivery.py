@@ -390,22 +390,31 @@ class FirstRunDelivery:
                     team = EmployeeTemplateContract(self.db).materialize_professional_team_in_connection(
                         con, company_id=draft.company_id, business_id=ids["business_id"],
                         workspace_id=ids["workspace_id"], contract=team_contract)
-                    holder = con.execute("select id from employee_instances where tenant_id=? and company_id=? and id=? "
-                        "and template_id=? and enabled=1 and deleted_at is null",
-                        (tenant, draft.company_id, team.get("employeeRef"), team_contract["templateId"])).fetchone()
-                    if (holder is None or team.get("leaderRef") != holder["id"]
-                            or team.get("contractSHA256") != team_contract["sha256"] or len(team.get("assignments", [])) != 2):
+                    writing = team_contract["departmentType"] == "writing"
+                    members = team_contract.get("members") or [
+                        {"templateId": team_contract["templateId"], "responsibilityKey": team_contract["leaderKey"]},
+                        {"templateId": team_contract["templateId"], "responsibilityKey": team_contract["authorKey"]}]
+                    refs = ([team.get("leaderRef"), team.get("employeeRef"), team.get("reviewerRef")]
+                            if writing else [team.get("employeeRef"), team.get("employeeRef")])
+                    if (not all(refs) or len(set(refs)) != (3 if writing else 1)
+                            or team.get("leaderRef") != refs[0]
+                            or team.get("templateRef") != team_contract["templateId"]
+                            or team.get("contractSHA256") != team_contract["sha256"]
+                            or len(team.get("assignments", [])) != len(members)):
                         raise BusinessSpineError("Initial team receipt is not fully materialized")
-                    for index, reference in enumerate(team["assignments"]):
+                    for index, (reference, member, employee_ref) in enumerate(zip(team["assignments"], members, refs)):
+                        holder = con.execute("select id from employee_instances where tenant_id=? and company_id=? and id=? "
+                            "and template_id=? and enabled=1 and deleted_at is null",
+                            (tenant, draft.company_id, employee_ref, member["templateId"])).fetchone()
                         row = con.execute("select data_json from runtime_entities where tenant_id=? and company_id=? "
                             "and entity_id=? and entity_type='RESPONSIBILITY_ASSIGNMENT' and lifecycle_status='ACTIVE'",
                             (tenant, draft.company_id, reference["assignmentRef"])).fetchone()
                         assignment = json.loads(row["data_json"]) if row else {}
-                        if (assignment.get("employeeRef") != holder["id"] or assignment.get("roleRef") != reference["roleRef"]
+                        if (holder is None or assignment.get("employeeRef") != employee_ref or assignment.get("roleRef") != reference["roleRef"]
                                 or assignment.get("scopeType") != ("BUSINESS" if index == 0 else "WORKSPACE")
                                 or assignment.get("scopeRef") != ids["business_id" if index == 0 else "workspace_id"]
                                 or assignment.get("isLeader") is not (index == 0)
-                                or assignment.get("responsibilityKey") != team_contract["leaderKey" if index == 0 else "authorKey"]):
+                                or assignment.get("responsibilityKey") != member["responsibilityKey"]):
                             raise BusinessSpineError("Initial team receipt conflicts with its scoped responsibilities")
                     data["initialTeam"] = team
                 data["firstBusiness"] = {**ids, "department_id": department_id}
