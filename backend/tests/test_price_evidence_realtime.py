@@ -8,8 +8,17 @@ from app.runtime import RuntimeScopeError
 from backend.tests.test_position_authorization import writing_model_position, scope, COMPANY
 
 
-def test_shipped_expired_price_saves_pending_without_paid_execution(tmp_path):
-    assert datetime.now(timezone.utc) >= datetime.fromisoformat(module.PRICE['valid_until'])
+@pytest.fixture
+def expired_price(monkeypatch):
+    real = datetime.now(timezone.utc)
+    price = dict(module.PRICE, checked_at=(real - timedelta(days=8)).isoformat(),
+                 valid_until=(real - timedelta(days=1)).isoformat())
+    monkeypatch.setattr(module, 'PRICE', price)
+    return price
+
+
+def test_shipped_expired_price_saves_pending_without_paid_execution(tmp_path, expired_price):
+    assert datetime.now(timezone.utc) >= datetime.fromisoformat(expired_price['valid_until'])
     db, _, _, key, workspace = writing_model_position(tmp_path)
     with scope():
         policy = module.CompanyExecutionPolicy(db)
@@ -28,7 +37,7 @@ def test_shipped_expired_price_saves_pending_without_paid_execution(tmp_path):
         assert view['totals']['actual_paid'] is None
 
 
-def test_price_refresh_requires_new_explicit_consent(tmp_path, monkeypatch):
+def test_price_refresh_requires_new_explicit_consent(tmp_path, monkeypatch, expired_price):
     db, _, _, key, workspace = writing_model_position(tmp_path)
     with scope():
         policy = module.CompanyExecutionPolicy(db)
@@ -51,6 +60,19 @@ def test_price_refresh_requires_new_explicit_consent(tmp_path, monkeypatch):
         monkeypatch.setitem(module.PRICE, 'valid_until', (real - timedelta(seconds=1)).isoformat())
         with pytest.raises(RuntimeScopeError, match='价格依据已过期'):
             policy.current_grant(COMPANY, workspace, key)
+
+
+def test_current_shipped_price_allows_execution_after_explicit_consent(tmp_path):
+    if not module.CompanyExecutionPolicy.price_is_current():
+        pytest.skip('代码中的 PRICE 在真实当前时间下已过期或无效，不能验证 CURRENT 放行')
+    # helper 通过真实预览与 consent=True 保存许可；不注入价格或修改时钟。
+    db, _, _, key, workspace = writing_model_position(tmp_path)
+    with scope():
+        policy = module.CompanyExecutionPolicy(db)
+        view = policy.read(COMPANY)
+        assert view['price_status'] == 'CURRENT'
+        assert view['policy']['enabled'] is True
+        assert policy.current_grant(COMPANY, workspace, key)['price_cny'] == module.PRICE
 
 
 @pytest.mark.parametrize('change', ['future', 'malformed', 'naive'])
