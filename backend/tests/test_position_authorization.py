@@ -248,8 +248,8 @@ from types import SimpleNamespace
 import pytest
 from app.employee_templates import EmployeeTemplateContract
 from app.tenant_context import TenantContext
-from test_writing_entry_readiness import company_only
-from test_writing_chapter_vertical import scope, COMPANY, CEO
+from backend.tests.test_writing_entry_readiness import company_only
+from backend.tests.test_writing_chapter_vertical import scope, COMPANY, CEO
 
 AGENT = {"capability_source": "tenant_private", "capability_type": "agent",
          "capability_id": "agent.position-fixture", "priority": 80, "enabled": True}

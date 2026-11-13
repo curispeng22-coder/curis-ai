@@ -155,6 +155,25 @@ _BACKEND_DIR = str(_REPO_ROOT)
 if _BACKEND_DIR not in _sys.path:
     _sys.path.insert(0, _BACKEND_DIR)
 
+# 子进程不会继承 sys.path；显式传递仓库与 backend 的模块搜索路径。
+_IMPORT_ROOTS = (str(_REPO_ROOT.parent), _BACKEND_DIR)
+for _import_root in _IMPORT_ROOTS:
+    if _import_root not in _sys.path:
+        _sys.path.insert(0, _import_root)
+_existing_pythonpath = _os.environ.get("PYTHONPATH", "").split(_os.pathsep)
+_os.environ["PYTHONPATH"] = _os.pathsep.join(dict.fromkeys(
+    [*_IMPORT_ROOTS, *(entry for entry in _existing_pythonpath if entry)]
+))
+
+# 决策队列的默认库独立于 CURIS_DB；在应用导入前将两种模块名都隔离。
+# 显式传入路径的 PendingDecisionStore 仍按原测试要求工作。
+import importlib as _importlib
+for _module_name in ("app.decision_sink", "backend.app.decision_sink"):
+    _decision_sink = _importlib.import_module(_module_name)
+    _decision_sink._default_db_path = lambda: str(
+        ISOLATED_TEST_DATABASE.parent / "b_layer_pending_decisions.sqlite"
+    )
+
 from app.database import Database as _Database  # noqa: E402
 from app.evolution_event_log import EvolutionEventLog as _EvolutionEventLog  # noqa: E402
 from app.wave1_seed import seed_wave1 as _seed_wave1  # noqa: E402

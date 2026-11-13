@@ -113,7 +113,7 @@ def test_discussion_and_employee_candidate_basis_cannot_follow_rebind(tmp_path,m
         topic={'conversation_id':'unit-only-topic'}
         monkeypatch.setattr(service.conversations,'read',lambda *args,**kwargs:{'messages':[]})
         responsibility={'status':'AVAILABLE','assignment_ref':'controlled-unit-assignment','context':{},'employee_ref':'unit-only'}
-        monkeypatch.setattr(service,'responsibility',lambda *args:responsibility)
+        monkeypatch.setattr(service,'responsibility',lambda *args, **kwargs:responsibility)
         monkeypatch.setattr(service.conversations,'owner',lambda *args:{'owner_ref':'unit-only'})
         binding=command(service,w,b,c,'discussion.bound',{'selection':selection,'assignment_ref':responsibility['assignment_ref'],'conversation_ref':topic['conversation_id']})
         assert binding['book_context_basis'] is None
