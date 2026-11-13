@@ -17,9 +17,10 @@ from .result_attention import ResultAttention
 from .runtime import RuntimeScopeError
 from .tenant_context import TenantContext
 
-# Official CNY/USD pricing pages rechecked at checked_at; retain the seven-day expiry fence.
+# Official CNY/USD pricing verified 2026-11-13T16:20:00+00:00; see runs/T-015/price_evidence.md.
+# Rates unchanged; retain the seven-day expiry fence.
 PRICE = {"model_name": "deepseek-flash", "model_version": "DeepSeek-V4.1-Flash-1017",
-         "checked_at": "2026-11-05T11:52:26+00:00", "valid_until": "2026-11-12T11:52:26+00:00",
+         "checked_at": "2026-11-13T16:20:00+00:00", "valid_until": "2026-11-20T16:20:00+00:00",
          "source_cny": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
          "source_usd": "https://api-docs.deepseek.com/quick_start/pricing/",
          "input_cny_per_million": 2, "output_cny_per_million": 8,
