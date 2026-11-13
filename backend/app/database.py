@@ -198,7 +198,14 @@ _SECURITY_BACKFILL: dict[str, tuple[str, list[str]]] = {
 
 
 class Database:
-    def __init__(self, path: str = "curis.sqlite"):
+    def __init__(self, path: str | os.PathLike[str] = "curis.sqlite"):
+        if not isinstance(path, (str, os.PathLike)):
+            raise TypeError("database path must be str or os.PathLike[str]")
+        path = os.fspath(path)
+        if not isinstance(path, str):
+            raise TypeError("database path must resolve to str")
+        if re.fullmatch(r"<app\.database\.Database object at 0x[0-9a-fA-F]+>", path):
+            raise TypeError("database path must not be a Database object representation")
         self.path = path
 
     def has_model_catalog_rows(self) -> bool:
