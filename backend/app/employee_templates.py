@@ -380,7 +380,7 @@ WRITING_EMPLOYEE_PRESETS = [{'templateId': 'official.employee.writing.chief_edit
               '倒逼法」；收尾按新语气重写。新要求「更直接」落在新方法三和收尾两处。"\n'
               '}\n'
               '```\n'},
- {'templateId': 'official.employee.writing.author',
+ {'templateId': 'official.employee.writing.author_v2',
   'templateIdStatus': '现有模板',
   'name': '作者',
   'displayName': '作者',
@@ -984,7 +984,7 @@ WRITING_EMPLOYEE_PRESETS = [{'templateId': 'official.employee.writing.chief_edit
 WRITING_COLLABORATION = '# 写作团队三人协作说明\n\n## 协作顺序\n\n固定流水线：**主编规划 → 作者成稿 → 编辑检查**。\n\n```text\n用户需求\n   │\n   ▼\n① 主编：需求 → 写作计划（plan）\n   │\n   ▼\n② 作者：plan (+ 参考资料/上一版) → 候选文稿（draft）\n   │\n   ▼\n③ 编辑：draft + plan → 检查结论（review）\n   │        ├─ pass → 交给用户审核，由用户决定是否采用\n   │        └─ revise → 退回作者（见「编辑退回后的处理」）\n```\n\n每一步只做自己环节的事，不跳级、不代做。最终采用与否由用户决定，三人都不替用户拍板。\n\n## 每一步交接的数据\n\n### ① 用户需求 → 主编\n\n用户填写：主题（topic）、要求（requirements）、风格（style）、长度（length）、参考资料（references）、上一正式版本（previousVersion，仅续做）。\n\n### ② 主编 → 作者\n\n| 主编输出字段 | 作者输入字段 |\n|---|---|\n| 完整计划对象（planTitle / structure / styleGuide / assignment / revisionNotes） | `plan` |\n| 计划中的 `revisionNotes` | `revisionNotes`（续做时必填） |\n| （透传）用户给的参考资料 references | `references` |\n| （透传）上一正式版本 previousVersion | `previousVersion`（续做时必填） |\n\n主编的 `openQuestions` 若不为空，先回到用户补答，不直接进作者环节（作者按计划里写明的默认假设先写也可以，由用户选）。\n\n### ③ 作者 → 编辑\n\n| 作者输出字段 | 编辑输入字段 |\n|---|---|\n| 完整候选文稿对象（title / content / wordCount / basedOnVersionId / changeLog / notes） | `draft` |\n| （透传）主编的 plan | `plan` |\n| （透传）主编的 revisionNotes | `revisionNotes`（续做时必填） |\n| （透传）上一正式版本 previousVersion | `previousVersion`（续做时必填） |\n\n### ③ 编辑 → 用户\n\n编辑输出完整 review 对象（decision / summary / issues / suggestions / planCompliance / placeholderWarnings）。`decision=pass` 时连同 draft 一起交用户审核；用户决定采用后生成新的正式版本。\n\n## 编辑退回后的处理\n\n1. `decision=revise` 时，候选文稿不进入用户采用环节，直接退回作者。\n2. 退回时把 review 的 `suggestions` 和 `issues` 原样装入作者输入的 `reviewFeedback` 字段（`decision`、`suggestions` 必填，`issues` 供参考）。\n3. 作者逐条处理 `reviewFeedback.suggestions`：改了的在 `changeLog` 里记录；不同意改的写在 `notes` 里说明理由。其余与续做规则相同——保留部分不得顺手改。\n4. 改完重新走 ③ 检查。编辑复查时先核对上次的 blocker 是否消除，再看新问题。\n5. 同一篇稿子连续 3 次被判 revise，暂停循环，把三份 review 一并交用户决定：换方向重开任务，还是用户自己改。\n'
 
 
-def professional_team_contract(package_id, version, digest):
+def professional_team_contract(package_id, version, digest, *, legacy_writing=False):
     match = PROFESSIONAL_TEAM_PACKAGES.get((package_id, version))
     if match is None:
         if package_id in {key[0] for key in PROFESSIONAL_TEAM_PACKAGES}:
@@ -1000,10 +1000,10 @@ def professional_team_contract(package_id, version, digest):
         "authorKey": author_key, "responsibility": responsibility,
         "leaderKey": "BUSINESS_LEADER", "leaderResponsibility": "接收业务目标、统筹责任与证据交付、向CEO沟通进展风险与下一步；权限成本和外部效果门交CEO决定",
         "coverage": ["CREATION", "SELF_CHECK", "DELIVERY", "RETROSPECTIVE"] + (["PUBLISHING", "ANALYTICS"] if kind == "content_growth" else [])}
-    if kind == "writing":
+    if kind == "writing" and not legacy_writing:
         author, chief, reviewer = WRITING_EMPLOYEE_PRESETS[1], WRITING_EMPLOYEE_PRESETS[0], WRITING_EMPLOYEE_PRESETS[2]
         contract.update(decisionSourceSHA256="badfdaee89e0789d84b979289f3f8c37e8311aa21afd61ed7950184fc99c8c87",
-            displayName=author["displayName"], responsibility=author["responsibility"],
+            templateId=author["templateId"], displayName=author["displayName"], responsibility=author["responsibility"],
             leaderKey=chief["responsibilityKey"], leaderResponsibility=chief["responsibility"],
             reviewerKey=reviewer["responsibilityKey"], members=json.loads(json.dumps(WRITING_EMPLOYEE_PRESETS)),
             collaboration=WRITING_COLLABORATION, version="2")
@@ -1107,7 +1107,13 @@ class EmployeeTemplateContract:
                   "employee_ref": json.loads(row["data_json"]).get("employeeRef")} for row in rows]
         if not rows:
             return {"basis": basis, "team": None}
-        writing = contract["departmentType"] == "writing"
+        writing = contract["departmentType"] == "writing" and contract["version"] == "2"
+        if writing and len(rows) == 2:
+            contract = professional_team_contract(
+                contract["packageId"], contract["packageVersion"], contract["packageDigest"],
+                legacy_writing=True,
+            )
+            writing = False
         if len(rows) != (3 if writing else 2):
             raise ValueError("Existing team requires explicit arrangement review")
         assignments = [json.loads(row["data_json"]) for row in rows]
@@ -1132,6 +1138,11 @@ class EmployeeTemplateContract:
                 (tenant, company_id, company_ref)).fetchone()
             if person is None:
                 raise ValueError("Current team has no available canonical Company Employee")
+            if contract["departmentType"] == "writing" and contract["version"] == "1" and (
+                person["template_id"] != contract["templateId"]
+                or person["created_from_template_id"] != contract["templateId"]
+            ):
+                raise ValueError("Legacy Writing team has no canonical legacy template provenance")
             people[employee_ref] = (company_ref, person)
         for row, assignment in zip(rows, assignments):
             role = connection.execute("select * from runtime_entities where tenant_id=? and company_id=? and entity_id=? and entity_type='ROLE_SLOT'",
@@ -1700,7 +1711,10 @@ class EmployeeTemplateContract:
         proofs = []
         for package in packages:
             try:
-                contract = professional_team_contract(package["package_id"], package["package_version"], package["package_digest"])
+                contract = professional_team_contract(
+                    package["package_id"], package["package_version"], package["package_digest"],
+                    legacy_writing=employee["template_id"] == PROFESSIONAL_TEAM_DEFINITIONS["writing"][0],
+                )
                 if not contract:
                     continue
                 member = next((m for m in contract.get("members", []) if m["templateId"] == employee["template_id"]), None)
