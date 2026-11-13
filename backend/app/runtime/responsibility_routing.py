@@ -926,7 +926,13 @@ class ResponsibilityRoutingRuntime:
             human_input.update({"state": "INVALIDATED", "revision": int(human_input["revision"]) + 1,
                                 "invalidatedAt": at, "invalidatedReason": "ORIGINAL_WORK_CANCELLED"})
             routing["humanInput"] = human_input
+        executions = dict(routing.get("executions") or {})
+        for key, execution in executions.items():
+            if execution.get("status") in {"SUBMITTING", "RUNNING"}:
+                executions[key] = {**execution, "status": "CANCELLED", "resultStatus": "CANCELLED",
+                                   "updatedAt": at}
         routing.update({
+            "executions": executions,
             "status": "CANCELLED",
             "currentExecutorRef": None,
             "lastAction": "CANCELLED",
