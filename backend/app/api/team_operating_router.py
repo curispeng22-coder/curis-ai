@@ -433,6 +433,15 @@ def build_team_operating_router(
                 scope = ResourceScopePolicy.authorize_assignment(connection, tenant_id=foundation.tenant_id,
                     company_id=assignment["company_id"], assignment_ref=assignment_ref,
                     employee_ref=assignment["data"].get("employeeRef"))
+            if payload.source and "continuation" in payload.source:
+                continuation = payload.source["continuation"]
+                if not isinstance(continuation, dict):
+                    raise ValueError("续做参数无效")
+                if continuation.get("confirmed") is False:
+                    return {"status": "CANCELLED", "work": None}
+                if (not payload.model_key or not isinstance(continuation.get("requirements"), str)
+                        or continuation["requirements"].strip() != payload.problem.strip()):
+                    raise ValueError("续做需明确模型且问题须与确认的修改要求一致")
             contract = {"problem": payload.problem.strip(), "expectedResult": payload.expected_result.strip(),
                         "constraints": [], "references": []}
             workflow = None
