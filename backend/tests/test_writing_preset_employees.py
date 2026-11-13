@@ -247,3 +247,16 @@ def test_receipt_cannot_alias_distinct_writing_members(tmp_path, monkeypatch, ke
         with db.connect() as con:
             assert con.execute('select count(*) from employee_instances where company_id=?', (COMPANY,)).fetchone()[0] == 0
             assert con.execute('select count(*) from canonical_businesses').fetchone()[0] == 0
+
+
+def test_legacy_author_definition_keeps_its_original_contract_hash():
+    (package_id, version), (_, _, digest) = next(
+        (key, value) for key, value in PROFESSIONAL_TEAM_PACKAGES.items() if value[0] == 'writing'
+    )
+    old = professional_team_contract(package_id, version, digest, legacy_writing=True)
+    new = professional_team_contract(package_id, version, digest)
+    assert old['version'] == '1'
+    assert old['templateId'] == 'official.employee.writing.author'
+    assert old['leaderKey'] == 'BUSINESS_LEADER'
+    assert new['templateId'] != old['templateId']
+    assert new['members'][1]['templateId'] == new['templateId']

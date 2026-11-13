@@ -143,3 +143,26 @@ def test_concurrent_launch_and_draft_conflict_do_not_duplicate(tmp_path, monkeyp
             assert con.execute('select count(*) from companies').fetchone()[0] == 1
             assert con.execute('select count(*) from workspaces').fetchone()[0] == 3
             assert con.execute("select count(*) from runtime_entities where entity_type='WORK'").fetchone()[0] == 1
+
+
+def test_existing_package_workspace_from_another_run_is_reused(tmp_path, monkeypatch):
+    monkeypatch.setenv('CURIS_WORKSPACE_PACKAGE_STORE', str(tmp_path/'packages'))
+    db = Database(str(tmp_path/'existing.sqlite'))
+    db.initialize()
+    with TenantContext.scope('selfuse', ceo_id='t011-existing-owner', role='ceo'):
+        first = FirstLaunchService(db).ensure()
+        writing = next(team for team in first['teams'] if team['kind'] == 'writing')
+        with db.connect() as con:
+            # A normal package activation has a different founding run identity.
+            con.execute(
+                "update runtime_entities set entity_id='other-writing-founding-run' "
+                "where entity_type='FOUNDING_RUN' and entity_id like 'founding-launch-%-writing'"
+            )
+        for _ in range(2):
+            result = FirstLaunchService(Database(db.path)).ensure()
+            reused = next(team for team in result['teams'] if team['kind'] == 'writing')
+            assert reused['workspace_id'] == writing['workspace_id']
+            assert reused['business_id'] == writing['business_id']
+        with db.connect() as con:
+            assert con.execute('select count(*) from canonical_businesses').fetchone()[0] == 3
+            assert con.execute('select count(*) from workspaces').fetchone()[0] == 3
