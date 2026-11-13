@@ -571,10 +571,16 @@ def test_review_work_creation_failure_rolls_back_new_work_without_dispatch(tmp_p
 
 
 def test_existing_default_deny_author_can_bind_then_create_work_without_sending(tmp_path, monkeypatch):
-    from test_position_authorization import writing_model_position
+    from backend.tests.test_position_authorization import writing_model_position
     from app.model_preferences import TenantModelPreferenceResolver
     from app.workspace_package_runtime import WorkspacePackageRuntime
     from app.runtime.responsibility_routing import ResponsibilityRoutingRuntime
+    # 本例验证默认拒绝员工创建 Work，不验证价格有效期；固定合成授权时钟。
+    # 生产价格过期围栏保持原样，不更新真实价格或授权。
+    from datetime import datetime, timedelta
+    from app import company_execution_policy
+    fixture_now = datetime.fromisoformat(company_execution_policy.PRICE["checked_at"]) + timedelta(minutes=1)
+    monkeypatch.setattr(company_execution_policy, "now", lambda: fixture_now)
     db, employee_service, employee, key, w = writing_model_position(tmp_path)
     with scope():
         TenantModelPreferenceResolver(db).set_current(key)

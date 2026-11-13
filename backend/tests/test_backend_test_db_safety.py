@@ -21,7 +21,10 @@ def _set_database(monkeypatch: pytest.MonkeyPatch, path: Path) -> None:
         monkeypatch.setenv(name, str(path))
 
 
-def _active_fingerprint() -> tuple[int, int, str]:
+def _active_fingerprint() -> tuple[int, int, str] | None:
+    # 干净机器没有真实数据库；同样断言子进程不得创建它。
+    if not ACTIVE_DATABASE.exists():
+        return None
     stat = ACTIVE_DATABASE.stat()
     return stat.st_size, stat.st_mtime_ns, hashlib.sha256(ACTIVE_DATABASE.read_bytes()).hexdigest()
 
