@@ -562,8 +562,14 @@ class WritingChapterService:
                 origin = json.loads(original["body"]) if original else {}
             except (ValueError, TypeError):
                 origin = {}
+            execution_selection = claim["execution_selection"]
+            prompt_selection = binding["selection"]
+            if self._is_direct(scope) and execution_selection.get("work_continuation"):
+                prompt_selection = {key: value for key, value in prompt_selection.items() if key != "excerpt"}
             if (claim.get("conversation_id") != binding["conversation_ref"] or
-                    origin.get("chapter_scope") != scope or origin.get("selection") != binding["selection"]
+                    execution_selection.get("selection") != binding["selection"] or
+                    origin.get("chapter_scope") != scope or origin.get("selection") != prompt_selection or
+                    origin.get("writing_continuation") != execution_selection.get("work_continuation")
                     or (origin.get("book_context_basis_sha256") or "") != (sha(encode(basis)) if basis else "")):
                 raise RuntimeScopeError("员工回复没有当前章节选择范围依据。")
             EmployeeExecutionIdentity(self.db).verify_task_callback(company_id=scope["company_id"],
