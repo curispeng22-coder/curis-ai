@@ -5,7 +5,7 @@ import EmployeeConversation from "../v1/EmployeeConversation.js";
 import { ConversationComposer, useConversationModel } from "../v1/SharedConversation.js";
 import { EmployeeAvatar } from "../v1/EmployeeAvatar.js";
 import { writingApi, writingRequestLocked, writingRepairHref } from "../../lib/writingApi.js";
-import { chapterHref, currentInspection, sameChapter, selectionFor, writingSessionKey, WRITING_CHECKS } from "../../lib/writingState.mjs";
+import { chapterHref, currentInspection, sameChapter, selectionFor, writingSessionKey, WRITING_CHECKS, writingCandidates, candidateOutcome, formalVersions, continuationSources, continuationSource, continuationWorkPayload } from "../../lib/writingState.mjs";
 import { writingBookHref, BOOK_KINDS } from "../../lib/writingBookState.mjs";
 import { createAssignedWork, getAssignedAgentWorkflow, publishAssignedAgentWorkflow } from "../../lib/v1FrontendApi.js";
 import styles from "./Writing.module.css";
@@ -27,6 +27,11 @@ export default function WritingChapterMain({ state, entry, workspaceId, company,
   const [editBase, setEditBase] = useState(state.draft.ref);
   const sending = useRef(false); const [sendBusy, setSendBusy] = useState(false);
   const previousHead = useRef(state.draft.ref); const savedText = useRef(state.draft.text);
+  const actionPending = useRef(""); const [actionBusy, setActionBusy] = useState("");
+  const [resultMessage, setResultMessage] = useState("");
+  const [panel, setPanel] = useState(null); const [panelValue, setPanelValue] = useState("");
+  const [continuationOpen, setContinuationOpen] = useState(false);
+  const [sourceRef, setSourceRef] = useState(""); const [continuationText, setContinuationText] = useState("");
   useEffect(() => {
     if (initialized.current) return;
     try { const value = JSON.parse(localStorage.getItem(key) || sessionStorage.getItem(key) || "null"); if (value) { setText(value.text ?? state.draft.text); setMessage(value.message || ""); setEditBase(value.baseRef || state.draft.ref); setSelection(value.selection || null); setRequest(value.request || null); setDiscussionOpen(Boolean(value.discussionOpen)); setChecks((Array.isArray(value.checks) ? value.checks : []).filter((check) => WRITING_CHECKS.includes(check))); setNote(value.note || ""); } } catch {}
@@ -61,6 +66,48 @@ export default function WritingChapterMain({ state, entry, workspaceId, company,
   const candidates = state.events.filter((e) => ["candidate.recorded", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"].includes(e.action) && e.draft_ref === state.draft.ref);
   const binding = [...state.events].reverse().find((e) => e.action === "discussion.bound" && e.draft_ref === state.draft.ref && e.discussion_scope?.object_ref === entry.chapter);
   const run = async (action, data, base) => { try { setError(""); return await command(action, data, undefined, base); } catch (reason) { setError(reason.message); return null; } };
+  const sourceOptions = continuationSources(state.events);
+  const chosenSource = continuationSource(state.events, sourceRef);
+  const assignmentRef = binding?.assignment_ref || entryMetadata?.assignment_ref;
+  const workSelection = (candidate) => candidate?.selection || binding?.selection || selection || null;
+  const createWorkAvailable = typeof createAssignedWork === "function" && Boolean(model.selected && assignmentRef && workSelection(null));
+  const submitPanel = async (candidate) => {
+    if (!panel || panel.ref !== candidate.ref || actionPending.current || candidateOutcome(state.events, candidate.ref).status !== "PENDING") return;
+    actionPending.current = candidate.ref; setActionBusy(candidate.ref); setError("");
+    try {
+      if (panel.kind === "reject") {
+        const output = await run("candidate.rejected", { candidate_ref: candidate.ref, reason: panelValue });
+        if (output) { setPanel(null); setPanelValue(""); setResultMessage("已拒绝；原稿与来源仍保留，可继续查看。"); }
+        return;
+      }
+      if (!createWorkAvailable) { setError("请先配置可用模型并选择当前正文范围，再确认提交。"); return; }
+      const payload = continuationWorkPayload({ scope: state.scope, draft: state.draft, selection: workSelection(candidate),
+        modelKey: model.selected.model_key, source: { source_ref: candidate.ref, source_class: "CANDIDATE", label: "基于候选稿" },
+        requirements: panelValue, requestId: crypto.randomUUID(), mode: "REVISE" });
+      if (!payload) { setError("请填写修改意见并确认后再提交。"); return; }
+      const result = await createAssignedWork(assignmentRef, payload);
+      if (result?.work) { setPanel(null); setPanelValue(""); setResultMessage("已创建关联修改工作；尚未调用模型，结果仍需人工采用。"); }
+      else setError("未创建工作；请核对后重试。");
+    } catch (reason) { setError(reason.message); }
+    finally { actionPending.current = ""; setActionBusy(""); }
+  };
+  const submitContinuation = async () => {
+    if (actionPending.current || !chosenSource || !continuationText.trim() || !createWorkAvailable) return;
+    const payload = continuationWorkPayload({ scope: state.scope, draft: state.draft, selection: workSelection(null),
+      modelKey: model.selected.model_key, source: chosenSource, requirements: continuationText, requestId: crypto.randomUUID(), mode: "CONTINUE" });
+    if (!payload) { setError("请填写修改要求并确认后再续做。"); return; }
+    actionPending.current = "continuation"; setActionBusy("continuation");
+    try {
+      const result = await createAssignedWork(assignmentRef, payload);
+      if (result?.work) { setContinuationOpen(false); setContinuationText(""); setSourceRef(""); setResultMessage(`已创建续做工作；来源：${chosenSource.label}，结果仍需人工采用。`); }
+      else setError("未创建工作；请核对后重试。");
+    } catch (reason) { setError(reason.message); }
+    finally { actionPending.current = ""; setActionBusy(""); }
+  };
+  const continuationDisabledReason = actionBusy === "continuation" ? "正在创建，请稍候。"
+    : !continuationText.trim() ? "请填写修改要求。"
+    : !model.selected ? "请先配置可用模型；输入会保留。"
+    : !assignmentRef || !workSelection(null) ? "请先绑定当前章节选文依据。" : "";
   const save = async () => { const output = await run("draft.saved", { text, knowledge: state.draft.knowledge }, editBase); if (output) { savedText.current = output.draft.text; previousHead.current = output.draft.ref; setText(output.draft.text); setEditBase(output.draft.ref); setSelection(null); setChecks([]); } };
   const select = () => {
     try { const value = selectionFor(state.draft, text, editor.current.selectionStart, editor.current.selectionEnd); setSelection(value); setError(""); onNavigate({ anchor: value.anchor, draft: value.draft_ref }); }
@@ -180,6 +227,7 @@ export default function WritingChapterMain({ state, entry, workspaceId, company,
 
     </div>
     {error && <p className={styles.error} role="alert">{error}</p>}
+    {resultMessage && <p className={styles.notice} role="status">{resultMessage}</p>}
     {editBase !== state.draft.ref && <aside role="alert" className={styles.source}><p>正文已被其他编辑更新。保留输入仍基于旧版本，保存将拒绝覆盖。请核对最新版本后再决定。</p><button onClick={() => setEditBase(state.draft.ref)}>已核对，保留输入并以最新版本为基础</button></aside>}
     <section hidden={!discussionOpen} className={styles.discussion} aria-label="章节讨论">
       {identityHref && entryMetadata?.employee_ref && <EmployeeConversation key={`${company}:${workspaceId}:${entry.chapter}:${entryMetadata.employee_ref}`} companyId={company} employee={{ employee_ref: entryMetadata.employee_ref, id: entryMetadata.company_employee_ref, name: employeeName }} active={discussionOpen} blocked={Boolean(lock || busy)} embedded={{ workspaceId, contextKey: `chapter:${entry.book}:${entry.chapter}`, objectRef: entry.chapter, assignmentRef: entryMetadata.assignment_ref, title: "章节讨论", receiveReady: !dirty && !state.read_only, onAgentCandidate: onRefresh, onReload: onRefresh, agentSourceReady: Boolean(!dirty && !state.read_only && selection?.draft_ref === state.draft.ref && selection?.sha256 === state.draft.sha256), agentSource: { kind: "writing", book_ref: entry.book, chapter_ref: entry.chapter, expected_draft_ref: state.draft.ref, selection } }} businessReturn={{ href: chapterHref(workspaceId, entry), kind: "writing" }} />}
@@ -215,7 +263,49 @@ export default function WritingChapterMain({ state, entry, workspaceId, company,
     {selection && <aside className={styles.source}><h3>选中的正文依据</h3><blockquote>{selection.excerpt}</blockquote><p>范围 {selection.start}–{selection.end} · 当前保存版本</p></aside>}
 
     {entry.mode === "chapter" && <section className={styles.section}><h2>作者人工修改候选</h2><p>先保存并选择一段正文；人工候选不会冒充员工回复。</p><button disabled={busy || dirty || !selection || state.read_only} onClick={()=>setManualOpen(v=>!v)}>准备人工修改</button>{manualOpen && <><blockquote>{selection?.excerpt}</blockquote><label>候选替换文字<textarea aria-label="人工修改候选" maxLength={200000} value={replacement} onChange={e=>setReplacement(e.target.value)} /></label><button disabled={busy || dirty || !selection || !replacement.trim()} onClick={async()=>{const value=await run("candidate.manual-recorded",{selection,replacement});if(value)setManualOpen(false);}}>保存人工候选</button><button onClick={()=>setManualOpen(false)}>保留原文，收起</button></>}</section>}
-    {candidates.length > 0 && <section className={styles.section}><h2>候选修改</h2>{candidates.length ? candidates.map((candidate) => <article key={candidate.ref} className={styles.candidate}><p>{candidate.source_class === "CONVERSATION_REPLY" ? "普通对话原回复 · 接收版本不代表生成依据" : candidate.source_class === "CEO_MANUAL" ? "作者人工候选 · 未经独立审校" : candidate.source_class === "AGENT_EXECUTOR" ? "Agent 原工作成果 · 内容待核验" : `员工回复衍生建议 · ${candidate.source_class === "PROVIDER_EXECUTOR" ? "已验证模型回复" : "受控验证来源"}`}</p><div><section><h3>{candidate.source_class === "CONVERSATION_REPLY" ? "接收时的当前正文" : "原选段"}</h3><blockquote>{candidate.selection?.excerpt ?? state.draft.text}</blockquote></section><section><h3>将替换为</h3><blockquote>{candidate.replacement}</blockquote></section></div><button disabled={busy || dirty || state.read_only} onClick={async () => { const output = await run("candidate.adopted", { candidate_ref: candidate.ref, confirmed: true }); if (output) { setText(output.draft.text); setEditBase(output.draft.ref); savedText.current = output.draft.text; previousHead.current = output.draft.ref; setChecks([]); setSelection(null); } }}>确认采用这处修改</button></article>) : <p>还没有具有合法员工回复来源的修改建议。可由作者直接编辑并保存正文。</p>}</section>}
+    {candidates.length > 0 && <section className={styles.section}><h2>候选修改</h2><p>采用一次点击即形成正式版本；要求修改需填写意见并确认；拒绝后原稿仍可查看。</p>{candidates.map((candidate) => {
+      const outcome = candidateOutcome(state.events, candidate.ref);
+      const open = panel?.ref === candidate.ref;
+      const canAct = !busy && !dirty && !state.read_only && !actionBusy && outcome.status === "PENDING";
+      const sourceLabel = candidate.source_class === "CONVERSATION_REPLY" ? "普通对话原回复 · 接收版本不代表生成依据" : candidate.source_class === "CEO_MANUAL" ? "作者人工候选 · 未经独立审校" : candidate.source_class === "AGENT_EXECUTOR" ? "Agent 原工作成果 · 内容待核验" : `员工回复衍生建议 · ${candidate.source_class === "PROVIDER_EXECUTOR" ? "已验证模型回复" : "受控验证来源"}`;
+      return <article key={candidate.ref} className={styles.candidate}>
+        <p>{sourceLabel}</p>
+        <p role="status" className={styles.badge}>{outcome.status === "ADOPTED" ? "已采用 · 正式版本" : outcome.status === "REJECTED" ? "已拒绝" : "待采用"}</p>
+        <div>
+          <section><h3>{candidate.source_class === "CONVERSATION_REPLY" ? "接收时的当前正文" : "原选段"}</h3><blockquote>{candidate.selection?.excerpt ?? state.draft.text}</blockquote></section>
+          <section><h3>将替换为</h3><blockquote>{candidate.replacement}</blockquote></section>
+        </div>
+        {outcome.status === "ADOPTED" && <p role="status">已采用为正式版本（{outcome.adopted?.formal_ref || outcome.adopted?.ref}）。同一候选重复采用不会新增正式版本；原候选与来源仍保留。</p>}
+        {outcome.status === "REJECTED" && <p role="status">已拒绝；原稿与来源仍保留在上方，可继续查看。{outcome.rejected?.reason ? ` 理由：${outcome.rejected.reason}` : ""}</p>}
+        {outcome.status === "PENDING" && <div className={styles.opRow}>
+          <button className={styles.primary} disabled={!canAct || actionBusy === candidate.ref} onClick={async () => {
+            if (actionPending.current || candidateOutcome(state.events, candidate.ref).status !== "PENDING") return;
+            actionPending.current = candidate.ref; setActionBusy(candidate.ref); setError("");
+            try {
+              const output = await run("candidate.adopted", { candidate_ref: candidate.ref, confirmed: true });
+              if (output && output.draft) { setText(output.draft.text); setEditBase(output.draft.ref); savedText.current = output.draft.text; previousHead.current = output.draft.ref; setChecks([]); setSelection(null); setResultMessage("已采用，正式版本已生成。"); }
+            } finally { actionPending.current = ""; setActionBusy(""); }
+          }}>确认采用这处修改</button>
+          <button disabled={!canAct} onClick={() => { setPanel({ kind: "revise", ref: candidate.ref }); setPanelValue(""); }}>要求修改</button>
+          <button disabled={!canAct} onClick={() => { setPanel({ kind: "reject", ref: candidate.ref }); setPanelValue(""); }}>拒绝</button>
+        </div>}
+        {open && <div className={styles.bookItemForm} role="group" aria-label={panel.kind === "revise" ? "要求修改表单" : "拒绝候选表单"}>
+          <label>{panel.kind === "revise" ? "修改意见" : "拒绝理由（可选）"}<textarea aria-label={panel.kind === "revise" ? "修改意见" : "拒绝理由"} maxLength={panel.kind === "revise" ? 1600 : 2000} value={panelValue} onChange={(event) => setPanelValue(event.target.value)} /></label>
+          <p role="status">{panel.kind === "revise" ? "填写意见并确认提交后才创建关联工作；取消不创建、不调用模型。" : "确认后候选标记为已拒绝，原稿保留；取消不创建任何内容。"}</p>
+          <div className={styles.opRow}>
+            <button className={styles.primary} disabled={Boolean(actionBusy) || (panel.kind === "revise" && (!panelValue.trim() || !createWorkAvailable))} onClick={() => submitPanel(candidate)}>{panel.kind === "revise" ? "确认提交" : "确认拒绝"}</button>
+            <button onClick={() => { setPanel(null); setPanelValue(""); }} aria-label={panel.kind === "revise" ? "取消要求修改" : "取消拒绝"}>取消</button>
+          </div>
+        </div>}
+      </article>;
+    })}</section>}
+    {formalVersions(state.events).length > 0 && <section className={styles.section} aria-label="正式版本"><h2>正式版本</h2><p role="status">共 {formalVersions(state.events).length} 份正式版本；同一候选重复采用不会新增。</p>{formalVersions(state.events).map((formal, index, all) => <article key={formal.ref} className={styles.formalSnapshot}><p><span className={styles.badge}>正式版本</span> {index === all.length - 1 ? "最新" : "历史"} · {formal.ref}</p><pre>{formal.snapshot?.text ?? ""}</pre></article>)}</section>}
+    {sourceOptions.length > 0 && <section className={styles.section} aria-label="续做工作台"><h2>续做 / 二次生成</h2><p>默认基于最新正式版本，可显式选择历史正式版本；没有正式版本时只能基于候选稿，并明确标注来源。</p>
+      <label>来源<select aria-label="续做来源" value={sourceRef || chosenSource?.source_ref || ""} onChange={(event) => setSourceRef(event.target.value)}>{sourceOptions.map((option, index) => <option key={option.source_ref} value={option.source_ref}>{option.label}{index === 0 ? "（默认）" : ""} · {option.source_ref}</option>)}</select></label>
+      {chosenSource && <div className={styles.formalSnapshot} role="status"><p><strong>来源：</strong>{chosenSource.source_class === "CANDIDATE" ? "基于候选稿（无正式版本）" : `${chosenSource.label} · 正式版本`}</p><p>来源标识：{chosenSource.source_ref}</p><pre>{chosenSource.text}</pre></div>}
+      {!continuationOpen && <button className={styles.primary} disabled={!chosenSource} onClick={() => setContinuationOpen(true)}>续做</button>}
+      {continuationOpen && <div className={styles.bookItemForm}><label>修改要求<textarea aria-label="续做修改要求" maxLength={1600} value={continuationText} onChange={(event) => setContinuationText(event.target.value)} /></label><p role="status">{continuationDisabledReason || `将基于${chosenSource.label}生成候选，结果仍需人工采用。`}</p><div className={styles.opRow}><button className={styles.primary} disabled={Boolean(continuationDisabledReason) || !chosenSource} onClick={submitContinuation}>确认续做</button><button onClick={() => { setContinuationOpen(false); setContinuationText(""); setSourceRef(""); }} aria-label="取消续做">取消</button></div></div>}
+    </section>}
     {entry.mode === "review" && <section className={styles.reviewPanel}><div className={styles.reviewHeading}><span className={styles.badge}>作者裁决</span><h2>检查当前保存版本</h2><p>核对正文、署名与引用，再明确确认正式稿。正式稿仍未发布。</p></div>{(dirty || state.draft.ref === "ABSENT") && <p role="status" className={styles.notice}>请先返回正文保存草稿，再检查当前版本。</p>}<p>按当前正文版本检查，不代表独立审核或平台许可。</p>{WRITING_CHECKS.map((check, index) => <label className={styles.check} key={check}><input type="checkbox" checked={checks.includes(check)} onChange={(e) => setChecks(e.target.checked ? [...checks, check] : checks.filter((v) => v !== check))} />{["情节与人物连贯性", "语言、错字与格式", "署名、引用与权利声明"][index]}</label>)}<label>检查备注<textarea aria-label="检查备注" maxLength={2000} value={note} onChange={(e) => setNote(e.target.value)} /></label><button disabled={busy || dirty || state.read_only || state.draft.ref === "ABSENT" || checks.length !== 3} onClick={() => run("inspection.recorded", { mode: "AUTHOR_MANUAL", checks: WRITING_CHECKS, note })}>记录当前版本作者检查</button>{inspection && <p>当前版本已记录作者人工检查。</p>}{reviewedAdoption && <button type="button" disabled={busy || dirty || lock} onClick={() => { setDiscussionOpen(true); onNavigate({ mode: "chapter" }); }}>返回正文，基于复盘准备下一次工作</button>}<label className={styles.authorConsent}><input type="checkbox" checked={formalConsent} onChange={(event) => setFormalConsent(event.target.checked)} />我已检查当前保存版本，同意确认为正式稿（尚未发布）</label><button className={styles.primary} disabled={busy || dirty || state.read_only || !inspection || !formalConsent} onClick={async () => { if (!formalConsent) return; const formal = await run("formal.confirmed", { inspection_ref: inspection.ref, confirmed: true }); if (formal) onNavigate({ mode: "package", formal: formal.ref, draft: state.draft.ref, package: "", anchor: "" }); }}>明确确认当前版本为正式稿</button><button onClick={() => onNavigate({ mode: "chapter" })}>返回正文，保留检查输入</button></section>}
 
   </div>;
