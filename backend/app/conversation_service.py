@@ -1077,7 +1077,13 @@ class ConversationService:
                     if attempt.get("effect_status") == "UNKNOWN":
                         attempt["status"] = "UNKNOWN"
             own = [claim for claim in claims if claim["message_id"] == message["message_id"]]
-            if retry_no and own and (own[0].get("execution_selection") or {}).get("grant", {}).get("policy_revision") and not company_retry:
+            writing_work_retry = bool(retry_no == 1 and own and execution_selection
+                and execution_selection.get("purpose") == "WRITING_CHAPTER_REPLY"
+                and execution_selection.get("work_ref")
+                and execution_selection.get("work_ref") == (own[0].get("execution_selection") or {}).get("work_ref")
+                and execution_selection.get("retry_of_attempt") == own[0]["attempt_id"])
+            if (retry_no and own and (own[0].get("execution_selection") or {}).get("grant", {}).get("policy_revision")
+                    and not company_retry and not writing_work_retry):
                 raise RuntimeScopeError("原专业回复只能在原工作范围内使用当前公司许可重试。")
             if company_retry and (not own or own[0]["attempt_id"] not in verified_pre_outbound):
                 raise RuntimeScopeError("原请求未证实在外发前终止，不能重试。")
@@ -1095,7 +1101,7 @@ class ConversationService:
                 return own[retry_no], False
             if retry_no and (len(own) != 1 or finished.get(own[0]["attempt_id"], {}).get("status") != "FAILED"):
                 raise ValueError("Only a confirmed failed attempt can be retried")
-            if any(finished.get(claim["attempt_id"], {}).get("status") not in {"FAILED", "COMPLETED"} or (cg and finished.get(claim["attempt_id"], {}).get("effect_status") == "UNKNOWN") for claim in claims):
+            if any(finished.get(claim["attempt_id"], {}).get("status") not in {"FAILED", "COMPLETED", "CANCELLED"} or (cg and finished.get(claim["attempt_id"], {}).get("effect_status") == "UNKNOWN") for claim in claims):
                 raise ValueError("上一条消息仍在处理或等待恢复确认")
             context = self.context(company_id, employee_ref, assignment_ref)
             if execution_selection is not None:
@@ -1143,8 +1149,11 @@ class ConversationService:
             with self.db.connect() as con:
                 existing = con.execute("select task_id from tasks where tenant_id=? and work_ref=? and execution_ref=?",
                                        (TenantContext.current_tenant_id(), work_ref, attempt_id)).fetchall()
-            if existing:
-                return  # Reconcile the retained Task; never replay an uncertain physical attempt.
+                finished = con.execute("select 1 from evolution_events where tenant_id=? and correlation_id=? "
+                    "and event_type='conversation.attempt.finished' and idempotency_key=?",
+                    (TenantContext.current_tenant_id(), conversation_id, attempt_id + ":finished")).fetchone()
+            if existing or finished:
+                return  # A retained Task or settled preflight must never replay.
         launched = False
         try:
             company, employee = claim["company_id"], claim["employee_ref"]
@@ -1293,16 +1302,34 @@ class ConversationService:
             if not duplicate_work_task:
                 effect = "UNKNOWN" if claim.get("execution_selection") and launched and status != "COMPLETED" else "SETTLED"
                 if not completed_atomically:
-                    if work_ref and not launched:
+                    if work_ref:
                         from .runtime import ResponsibilityRoutingRuntime
                         with self.db.connect() as con:
                             con.execute("begin immediate")
                             scoped = self._work_database(con)
                             work = RuntimeFoundation(scoped).get(work_ref)
-                            if work["data"].get("responsibilityRouting", {}).get("status") != "CANCELLED":
-                                ResponsibilityRoutingRuntime(scoped).finish_employee_execution(work_ref,
-                                    execution_key=attempt_id, status="FAILED", task_ref=task_id or "", session_ref="",
-                                    result_summary="发送前失败，原交办保留；没有发起模型调用。")
+                            cancelled = work["data"].get("responsibilityRouting", {}).get("status") == "CANCELLED"
+                            if cancelled:
+                                status = "CANCELLED"
+                            else:
+                                retained = None
+                                if launched and task_id:
+                                    retained = con.execute(
+                                        "select status from tasks where tenant_id=? and company_id=? and workspace_id=? "
+                                        "and work_ref=? and task_id=? and execution_ref=?",
+                                        (TenantContext.current_tenant_id(), claim["company_id"], claim["context"]["workspace_id"],
+                                         work_ref, task_id, attempt_id),
+                                    ).fetchone()
+                                if retained and retained["status"] in {"FAILED", "CANCELLED"}:
+                                    status = retained["status"]
+                                outcome = "UNKNOWN" if launched and status not in {"FAILED", "CANCELLED"} else status
+                                ResponsibilityRoutingRuntime(scoped).finish_employee_execution(
+                                    work_ref, execution_key=attempt_id, status=outcome,
+                                    task_ref=task_id or "", session_ref="",
+                                    result_summary=("员工执行未返回可采用结果；外发效果与费用仍待核验。" if launched
+                                                    else "发送前失败，原交办保留；没有发起模型调用。"),
+                                    provenance={"effect_status": effect},
+                                )
                             EvolutionEventLog(scoped).record(correlation_id=conversation_id, event_type="conversation.attempt.finished",
                                 payload={**claim, "status": status, "task_ref": task_id, "effect_status": effect},
                                 idempotency_key=attempt_id + ":finished")

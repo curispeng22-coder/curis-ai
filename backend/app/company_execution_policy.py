@@ -19,7 +19,7 @@ from .tenant_context import TenantContext
 
 # Official CNY/USD pricing pages rechecked at checked_at; retain the seven-day expiry fence.
 PRICE = {"model_name": "deepseek-flash", "model_version": "DeepSeek-V4.1-Flash-1017",
-         "checked_at": "2026-11-05T11:52:26+00:00", "valid_until": "2026-11-12T11:52:26+00:00",
+         "checked_at": "2026-11-14T06:29:40+00:00", "valid_until": "2026-11-21T06:29:40+00:00",
          "source_cny": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
          "source_usd": "https://api-docs.deepseek.com/quick_start/pricing/",
          "input_cny_per_million": 2, "output_cny_per_million": 8,

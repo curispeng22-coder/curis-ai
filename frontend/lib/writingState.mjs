@@ -65,3 +65,71 @@ export async function writingRequest(previous, action, base, data, newId) {
   const signature = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)), (v) => v.toString(16).padStart(2, "0")).join("");
   return previous?.signature === signature ? previous : { signature, request_id: newId() };
 }
+
+// T-012 writing result operations. These read the append-only chapter events and
+// shape the exact T-010 backend contract; they never invent an endpoint or field.
+const CANDIDATE_ACTIONS = ["candidate.recorded", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"];
+
+export function writingCandidates(events) {
+  return events.filter((event) => CANDIDATE_ACTIONS.includes(event.action));
+}
+
+export function candidateOutcome(events, ref) {
+  const adopted = events.find((event) => event.action === "candidate.adopted" && event.candidate_ref === ref) || null;
+  const rejected = events.find((event) => event.action === "candidate.rejected" && event.candidate_ref === ref) || null;
+  return { adopted, rejected, status: adopted ? "ADOPTED" : rejected ? "REJECTED" : "PENDING" };
+}
+
+export function formalVersions(events) {
+  return events.filter((event) => event.action === "formal.confirmed" && event.snapshot);
+}
+
+// Ordered continuation sources. The newest formal version is the default; when
+// there is no formal version, a candidate is the only basis and is explicitly
+// labelled "基于候选稿" so it is never presented as a confirmed formal version.
+export function continuationSources(events) {
+  const formal = formalVersions(events);
+  if (formal.length) {
+    return formal.slice().reverse().map((event, index) => ({
+      source_ref: event.ref, source_class: "FORMAL",
+      label: index === 0 ? "最新正式版本" : "历史正式版本",
+      text: event.snapshot?.text ?? "", created_at: event.created_at || "",
+    }));
+  }
+  return writingCandidates(events).slice().reverse().map((event) => ({
+    source_ref: event.ref, source_class: "CANDIDATE", label: "基于候选稿",
+    text: event.replacement ?? "", created_at: event.created_at || "",
+  }));
+}
+
+export function continuationSource(events, sourceRef = "") {
+  const options = continuationSources(events);
+  return options.find((option) => option.source_ref === sourceRef) || options[0] || null;
+}
+
+// createAssignedWork body for 要求修改 / 续做. Field names follow
+// team_operating_router.AssignedWorkIn and the writing agent_work_source
+// "source.continuation" contract. Creating the Work never calls a model here.
+export function continuationWorkPayload({ scope, draft, selection, modelKey, source, requirements, requestId, mode = "CONTINUE" }) {
+  const problem = typeof requirements === "string" ? requirements.trim() : "";
+  if (!modelKey || !selection || !source || !problem || !requestId || !scope || !draft) return null;
+  return {
+    problem,
+    expected_result: "基于选定来源正文与修改要求的候选稿；结果仍需人工采用",
+    request_id: requestId,
+    model_key: modelKey,
+    source: {
+      kind: "writing",
+      book_ref: scope.book_ref,
+      chapter_ref: scope.chapter_ref,
+      expected_draft_ref: draft.ref,
+      selection,
+      continuation: {
+        source_ref: source.source_ref,
+        requirements: problem,
+        confirmed: true,
+        ...(mode === "REVISE" ? { mode: "REVISE" } : {}),
+      },
+    },
+  };
+}

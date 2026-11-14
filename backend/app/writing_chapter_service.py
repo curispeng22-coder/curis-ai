@@ -19,7 +19,7 @@ PACKAGE_ID = "com.curis.local.writing-authoring"
 PACKAGE_VERSION = "0.1.0"
 PACKAGE_DIGEST = "2f4c37d6b579d8db31f88f7626acec44b9f630164ba8c9909e217a5f41e2d66e"
 PREFIX = "writing.chapter."
-ACTIONS = frozenset(("draft.saved", "discussion.bound", "candidate.recorded", "candidate.adopted",
+ACTIONS = frozenset(("draft.saved", "discussion.bound", "candidate.recorded", "candidate.adopted", "candidate.rejected",
                      "inspection.recorded", "formal.confirmed", "package.prepared", "work.linked", "context.bound", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"))
 CHECKS = ("continuity", "language", "rights")
 
@@ -56,6 +56,35 @@ class WritingChapterService:
         self.conversations = conversation_service or ConversationService(database)
         self.allow_execution = allow_execution
         self.entry = entry_service
+
+    @staticmethod
+    def _direct_refs(scope):
+        identity = sha(encode([scope["tenant_id"], scope["company_id"], scope["workspace_id"]]))
+        return "package-object-writing-book-" + identity, "package-object-writing-chapter-" + identity
+
+    def _is_direct(self, scope):
+        return (scope["book_ref"], scope["chapter_ref"]) == self._direct_refs(scope)
+
+    def open_direct(self, company, workspace):
+        from .workspace_package_runtime import WorkspacePackageRuntime
+
+        runtime = WorkspacePackageRuntime(self.db)
+        with self.db.connect() as con:
+            con.execute("begin immediate")
+            scope, _, _, _ = self._scope(con, company, workspace, write=True)
+            book, chapter = self._direct_refs(scope)
+            existing = con.execute(
+                "select object_id from workspace_package_objects where tenant_id=? and company_id=? "
+                "and workspace_id=? and object_id in (?,?)",
+                (scope["tenant_id"], company, workspace, book, chapter),
+            ).fetchall()
+            if not existing:
+                runtime.create_object_in_connection(con, workspace, "core.domain-object.create", "WritingBook",
+                    {"title": "直接写作", "status": "DRAFT"}, book)
+                runtime.create_object_in_connection(con, workspace, "core.domain-object.create", "WritingChapter",
+                    {"title": "文稿", "bookRef": book, "status": "DRAFT"}, chapter)
+            self._scope(con, company, workspace, book, chapter, write=True)
+        return {"book_ref": book, "chapter_ref": chapter}
 
     def _scope(self, con, company, workspace, book=None, chapter=None, *, write=False):
         identity = TenantContext.current_identity()
@@ -142,7 +171,7 @@ class WritingChapterService:
                 raise WritingConflict("知识来源已更新，请核对新版本。")
         return values
 
-    def _selection(self, draft, selection, lineage):
+    def _selection(self, draft, selection, lineage, scope=None):
         if set(selection) != {"draft_ref", "sha256", "start", "end", "excerpt", "anchor", "knowledge"}:
             raise ValueError("选择范围缺少版本、位置或来源。")
         if selection["draft_ref"] != draft["ref"] or selection["sha256"] != draft["sha256"]:
@@ -150,7 +179,12 @@ class WritingChapterService:
         if selection["knowledge"] != draft["knowledge"]:
             raise WritingConflict("选择范围的知识依据与正文不一致。")
         self._knowledge(lineage, selection["knowledge"])
-        excerpt = utf16_slice(draft["text"], selection["start"], selection["end"])
+        empty_direct = (
+            scope is not None and self._is_direct(scope) and draft["text"] == ""
+            and type(selection["start"]) is int and type(selection["end"]) is int
+            and selection["start"] == selection["end"] == 0
+        )
+        excerpt = "" if empty_direct else utf16_slice(draft["text"], selection["start"], selection["end"])
         anchor = f'{draft["ref"]}:{selection["start"]}:{selection["end"]}'
         if excerpt != selection["excerpt"] or selection["anchor"] != anchor:
             raise WritingConflict("正文范围、引用或定位不匹配。")
@@ -256,7 +290,7 @@ class WritingChapterService:
             books = WritingBookService(self.db, chapters=self)
             basis_status = books.basis_status(con, scope, self._draft(events).get("book_context_basis"))
         context = books.read(company, workspace, book)
-        return {"scope": scope, "draft": self._draft(events), "events": events, "creation_source": creation_source,
+        return {"scope": scope, "direct": self._is_direct(scope), "draft": self._draft(events), "events": events, "creation_source": creation_source,
                 "book_context": context, "book_context_status": basis_status,
                 "read_only": instance["status"] != "ACTIVE" or instance["package_status"] != "ACTIVE",
                 "responsibility": self.responsibility(company, workspace),
@@ -265,7 +299,8 @@ class WritingChapterService:
 
     def agent_work_source(self, company, workspace, assignment_ref, source):
         self._fields(source, {"kind", "book_ref", "chapter_ref", "expected_draft_ref", "selection"}
-                     | ({"review_ref"} if "review_ref" in source else set()))
+                     | ({"review_ref"} if "review_ref" in source else set())
+                     | ({"continuation"} if "continuation" in source else set()))
         assignment = self.conversations.foundation.get(assignment_ref)
         if assignment["data"].get("responsibilityKey") != "WRITING_CHAPTER_AUTHOR":
             raise RuntimeScopeError("当前责任不是章节作者。")
@@ -274,7 +309,8 @@ class WritingChapterService:
             draft = self._draft(self._events(con, scope))
             if source["expected_draft_ref"] != draft["ref"]:
                 raise WritingConflict("原章节版本已变化，请重新保存并选择。")
-            self._selection(draft, source["selection"], lineage)
+            self._selection(draft, source["selection"], lineage, scope)
+            continuation = self.continuation_basis(events=self._events(con, scope), data=source["continuation"]) if "continuation" in source else None
             review = self.review_work_basis(con, scope, draft, source["review_ref"]) if "review_ref" in source else None
         knowledge = []
         for selected in source["selection"]["knowledge"]:
@@ -282,9 +318,35 @@ class WritingChapterService:
             if item.get("content_sha256") != selected["sha256"]:
                 raise WritingConflict("知识来源已变化。")
             knowledge.append({**selected, "title": item["title"], "body": item["body"]})
-        return {**({"review": review} if review else {}), "kind": "writing", "scope": scope, "selection": source["selection"],
+        return {**({"continuation": continuation} if continuation else {}), **({"review": review} if review else {}), "kind": "writing", "scope": scope, "selection": source["selection"],
                 "draft_ref": draft["ref"], "draft_sha256": draft["sha256"], "knowledge": knowledge,
                 "book_context_basis_sha256": sha(encode(draft.get("book_context_basis")))}
+
+    @staticmethod
+    def continuation_basis(*, events, data):
+        if not isinstance(data, dict) or set(data) not in ({"source_ref", "requirements", "confirmed"}, {"source_ref", "requirements", "confirmed", "mode"}):
+            raise ValueError("续做需要来源、修改要求和明确确认。")
+        mode = data.get("mode", "CONTINUE")
+        if mode not in {"CONTINUE", "REVISE"}:
+            raise ValueError("续做模式无效。")
+        if data["confirmed"] is not True or not isinstance(data["requirements"], str) or not data["requirements"].strip() or len(data["requirements"]) > 2000:
+            raise ValueError("请填写修改要求并确认提交。")
+        if not isinstance(data["source_ref"], str):
+            raise ValueError("来源标识无效。")
+        formal = [e for e in events if e["action"] == "formal.confirmed"]
+        selected = next((e for e in formal if e["ref"] == data["source_ref"]), None) if data["source_ref"] else (formal[-1] if formal else None)
+        if selected:
+            adoption = next((e for e in events if e.get("ref") == selected.get("adoption_ref")), {})
+            return {"source_ref": selected["ref"], "source_class": "FORMAL", "text": selected["snapshot"]["text"],
+                    "sha256": selected["snapshot"]["sha256"], "requirements": data["requirements"],
+                    "parent_work_ref": adoption.get("work_ref")}
+        candidate = next((e for e in events if e["ref"] == data["source_ref"] and e["action"] in
+            {"candidate.recorded", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"}), None)
+        if (formal and mode != "REVISE") or not candidate:
+            raise WritingConflict("请选择正式版本；无正式版本时须明确指定候选稿。")
+        return {"source_ref": candidate["ref"], "source_class": "CANDIDATE", "text": candidate["replacement"],
+                "sha256": sha(candidate["replacement"]), "requirements": data["requirements"],
+                "parent_work_ref": candidate.get("work_ref")}
 
     def review_work_basis(self, con, scope, draft, review_ref):
         if not isinstance(review_ref, str) or not 1 <= len(review_ref) <= 128:
@@ -354,17 +416,37 @@ class WritingChapterService:
                 return payload["output"]
             events = self._events(con, scope)
             draft = self._draft(events)
+            if action == "candidate.adopted":
+                self._fields(data, {"candidate_ref", "confirmed"})
+                prior = next((e for e in events if e["action"] == action and e.get("candidate_ref") == data.get("candidate_ref")), None)
+                if prior and data.get("confirmed") is True:
+                    return {k: v for k, v in prior.items() if k not in {"event_id", "action", "created_at"}}
             if expected_draft_ref != draft["ref"]:
                 raise WritingConflict("章节已被另一处更新；输入保留，请重新读取。")
             ref = "writing-" + action.replace(".", "-") + "-" + str(uuid.uuid4())
             output = self._apply(con, scope, lineage, author, events, draft, action, data, ref)
+            if action == "formal.confirmed":
+                adopted = next((event for event in events if event["action"] == "formal.confirmed"
+                                and event.get("adoption_ref") and event["snapshot"] == draft), None)
+                if adopted:
+                    return {key: value for key, value in adopted.items() if key not in {"event_id", "action", "created_at"}}
             output = {"ref": ref, **output}
+            if action == "candidate.adopted":
+                output["formal_ref"] = ref + "-formal"
             payload = {"scope": scope, "request": request, "output": output}
             serialized = encode(payload)
             if len(serialized.encode()) > 1024 * 1024:
                 raise ValueError("章节事件超过1MiB限制；没有保存或截断正文。")
             con.execute("insert into evolution_events(tenant_id,correlation_id,event_type,payload,idempotency_key) "
                 "values (?,?,?,?,?)", (scope["tenant_id"], chapter, PREFIX + action, serialized, key))
+            if action == "candidate.adopted":
+                formal_ref = output["formal_ref"]
+                formal = {"ref": formal_ref, "snapshot": output["draft"], "author": author,
+                          "status": "FORMAL_NOT_PUBLISHED", "adoption_ref": ref,
+                          "candidate_ref": data["candidate_ref"]}
+                con.execute("insert into evolution_events(tenant_id,correlation_id,event_type,payload,idempotency_key) values (?,?,?,?,?)",
+                    (scope["tenant_id"], chapter, PREFIX + "formal.confirmed",
+                     encode({"scope": scope, "output": formal}), key + "-formal"))
         return output
 
     @staticmethod
@@ -381,6 +463,7 @@ class WritingChapterService:
             "candidate.agent-recorded": {"work_ref": str, "task_ref": str, "reply": dict},
             "discussion.bound": {"selection": dict, "conversation_ref": str, "assignment_ref": str},
             "candidate.recorded": {"binding_ref": str, "message_ref": str, "reply_start": int, "reply_end": int, "reply_excerpt": str},
+            "candidate.rejected": {"candidate_ref": str, "reason": str},
             "candidate.adopted": {"candidate_ref": str, "confirmed": bool},
             "inspection.recorded": {"mode": str, "checks": list, "note": str},
             "formal.confirmed": {"inspection_ref": str, "confirmed": bool},
@@ -414,7 +497,7 @@ class WritingChapterService:
             excerpt = utf16_slice(proof["text"], reply["start"], reply["end"])
             if excerpt != reply["excerpt"] or reply["text_sha256"] != proof["text_sha256"] or not excerpt.strip():
                 raise WritingConflict("候选文字与原 Agent 结果不一致。")
-            self._selection(draft, source["selection"], lineage)
+            self._selection(draft, source["selection"], lineage, scope)
             return {**data, "selection": source["selection"], "replacement": excerpt, "draft_ref": draft["ref"],
                     "book_context_basis": basis, "source_class": "AGENT_EXECUTOR", "provenance": proof["provenance"]}
         if action == "candidate.dialogue-recorded":
@@ -427,7 +510,7 @@ class WritingChapterService:
                     "task_ref": proof["task_ref"], "provenance": proof["provenance"],
                     "receiving_basis": {"draft_ref": draft["ref"], "sha256": draft["sha256"]}}
         if action == "candidate.manual-recorded":
-            self._selection(draft, data["selection"], lineage)
+            self._selection(draft, data["selection"], lineage, scope)
             if not data["replacement"].strip() or len(data["replacement"]) > 200000:
                 raise ValueError("请填写不超过200000字的人工候选修改。")
             return {**data, "draft_ref": draft["ref"], "basis": basis, "source_class": "CEO_MANUAL", "kind": "AUTHOR_MANUAL_PROPOSAL", "author": author}
@@ -441,7 +524,7 @@ class WritingChapterService:
                     "author": author}
         if action == "discussion.bound":
             self._fields(data, ("selection", "conversation_ref", "assignment_ref"))
-            self._selection(draft, data["selection"], lineage)
+            self._selection(draft, data["selection"], lineage, scope)
             responsibility = self.responsibility(scope["company_id"], scope["workspace_id"], connection=con)
             if responsibility["status"] != "AVAILABLE" or responsibility["assignment_ref"] != data["assignment_ref"]:
                 raise WritingConflict("当前写作责任或执行不可用。")
@@ -453,7 +536,7 @@ class WritingChapterService:
             binding = find("discussion.bound", data["binding_ref"])
             if binding.get("book_context_basis") != basis:
                 raise WritingConflict("讨论绑定的作品依据已变化，请重新选择正文并发起讨论。")
-            self._selection(draft, binding["selection"], lineage)
+            self._selection(draft, binding["selection"], lineage, scope)
             current = self.responsibility(scope["company_id"], scope["workspace_id"], connection=con)
             if current.get("context") != binding["context"]:
                 raise WritingConflict("写作责任已变化。")
@@ -479,8 +562,14 @@ class WritingChapterService:
                 origin = json.loads(original["body"]) if original else {}
             except (ValueError, TypeError):
                 origin = {}
+            execution_selection = claim["execution_selection"]
+            prompt_selection = binding["selection"]
+            if self._is_direct(scope) and execution_selection.get("work_continuation"):
+                prompt_selection = {key: value for key, value in prompt_selection.items() if key != "excerpt"}
             if (claim.get("conversation_id") != binding["conversation_ref"] or
-                    origin.get("chapter_scope") != scope or origin.get("selection") != binding["selection"]
+                    execution_selection.get("selection") != binding["selection"] or
+                    origin.get("chapter_scope") != scope or origin.get("selection") != prompt_selection or
+                    origin.get("writing_continuation") != execution_selection.get("work_continuation")
                     or (origin.get("book_context_basis_sha256") or "") != (sha(encode(basis)) if basis else "")):
                 raise RuntimeScopeError("员工回复没有当前章节选择范围依据。")
             EmployeeExecutionIdentity(self.db).verify_task_callback(company_id=scope["company_id"],
@@ -492,7 +581,19 @@ class WritingChapterService:
             return {**data, "selection": binding["selection"], "replacement": excerpt, "draft_ref": draft["ref"], "book_context_basis": basis,
                     "source_class": message.get("provenance", {}).get("source_class", "CONTROLLED_EXECUTOR"), "kind": "REPLY_DERIVED_PROPOSAL", "task_ref": message["task_ref"],
                     **({"work_ref": claim["execution_selection"]["work_ref"]} if claim["execution_selection"].get("work_ref") else {})}
+        if action == "candidate.rejected":
+            candidate = next((e for e in events if e["ref"] == data["candidate_ref"] and e["action"] in
+                {"candidate.recorded", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"}), None)
+            if not candidate:
+                raise RuntimeScopeError("候选不属于当前章节。")
+            if any(e["action"] == "candidate.adopted" and e.get("candidate_ref") == candidate["ref"] for e in events):
+                raise WritingConflict("已采用候选不能拒绝。")
+            if len(data["reason"]) > 2000:
+                raise ValueError("拒绝原因最多2000字符。")
+            return {**data, "status": "REJECTED", "author": author}
         if action == "candidate.adopted":
+            if any(e["action"] == "candidate.rejected" and e.get("candidate_ref") == data["candidate_ref"] for e in events):
+                raise WritingConflict("已拒绝候选不能采用。")
             self._fields(data, ("candidate_ref", "confirmed"))
             if data["confirmed"] is not True:
                 raise ValueError("需要明确确认采用修改。")
@@ -524,7 +625,7 @@ class WritingChapterService:
                     {k: candidate[k] for k in ("binding_ref", "message_ref", "reply_start", "reply_end", "reply_excerpt")}, ref)
             if books.basis_status(con, scope, basis)["status"] == "STALE":
                 raise WritingConflict("作品依据已变化，请先核对并明确重选。")
-            selection = self._selection(draft, candidate["selection"], lineage)
+            selection = self._selection(draft, candidate["selection"], lineage, scope)
             raw = draft["text"].encode("utf-16-le")
             text = (raw[:selection["start"] * 2] + candidate["replacement"].encode("utf-16-le") + raw[selection["end"] * 2:]).decode("utf-16-le")
             if len(text) > 200000:
@@ -612,7 +713,7 @@ class WritingChapterService:
             raise WritingConflict("章节版本或写作责任已变化。")
         with self.db.connect() as con:
             _, _, lineage, _ = self._scope(con, company, workspace, book, chapter, write=True)
-        self._selection(state["draft"], data["selection"], lineage)
+        self._selection(state["draft"], data["selection"], lineage, state["scope"])
         topic = self.conversations.create(company, request_id="writing-topic-" + sha(encode([state["scope"], request_id])),
             title="章节选文讨论", employee_ref=state["responsibility"]["employee_ref"],
             discussion_scope={"workspace_id": workspace, "object_ref": chapter, "assignment_ref": state["responsibility"]["assignment_ref"]})
@@ -627,7 +728,7 @@ class WritingChapterService:
             raise WritingConflict("员工执行未启用；输入已保留。")
         with self.db.connect() as con:
             _, _, lineage, _ = self._scope(con, company, workspace, book, chapter, write=True)
-        self._selection(state["draft"], binding["selection"], lineage)
+        self._selection(state["draft"], binding["selection"], lineage, state["scope"])
         if state["responsibility"].get("context") != binding["context"]:
             raise WritingConflict("写作责任已变化。")
         if binding.get("book_context_basis") != state["draft"].get("book_context_basis"):
@@ -635,6 +736,7 @@ class WritingChapterService:
         basis_hash = sha(encode(binding["book_context_basis"])) if binding.get("book_context_basis") else ""
         execution_selection = None
         knowledge = []
+        continuation = None
         if self.entry is not None:
             if model_key:
                 self.entry.prepare_model(company, workspace, binding["assignment_ref"], model_key)
@@ -650,18 +752,40 @@ class WritingChapterService:
                 "context": binding["context"], "binding_id": policy["binding"]["id"], "model": policy["selected"]["model"],
                 "grant": policy["grant"], "book_context_basis_sha256": basis_hash, "source_class": policy["grant"].get("source_class", "PROVIDER_EXECUTOR")}
         if work_ref:
-            if execution_selection is None or retry_no:
+            if execution_selection is None:
                 raise WritingConflict("Explicit Work requires a selected model; never retry an uncertain Work")
             execution_selection["work_ref"] = work_ref
             execution_selection["work_instruction"] = body.strip()
+            if retry_no:
+                previous = self.conversations.read_request(company, binding["conversation_ref"], request_id)["attempts"]
+                original = previous[0] if previous else {}
+                if (retry_no != 1 or original.get("status") != "FAILED"
+                        or original.get("effect_status") != "SETTLED" or original.get("task_ref")
+                        or (original.get("execution_selection") or {}).get("work_ref") != work_ref):
+                    raise WritingConflict("Only a proven pre-Task Writing failure can be retried once")
+                execution_selection["retry_of_attempt"] = original["attempt_id"]
             with self.db.connect() as con:
                 work = self.validate_model_work(con, execution_selection)
                 cycle_ref = json.loads(work["data_json"])["cycleRef"]
                 contract = json.loads(con.execute("select data_json from runtime_entities where tenant_id=? and entity_id=?",
                     (TenantContext.current_tenant_id(), cycle_ref)).fetchone()[0])["contract"]
+                continuation = contract["modelSource"].get("continuation")
+                if continuation:
+                    if body.strip() != continuation["requirements"].strip():
+                        raise WritingConflict("执行要求必须与确认的修改要求一致。")
+                    execution_selection["work_continuation"] = continuation
                 if contract["modelSource"].get("review"):
                     execution_selection["work_review"] = contract["modelSource"]["review"]
-        compiled = encode({"author_message": body, "chapter_scope": state["scope"], "selection": binding["selection"], "book_context_basis_sha256": basis_hash,
+        direct = state["direct"]
+        prompt_selection = binding["selection"]
+        if direct and continuation:
+            # The source snapshot is the manuscript to revise; the binding still
+            # validates the full current replacement range before applying it.
+            prompt_selection = {key: value for key, value in prompt_selection.items() if key != "excerpt"}
+        compiled = encode({
+            **({"writing_continuation": continuation} if continuation else {}),
+            **({"output_instruction": "只输出完整文稿正文。续做时以 writing_continuation.text 为原稿，并按本次修改要求生成新候选。"} if direct else {}),
+            "author_message": body, "chapter_scope": state["scope"], "selection": prompt_selection, "book_context_basis_sha256": basis_hash,
                            **({"selected_knowledge": knowledge, "effective_model": execution_selection["model"]} if execution_selection else {}),
                            **({"writing_review": execution_selection["work_review"]} if execution_selection and execution_selection.get("work_review") else {})})
         if not body.strip() or len(compiled) > 8000:
@@ -726,6 +850,8 @@ class WritingChapterService:
             current_review = self.review_work_basis(con, scope, draft, source["review"].get("review_ref"))
             if current_review != source["review"] or (attempt_id and selection.get("work_review") != current_review):
                 raise WritingConflict("本次 Work 的复盘来源已变化。")
+        if attempt_id and selection.get("work_continuation") != source.get("continuation"):
+            raise WritingConflict("本次 Work 的续做来源已变化。")
         route = data.get("responsibilityRouting", {})
         if (route.get("status") in {"CANCELLED", "COMPLETED"}
                 or contract.get("problem") != selection.get("work_instruction")
@@ -734,9 +860,33 @@ class WritingChapterService:
                 or source.get("context") != selection["context"] or data.get("writingBasis") != expected
                 or binding != {"bindingRef": selection["binding_id"], "model": selection["model"]}
                 or route.get("currentAssignmentRef") != selection["context"]["assignment_ref"]
-                or any(key != attempt_id for key in route.get("executions", {}))):
+                or any(key != attempt_id and not self._safe_work_retry(con, selection, key, record)
+                       for key, record in route.get("executions", {}).items())):
             raise WritingConflict("Original Work chapter, responsibility, model or execution differs")
         return dict(row)
+
+    @staticmethod
+    def _safe_work_retry(con, selection, key, execution):
+        # A stopped/unknown physical call is never retried. Only an original
+        # attempt that failed before Task creation may share this Work.
+        if (selection.get("retry_of_attempt") != key or execution.get("status") != "FAILED"
+                or execution.get("taskRef")):
+            return False
+        scope = selection["scope"]
+        rows = con.execute("select payload from evolution_events where tenant_id=? "
+            "and event_type='conversation.attempt.finished' and json_extract(payload,'$.attempt_id')=?",
+            (scope["tenant_id"], key)).fetchall()
+        if len(rows) != 1:
+            return False
+        finished = json.loads(rows[0][0])
+        prior = finished.get("execution_selection") or {}
+        if (finished.get("status") != "FAILED" or finished.get("effect_status") != "SETTLED"
+                or finished.get("task_ref") or prior.get("work_ref") != selection["work_ref"]
+                or prior.get("scope") != scope or prior.get("context") != selection["context"]
+                or prior.get("binding_id") != selection["binding_id"] or prior.get("model") != selection["model"]):
+            return False
+        return con.execute("select 1 from tasks where tenant_id=? and execution_ref=? limit 1",
+                           (scope["tenant_id"], key)).fetchone() is None
 
     def validate_execution_selection(self, selection, *, attempt_id=None, connection=None):
         if self.entry is None or selection.get("purpose") != "WRITING_CHAPTER_REPLY":
@@ -752,7 +902,7 @@ class WritingChapterService:
             current_basis = current_draft.get("book_context_basis")
             if (selection.get("book_context_basis_sha256") or "") != (sha(encode(current_basis)) if current_basis else ""):
                 raise WritingConflict("原请求的作品依据已变化。")
-            self._selection(current_draft, selection["selection"], lineage)
+            self._selection(current_draft, selection["selection"], lineage, scope)
             if any(value["attempt_id"] != attempt_id for value in self.entry.pending(con, company, workspace)):
                 raise WritingConflict("原请求正在处理或结果待核验。")
             policy = self.entry.execution_policy(company, workspace, connection=con, attempt_id=attempt_id)
