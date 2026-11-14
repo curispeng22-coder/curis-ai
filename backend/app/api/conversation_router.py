@@ -1,4 +1,4 @@
-"""Shared owner API; no Work is created by direct Employee conversation."""
+"""Conversation messages, reads and explicit Work confirmation."""
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -79,6 +79,12 @@ class JoinIn(BaseModel):
     employee_ref: str = Field(min_length=1, max_length=256)
 
 
+class ConfirmResearchWorkIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    message_ref: str = Field(min_length=1, max_length=256)
+    proposal_version: str = Field(pattern="^[0-9a-f]{64}$")
+
+
 def build_conversation_router(database, executor, *, service=None):
     router = APIRouter(prefix="/api/workspace/v1/companies/{company_id}/employees/{employee_ref}/conversation")
     service = service if service is not None else ConversationService(database)
@@ -154,6 +160,16 @@ def build_conversation_router(database, executor, *, service=None):
             raise HTTPException(404, "这段对话或当前工作范围不可访问，请从所在公司重新进入。")
         except ValueError:
             raise HTTPException(409, "当前操作未确认完成，请重新读取已有记录后重试。")
+
+    @router.post("/research-work/confirm")
+    def confirm_employee_research_work(company_id: str, employee_ref: str, payload: ConfirmResearchWorkIn):
+        return safe(lambda: service.confirm_research_work(
+            company_id, employee_ref=employee_ref, **payload.model_dump()))
+
+    @topics.post("/{conversation_id}/research-work/confirm")
+    def confirm_topic_research_work(company_id: str, conversation_id: str, payload: ConfirmResearchWorkIn):
+        return safe(lambda: service.confirm_research_work(
+            company_id, conversation_id=conversation_id, **payload.model_dump()))
 
     @topics.get("")
     def recent_conversations(company_id: str, search: str = ""):

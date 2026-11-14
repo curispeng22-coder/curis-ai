@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AgentWorkControl, ConversationComposer } from "./SharedConversation.js";
 import { EmployeeAvatar } from "./EmployeeAvatar.js";
-import { receiveConversationResult, createConversation, getConversation, sendConversation, getCompanyTextPolicy, getEmployeeConversation, getEmployeeConversationReferences, openEmployeeConversation, sendEmployeeConversation } from "../../lib/v1FrontendApi.js";
+import { confirmConversationResearchWork, receiveConversationResult, createConversation, getConversation, sendConversation, getCompanyTextPolicy, getEmployeeConversation, getEmployeeConversationReferences, openEmployeeConversation, sendEmployeeConversation } from "../../lib/v1FrontendApi.js";
 import ResultReferenceView, { resultSelection } from "./ResultReferenceView.js";
 
 function requestReference({ reference_id, workspace_id, kind, version_ref, purpose, locator }) {
@@ -34,6 +34,7 @@ export default function EmployeeConversation({ companyId, employee, conversation
   const [error, setError] = useState("");
   const [received, setReceived] = useState({});
   const receiving = useRef(false);
+  const confirmingResearch = useRef(false);
   const receiveContext = useRef("");
   const [readState, setReadState] = useState("loading");
   const [input, setInput] = useState("");
@@ -164,8 +165,33 @@ export default function EmployeeConversation({ companyId, employee, conversation
       setReadState("ready");
     } catch { if (generation !== epoch.current) return; setReadState("error"); setError("暂时无法读取这位员工的对话，请重新读取。已有记录不会被删除。"); }
   }, [companyId, employeeRef, conversationId, workspaceId, contextKey, embedded?.assignmentRef, embedded?.objectRef, topic]);
+  async function confirmResearch(message) {
+    if (confirmingResearch.current || sending.current || busy || running || blocked || embedded
+      || readState !== "ready" || !view?.conversation_id) return;
+    const generation = epoch.current;
+    confirmingResearch.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      await confirmConversationResearchWork(companyId, { employeeRef, conversationId }, {
+        message_ref: message.message_id, proposal_version: message.research_proposal.version,
+      });
+      if (generation === epoch.current) await load();
+    } catch {
+      if (generation === epoch.current) {
+        setReadState("error");
+        setError("研究工作尚未确认创建。请重新读取原对话，核对是否已有工作回执。");
+      }
+    } finally {
+      if (generation === epoch.current) {
+        confirmingResearch.current = false;
+        setBusy(false);
+      }
+    }
+  }
   useEffect(() => {
     epoch.current += 1; cache.current = null; request.current = null; sending.current = false; restoredAssignment.current = "";
+    confirmingResearch.current = false; setBusy(false);
     setView(null); setInput(""); setSelected([]); setTopic(conversationId || ""); setHydrated(false); setUncertain(false);
     modeRef.current = "discussion"; setWorkMode("discussion");
     return () => { epoch.current += 1; };
@@ -236,7 +262,7 @@ export default function EmployeeConversation({ companyId, employee, conversation
   }
   async function send(event, retry = false) {
     event.preventDefault();
-    if ((!retry && !input.trim()) || sending.current || busy || running || uncertain || blocked || unresolved || (employeeRef && !assignment)) return;
+    if ((!retry && !input.trim()) || sending.current || confirmingResearch.current || busy || running || uncertain || blocked || unresolved || (employeeRef && !assignment)) return;
     const generation = epoch.current;
     const body = input.trim();
     const references = selected.map(requestReference);
@@ -353,7 +379,14 @@ export default function EmployeeConversation({ companyId, employee, conversation
     <div className="space-y-3 p-4" aria-live="polite">
       {!view && !error ? <p className="text-ui-2 text-ui-txt-2">正在读取对话…</p> : null}
       {view?.messages?.length === 0 ? <p className="text-ui-2 text-ui-txt-2">{employeeRef ? "可以直接与这位员工讨论，不需要先创建工作。" : "先记录问题，选择员工后再继续讨论。"}</p> : null}
-      {view?.messages?.map((message) => <article key={message.message_id} id={message.message_id} className="text-ui-2"><p className="font-medium">{message.sender.kind === "CEO" ? "你" : employeeName}</p><p className="whitespace-pre-wrap">{message.display_body || message.body}</p>
+      {view?.messages?.map((message) => {
+        const proposal = !embedded && message.sender.kind === "EMPLOYEE" && message.context?.scope_type === "BUSINESS" && message.research_proposal;
+        const receipt = proposal && view.research_work_receipts?.find((item) => item.conversation_ref === view.conversation_id
+          && item.proposal_message_ref === message.message_id && item.proposal_version === proposal.version && item.work_ref);
+        return <article key={message.message_id} id={message.message_id} className="text-ui-2"><p className="font-medium">{message.sender.kind === "CEO" ? "你" : employeeName}</p><p className="whitespace-pre-wrap">{message.display_body || message.body}</p>
+        {receipt ? <p role="status">已创建研究工作。工作编号：{receipt.work_ref}</p>
+          : proposal ? <button type="button" className="text-ui-primary" disabled={busy || running || blocked || readState !== "ready"}
+            onClick={() => confirmResearch(message)}>确认并创建研究工作</button> : null}
         {embedded?.objectRef && message.sender.kind === "EMPLOYEE" && message.task_ref && message.provenance?.execution_selection?.purpose === "CONVERSATION_REPLY" && <div><button type="button" disabled={busy || blocked || !embedded.receiveReady || received[message.message_id]} onClick={() => receiveResult(message)}>{received[message.message_id] ? "已送回业务候选" : "送回当前工作候选"}</button><p>送回后请在候选中核对；明确采用将以这条回复替换当前正文或歌词。接收版本不是生成依据。</p></div>}
         {message.task_ref && message.sender.kind === "EMPLOYEE" && fullConversationHref && <a href={`${fullConversationHref}#${encodeURIComponent(message.message_id)}`}>打开这次回复</a>}
         {message.references?.map((reference) => ["RESULT", "ARTIFACT", "EVIDENCE"].includes(reference.kind)
@@ -361,7 +394,8 @@ export default function EmployeeConversation({ companyId, employee, conversation
           : <a key={reference.reference_id} className="mr-3 text-ui-primary" href={reference.kind === "KNOWLEDGE"
             ? `/ceo-office/knowledge/entries/${encodeURIComponent(reference.reference_id)}?return_to=${encodeURIComponent(`${conversationHref}#${message.message_id}`)}`
             : `/ceo-office/workspace?workspace_id=${encodeURIComponent(reference.workspace_id)}&return_to=${encodeURIComponent(`${conversationHref}#${message.message_id}`)}${reference.kind === "WORK" ? `#work-${encodeURIComponent(reference.reference_id)}` : ""}`}>{reference.title || "查看来源"} ▸</a>)}
-      </article>)}
+      </article>;
+      })}
       {embedded && !topic && uncertain && request.current?._phase === "CREATING" && <button type="button" disabled={busy} onClick={recoverTopic}>恢复原讨论入口</button>}
       {running ? <p role="status" className="text-ui-2 text-ui-txt-2">{runningNotice}</p> : null}
       {latest?.status === "FAILED" ? <p role="alert" className="text-ui-2 text-ui-red">员工这次未能回复。原消息仍保留，请检查当前模型与公司文字许可。</p> : null}
