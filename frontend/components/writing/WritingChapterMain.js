@@ -187,6 +187,15 @@ export default function WritingChapterMain({ state, entry, workspaceId, company,
     let creationStarted = false, sendStarted = false;
     sending.current = true; setSendBusy(true); onExecutionLock(true);
     try {
+      const savedModel = entryMetadata?.selected_model?.model;
+      if (state.direct && !retry && (savedModel?.model_key !== payload.model_key
+          || savedModel.source !== model.selected.source || savedModel.updated_at !== model.selected.updated_at)) {
+        const prepared = await writingApi.selectModel(company, workspaceId, payload.model_key);
+        if (prepared.execution?.status !== "AVAILABLE") {
+          throw new Error(prepared.execution?.reason || "当前写作模型尚未获得执行许可。");
+        }
+        await onRefresh();
+      }
       let activeBinding = binding;
       if (state.direct && !retry && !activeBinding) {
         activeBinding = await command("discussion.start", { selection: fullSelection() });

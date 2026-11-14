@@ -259,3 +259,37 @@ test("a confirmed continuation survives remount and sends the same Work and requ
   assert.equal(sends[0].body, "改写结尾");
   assert.equal(sends[0].retry_no, 0);
 });
+
+
+test("direct writing prepares the default model before creating its first Work", async () => {
+  const calls = [];
+  const state = { ...baseState(), direct: true, responsibility: { status: "AVAILABLE" } };
+  const api = readyApi({
+    selectModel: async (_company, _workspace, key) => {
+      calls.push(["select", key]);
+      return { execution: { status: "AVAILABLE" } };
+    },
+    send: async (_company, _workspace, _entry, payload) => {
+      calls.push(["send", payload.work_ref]);
+      return { attempt: { status: "RUNNING" } };
+    },
+    discussion: async () => ({ attempts: [], messages: [] }),
+  });
+  api.__workApi.createAssignedWork = async (_assignment, payload) => {
+    calls.push(["work", payload.model_key]);
+    return { work: { entity_id: "work-direct" } };
+  };
+  const view = await writingComponent("WritingChapterMain.js", props(state, {
+    command: async action => {
+      calls.push(["bind", action]);
+      return binding();
+    },
+  }), api);
+  await view.flush();
+  view.find(node => node.type === "composer").props.onChange("写一封短信");
+  await view.find(node => node.type === "composer").props.onSubmit({ preventDefault() {} });
+  assert.deepEqual(calls, [
+    ["select", "model.writing-entry"], ["bind", "discussion.start"],
+    ["work", "model.writing-entry"], ["send", "work-direct"],
+  ]);
+});
