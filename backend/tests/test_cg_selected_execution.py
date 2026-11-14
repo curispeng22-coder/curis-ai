@@ -328,3 +328,51 @@ def test_v1_publication_packages_keep_two_works_and_formal_source(tmp_path, monk
         continuation = second["data"]["provenance"]["execution_selection"]["publication_continuation"]
         assert continuation["source_ref"] == formal["version"]["entity_id"]
         assert continuation["parent_work_ref"] == first_work
+
+
+
+def test_first_launch_department_catalog_and_legacy_aliases_survive_restart(tmp_path, monkeypatch):
+    from app.database import Database
+    from app.first_launch_service import FirstLaunchService
+    from app.tenant_context import TenantContext
+
+    monkeypatch.setenv('CURIS_WORKSPACE_PACKAGE_STORE', str(tmp_path / 'packages'))
+    db = Database(str(tmp_path / 'launch.sqlite'))
+    db.initialize()
+    with TenantContext.scope('selfuse', ceo_id='cg-catalog-owner', role='ceo'):
+        first = FirstLaunchService(db).ensure()
+        company = first['company_id']
+        with db.connect() as con:
+            def departments(connection):
+                return {row['department_type']: tuple(row) for row in connection.execute(
+                    "select di.department_type,di.id,di.template_id,di.status,di.enabled,dt.enabled "
+                    "from department_instances di left join department_templates dt on dt.id=di.template_id "
+                    "where di.company_id=? and di.tenant_id='selfuse' "
+                    "and di.id like 'department-launch-%'", (company,))}
+            original = departments(con)
+            assert {kind: (row[2], *row[3:]) for kind, row in original.items()} == {
+                'content_growth': ('dt_content_growth', 'active', 1, 1),
+                'writing': ('official.department.writing', 'active', 1, 1),
+                'music': ('dt_music', 'active', 1, 1),
+            }
+            con.execute(
+                "update department_instances set template_id='official.department.content_growth' "
+                "where id=?", (original['content_growth'][1],))
+            con.execute(
+                "update department_instances set template_id='official.department.music',status='archived',enabled=0 "
+                "where id=?", (original['music'][1],))
+        cold = Database(db.path)
+        cold.initialize()
+        with cold.connect() as con:
+            recovered = departments(con)
+            assert recovered['content_growth'] == original['content_growth']
+            assert recovered['writing'] == original['writing']
+            assert recovered['music'] == ('music', original['music'][1], 'dt_music', 'archived', 0, 1)
+        reopened = FirstLaunchService(cold).ensure()
+        assert reopened['next_action'] == 'OPEN_HOME'
+        assert [team['workspace_id'] for team in reopened['teams']] == [
+            team['workspace_id'] for team in first['teams']]
+        assert next(team for team in reopened['teams'] if team['kind'] == 'music')['organization_status'] == 'ARCHIVED'
+        cold.initialize()
+        with cold.connect() as con:
+            assert departments(con) == recovered

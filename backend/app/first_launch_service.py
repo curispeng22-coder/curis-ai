@@ -2,6 +2,7 @@
 import hashlib
 import json
 
+from .database import FIRST_LAUNCH_DEPARTMENT_TEMPLATES
 from .resource_scope_policy import ResourceScopePolicy
 from .runtime import RuntimeFoundation, RuntimeScopeError
 from .runtime.first_run_delivery import FirstRunDelivery, FirstGeneralWorkspaceDraft
@@ -59,7 +60,8 @@ class FirstLaunchService:
                 package_id = service.publication()['package_id']
                 with self.db.connect() as con:
                     founding_run = con.execute(
-                        "select 1 from runtime_entities where tenant_id=? and entity_id=? and entity_type='FOUNDING_RUN'",
+                        "select lifecycle_status from runtime_entities where tenant_id=? "
+                        "and entity_id=? and entity_type='FOUNDING_RUN'",
                         (tenant, run),
                     ).fetchone()
                     existing = None
@@ -78,6 +80,24 @@ class FirstLaunchService:
                             except ValueError:
                                 continue
                             break
+                if founding_run and founding_run['lifecycle_status'] == 'COMPANY_CREATED':
+                    result = delivery.package_creation_status(run, company, ceo)
+                    created = result.get('creation_result')
+                    if created:
+                        with self.db.connect() as con:
+                            department = con.execute(
+                                "select status,enabled from department_instances "
+                                "where tenant_id=? and company_id=? and id=? and deleted_at is null",
+                                (tenant, company, created['department_id']),
+                            ).fetchone()
+                        if department and department['status'] == 'archived':
+                            teams.append({
+                                'kind': kind, 'name': name,
+                                **{key: created[key] for key in ('company_id', 'business_id', 'workspace_id')},
+                                'organization_status': 'ARCHIVED', 'status_label': '已归档',
+                                'execution': {'status': 'UNAVAILABLE', 'reason': '所属部门已归档'},
+                            })
+                            continue
                 if existing:
                     created = {key: existing[key] for key in ('company_id', 'business_id', 'workspace_id')}
                     teams.append(self._team_status(kind, name, service, company, created))
@@ -88,7 +108,7 @@ class FirstLaunchService:
                     with self.db.connect() as con:
                         con.execute('begin immediate')
                         department_id = f'department-launch-{suffix}-{kind}'
-                        con.execute("insert or ignore into department_instances(id,tenant_id,company_id,template_id,name,department_type,status) values (?,?,?,?,?,?,'active')", (department_id, tenant, company, f'official.department.{kind}', name, kind))
+                        con.execute("insert or ignore into department_instances(id,tenant_id,company_id,template_id,name,department_type,status) values (?,?,?,?,?,?,'active')", (department_id, tenant, company, FIRST_LAUNCH_DEPARTMENT_TEMPLATES[kind], name, kind))
                         department = {'id': department_id}
                 values = dict(intent=f'{name}本地工作', business_name=name, goal=f'完成{name}工作', positioning='本地创作', workspace_name=f'{name}工作台', package_id=package_id, department_id=department['id'])
                 proposal = service.proposal(company, values)
