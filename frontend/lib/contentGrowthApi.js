@@ -6,6 +6,7 @@ export function createContentGrowthApi(request = workspaceFetch) {
   const item = (c, w, ref) => `${root(c, w)}/contents/${id(ref)}`;
   const post = (url, payload) => request(url, { method: "POST", body: JSON.stringify(payload) });
   return {
+    prepareModel: (c, w, p) => post(`${root(c, w)}/model`, p),
     collection: (c, w) => request(root(c, w)),
     operatingContext: (c,w) => request(`${root(c,w)}/operating-context`),
     saveOperatingContext: (c,w,kind,p) => post(`${root(c,w)}/operating-context/${id(kind)}`,p),

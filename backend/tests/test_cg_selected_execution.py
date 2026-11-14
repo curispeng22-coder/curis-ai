@@ -205,3 +205,126 @@ def test_cg_formal_model_work_result_and_explicit_adoption(tmp_path, monkeypatch
         assert usage[0]['task_id'] == task[0]['task_id']
         assert done['data']['resultRefs'] == ['task:' + task[0]['task_id']]
         assert RuntimeFoundation(db).get(done['data']['acceptanceRefs'][0])['lifecycle_status'] == 'CLOSED'
+
+
+def test_v1_publication_packages_keep_two_works_and_formal_source(tmp_path, monkeypatch):
+    from datetime import datetime, timedelta
+
+    from app import company_execution_policy as pricing
+    from app.database import Database
+    from backend.tests.test_cg_four_form_interaction import draft, install_v02
+    from backend.tests.test_company_execution_policy import KEY, consent, policy_ready
+
+    monkeypatch.setattr(pricing, "now",
+        lambda: datetime.fromisoformat(pricing.PRICE["checked_at"]) + timedelta(hours=1))
+    db, app, entry, _, _, _, *_ = policy_ready(tmp_path, monkeypatch)
+    workspace = install_v02(db, tmp_path)
+    root = f"/api/workspace/v1/companies/{COMPANY}/content-growth/{workspace}"
+    headers = {"X-Tenant-Id": "selfuse", "X-Ceo-Id": CEO}
+    calls = []
+
+    def post(_url, payload, _headers, _timeout):
+        calls.append(payload)
+        n = len(calls)
+        package = {"title": f"周末园艺第{n}期", "body": f"第{n}期正文。",
+                   "tags": ["周末园艺"], "cover_copy": f"封面文案{n}", "publishing_advice": "人工审核后复制发布"}
+        return {"choices": [{"message": {"content": json.dumps(package, ensure_ascii=False)}}],
+                "usage": {"prompt_tokens": 18, "completion_tokens": 15, "total_tokens": 33}}
+
+    original_metadata = ModelGatewayAdapter.with_model_metadata
+
+    def metadata(adapter, **kwargs):
+        resolved = original_metadata(adapter, **kwargs)
+        resolved.http_post = post
+        return resolved
+
+    monkeypatch.setattr(ModelGatewayAdapter, "with_model_metadata", metadata)
+    with scope():
+        info = entry.authoring_scope(COMPANY, workspace)
+        [editor] = info["assignments"]
+        assert editor["name"] == "内容编辑"
+        with db.connect() as con:
+            people = con.execute("select name from employee_instances where tenant_id=? and company_id=? "
+                "and template_id in (?, ?, ?)", ("selfuse", COMPANY, "official.employee.content_growth.lead",
+                    "official.employee.content_growth.editor", "official.employee.content_growth.planner")).fetchall()
+        assert {person["name"] for person in people} == {"内容负责人", "选题策划", "内容编辑"}
+        assignment = editor["assignment_ref"]
+        consent(pricing.CompanyExecutionPolicy(db), workspace)
+        ResponsibilityRoutingRuntime(db).publish_workflow(
+            company_id=COMPANY, workspace_id=workspace, scope_type="WORKSPACE",
+            scope_ref=workspace, workflow_key="cg-publication-v1",
+            assignment_refs=[assignment], default_flow=["CONTENT_AUTHOR"],
+        )
+
+    with TestClient(app) as client:
+        def request(method, path, payload=None, *, status=200):
+            kwargs = {"json": payload} if payload is not None else {}
+            response = client.request(method, path, headers=headers, **kwargs)
+            assert response.status_code == status, response.text
+            return response.json()
+
+        request("POST", root + "/model", {"assignment_ref": assignment, "model_key": KEY})
+        values = draft("graphic", "内容主题：周末园艺。面向新手。")
+        values.update(title="从阳台小盆栽开始", topic="周末园艺", audience="新手")
+        values["work"].update(goal="给出容易行动的入门步骤", assignment_ref=assignment,
+            recipient_ref=editor["company_employee_ref"], model_key=KEY,
+            publication_brief={"platform": "小红书", "confirmed_topic": values["title"]})
+        row = request("POST", root + "/contents", {"request_id": "cg-publication-create", "data": values})
+        content = row["content"]["entity_id"]
+        content_url = root + "/contents/" + content
+        work_url = f"/api/workspace/runtime/foundation/team-operating/assignments/{assignment}/work"
+
+        def execute(head, key, problem):
+            basis = head["version"]["entity_id"]
+            body = head["version"]["data"]["body"]
+            selection = {"version_ref": basis, "start": 0, "end": len(body.encode("utf-16-le")) // 2,
+                "excerpt": body, "locator": "body"}
+            binding = request("POST", content_url + "/discussion", {"request_id": key + "-bind",
+                "expected_version_ref": basis, "assignment_ref": assignment})
+            work = request("POST", work_url, {"request_id": key + "-work", "problem": problem,
+                "expected_result": "完整内容包", "model_key": KEY,
+                "source": {"kind": "content-growth", "content_ref": content, "expected_version_ref": basis,
+                           "selection": selection, "references": []}})["work"]["entity_id"]
+            message = {"request_id": key, "expected_version_ref": basis, "binding_ref": binding["binding_ref"],
+                "body": problem, "work_ref": work, "model_key": KEY, "selection": selection, "references": []}
+            attempt = request("POST", content_url + "/messages", message, status=202)["attempt"]
+            request("POST", content_url + "/messages", message, status=202)
+            # Fresh reads need neither a query string nor browser-local state.
+            with scope():
+                cold = ContentGrowthService(Database(db.path)).content(COMPANY, workspace, content)
+            assert cold["publication_attempt"] == {"binding_ref": binding["binding_ref"],
+                "attempt_id": attempt["attempt_id"], "work_ref": work,
+                "status": "COMPLETED", "candidate_ref": None}
+            request("POST", content_url + "/messages", {**message, "request_id": key + "-duplicate"}, status=404)
+            received = request("POST", content_url + "/reply-candidate", {"request_id": key + "-candidate",
+                "binding_ref": binding["binding_ref"], "attempt_id": attempt["attempt_id"]})
+            [candidate] = [item["version"] for item in received["candidates"]
+                           if item["version"]["data"].get("attempt_id") == attempt["attempt_id"]]
+            assert received["publication_attempt"]["candidate_ref"] == candidate["entity_id"]
+            return work, candidate
+
+        first_work, first = execute(row, "cg-first", "按已确认选题生成内容包。")
+        assert first["data"]["publication_package"]["cover_copy"] == "封面文案1"
+        formal = request("POST", content_url + "/commands/adopt", {"request_id": "cg-publication-adopt",
+            "expected_version_ref": row["version"]["entity_id"], "data": {
+                "candidate_ref": first["entity_id"], "checks": {"content": True, "references": True, "account": True}}})
+        assert formal["version"]["data"]["kind"] == "adopted"
+        request("POST", content_url + "/commands/save", {"request_id": "overwrite-formal",
+            "expected_version_ref": formal["version"]["entity_id"], "data": values}, status=409)
+        second_work, second = execute(formal, "cg-second", "基于正式内容包生成下一期。")
+        assert second["data"]["body"] == "第2期正文。"
+        assert len(calls) == 2
+
+    assert "第1期正文" in str(calls[-1]) and "封面文案1" in str(calls[-1])
+    with scope():
+        cold = Database(db.path)
+        restored = ContentGrowthService(cold).content(COMPANY, workspace, content)
+        assert restored["version"]["entity_id"] == formal["version"]["entity_id"]
+        assert restored["version"]["data"]["publication_package"]["body"] == "第1期正文。"
+        assert {item["version"]["entity_id"] for item in restored["candidates"]} == {first["entity_id"], second["entity_id"]}
+        foundation = RuntimeFoundation(cold)
+        assert foundation.get(first_work)["lifecycle_status"] == "COMPLETED"
+        assert foundation.get(second_work)["lifecycle_status"] == "ACTIVE"
+        continuation = second["data"]["provenance"]["execution_selection"]["publication_continuation"]
+        assert continuation["source_ref"] == formal["version"]["entity_id"]
+        assert continuation["parent_work_ref"] == first_work

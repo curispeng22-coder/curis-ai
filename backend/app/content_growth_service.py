@@ -152,6 +152,50 @@ class ContentGrowthService:
                 continue
         return {"materials": items, "entry": info}
 
+    def publication_attempt(self, con, scope, content_ref, version_ref, candidates=()):
+        started = con.execute(
+            "select payload from evolution_events where tenant_id=? and event_type='conversation.attempt.started' "
+            "and json_extract(payload,'$.execution_selection.purpose')=? "
+            "and json_extract(payload,'$.execution_selection.scope.company_id')=? "
+            "and json_extract(payload,'$.execution_selection.scope.workspace_id')=? "
+            "and json_extract(payload,'$.execution_selection.content_ref')=? "
+            "and json_extract(payload,'$.execution_selection.basis_version_ref')=? "
+            "and json_extract(payload,'$.execution_selection.publication_package')=1 order by event_id desc limit 1",
+            (scope["tenant_id"], CONTENT_PURPOSE, scope["company_id"], scope["workspace_id"], content_ref, version_ref),
+        ).fetchone()
+        if started is None:
+            return None
+        attempt = json.loads(started[0])
+        selection = attempt["execution_selection"]
+        binding_ref = selection["input"]["binding_ref"]
+        binding = con.execute(
+            "select payload from evolution_events where tenant_id=? and event_type='cg.discussion.bound' and idempotency_key=?",
+            (scope["tenant_id"], binding_ref),
+        ).fetchone()
+        if (binding is None or selection["scope"] != scope
+                or (original := json.loads(binding[0]))["scope"] != scope
+                or original["content_ref"] != content_ref or original["basis_version_ref"] != version_ref
+                or original["conversation_id"] != attempt["conversation_id"]):
+            raise ContentGrowthConflict("内容包请求的原讨论来源无法核验。")
+        attempt_id = attempt["attempt_id"]
+        finished = con.execute(
+            "select payload from evolution_events where tenant_id=? and correlation_id=? "
+            "and event_type='conversation.attempt.finished' and json_extract(payload,'$.attempt_id')=? "
+            "order by event_id desc limit 1",
+            (scope["tenant_id"], original["conversation_id"], attempt_id),
+        ).fetchone()
+        result = json.loads(finished[0]) if finished else attempt
+        if result.get("effect_status") == "UNKNOWN":
+            status = "UNKNOWN"
+        elif not finished and attempt_id not in self.conversations.running:
+            status = "UNKNOWN"
+        else:
+            status = result["status"]
+        candidate = next((candidate["version"]["entity_id"] for candidate in candidates
+            if candidate["version"]["data"].get("attempt_id") == attempt_id), None)
+        return {"binding_ref": binding_ref, "attempt_id": attempt_id, "work_ref": selection["work_ref"],
+                "status": status, "candidate_ref": candidate}
+
     def content(self, company, workspace, content_ref, *, connection=None):
         scope_info=self.entry.authoring_scope(company,workspace,connection=connection)
         def read(con):
@@ -183,6 +227,8 @@ class ContentGrowthService:
                 if version["data"].get("targetAccountRefs"): reasons.append("目标账号依据未获验证。")
                 try: self.check_qualification(self.entry.authoring_scope(company,workspace,connection=con), version["data"])
                 except (ValueError, RuntimeScopeError, KeyError) as error: reasons.append(str(error))
+                if head["data"].get("work", {}).get("publication_brief") and not version["data"].get("publication_package"):
+                    reasons.append("此候选缺少可采用的完整内容包。")
                 if version["data"].get("source_class") == "MANUAL_CANDIDATE":
                     try: self._feedback_source(con, company, workspace, content_ref, version["entity_id"])
                     except (ValueError, RuntimeScopeError, ContentGrowthConflict, KeyError, TypeError, AttributeError) as error:
@@ -218,7 +264,12 @@ class ContentGrowthService:
                     "feedback_version":feedback_version,"feedback":feedback})
             from .content_growth_operating_service import ContentGrowthOperatingService
             context = ContentGrowthOperatingService(self.db, service=self).context(con, scope_info, content_ref, head["entity_id"])
-            return {"content":item,"version":head,"versions":versions,"candidates":candidates,"operating_context":context}
+            result = {"content": item, "version": head, "versions": versions,
+                      "candidates": candidates, "operating_context": context}
+            if head["data"].get("work", {}).get("publication_brief"):
+                result["publication_attempt"] = self.publication_attempt(
+                    con, scope_info["scope"], content_ref, head["entity_id"], candidates)
+            return result
         if connection is not None: return read(connection)
         with self.db.connect() as con: return read(con)
 
@@ -449,12 +500,43 @@ class ContentGrowthService:
     REFERENCE_ADAPTER = {"ORIGINAL":"BACKGROUND", "PATTERN":"STYLE", "EVIDENCE":"FACT", "DIRECTION":"CONSTRAINT", "CONTEXT":"BACKGROUND"}
     WORK_FIELDS = {"goal","shots","recording_requirements","output_intent","output_spec","source_refs","assignment_ref","recipient_ref","model_key"}
 
+    @staticmethod
+    def publication_package(reply):
+        # Provider output is content, not an instruction or a source of permissions.
+        raw = reply.strip()
+        if raw.startswith("```json\n") and raw.endswith("\n```"):
+            raw = raw[8:-4]
+        try:
+            package = json.loads(raw)
+        except (TypeError, ValueError) as error:
+            raise ContentGrowthConflict("员工回复不是完整的内容包，请查看原结果。") from error
+        limits = {"title": 240, "body": 8000, "cover_copy": 500, "publishing_advice": 1500}
+        if not isinstance(package, dict) or set(package) != set(limits) | {"tags"}:
+            raise ContentGrowthConflict("内容包必须包括标题、正文、标签、封面文案与发布建议。")
+        for field, maximum in limits.items():
+            value = package[field]
+            if not isinstance(value, str) or not value.strip() or len(value) > maximum:
+                raise ContentGrowthConflict("内容包字段为空或超出长度限制。")
+        tags = package["tags"]
+        if (not isinstance(tags, list) or not 1 <= len(tags) <= 12
+                or any(not isinstance(tag, str) or not tag.strip() or len(tag) > 60 for tag in tags)):
+            raise ContentGrowthConflict("内容包需要一至十二个有效标签。")
+        return package
+
     def technical_references(self, references):
         return [{**r, "purpose": self.REFERENCE_ADAPTER.get(r["purpose"], r["purpose"])} for r in references]
 
     def work_metadata(self, info, work):
-        if not isinstance(work,dict) or set(work) != self.WORK_FIELDS:
+        if not isinstance(work, dict) or set(work) not in (self.WORK_FIELDS, self.WORK_FIELDS | {"publication_brief"}):
             raise ValueError("脚本依据字段不完整或包含未授权媒体/来源字段。")
+        if "publication_brief" in work:
+            brief = work["publication_brief"]
+            if (info["definition"]["version"] != VERSION_2 or not isinstance(brief, dict)
+                    or set(brief) != {"platform", "confirmed_topic"}
+                    or not isinstance(brief["platform"], str) or not 1 <= len(brief["platform"].strip()) <= 80
+                    or not isinstance(brief["confirmed_topic"], str) or not 1 <= len(brief["confirmed_topic"].strip()) <= 240
+                    or not isinstance(work["goal"], str) or not work["goal"].strip()):
+                raise ValueError("请确认有界选题、目标平台与内容目标。")
         limits = {"goal":1000,"recording_requirements":2000,"output_spec":1000,"assignment_ref":256,"recipient_ref":256,"model_key":256}
         for k,limit in limits.items():
             if not isinstance(work[k],str) or len(work[k]) > limit: raise ValueError("脚本依据超出字段边界。")
@@ -503,7 +585,10 @@ class ContentGrowthService:
         format=data.get("format","graphic")
         if format not in (("graphic",) if legacy else FORMATS): raise ValueError("内容格式未获授权。")
         metadata={"format":format,"topic":data["topic"],"audience":data["audience"],"targetAccountRefs":[],"references":self.resolve_references(info["scope"],data.get("references",[])),"kind":"draft"}
-        if not legacy: metadata.update(self.work_metadata(info,data.get("work")))
+        if not legacy:
+            metadata.update(self.work_metadata(info, data.get("work")))
+            if "publication_brief" in metadata["work"] and format != "graphic":
+                raise ValueError("当前内容包仅支持图文工作。")
         return metadata
 
     def resolve_references(self, scope, references):
@@ -577,6 +662,9 @@ class ContentGrowthService:
             metadata=self.draft_metadata(info,data,candidate=action=="candidate")
             refs=metadata["references"]
             if action == "create":
+                brief = metadata.get("work", {}).get("publication_brief")
+                if brief and (data["title"] != brief["confirmed_topic"] or not data["body"].strip()):
+                    raise ValueError("新建内容包前请确认选题并保存原始需求。")
                 item,_=self.workspace.create_content_item(company_id=company,workspace_id=workspace,blueprint_version=info["blueprint_version"],
                     platform="",owner_ref=info["actor"],outcome_ref="",intent_ref=data["topic"],platform_variant="",payload_ref="",
                     author=info["actor"],constraints_check="LOCAL_AUTHORING_NO_PUBLICATION",title=data["title"],body=data["body"],
@@ -584,6 +672,11 @@ class ContentGrowthService:
                     script_metadata={k:metadata[k] for k in ("work","qualification") if k in metadata})
                 return self.content(company,workspace,item["entity_id"])
             row=self.content(company,workspace,content_ref)
+            prior_brief = row["version"]["data"].get("work", {}).get("publication_brief")
+            if prior_brief and (action == "candidate" or row["version"]["data"].get("kind") == "adopted"):
+                raise ContentGrowthConflict("请使用内容包工作流程保留正式版本和生成来源。")
+            if metadata.get("work", {}).get("publication_brief") != prior_brief:
+                raise ContentGrowthConflict("当前内容的选题确认依据不可更换。")
             if metadata["format"] != row["content"]["data"]["format"]: raise ValueError("既有内容不能换形态，请显式新建。")
             if action == "save":
                 from .content_growth_operating_service import ContentGrowthOperatingService
@@ -636,6 +729,12 @@ class ContentGrowthService:
                     selected=next(c for c in row["candidates"] if c["version"]["entity_id"] == candidate["entity_id"])
                     if selected["reasons"]: raise ContentGrowthConflict("；".join(selected["reasons"]))
                     basis=next(v for v in row["versions"] if v["entity_id"] == candidate["data"]["basis_version_ref"])
+                    if basis["data"].get("work", {}).get("publication_brief") and (
+                        not candidate["data"].get("publication_package")
+                        or not candidate["data"].get("provenance", {}).get("execution_selection", {}).get("publication_package")
+                        or not candidate["data"]["provenance"]["execution_selection"].get("work_ref")
+                    ):
+                        raise ContentGrowthConflict("请先回收并核对原员工生成的完整内容包。")
                     if candidate["data"].get("source_class") == "CONVERSATION_REPLY":
                         source = candidate["data"]["dialogue_source"]
                         proof = self.conversations.dialogue_result(con, company, workspace, content_ref,
@@ -645,8 +744,15 @@ class ContentGrowthService:
                     else:
                         self.selection(basis,candidate["data"]["selection"])
                 if not replay and candidate["data"].get("provenance", {}).get("execution_selection", {}).get("work_ref"):
+                    provider_text = candidate["data"].get("provider_reply", candidate["data"]["body"])
+                    if "publication_package" in candidate["data"] and (
+                        self.publication_package(provider_text) != candidate["data"]["publication_package"]
+                        or candidate["data"]["body"] != candidate["data"]["publication_package"]["body"]
+                        or candidate["data"]["title"] != candidate["data"]["publication_package"]["title"]
+                    ):
+                        raise ContentGrowthConflict("候选内容包与原员工回复不一致。")
                     self.conversations.accept_model_work(con, provenance=candidate["data"]["provenance"],
-                        task_ref=candidate["data"]["task_ref"], candidate_ref=candidate["entity_id"], text=candidate["data"]["body"],
+                        task_ref=candidate["data"]["task_ref"], candidate_ref=candidate["entity_id"], text=provider_text,
                         decision_ref=key, actor=info["actor"])
                 self.workspace.adopt_content_candidate(con,row["content"],candidate,author=info["actor"],request_id=request_id,
                     expected_version_ref=expected_version_ref,checks=data["checks"])
@@ -695,15 +801,26 @@ class ContentGrowthService:
                 raise RuntimeScopeError("本次员工与原保存责任不一致。")
             if refs != row["version"]["data"]["references"]:
                 raise ContentGrowthConflict("引用与原保存依据不一致。")
+        data = row["version"]["data"]
+        continuation = None
+        if data.get("kind") == "adopted" and data.get("publication_package"):
+            execution = data.get("provenance", {}).get("execution_selection", {})
+            if not execution.get("work_ref"):
+                raise ContentGrowthConflict("正式内容包缺少原 Work，无法续做。")
+            continuation = {"source_ref": row["version"]["entity_id"], "parent_work_ref": execution["work_ref"],
+                "sha256": digest(data["publication_package"])}
         return {"kind": "content-growth", "scope": info["scope"],
                 "content_ref": source["content_ref"], "version_ref": source["expected_version_ref"],
-                "selection": selected, "references": refs, "saved_content": row["version"]["data"]}
+                "selection": selected, "references": refs, "saved_content": data,
+                **({"publication_continuation": continuation} if continuation else {})}
 
     def prepare_message(self, company, workspace, content_ref, *, binding_ref, body, request_id, model_key, expected_version_ref, selection, references, work_ref=""):
         row=self.content(company,workspace,content_ref)
         query=self.query_request(company,workspace,content_ref,binding_ref)
         binding=query["binding"]
         inputs={"body":body,"model_key":model_key,"expected_version_ref":expected_version_ref,"selection":selection,"references":references}
+        if row["version"]["data"].get("work", {}).get("publication_brief"):
+            inputs["binding_ref"] = binding_ref
         if work_ref:
             inputs["work_ref"] = work_ref
         originals=[m for m in query["messages"] if m.get("idempotency_key") == request_id]
@@ -732,6 +849,15 @@ class ContentGrowthService:
             "grant":policy["grant"],"source_class":policy["grant"].get("source_class","REAL_PROVIDER"),"input":inputs}
         if work_ref:
             execution.update(work_ref=work_ref, work_instruction=body.strip())
+        saved = row["version"]["data"]
+        if saved.get("work", {}).get("publication_brief"):
+            if not work_ref:
+                raise ValueError("正式内容包必须通过关联工作生成。")
+            execution["publication_package"] = True
+            if saved.get("kind") == "adopted" and saved.get("publication_package"):
+                execution["publication_continuation"] = {"source_ref": expected_version_ref,
+                    "parent_work_ref": saved.get("provenance", {}).get("execution_selection", {}).get("work_ref"),
+                    "sha256": digest(saved["publication_package"])}
         if info["definition"]["version"] != VERSION:
             execution["basis_sha256"]=digest(row["version"]["data"])
             self.reply_context(execution)  # Validate selected-input size before append/claim.
@@ -768,6 +894,12 @@ class ContentGrowthService:
         work=saved["work"]
         result={"version_ref":selection["basis_version_ref"],"basis_sha256":selection["basis_sha256"],"format":saved["format"],"title":saved["title"],"topic":saved["topic"],"audience":saved["audience"],"selection":selected,
             "work":{k:work[k] for k in ("goal","recording_requirements","output_intent","output_spec","source_refs")},"references":references}
+        if selection.get("publication_package"):
+            result["publication_brief"] = work["publication_brief"]
+            if selection.get("publication_continuation"):
+                result["previous_formal_package"] = saved["publication_package"]
+                # The whole prior package already carries the authorized body.
+                result["selection"] = {key: value for key, value in selected.items() if key != "excerpt"}
         # Full body, all other shots and qualification remain referenced server truth.
         # Never truncate a selected excerpt, shot or evidence to make it executable.
         if len(json.dumps(result,ensure_ascii=False,separators=(",",":")).encode("utf-8"))>16000:
@@ -866,6 +998,10 @@ class ContentGrowthService:
                 data={**basis["data"],"kind":"candidate","body":reply["body"],"basis_version_ref":basis["entity_id"],
                     "selection":execution["selection"],"references":execution["references"],"task_ref":reply["task_ref"],
                     "attempt_id":attempt_id,"provenance":provenance,"source_class":execution["source_class"]}
+                if execution.get("publication_package"):
+                    package = self.publication_package(reply["body"])
+                    data.update(publication_package=package, provider_reply=reply["body"],
+                        title=package["title"], body=package["body"], tags=package["tags"])
                 ref=self.workspace._insert_content_version_in_connection(con,row["content"],data,info["actor"])
                 con.execute("insert into evolution_events(tenant_id,correlation_id,event_type,payload,idempotency_key) values (?,?,'cg.candidate.created',?,?)",
                     (TenantContext.current_tenant_id(),content_ref,json.dumps({"version_ref":ref,"attempt_id":attempt_id,"request_id":request_id}),key))

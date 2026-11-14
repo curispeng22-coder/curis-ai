@@ -984,7 +984,20 @@ WRITING_EMPLOYEE_PRESETS = [{'templateId': 'official.employee.writing.chief_edit
 WRITING_COLLABORATION = '# 写作团队三人协作说明\n\n## 协作顺序\n\n固定流水线：**主编规划 → 作者成稿 → 编辑检查**。\n\n```text\n用户需求\n   │\n   ▼\n① 主编：需求 → 写作计划（plan）\n   │\n   ▼\n② 作者：plan (+ 参考资料/上一版) → 候选文稿（draft）\n   │\n   ▼\n③ 编辑：draft + plan → 检查结论（review）\n   │        ├─ pass → 交给用户审核，由用户决定是否采用\n   │        └─ revise → 退回作者（见「编辑退回后的处理」）\n```\n\n每一步只做自己环节的事，不跳级、不代做。最终采用与否由用户决定，三人都不替用户拍板。\n\n## 每一步交接的数据\n\n### ① 用户需求 → 主编\n\n用户填写：主题（topic）、要求（requirements）、风格（style）、长度（length）、参考资料（references）、上一正式版本（previousVersion，仅续做）。\n\n### ② 主编 → 作者\n\n| 主编输出字段 | 作者输入字段 |\n|---|---|\n| 完整计划对象（planTitle / structure / styleGuide / assignment / revisionNotes） | `plan` |\n| 计划中的 `revisionNotes` | `revisionNotes`（续做时必填） |\n| （透传）用户给的参考资料 references | `references` |\n| （透传）上一正式版本 previousVersion | `previousVersion`（续做时必填） |\n\n主编的 `openQuestions` 若不为空，先回到用户补答，不直接进作者环节（作者按计划里写明的默认假设先写也可以，由用户选）。\n\n### ③ 作者 → 编辑\n\n| 作者输出字段 | 编辑输入字段 |\n|---|---|\n| 完整候选文稿对象（title / content / wordCount / basedOnVersionId / changeLog / notes） | `draft` |\n| （透传）主编的 plan | `plan` |\n| （透传）主编的 revisionNotes | `revisionNotes`（续做时必填） |\n| （透传）上一正式版本 previousVersion | `previousVersion`（续做时必填） |\n\n### ③ 编辑 → 用户\n\n编辑输出完整 review 对象（decision / summary / issues / suggestions / planCompliance / placeholderWarnings）。`decision=pass` 时连同 draft 一起交用户审核；用户决定采用后生成新的正式版本。\n\n## 编辑退回后的处理\n\n1. `decision=revise` 时，候选文稿不进入用户采用环节，直接退回作者。\n2. 退回时把 review 的 `suggestions` 和 `issues` 原样装入作者输入的 `reviewFeedback` 字段（`decision`、`suggestions` 必填，`issues` 供参考）。\n3. 作者逐条处理 `reviewFeedback.suggestions`：改了的在 `changeLog` 里记录；不同意改的写在 `notes` 里说明理由。其余与续做规则相同——保留部分不得顺手改。\n4. 改完重新走 ③ 检查。编辑复查时先核对上次的 blocker 是否消除，再看新问题。\n5. 同一篇稿子连续 3 次被判 revise，暂停循环，把三份 review 一并交用户决定：换方向重开任务，还是用户自己改。\n'
 
 
-def professional_team_contract(package_id, version, digest, *, legacy_writing=False):
+CONTENT_GROWTH_EMPLOYEE_PRESETS = [
+    {"templateId": "official.employee.content_growth.lead", "displayName": "内容负责人",
+     "responsibilityKey": "BUSINESS_LEADER", "responsibility": "核对内容目标和发布边界，由用户决定是否采用。",
+     "departmentType": "content_growth", "outputContract": {}},
+    {"templateId": "official.employee.content_growth.editor", "displayName": "内容编辑",
+     "responsibilityKey": "CONTENT_AUTHOR", "responsibility": "按确认选题和目标受众起草完整内容包，交用户审核采用。",
+     "departmentType": "content_growth", "outputContract": {"requiresResult": True}},
+    {"templateId": "official.employee.content_growth.planner", "displayName": "选题策划",
+     "responsibilityKey": "CONTENT_TOPIC_PLANNER", "responsibility": "根据主题、受众、平台和目标提供候选选题。",
+     "departmentType": "content_growth", "outputContract": {}},
+]
+
+
+def professional_team_contract(package_id, version, digest, *, legacy_writing=False, legacy_content_growth=False):
     match = PROFESSIONAL_TEAM_PACKAGES.get((package_id, version))
     if match is None:
         if package_id in {key[0] for key in PROFESSIONAL_TEAM_PACKAGES}:
@@ -1007,6 +1020,13 @@ def professional_team_contract(package_id, version, digest, *, legacy_writing=Fa
             leaderKey=chief["responsibilityKey"], leaderResponsibility=chief["responsibility"],
             reviewerKey=reviewer["responsibilityKey"], members=json.loads(json.dumps(WRITING_EMPLOYEE_PRESETS)),
             collaboration=WRITING_COLLABORATION, version="2")
+    if kind == "content_growth" and version == "0.2.0" and not legacy_content_growth:
+        leader, editor, planner = CONTENT_GROWTH_EMPLOYEE_PRESETS
+        contract.update(templateId=editor["templateId"], displayName=editor["displayName"],
+            responsibility=editor["responsibility"], leaderResponsibility=leader["responsibility"],
+            plannerKey=planner["responsibilityKey"], members=json.loads(json.dumps(CONTENT_GROWTH_EMPLOYEE_PRESETS)),
+            collaboration="选题策划提供选题，用户确认后由内容编辑生成，内容负责人核对工作范围。",
+            version="2")
     contract["sha256"] = hashlib.sha256(json.dumps(contract, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return contract
 
@@ -1034,7 +1054,7 @@ class EmployeeTemplateContract:
             (tenant, company_id, workspace_id)).fetchall()
         if len(instance) != 1 or tuple(instance[0]) != (contract["packageId"], contract["packageVersion"], contract["packageDigest"]):
             raise ValueError("Initial team contract is outside the installed Package identity")
-        writing = contract["departmentType"] == "writing"
+        team_members = bool(contract.get("members"))
         members = contract.get("members") or [{"templateId": contract["templateId"],
             "displayName": contract["displayName"], "responsibility": contract["responsibility"],
             "departmentType": contract["departmentType"]}]
@@ -1055,29 +1075,29 @@ class EmployeeTemplateContract:
             if (any(template[key] != value for key, value in zip(("id", "slug", "name", "role", "responsibility", "department_type"), values))
                     or template["source"] != "official" or template["tenant_id"] != "platform" or not template["enabled"]
                     or template["default_instructions"] != instructions
-                    or (writing and template["description"] != description)
+                    or (team_members and template["description"] != description)
                     or any(template[key] for key in ("persona_ref", "default_skill", "default_tool"))
                     or any(json.loads(template[key]) for key in ("default_capability_types_json", "default_model_policy_json", "default_workflow_step_types_json", "guardrails_json"))):
                 raise ValueError("Professional Employee definition conflicts with the approved catalog")
             employee_id = f"emp-{uuid.uuid4()}"
             # Snapshot all input/output/continuation/examples verbatim for execution readers.
-            snapshot = instructions + ("\n\n" + description + "\n\n" + contract["collaboration"] if writing else "")
+            snapshot = instructions + ("\n\n" + description + "\n\n" + contract["collaboration"] if team_members else "")
             connection.execute("insert into employee_instances(id,tenant_id,company_id,department_id,template_id,created_from_template_id,name,role,status,instructions_override) "
                 "values (?,?,?,'',?,?,?,?,'idle',?)", (employee_id, tenant, company_id, template_id, template_id, member["displayName"], member["displayName"], snapshot))
             holders[template_id] = employee_id
             entity(employee_id, "AI_EMPLOYEE", "AVAILABLE", {"companyEmployeeRef": employee_id,
                 "officialDefinitionRef": template_id, "name": member["displayName"], "role": member["displayName"]})
         employee_id = holders[contract["templateId"]]
-        ordered = [members[0], members[1], members[2]] if writing else [members[0], members[0]]
+        ordered = [members[0], members[1], members[2]] if team_members else [members[0], members[0]]
         assignments = []
         routing = ResponsibilityRoutingRuntime(self.database)
         for index, member in enumerate(ordered):
             leader = index == 0
             holder = holders[member["templateId"]]
             role_id = str(uuid.uuid4())
-            key = member["responsibilityKey"] if writing else contract["leaderKey" if leader else "authorKey"]
-            responsibility = member["responsibility"] if writing else contract["leaderResponsibility" if leader else "responsibility"]
-            entity(role_id, "ROLE_SLOT", "ASSIGNED", {"name": member["displayName"] if writing or not leader else "业务负责人",
+            key = member["responsibilityKey"] if team_members else contract["leaderKey" if leader else "authorKey"]
+            responsibility = member["responsibility"] if team_members else contract["leaderResponsibility" if leader else "responsibility"]
+            entity(role_id, "ROLE_SLOT", "ASSIGNED", {"name": member["displayName"] if team_members or not leader else "业务负责人",
                 "responsibility": responsibility, "officialDefinitionRef": member["templateId"]},
                 None if leader else workspace_id, holder)
             assignment = routing.create_assignment_in_connection(connection, company_id=company_id,
@@ -1085,13 +1105,13 @@ class EmployeeTemplateContract:
                 workspace_id=None if leader else workspace_id, role_ref=role_id, employee_ref=holder,
                 responsibility_key=key, responsibility=responsibility, is_leader=leader,
                 input_contract=member.get("inputContract", {}),
-                output_contract=member["outputContract"] if writing else ({} if leader else {"coverage": contract["coverage"], "independentReview": False}))
+                output_contract=member["outputContract"] if team_members else ({} if leader else {"coverage": contract["coverage"], "independentReview": False}))
             assignments.append({"roleRef": role_id, "assignmentRef": assignment["entity_id"],
                 "scopeType": "BUSINESS" if leader else "WORKSPACE", "scopeRef": business_id if leader else workspace_id})
         leader_ref = holders[members[0]["templateId"]]
         return {"contractVersion": contract["version"], "contractSHA256": contract["sha256"],
             "templateRef": contract["templateId"], "employeeRef": employee_id, "leaderRef": leader_ref,
-            **({"reviewerRef": holders[members[2]["templateId"]]} if writing else {}),
+            **({("reviewerRef" if contract["departmentType"] == "writing" else "plannerRef"): holders[members[2]["templateId"]]} if team_members else {}),
             "businessRef": business_id, "workspaceRef": workspace_id, "assignments": assignments,
             "coverage": contract["coverage"], "executionVerification": "UNVERIFIED"}
 
@@ -1107,25 +1127,26 @@ class EmployeeTemplateContract:
                   "employee_ref": json.loads(row["data_json"]).get("employeeRef")} for row in rows]
         if not rows:
             return {"basis": basis, "team": None}
-        writing = contract["departmentType"] == "writing" and contract["version"] == "2"
-        if writing and len(rows) == 2:
+        team_members = bool(contract.get("members"))
+        if team_members and len(rows) == 2:
             contract = professional_team_contract(
                 contract["packageId"], contract["packageVersion"], contract["packageDigest"],
-                legacy_writing=True,
+                legacy_writing=True, legacy_content_growth=True,
             )
-            writing = False
-        if len(rows) != (3 if writing else 2):
+            team_members = False
+        if len(rows) != (3 if team_members else 2):
             raise ValueError("Existing team requires explicit arrangement review")
         assignments = [json.loads(row["data_json"]) for row in rows]
         expected = {(contract["leaderKey"], "BUSINESS", business_id), (contract["authorKey"], "WORKSPACE", workspace_id)}
-        if writing:
-            expected.add((contract["reviewerKey"], "WORKSPACE", workspace_id))
+        if team_members:
+            expected.update((member["responsibilityKey"], "WORKSPACE", workspace_id)
+                for member in contract["members"][1:])
         if {(a.get("responsibilityKey"), a.get("scopeType"), a.get("scopeRef")) for a in assignments} != expected:
             raise ValueError("Existing team responsibilities differ from the approved initial composition")
         if any(a.get("isLeader") is not (a["scopeType"] == "BUSINESS") for a in assignments):
             raise ValueError("Existing team leader arrangement requires review")
         refs = {a.get("employeeRef") for a in assignments}
-        if len(refs) != (3 if writing else 1) or not all(row["lifecycle_status"] == "ACTIVE" for row in rows):
+        if len(refs) != (3 if team_members else 1) or not all(row["lifecycle_status"] == "ACTIVE" for row in rows):
             raise ValueError("Existing team is disabled or independently arranged")
         people = {}
         for employee_ref in refs:
@@ -1138,13 +1159,19 @@ class EmployeeTemplateContract:
                 (tenant, company_id, company_ref)).fetchone()
             if person is None:
                 raise ValueError("Current team has no available canonical Company Employee")
-            if contract["departmentType"] == "writing" and contract["version"] == "1" and (
+            if contract["departmentType"] in {"writing", "content_growth"} and contract["version"] == "1" and (
                 person["template_id"] != contract["templateId"]
                 or person["created_from_template_id"] != contract["templateId"]
             ):
-                raise ValueError("Legacy Writing team has no canonical legacy template provenance")
+                raise ValueError("Legacy professional team has no canonical legacy template provenance")
             people[employee_ref] = (company_ref, person)
         for row, assignment in zip(rows, assignments):
+            if team_members:
+                template = next(member["templateId"] for member in contract["members"]
+                    if member["responsibilityKey"] == assignment["responsibilityKey"])
+                _, person = people[assignment["employeeRef"]]
+                if (person["template_id"], person["created_from_template_id"]) != (template, template):
+                    raise ValueError("Current role does not match the canonical employee preset")
             role = connection.execute("select * from runtime_entities where tenant_id=? and company_id=? and entity_id=? and entity_type='ROLE_SLOT'",
                 (tenant, company_id, assignment.get("roleRef"))).fetchone()
             required_workspace = workspace_id if assignment["scopeType"] == "WORKSPACE" else None
@@ -1700,7 +1727,7 @@ class EmployeeTemplateContract:
         """Validate existing canonical arrangements; never materialize or grant here."""
         from .resource_scope_policy import ResourceScopePolicy
         if employee["template_id"] not in ({row[0] for row in PROFESSIONAL_TEAM_DEFINITIONS.values()}
-                | {member["templateId"] for member in WRITING_EMPLOYEE_PRESETS}):
+                | {member["templateId"] for member in [*WRITING_EMPLOYEE_PRESETS, *CONTENT_GROWTH_EMPLOYEE_PRESETS]}):
             return []
         tenant, company = TenantContext.current_tenant_id(), employee["company_id"]
         packages = connection.execute(
@@ -1714,6 +1741,7 @@ class EmployeeTemplateContract:
                 contract = professional_team_contract(
                     package["package_id"], package["package_version"], package["package_digest"],
                     legacy_writing=employee["template_id"] == PROFESSIONAL_TEAM_DEFINITIONS["writing"][0],
+                    legacy_content_growth=employee["template_id"] == PROFESSIONAL_TEAM_DEFINITIONS["content_growth"][0],
                 )
                 if not contract:
                     continue
