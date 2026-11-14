@@ -224,6 +224,10 @@ class ContentGrowthEntryService:
             expected_purpose = PURPOSE if info["definition"]["version"] == VERSION else CONTENT_PURPOSE
             if selection["purpose"] != expected_purpose:
                 raise RuntimeScopeError("原执行用途与组件版本不一致。")
+            if selection.get("publication_package"):
+                latest = service.publication_attempt(con, scope, selection["content_ref"], selection["basis_version_ref"])
+                if latest and latest["attempt_id"] != attempt_id and latest["status"] in {"COMPLETED", "RUNNING", "UNKNOWN", "UNVERIFIED"}:
+                    raise RuntimeScopeError("原内容包请求已保留，请先查询并回收原结果。")
             service.check_qualification(info, row["version"]["data"])
             if info["definition"]["version"] == VERSION_2:
                 from .conversation_service import digest

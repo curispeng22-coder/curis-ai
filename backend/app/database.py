@@ -197,6 +197,13 @@ _SECURITY_BACKFILL: dict[str, tuple[str, list[str]]] = {
 }
 
 
+FIRST_LAUNCH_DEPARTMENT_TEMPLATES = {
+    "content_growth": "dt_content_growth",
+    "writing": "official.department.writing",
+    "music": "dt_music",
+}
+
+
 class Database:
     def __init__(self, path: str = "curis.sqlite"):
         self.path = path
@@ -2854,6 +2861,13 @@ class Database:
         超出规范集的新增类型须走 gate + ADR（ADR-0017 D4），本 slice 不预设。
         """
         # CEO 2026-10-10: catalog supply only; never creates Company departments.
+        connection.execute(
+            "insert or ignore into department_templates "
+            "(id,slug,name,department_type,description,version,status,source,tenant_id,enabled) "
+            "values (?, 'writing', '写作部', 'writing', '本地写作与版本续做。', "
+            "'1.0.0', 'active', 'official', 'platform', 1)",
+            (FIRST_LAUNCH_DEPARTMENT_TEMPLATES["writing"],),
+        )
         content_growth = (
             "content_growth", "business", "内容增长部",
             "本地图文、长短视频及口播文本与脚本、来源版本自检、账号资料、人工核验、观察与经验；不保证真实媒体、平台连接发布、自动采集、独立审核或 Provider 执行。",
@@ -3679,6 +3693,28 @@ class Database:
                     "update employee_instances set status = 'deprecated', enabled = 0 where id = ?",
                     (row["id"],),
                 )
+
+        # Exact first-launch aliases are the same department identity. Preserve all
+        # relationships and lifecycle flags, including any prior archive.
+        for kind in ("content_growth", "music"):
+            legacy_template = f"official.department.{kind}"
+            target = FIRST_LAUNCH_DEPARTMENT_TEMPLATES[kind]
+            candidates = connection.execute(
+                "select di.id, di.tenant_id, di.company_id, c.ceo_id from department_instances di "
+                "join companies c on c.company_id = di.company_id and c.tenant_id = di.tenant_id "
+                "where di.template_id = ? and di.department_type = ? and di.deleted_at is null "
+                "and not exists (select 1 from department_templates where id = ?) "
+                "and exists (select 1 from department_templates where id = ? and enabled = 1)",
+                (legacy_template, kind, legacy_template, target),
+            ).fetchall()
+            for row in candidates:
+                identity = f"{row['tenant_id']}:{row['ceo_id']}:{row['company_id']}"
+                suffix = hashlib.sha256(identity.encode()).hexdigest()[:24]
+                if row["id"] == f"department-launch-{suffix}-{kind}":
+                    connection.execute(
+                        "update department_instances set template_id = ? where id = ?",
+                        (target, row["id"]),
+                    )
 
         legacy_departments = {
             "dt_ai_rd": "dt_engineering",

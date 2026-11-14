@@ -26,21 +26,25 @@ def legacy(tmp_path,monkeypatch):
   detail=install(runtime)
  return db,runtime,detail,original
 
-@pytest.mark.parametrize('folder',['writing_authoring','content_growth_v02','music'])
-def test_new_install_true_identity_two_assignments_and_same_business_retry(tmp_path,folder):
+@pytest.mark.parametrize(('folder','assignment_count','employee_count'),[
+ ('writing_authoring',2,1),
+ ('content_growth_v02',3,3),
+ ('music',2,1),
+])
+def test_new_install_true_identity_two_assignments_and_same_business_retry(tmp_path,folder,assignment_count,employee_count):
  db,runtime=company_only(tmp_path)
  with scope():
   detail=install(runtime,folder);ws=detail['instance']['workspace_id']
   with db.connect() as con:
-   assignments=con.execute("select data_json from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchall();assert len(assignments)==2
+   assignments=con.execute("select data_json from runtime_entities where entity_type='RESPONSIBILITY_ASSIGNMENT'").fetchall();assert len(assignments)==assignment_count
    employee=json.loads(assignments[0][0])['employeeRef']
-   assert con.execute('select count(*) from employee_instances').fetchone()[0]==1
+   assert con.execute('select count(*) from employee_instances').fetchone()[0]==employee_count
    assert con.execute('select count(*) from employee_capability_bindings').fetchone()[0]==0
   identity=EmployeeExecutionIdentity(db).resolve(company_id=COMPANY,workspace_id=ws,runtime_employee_ref=employee)
   assert identity['identity_status']=='VERIFIED_EXPLICIT_BRIDGE'
   assert install(runtime,folder)['instance']['workspace_id']==ws
   with pytest.raises(PackageConflictError):install(runtime,folder,'another-business')
-  projection=read_organization_projection(db,CanonicalBusinessSpine(db),COMPANY);assert len(projection['employees'])==1
+  projection=read_organization_projection(db,CanonicalBusinessSpine(db),COMPANY);assert len(projection['employees'])==employee_count
 
 
 def test_confirmed_caller_not_doubled_and_new_install_rollback(tmp_path,monkeypatch):

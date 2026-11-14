@@ -729,3 +729,25 @@ for (const problem of ['dirty','empty','denied','locked']) test(`CG whole saved 
  if(problem==='locked')f.props.locked=true;
  f.render();assert.equal(f.composer().props.disabled,true);await f.send();assert.equal(f.writes.length,0);f.h.unmount();
 });
+
+
+test("completed package work recovers its candidate without local storage or a duplicate send", async () => {
+  const calls = [];
+  const api = { query: async (...args) => {
+    calls.push(["query", ...args]);
+    return { attempt: { attempt_id: "original-attempt", status: "COMPLETED" } };
+  } };
+  const h = scene("workspace", api, runtime);
+  const props = { company: "A", workspaceId: "w", busy: false, locked: false, collection: { ...collection(), pending_requests: [
+      { content_ref: "content", binding_ref: "other-version-binding", attempt_id: "original-attempt" },
+    ] },
+    row: { content: { entity_id: "content" }, candidates: [],
+      version: { entity_id: "draft", data: { title: "选题", work: { publication_brief: { platform: "小红书" } } } },
+      publication_attempt: { binding_ref: "original-binding", attempt_id: "original-attempt", work_ref: "original-work", status: "COMPLETED" } },
+    perform: async (action, payload) => { calls.push([action, payload.attempt_id]); },
+  };
+  h.render(h.exports.PublicationWork, props);
+  assert.equal(button(h.tree, "交办生成内容包").props.disabled, true);
+  await button(h.tree, "查询并回收原结果").props.onClick();
+  assert.deepEqual(calls, [["query", "A", "w", "content", "original-binding", "original-attempt"], ["materialize", "original-attempt"]]);
+});

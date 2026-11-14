@@ -15,6 +15,12 @@ class CommandIn(BaseModel):
     expected_version_ref: str=Field(default="",max_length=256)
     data: dict
 
+class ModelIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    assignment_ref: str = Field(min_length=1, max_length=256)
+    model_key: str = Field(min_length=1, max_length=256)
+
+
 class DiscussionIn(BaseModel):
     model_config=ConfigDict(extra="forbid")
     request_id: str=Field(min_length=1,max_length=128)
@@ -183,6 +189,11 @@ def build_content_growth_router(database,executor,*,service=None):
     @router.get("/observations/{observation}")
     def observation(company:str,workspace:str,observation:str):
         return invoke(lambda:service.observation(company,workspace,observation))
+    @router.post("/model")
+    def prepare_model(company: str, workspace: str, payload: ModelIn):
+        invoke(lambda: service.entry.prepare_model(company, workspace, **payload.model_dump()))
+        return {"prepared": True}
+
     @router.post("/contents")
     def create(company:str,workspace:str,payload:CommandIn):
         return invoke(lambda:service.command(company,workspace,"","create",**payload.model_dump()))

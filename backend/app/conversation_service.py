@@ -277,6 +277,7 @@ class ConversationService:
         if (not kind or source.get("kind") != kind or origin != selected
                 or source.get("scope") != scope or source.get("context") != selection["context"]
                 or source.get("selection") != selection["selection"] or source.get("references") != selection["references"]
+                or source.get("publication_continuation") != selection.get("publication_continuation")
                 or contract.get("problem") != selection.get("work_instruction")
                 or contract.get("modelBinding") != {"bindingRef": selection["binding_id"], "model": selection["model"]}
                 or route.get("status") in {"CANCELLED", "COMPLETED"}
@@ -1200,6 +1201,16 @@ class ConversationService:
                     f"当前责任：{context['responsibility']}\n已授权当前对象对话：{json.dumps(recent, ensure_ascii=False)}\n本次CEO消息：{message['body']}\n"
                     f"本次已核验选段与来源：{json.dumps(selected_context,ensure_ascii=False,separators=(',',':'))}\n"
                     "只讨论这次选段或镜头；完整原脚本保留在原版本，不从旧聊天补正文。不执行媒体制作或发布，不猜测事实。")
+                if selection.get("publication_package"):
+                    prompt = (
+                        f"你是{identity['employee']['name']}，负责内容编辑。\n"
+                        f"本次要求：{message['body']}\n"
+                        f"已核验内容依据：{json.dumps(selected_context, ensure_ascii=False, separators=(',', ':'))}\n"
+                        '只返回一个 JSON 对象，字段严格为 title、body、tags、cover_copy、publishing_advice。'
+                        'tags 是字符串数组，其余字段是非空字符串。生成完整的图文内容包。'
+                        '若包含 previous_formal_package，基于该正式版本和本次要求生成下一期。'
+                        '发布建议仅供人工审核，不执行发布，不编造未提供的事实。'
+                    )
                 if len(prompt.encode("utf-8"))>32000:
                     raise ValueError("当前责任与选段信息超出本次建议范围，输入保留，请显式缩小选择。")
             else:

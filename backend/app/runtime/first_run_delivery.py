@@ -415,13 +415,13 @@ class FirstRunDelivery:
                     team = EmployeeTemplateContract(self.db).materialize_professional_team_in_connection(
                         con, company_id=draft.company_id, business_id=ids["business_id"],
                         workspace_id=ids["workspace_id"], contract=team_contract)
-                    writing = team_contract["departmentType"] == "writing"
+                    team_members = bool(team_contract.get("members"))
                     members = team_contract.get("members") or [
                         {"templateId": team_contract["templateId"], "responsibilityKey": team_contract["leaderKey"]},
                         {"templateId": team_contract["templateId"], "responsibilityKey": team_contract["authorKey"]}]
-                    refs = ([team.get("leaderRef"), team.get("employeeRef"), team.get("reviewerRef")]
-                            if writing else [team.get("employeeRef"), team.get("employeeRef")])
-                    if (not all(refs) or len(set(refs)) != (3 if writing else 1)
+                    refs = ([team.get("leaderRef"), team.get("employeeRef"), team.get("reviewerRef" if team_contract["departmentType"] == "writing" else "plannerRef")]
+                            if team_members else [team.get("employeeRef"), team.get("employeeRef")])
+                    if (not all(refs) or len(set(refs)) != (3 if team_members else 1)
                             or team.get("leaderRef") != refs[0]
                             or team.get("templateRef") != team_contract["templateId"]
                             or team.get("contractSHA256") != team_contract["sha256"]
