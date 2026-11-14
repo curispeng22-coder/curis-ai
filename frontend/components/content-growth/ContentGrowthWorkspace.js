@@ -74,7 +74,7 @@ export function PublicationWork({ company, workspaceId, collection, row, request
   });
   const query = () => run(async () => {
     const retained = currentLocator();
-    const locator = ownPending ? { ...retained, ...ownPending } : retained;
+    const locator = retained?.binding_ref || retained?.unreadable ? retained : ownPending;
     if (!locator?.binding_ref) { setNotice(locator?.unreadable ? "原交办记录无法读取，请先核对原任务。" : "当前内容还没有提交生成。"); return; }
     const result = await api.query(company, workspaceId, row.content.entity_id, locator.binding_ref, locator.attempt_id);
     const attempt = result.attempt || result.attempts?.find((item) =>

@@ -738,7 +738,9 @@ test("completed package work recovers its candidate without local storage or a d
     return { attempt: { attempt_id: "original-attempt", status: "COMPLETED" } };
   } };
   const h = scene("workspace", api, runtime);
-  const props = { company: "A", workspaceId: "w", busy: false, locked: false, collection: collection(),
+  const props = { company: "A", workspaceId: "w", busy: false, locked: false, collection: { ...collection(), pending_requests: [
+      { content_ref: "content", binding_ref: "other-version-binding", attempt_id: "original-attempt" },
+    ] },
     row: { content: { entity_id: "content" }, candidates: [],
       version: { entity_id: "draft", data: { title: "选题", work: { publication_brief: { platform: "小红书" } } } },
       publication_attempt: { binding_ref: "original-binding", attempt_id: "original-attempt", work_ref: "original-work", status: "COMPLETED" } },
