@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AgentWorkControl, ConversationComposer } from "./SharedConversation.js";
 import { EmployeeAvatar } from "./EmployeeAvatar.js";
-import { confirmConversationResearchWork, receiveConversationResult, createConversation, getConversation, sendConversation, getCompanyTextPolicy, getEmployeeConversation, getEmployeeConversationReferences, openEmployeeConversation, sendEmployeeConversation } from "../../lib/v1FrontendApi.js";
+import { confirmConversationResearchWork, receiveConversationResult, createConversation, executeOriginalAgentWork, getConversation, sendConversation, getCompanyTextPolicy, getEmployeeConversation, getEmployeeConversationReferences, openEmployeeConversation, sendEmployeeConversation } from "../../lib/v1FrontendApi.js";
+import { musicApi } from "../../lib/musicApi.js";
+import { getCanonicalBusinesses } from "../../lib/runtimeApi.js";
+import { operatingHref } from "../../lib/musicState.mjs";
 import ResultReferenceView, { resultSelection } from "./ResultReferenceView.js";
 
 function requestReference({ reference_id, workspace_id, kind, version_ref, purpose, locator }) {
@@ -29,8 +32,70 @@ function renewalDraftKey({ tenant_id, company_id, conversation_id, owner_ref }) 
   return `curis.employee.discussion.renewal.${JSON.stringify([tenant_id, company_id, conversation_id, owner_ref])}`;
 }
 
+export function MusicResearchResult({ item }) {
+  return <div>
+    <p>研究证据：{item.evidence_summary}</p>
+    <p><a href={item.source.url} target="_blank" rel="noreferrer">查看原公开来源</a> · <time dateTime={item.source.captured_at}>{item.source.captured_at}</time></p>
+    <p className="break-all">快照校验值：{item.source.snapshot_sha256}</p>
+    <p className="break-all">证据版本：{item.evidence_version}</p>
+    <p className="whitespace-pre-wrap">负责人建议：{item.opportunity_summary}</p>
+  </div>;
+}
+
+function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
+  const [delivery, setDelivery] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const pending = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  async function readDelivery(start = false) {
+    if (pending.current) return;
+    if (start && (blocked || !delivery?.can_start_research)) return;
+    pending.current = true;
+    setLoading(true);
+    setError("");
+    try {
+      if (start) await executeOriginalAgentWork(receipt.work_ref);
+      const data = await musicApi.researchDelivery(company, workspace, receipt.conversation_ref, receipt.work_ref);
+      if (data.conversation_ref !== receipt.conversation_ref || data.research_work_ref !== receipt.work_ref) {
+        throw new Error("研究回执与原对话不一致。");
+      }
+      if (mounted.current) setDelivery(data);
+    } catch (reason) {
+      if (mounted.current) { setDelivery(null); setError(reason.message || "暂时无法读取研究交付。"); }
+    } finally {
+      pending.current = false;
+      if (mounted.current) setLoading(false);
+    }
+  }
+  return <div>
+    <button type="button" className="text-ui-primary" disabled={loading} onClick={() => readDelivery()}>读取研究交付</button>
+    {delivery?.can_start_research && <button type="button" className="ml-2 text-ui-primary"
+      disabled={loading || blocked} onClick={() => readDelivery(true)}>启动原研究工作</button>}
+    {error && <p role="alert">{error}</p>}
+    {delivery && !delivery.deliveries.length && <p role="status">原工作尚无已验收的研究交付。</p>}
+    {delivery?.deliveries.map(item => <MusicResearchResult key={item.evidence_ref} item={item} />)}
+    {delivery?.planning_receipts?.map(item => <p role="status" key={item.work_ref}>已创建歌曲策划工作。工作编号：{item.work_ref}</p>)}
+    {(delivery?.deliveries.length > 0 || delivery?.planning_receipts.length > 0) && <a className="text-ui-primary"
+      href={`${operatingHref(workspace, { view: "direction" })}&${new URLSearchParams({
+        research_conversation: receipt.conversation_ref, research_work: receipt.work_ref,
+      })}`}>进入音乐工作台查看策划</a>}
+  </div>;
+}
+
 export default function EmployeeConversation({ companyId, employee, conversationId, businessReturn, embedded = null, active = true, blocked = false }) {
   const [view, setView] = useState(null);
+  const [musicCatalog, setMusicCatalog] = useState(null);
+  const hasResearchReceipts = Boolean(!embedded && view?.research_work_receipts?.length);
+  useEffect(() => {
+    if (!hasResearchReceipts || !companyId) return;
+    let active = true;
+    getCanonicalBusinesses(companyId).then(data => {
+      if (active && data.company_id === companyId) setMusicCatalog(data);
+    }).catch(() => { if (active) setMusicCatalog(null); });
+    return () => { active = false; };
+  }, [companyId, hasResearchReceipts]);
   const [error, setError] = useState("");
   const [received, setReceived] = useState({});
   const receiving = useRef(false);
@@ -383,8 +448,16 @@ export default function EmployeeConversation({ companyId, employee, conversation
         const proposal = !embedded && message.sender.kind === "EMPLOYEE" && message.context?.scope_type === "BUSINESS" && message.research_proposal;
         const receipt = proposal && view.research_work_receipts?.find((item) => item.conversation_ref === view.conversation_id
           && item.proposal_message_ref === message.message_id && item.proposal_version === proposal.version && item.work_ref);
+        const business = receipt && musicCatalog?.company_id === companyId
+          ? musicCatalog.businesses?.find(item => item.business_id === receipt.business_ref && item.company_id === companyId) : null;
+        const musicWorkspaces = (business?.workspaces || []).filter(item =>
+          item.business_type === "PACKAGE" && item.package_id === "com.curis.local.music"
+          && item.package_version === "0.2.0" && item.workspace_id);
         return <article key={message.message_id} id={message.message_id} className="text-ui-2"><p className="font-medium">{message.sender.kind === "CEO" ? "你" : employeeName}</p><p className="whitespace-pre-wrap">{message.display_body || message.body}</p>
-        {receipt ? <p role="status">已创建研究工作。工作编号：{receipt.work_ref}</p>
+        {receipt ? <><p role="status">已创建研究工作。工作编号：{receipt.work_ref}</p>
+          {musicWorkspaces.length === 1 && <MusicResearchDelivery key={`${receipt.work_ref}:${musicWorkspaces[0].workspace_id}`}
+            company={companyId} receipt={receipt} workspace={musicWorkspaces[0].workspace_id}
+            blocked={busy || running || blocked || readState !== "ready"} />}</>
           : proposal ? <button type="button" className="text-ui-primary" disabled={busy || running || blocked || readState !== "ready"}
             onClick={() => confirmResearch(message)}>确认并创建研究工作</button> : null}
         {embedded?.objectRef && message.sender.kind === "EMPLOYEE" && message.task_ref && message.provenance?.execution_selection?.purpose === "CONVERSATION_REPLY" && <div><button type="button" disabled={busy || blocked || !embedded.receiveReady || received[message.message_id]} onClick={() => receiveResult(message)}>{received[message.message_id] ? "已送回业务候选" : "送回当前工作候选"}</button><p>送回后请在候选中核对；明确采用将以这条回复替换当前正文或歌词。接收版本不是生成依据。</p></div>}
