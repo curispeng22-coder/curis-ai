@@ -103,6 +103,102 @@ class MusicMarketEvidence:
         return self.child._entity(self.child._row(con, ref, kind))
 
 
+    def capture_for_model_task(self, context):
+        """One host-owned public capture before this original worker's normal model call."""
+        if context.get("type") != "model" or not str(context.get("execution_ref") or "").startswith("leader:worker:"):
+            return None
+        with self.db.connect() as con:
+            work = self._entity(con, context["work_ref"])
+            root_ref = work["data"].get("leaderRootWorkRef")
+            if not root_ref or not self.applies(con, self._entity(con, root_ref)):
+                return None
+            configured = (work["data"].get("followupContract") or {}).get("marketEvidenceBrowser") or {}
+        from .agent_browser_runtime import agent_browser_release, open_agent_browser_for_work
+        from .agent_browser_policy import PublicTargets
+        from .agent_tool_server import AgentToolSessions
+        from .capability_authorizer import CapabilityAuthorizer
+        from .company_execution_policy import agent_work_claim_active
+        from .evolution_event_log import EvolutionEventLog
+        hosts, source_url = configured.get("hosts") or [], configured.get("sourceUrl")
+        PublicTargets(hosts).url(source_url)
+        if "#" in source_url:
+            raise ValueError("原文 URL 不能含页内片段。")
+        release = agent_browser_release()
+        identity = {"tenant_id": self.tenant, **{k: str(context.get(k) or "") for k in
+            ("company_id", "work_ref", "task_id", "employee_id")}, "binding_ref": str(context.get("binding_id") or "")}
+        actor = TenantContext.current_identity()
+
+        def stopped():
+            try:
+                with TenantContext.scope(tenant_id=self.tenant, company_id=identity["company_id"],
+                        ceo_id=actor.get("ceo_id"), role=actor.get("role")):
+                    with self.db.connect() as con:
+                        child, root, scope = self._lineage(con, identity["work_ref"])
+                        task = con.execute("select * from tasks where tenant_id=? and task_id=?",
+                            (self.tenant, identity["task_id"])).fetchone()
+                        binding = con.execute("select * from employee_capability_bindings where tenant_id=? "
+                            "and id=? and employee_id=? and capability_type='model' and enabled=1",
+                            (self.tenant, identity["binding_ref"], identity["employee_id"])).fetchone()
+                        joined = ConversationService(self.db)._work_database(con)
+                        employee = EmployeeExecutionIdentity(joined).resolve(company_id=identity["company_id"],
+                            runtime_employee_ref=child["owner_ref"])
+                        authorizer = CapabilityAuthorizer(joined)
+                        current = (child["data"].get("followupContract") or {}).get("marketEvidenceBrowser") or {}
+                        return (agent_browser_release(verify_assets=False) != release or current != configured
+                            or not task or task["status"] not in {"RUNNING", "PARSED", "PENDING", "RESUMED"}
+                            or task["requested_capability_type"] != "model" or task["employee_id"] != identity["employee_id"]
+                            or not binding or binding["capability_id"] != context.get("id")
+                            or binding["capability_source"] != context.get("source")
+                            or employee["company_employee_ref"] != identity["employee_id"]
+                            or not authorizer.authorize(identity["employee_id"], "model", context.get("id", ""), connection=con)[0]
+                            or not authorizer.authorize(identity["employee_id"], "tool", "reader", connection=con)[0]
+                            or not agent_work_claim_active(con, **{k: identity[k] for k in
+                                ("tenant_id", "company_id", "work_ref", "task_id")}, execution_ref=context["execution_ref"]))
+            except (ValueError, KeyError, OSError, RuntimeScopeError):
+                return True
+
+        if stopped():
+            raise RuntimeScopeError("公开取证需要原员工、岗位权限、模型绑定及仍有效的原 Task。")
+        events = EvolutionEventLog(self.db)
+        with self.db.connect() as con:
+            con.execute("begin immediate")
+            previous = con.execute("select 1 from evolution_events where tenant_id=? and correlation_id=? "
+                "and event_type in ('work.public_source.capture.claimed','work.public_source.captured')",
+                (self.tenant, identity["task_id"])).fetchone()
+            if previous:
+                raise RuntimeScopeError("本 Task 已领取过浏览器采集；保留原回执，不自动重开。")
+            events.record_in_connection(con, correlation_id=identity["task_id"], event_type="work.public_source.capture.claimed",
+                payload={"identity": identity, "source_url": source_url, "release_sha256": release["releaseSha256"]},
+                idempotency_key="public-source-claim:" + self.tenant + ":" + identity["task_id"])
+        resources = AgentWorkResources(Path(self.db.path).absolute().parent / "agent-work",
+            **{k: identity[k] for k in ("tenant_id", "company_id", "work_ref", "task_id")})
+        resources.prepare([])
+        browser = open_agent_browser_for_work(identity, stopped, hosts=hosts, source_url=source_url)
+        tools = AgentToolSessions()
+        token = tools.register(resources, [], stopped, browser=browser, seconds=80)
+        try:
+            for number, arguments in enumerate(({"action": "navigate", "url": source_url}, {"action": "observe"})):
+                response = tools.handle(token, {"jsonrpc": "2.0", "id": number, "method": "tools/call",
+                    "params": {"name": "browser", "arguments": arguments}})
+                if response["result"]["isError"]:
+                    raise RuntimeScopeError("浏览器未返回可核验原文，未启动模型分析。")
+            receipts, calls = resources.collect(), tools.browser_evidence(token)
+        finally:
+            tools.close(token)
+        shutdown = browser.shutdown_evidence or {}
+        if (stopped() or not shutdown.get("normal_browser_close") or not shutdown.get("proxy_closed")
+                or shutdown.get("held_process", {}).get("direct_child") != "EXITED" or len(receipts) != 1):
+            raise RuntimeScopeError("浏览器关闭或原 Work 权限未核验，未启动模型分析。")
+        calls[-1]["shutdown"] = shutdown
+        raw = resources.read_output(receipts[0])
+        if len(raw) > 120000:
+            raise RuntimeScopeError("原文超出单次材料上限，未启动模型分析。")
+        captured = {"identity": identity, "source_url": source_url, "release_sha256": release["releaseSha256"],
+            "artifact_receipts": receipts, "browser_tool_calls": calls}
+        events.record(correlation_id=identity["task_id"], event_type="work.public_source.captured", payload=captured,
+            idempotency_key="public-source:" + self.tenant + ":" + identity["task_id"])
+        return {**captured, "source_text": raw.decode("utf-8")}
+
     def applies(self, con, root):
         """Only Music Business research from the existing conversation confirmation."""
         cycle = self._entity(con, root["parent_id"], "CYCLE")
@@ -157,7 +253,7 @@ class MusicMarketEvidence:
         joined = ConversationService(self.db)._work_database(con)
         employee = EmployeeExecutionIdentity(joined).resolve(company_id=work["company_id"],
             runtime_employee_ref=work["owner_ref"])["company_employee_ref"]
-        if (not task or task["status"] != "COMPLETED" or task["requested_capability_type"] != "agent"
+        if (not task or task["status"] != "COMPLETED" or task["requested_capability_type"] not in {"agent", "model"}
                 or task["work_ref"] != work["entity_id"]
                 or task["employee_id"] != employee or task["execution_ref"] != records[0]["executionKey"]):
             raise RuntimeScopeError("Task 并非原员工完成的研究结果。")
@@ -179,6 +275,22 @@ class MusicMarketEvidence:
             raise RuntimeScopeError("原用量不属于本员工执行。")
         event = json.loads(events[0]["payload"])
         usage_ref = event.get("usage_record_id")
+        if task["requested_capability_type"] == "model":
+            model_events = con.execute("select event_id,payload from evolution_events where tenant_id=? and correlation_id=? "
+                "and event_type='usage.model_call'", (self.tenant, task_ref)).fetchall()
+            model = json.loads(model_events[0]["payload"]) if len(model_events) == 1 else {}
+            if (len(model_events) != 1 or str(model_events[0]["event_id"]) != records[0]["provenance"].get("evidence_event_ref")
+                    or model.get("usage_record_id") != usage[0]["usage_record_id"]
+                    or usage_ref not in {None, model.get("usage_record_id")}
+                    or any(model.get(k) != event.get(k) for k in
+                        ("task_id", "company_id", "work_ref", "employee_id", "execution_ref", "status"))
+                    or model.get("capability_type") != "model" or model.get("capability_id") != task["requested_capability_id"]
+                    or model.get("capability_binding_id") != usage[0]["capability_binding_id"]
+                    or model.get("model_name") != usage[0]["model_name"]
+                    or model.get("provider_id") != usage[0]["provider_id"] or model.get("outbound_attempted") is not True):
+                raise RuntimeScopeError("原模型分析的正常用量与执行回执无法核验。")
+            usage_ref = model["usage_record_id"]
+
         if (usage_ref != usage[0]["usage_record_id"] or event.get("task_id") != task_ref
                 or event.get("work_ref") != work["entity_id"] or event.get("company_id") != work["company_id"]
                 or event.get("employee_id") != employee or event.get("status") != "success"
@@ -196,6 +308,22 @@ class MusicMarketEvidence:
         if len(calls) != 1:
             raise RuntimeScopeError("没有宿主浏览器采集回执，不能接受手写网页来源。")
         capture = calls[0]
+        if task["requested_capability_type"] == "model":
+            captured = con.execute("select payload from evolution_events where tenant_id=? and correlation_id=? "
+                "and event_type='work.public_source.captured'", (self.tenant, task_ref)).fetchall()
+            source = json.loads(captured[0]["payload"]) if len(captured) == 1 else {}
+            expected = {"tenant_id": self.tenant, "company_id": work["company_id"], "work_ref": work["entity_id"],
+                "task_id": task_ref, "employee_id": employee, "binding_ref": usage[0]["capability_binding_id"]}
+            configured = (work["data"].get("followupContract") or {}).get("marketEvidenceBrowser") or {}
+            if (source.get("identity") != expected or source.get("artifact_receipts") != [receipt]
+                    or source.get("browser_tool_calls") != event.get("browser_tool_calls")
+                    or source.get("source_url") != configured.get("sourceUrl")
+                    or capture.get("url") != configured.get("sourceUrl")
+                    or not capture.get("shutdown", {}).get("normal_browser_close")
+                    or not capture.get("shutdown", {}).get("proxy_closed")
+                    or capture.get("shutdown", {}).get("held_process", {}).get("direct_child") != "EXITED"):
+                raise RuntimeScopeError("原模型分析缺少同一 Work 的宿主采集与关闭回执。")
+
         resources = AgentWorkResources(Path(self.db.path).absolute().parent / "agent-work",
             tenant_id=self.tenant, company_id=work["company_id"], work_ref=work["entity_id"], task_id=task_ref)
         raw = resources.read_output(receipt)
@@ -254,7 +382,7 @@ class MusicMarketEvidence:
             and not con.execute("select 1 from tasks where tenant_id=? and work_ref=?",
                 (self.tenant, root["entity_id"])).fetchone())
 
-    def browser_scope(self, root_ref, hosts):
+    def browser_scope(self, root_ref, hosts, source_url=None):
         """Owner narrows this unstarted Work's hosts; no permission or release changes."""
         from .agent_browser_policy import PublicTargets
         with self.db.connect() as con:
@@ -264,20 +392,27 @@ class MusicMarketEvidence:
                 raise RuntimeScopeError("只有所有者可在原研究尚未执行时设置公开来源域名。")
             if not isinstance(hosts, list) or not 1 <= len(hosts) <= 8:
                 raise ValueError("请指定一至八个公开来源域名。")
-            root["data"]["marketEvidenceBrowser"] = {"hosts": sorted(PublicTargets(hosts).hosts)}
+            policy = PublicTargets(hosts)
+            if source_url is not None:
+                policy.url(source_url)
+                if "#" in source_url:
+                    raise ValueError("请选择不含页内片段的公开原文 URL。")
+            root["data"]["marketEvidenceBrowser"] = {"hosts": sorted(policy.hosts), "sourceUrl": source_url}
             con.execute("update runtime_entities set data_json=? where tenant_id=? and entity_id=?",
                 (json.dumps(root["data"], ensure_ascii=False), self.tenant, root_ref))
         return self.readiness(root_ref)
 
     def readiness(self, root_ref):
         """Read existing gates without launching a browser, model, or permission change."""
-        from . import agent_adapter, agent_browser_runtime
+        from . import agent_browser_runtime
         from .agent_browser_policy import PublicTargets
         from .capability_authorizer import CapabilityAuthorizer
         with self.db.connect() as con:
             root = self._research_root(con, root_ref)
             contract = root["data"].get("followupContract") or self._entity(con, root["parent_id"], "CYCLE")["data"].get("contract") or {}
-            hosts = (root["data"].get("marketEvidenceBrowser") or contract.get("agentBrowser") or {}).get("hosts") or []
+            browser = root["data"].get("marketEvidenceBrowser") or {}
+            hosts = browser.get("hosts") or []
+            source_url = browser.get("sourceUrl")
             blockers = []
             def blocked(code, message, **fields):
                 blockers.append({"code": code, "message": message, **fields})
@@ -287,13 +422,15 @@ class MusicMarketEvidence:
             except ValueError as error:
                 blocked("PUBLIC_HOSTS_REQUIRED", str(error))
             try:
-                lock = agent_browser_runtime.load_trusted_reader_lock()
-                if lock.get("runtimeKind") not in {None, "VM", "NATIVE_BROWSERSKILL"}:
-                    raise ValueError("发布清单未指定已有受管浏览器入口。")
+                if not source_url: raise ValueError("请明确选择本次研究的公开原文 HTTPS URL。")
+                PublicTargets(hosts).url(source_url)
+                if "#" in source_url: raise ValueError("原文 URL 不能含页内片段。")
+            except ValueError as error:
+                blocked("PUBLIC_SOURCE_URL_REQUIRED", str(error))
+            try:
+                agent_browser_runtime.agent_browser_release()
             except (ValueError, OSError) as error:
                 blocked("BROWSER_RELEASE_REQUIRED", str(error))
-            if not agent_adapter.CODEX_STOP_VERIFIED:
-                blocked("AGENT_STOP_VERIFICATION_REQUIRED", "员工 Agent 的停止验收尚未放行。")
             joined = ConversationService(self.db)._work_database(con)
             route = root["data"].get("responsibilityRouting") or {}
             workflow = self._entity(con, route.get("workflowRef"), "RESPONSIBILITY_WORKFLOW")
@@ -315,27 +452,8 @@ class MusicMarketEvidence:
                         capability = None
                     if not capability or capability.get("status") != "active":
                         raise ValueError("员工绑定的能力不可用。")
-                    if assignment.get("isLeader") and kind == "agent" and not contract.get("agentBinding"):
-                        blocked("LEADER_SOURCE_REQUIRED", "原研究负责人尚无 Agent 工作来源；请通过现有员工配置选择已授权文本模型。", assignment_ref=ref)
-                    if kind == "agent":
-                        from .company_execution_policy import CompanyExecutionPolicy
-                        try:
-                            CompanyExecutionPolicy(joined).require_agent_execution(root["company_id"], binding["id"])
-                        except (ValueError, PermissionError) as error:
-                            blocked("AGENT_ALLOWANCE_REQUIRED", str(error), assignment_ref=ref)
-                        agent_kind = str((capability.get("metadata") or {}).get("kind") or "").lower()
-                        try:
-                            if agent_kind == "codex-cli":
-                                agent_adapter.require_codex_execution_available()
-                                agent_adapter.require_owned_container_execution_available()
-                            elif agent_kind == "acp-stdio":
-                                agent_adapter.require_acp_execution_available()
-                            else:
-                                raise ValueError("所选 Agent 未接入原 Work 的受管浏览器工具。")
-                        except (ValueError, agent_adapter.AgentExecutionError) as error:
-                            blocked("AGENT_RUNTIME_REQUIRED", str(error), assignment_ref=ref)
-                    if not assignment.get("isLeader") and kind != "agent":
-                        blocked("RESEARCH_AGENT_REQUIRED", "研究员工当前仅绑定文本模型；请通过现有员工配置选择受管 Agent。", assignment_ref=ref)
+                    if kind != "model":
+                        blocked("MODEL_BINDING_REQUIRED", "本次公开取证使用员工已有文本模型；请在现有配置中选择模型绑定。", assignment_ref=ref)
                     authorizer = CapabilityAuthorizer(joined)
                     allowed, reason = authorizer.authorize(identity["company_employee_ref"], kind, capability_id, connection=con)
                     if not allowed:
@@ -347,7 +465,7 @@ class MusicMarketEvidence:
                 except (ValueError, PermissionError, KeyError) as error:
                     blocked("EMPLOYEE_BINDING_REQUIRED", str(error), assignment_ref=ref)
             return {"work_ref": root_ref, "ready": not blockers, "blockers": blockers, "hosts": hosts,
-                "can_set_browser_scope": self._can_set_browser_scope(con, root)}
+                "source_url": source_url, "can_set_browser_scope": self._can_set_browser_scope(con, root)}
 
     def preview(self, child_ref, task_ref, artifact_ref):
         with self.db.connect() as con:

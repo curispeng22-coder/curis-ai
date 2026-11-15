@@ -945,3 +945,92 @@ def test_native_ipc_authentication_one_absolute_deadline_and_no_uncertain_replay
     if lease._closed:
         with pytest.raises(ValueError):lease.rpc("system.status",{})
         assert len(sent)==1
+
+
+def test_public_lease_leaves_fresh_tls_directory_to_certificate_owner(tmp_path, monkeypatch):
+    from app import agent_browser as browser, agent_browser_policy as policy
+    identity = dict(tenant_id="tenant", company_id="company", work_ref="child", task_id="task",
+        employee_id="employee", binding_ref="binding")
+    calls = []
+    def certificate(directory, hosts):
+        # Exercise PublicReadProxy's real constructor and its exclusive certificate-directory contract.
+        directory.mkdir(mode=0o700)
+        calls.append(directory)
+        raise RuntimeError("synthetic certificate stop before any process or network")
+    monkeypatch.setattr(policy, "tls_certificate", certificate)
+    monkeypatch.setattr(browser, "OwnedProcess", lambda *a, **kw: pytest.fail("must not launch"))
+    release = dict(temporaryRoot=str(tmp_path / "browser"), releaseSha256="a" * 64,
+        sourceUrl="https://example.org/report", hosts=["example.org"])
+    with pytest.raises(RuntimeError, match="synthetic certificate stop"):
+        browser.AgentBrowserLease(release, identity, lambda: False)
+    assert len(calls) == 1 and calls[0].is_dir()
+
+
+
+def test_agent_browser_requires_unique_successful_proxy_source():
+    from app.agent_browser import AgentBrowserLease
+    SOURCE_URL = "https://example.org/report"
+    lease = object.__new__(AgentBrowserLease)
+    lease.release = {"sourceUrl": SOURCE_URL}
+    good = {"url": SOURCE_URL, "method": "GET", "status": 200, "bytes": 5,
+        "peer_ip": "93.184.216.34", "validated_addresses": ["93.184.216.34"]}
+    for responses in ([], [good, good], [{**good, "status": 403}], [{**good, "method": "POST"}], [{**good, "peer_ip": "127.0.0.1"}]):
+        lease.proxy = SimpleNamespace(source_snapshot=lambda: responses)
+        with pytest.raises(ValueError): lease._source_response()
+    lease.proxy = SimpleNamespace(source_snapshot=lambda: [good])
+    assert lease._source_response() == good
+
+
+
+@pytest.mark.parametrize("handoff_fails", [False, True])
+def test_selected_source_proxy_receipt_requires_actual_response_handoff_without_extra_dns(monkeypatch, handoff_fails):
+    import io
+    import threading
+    import time
+    import hashlib
+    from app import agent_browser_policy as policy_module
+    SOURCE_URL = "https://example.org/report"
+    from urllib.parse import urlsplit
+    path = urlsplit(SOURCE_URL).path
+    resolves = []
+    policy = PublicTargets(["example.org"], resolver=lambda *a, **kw: resolves.append(a) or resolved("93.184.216.34"))
+    class Wire:
+        def __init__(self, request=b"", fail=False): self.request, self.fail, self.sent = request, fail, []
+        def makefile(self, *a, **kw): return io.BytesIO(self.request)
+        def settimeout(self, value): pass
+        def connect(self, address): self.address = address
+        def close(self): pass
+        def sendall(self, value):
+            if self.fail: raise OSError("synthetic handoff failed")
+            self.sent.append(value)
+    raw = Wire(b"CONNECT example.org:443 HTTP/1.1\r\nHost: example.org:443\r\n\r\n")
+    client = Wire((f"GET {path} HTTP/1.1\r\nHost: example.org\r\n\r\n").encode(), fail=handoff_fails)
+    upstream = Wire()
+    payload = b"synthetic public response, not actual market evidence"
+    class Response:
+        status, reason = 200, "OK"
+        def __init__(self, *a, **kw): self.body = io.BytesIO(payload)
+        def begin(self): pass
+        def getheader(self, key): return None
+        def getheaders(self): return [("Content-Type", "text/html"), ("Set-Cookie", "synthetic-strip")]
+        def read(self, size): return self.body.read(size)
+    monkeypatch.setattr(policy_module.socket, "socket", lambda *a: upstream)
+    monkeypatch.setattr(policy_module.ssl, "create_default_context", lambda **kw: SimpleNamespace(wrap_socket=lambda sock, **kw: sock))
+    monkeypatch.setattr(policy_module.http.client, "HTTPResponse", Response)
+    proxy = object.__new__(policy_module.PublicReadProxy)
+    proxy.policy, proxy.alive, proxy.deadline = policy, lambda: True, time.monotonic() + 10
+    proxy.sockets, proxy.lock, proxy.total_bytes, proxy.source_responses = set(), threading.Lock(), 0, []
+    proxy.source_url = SOURCE_URL
+    proxy.context = SimpleNamespace(wrap_socket=lambda *a, **kw: client)
+    if handoff_fails:
+        with pytest.raises(OSError): proxy.serve(raw)
+        assert proxy.source_snapshot() == []
+    else:
+        proxy.serve(raw)
+        receipt, = proxy.source_snapshot()
+        assert receipt["url"] == SOURCE_URL and receipt["status"] == 200 and receipt["method"] == "GET"
+        assert receipt["body_sha256"] == hashlib.sha256(payload).hexdigest() and receipt["bytes"] == len(payload)
+        assert receipt["peer_ip"] == upstream.address[0] == "93.184.216.34"
+        assert receipt["dns"] == policy.dns_snapshot()
+        assert "cookie" not in str(receipt).lower() and b"Set-Cookie" not in client.sent[0]
+    assert len(resolves) == 1

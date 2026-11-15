@@ -2,6 +2,15 @@ import os
 import sys
 import traceback
 
+if len(sys.argv) > 1 and sys.argv[1] == "--curis-browser-supervisor":
+    if len(sys.argv) != 2:
+        raise SystemExit(2)
+    if not getattr(sys, "frozen", False):
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from backend.app.agent_browser_runtime import run_browser_supervisor
+    raise SystemExit(run_browser_supervisor())
+
 if len(sys.argv) > 1 and sys.argv[1] == "--curis-agent-supervisor":
     if not getattr(sys, "frozen", False):
         from pathlib import Path

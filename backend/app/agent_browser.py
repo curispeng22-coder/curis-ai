@@ -112,7 +112,7 @@ def _browser_direct_children(supervisor_pid):
 
 class OwnedProcess:
     """Only held supervisor handles are signalled; missing child evidence stays UNKNOWN."""
-    def __init__(self, command, cwd, environment, *, deadline=None):
+    def __init__(self, command, cwd, environment, *, deadline=None, browser_only=False):
         if _UNRESOLVED_BROWSER_PROCESSES:
             raise ValueError("先前浏览器停止状态未确认，请保留现场核验。")
         now = time.monotonic()
@@ -123,11 +123,18 @@ class OwnedProcess:
         self.diagnostic = bytearray()
         self.shutdown_evidence = None
         self._close_lock = threading.Lock()
-        if (len(command) < 4 or command[:2] != ["/usr/bin/sandbox-exec", "-f"]
-                or not Path(command[2]).is_absolute() or not Path(command[3]).is_absolute()):
-            raise ValueError("浏览器必须保留已限定的外层沙箱。")
-        expected_executable = os.path.realpath(command[3])
         supervisor_command = packaged_supervisor_command()
+        if browser_only:
+            from .agent_browser_runtime import validate_browser_supervisor_request
+            validate_browser_supervisor_request({"command": command, "cwd": str(cwd),
+                "environment": environment, "prompt": ""})
+            expected_executable = os.path.realpath(command[0])
+            supervisor_command[-1] = "--curis-browser-supervisor"
+        else:
+            if (len(command) < 4 or command[:2] != ["/usr/bin/sandbox-exec", "-f"]
+                    or not Path(command[2]).is_absolute() or not Path(command[3]).is_absolute()):
+                raise ValueError("浏览器必须保留已限定的外层沙箱。")
+            expected_executable = os.path.realpath(command[3])
         self.process = subprocess.Popen(supervisor_command, cwd=cwd, env=environment,
             stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
             close_fds=True, start_new_session=True)
@@ -649,3 +656,135 @@ class BrowserLease:
             if interruption is not None:
                 raise interruption
             return dict(evidence)
+
+
+class AgentBrowserLease:
+    """One Work-selected public source; fresh context and proxy, not OS confinement."""
+    def __init__(self, release, identity, should_stop):
+        from .agent_browser_runtime import browser_environment, read_browser_marker
+        from .agent_work_resources import scope_key
+        self.identity = dict(identity)
+        self.release, self.should_stop = release, should_stop
+        self.session = secrets.token_hex(6)
+        self.browser_id = "agent-browser:" + self.session
+        self.tab = "owned-default-tab"
+        self.deadline = time.monotonic() + 80
+        self.closed = False
+        self.shutdown_evidence = None
+        self.proxy = self.daemon = None
+        self.url = None
+        temporary = Path(release["temporaryRoot"])
+        marker_content = {"runtimeKind": "NATIVE_AGENT_BROWSER", "releaseSha256": release["releaseSha256"]}
+        try:
+            temporary.mkdir(mode=0o700)
+            with (temporary / "release.json").open("x") as marker:
+                json.dump(marker_content, marker, sort_keys=True)
+        except FileExistsError:
+            info = temporary.lstat()
+            marker = temporary / "release.json"
+            if (not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode) != 0o700 or info.st_uid != os.getuid()
+                    or str(temporary.resolve()) != str(temporary)
+                    or json.loads(read_browser_marker(marker)) != marker_content):
+                raise ValueError("浏览器短临时根已有未知资源，不自动接管。")
+        self.directory = temporary / scope_key(
+            **{k: self.identity[k] for k in ("tenant_id", "company_id", "work_ref", "task_id")})[:16]
+        if self.directory.exists():
+            raise ValueError("原浏览器执行目录已存在，不自动重新启动。")
+        safe_directory(self.directory)
+        for name in ("s", "home", "tmp", "config", "cache"):
+            safe_directory(self.directory / name)
+        with (self.directory / "owner.json").open("x") as marker:
+            json.dump(self.identity, marker, sort_keys=True)
+        self.environment = browser_environment(self.directory, self.session)
+        self.socket = self.directory / "s" / (self.session + ".sock")
+        self.pidfile = self.directory / "s" / (self.session + ".pid")
+        (self.directory / "s" / (self.session + ".config")).write_text('{"debug":false}')
+        self.policy = PublicTargets(release["hosts"])
+        try:
+            self.proxy = PublicReadProxy(self.directory / "tls", self.policy,
+                alive=lambda: not self.closed and not should_stop(), seconds=80, source_url=release["sourceUrl"])
+            self.daemon = OwnedProcess([release["cliPath"]], self.directory,
+                {**self.environment, "AGENT_BROWSER_DAEMON": "1"}, deadline=self.deadline, browser_only=True)
+            until = min(self.deadline, time.monotonic() + 6)
+            while not self.socket.exists() and time.monotonic() < until and self.daemon.alive():
+                time.sleep(0.05)
+            self._check()
+        except BaseException:
+            self.close()
+            raise
+
+    def _check(self):
+        from .agent_browser_runtime import read_browser_marker
+        if (self.closed or self.should_stop() or time.monotonic() >= self.deadline
+                or not self.daemon or not self.daemon.alive() or not self.socket.is_socket()
+                or self.socket.is_symlink() or read_browser_marker(self.pidfile).strip() != str(self.daemon.pid)):
+            raise PermissionError("原 Work 的独占浏览器身份或执行时限已失效。")
+
+    def _command(self, arguments, *, closing=False):
+        self._check()
+        result = subprocess.run([self.release["cliPath"], "--session", self.session, *arguments],
+            cwd=self.directory, env=self.environment, stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
+            timeout=min(24, max(0.1, self.deadline - time.monotonic())))
+        if result.returncode != 0 or len(result.stdout) > 240000:
+            raise ValueError("固定浏览器动作失败，保留原执行，不自动重试。")
+        if not closing:
+            self._check()
+        return result.stdout.decode("utf-8", errors="strict").strip()
+
+    def call(self, arguments, resources):
+        self._check()
+        if any(self.identity[k] != v for k, v in resources.identity.items()):
+            raise PermissionError("浏览器不能跨 Work 使用。")
+        if arguments == {"action": "navigate", "url": self.release["sourceUrl"]} and self.url is None:
+            self.policy.url(arguments["url"])
+            text = self._command(["--executable-path", self.release["chromePath"],
+                "--allowed-domains", ",".join(sorted(self.policy.hosts)), "--proxy", f"http://127.0.0.1:{self.proxy.port}",
+                "--proxy-bypass", "<-loopback>", "--args", "--ignore-certificate-errors-spki-list=" + self.proxy.spki,
+                "open", arguments["url"]])
+            current = self._command(["get", "url"])
+            if current != arguments["url"]:
+                raise ValueError("原 Work 浏览器的最终 URL 与已批准原文不一致。")
+            self.url = current
+            self.source_response = self._source_response()
+            return {"url": current, "result": {"text": text}, "dns": self.policy.dns_snapshot(),
+                "proxy_source_response": self.source_response}
+        if arguments == {"action": "observe"} and self.url:
+            text = self._command(["snapshot"])
+            current = self._command(["get", "url"])
+            if current != self.url or not text or self._source_response() != self.source_response:
+                raise ValueError("浏览器原文或 URL 在采集中改变。")
+            return {"url": current, "result": {"text": text}, "dns": self.policy.dns_snapshot(),
+                "proxy_source_response": self.source_response}
+        raise ValueError("本次仅允许打开一次已选公开原文并读取快照。")
+
+    def _source_response(self):
+        responses = self.proxy.source_snapshot()
+        if (len(responses) != 1 or responses[0]["url"] != self.release["sourceUrl"]
+                or responses[0]["method"] != "GET" or responses[0]["status"] != 200 or responses[0]["bytes"] <= 0
+                or responses[0]["peer_ip"] not in responses[0]["validated_addresses"]):
+            raise ValueError("原网页快照缺少唯一已通过代理交给浏览器的实际成功响应。")
+        return responses[0]
+
+    def close(self):
+        if self.shutdown_evidence is not None:
+            return self.shutdown_evidence
+        normal = False
+        errors = []
+        try:
+            if self.daemon and self.daemon.alive():
+                try:
+                    message = self._command(["close"], closing=True)
+                    self.daemon.process.wait(timeout=min(4, max(0.1, self.deadline - time.monotonic())))
+                    normal = "closed" in message.lower() and not self.socket.exists()
+                except Exception as error:
+                    errors.append(type(error).__name__)
+        finally:
+            self.closed = True
+            held = self.daemon.close() if self.daemon else {"direct_child": "NOT_STARTED"}
+            if self.proxy:
+                self.proxy.close()
+            self.shutdown_evidence = {"normal_browser_close": normal, "socket_removed": not self.socket.exists(),
+                "held_process": held, "proxy_closed": self.proxy is None or self.proxy.server.fileno() == -1,
+                "descendants": "UNKNOWN", "os_confinement": "NOT_CLAIMED", "errors": errors}
+        return self.shutdown_evidence

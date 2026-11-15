@@ -122,7 +122,7 @@ def run_agent_supervisor() -> int:
     return _run_agent_supervisor_candidate()
 
 
-def _run_agent_supervisor_candidate() -> int:
+def _run_agent_supervisor_candidate(*, request_validator=None) -> int:
     """Unreleased candidate: a live session leader anchors its own group."""
     channel = sys.stdin.fileno()
     if (os.getpid() != os.getsid(0) or os.getpid() != os.getpgrp()
@@ -164,7 +164,9 @@ def _run_agent_supervisor_candidate() -> int:
         if "deadline" in request and (type(request["deadline"]) not in {int, float}
                 or not math.isfinite(request["deadline"])):
             return 2
-    except (ValueError, TypeError, KeyError):
+        if request_validator is not None:
+            request_validator(request)
+    except (ValueError, TypeError, KeyError, OSError):
         return 2
     stopped = False
 

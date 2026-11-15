@@ -235,9 +235,9 @@ def tls_certificate(directory, hosts):
 
 
 class PublicReadProxy:
-    def __init__(self, directory, policy, *, alive=lambda: True, seconds=90):
+    def __init__(self, directory, policy, *, alive=lambda: True, seconds=90, source_url=None):
         context, spki = tls_certificate(directory, policy.hosts)
-        self._initialize(policy, alive, seconds, context, spki, ("127.0.0.1", 0), None)
+        self._initialize(policy, alive, seconds, context, spki, ("127.0.0.1", 0), None, source_url=source_url)
 
     @classmethod
     def for_managed_runtime(cls, identity, nonce, policy, *, seconds=90):
@@ -283,9 +283,13 @@ class PublicReadProxy:
             raise
         return result
 
-    def _initialize(self, policy, alive, seconds, context, spki, address, browser_ip):
+    def _initialize(self, policy, alive, seconds, context, spki, address, browser_ip, *, source_url=None):
         self.policy, self.alive = policy, alive
         self.deadline = time.monotonic() + min(seconds, 90)
+        self.source_url = source_url
+        if source_url is not None:
+            policy.url(source_url)
+        self.source_responses = []
         self.context, self.spki = context, spki
         self.sockets, self.lock, self.total_bytes = set(), threading.Lock(), 0
         self.permits = threading.BoundedSemaphore(8)
@@ -395,12 +399,22 @@ class PublicReadProxy:
             self.check()
             client.sendall((f"HTTP/1.1 {response.status} {response.reason}\r\n" +
                 "".join(f"{k}: {v}\r\n" for k, v in fields.items()) + "\r\n").encode("latin1") + payload)
+            if "https://" + host + path == getattr(self, "source_url", None):
+                with self.lock:
+                    self.source_responses.append({"url": self.source_url, "host": host, "method": method,
+                        "status": response.status, "bytes": len(payload), "body_sha256": hashlib.sha256(payload).hexdigest(),
+                        "peer_ip": address[0], "validated_addresses": sorted({row[4][0] for row in addresses}),
+                        "dns": self.policy.dns_snapshot(), "received_at_unix": time.time()})
         finally:
             for sock in (upstream, client, raw):
                 if sock:
                     with self.lock:
                         self.sockets.discard(sock)
                     sock.close()
+
+    def source_snapshot(self):
+        with self.lock:
+            return json.loads(json.dumps(self.source_responses))
 
     def close(self):
         if hasattr(self, "timer"):

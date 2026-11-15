@@ -635,3 +635,162 @@ class ReaderLease:
         finally:
             with self._close_lock:
                 self._close_pending = False
+
+
+def _pinned_browser_asset(path, expected):
+    import hashlib
+    import os
+    import stat
+    from pathlib import Path
+    path = Path(path)
+    if not path.is_absolute() or not os.access(path, os.X_OK):
+        raise ValueError("Browser asset is not an absolute executable")
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ValueError("Browser asset is not a regular file")
+        with os.fdopen(fd, "rb", closefd=False) as stream:
+            actual = hashlib.file_digest(stream, "sha256").hexdigest()
+    finally:
+        os.close(fd)
+    if actual != expected:
+        raise ValueError("Browser asset changed from the acceptance release")
+    return str(path)
+
+
+def read_browser_marker(path):
+    import os
+    import stat
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(fd)
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid()
+                or info.st_size > 65536 or stat.S_IMODE(info.st_mode) & 0o022):
+            raise ValueError("Browser ownership marker is not a private regular file")
+        with os.fdopen(fd, "rb", closefd=False) as stream:
+            return stream.read(65537).decode("utf-8")
+    finally:
+        os.close(fd)
+
+
+def browser_bundle_digest(root):
+    """Pin the complete Chrome bundle, including framework bytes and symlink targets."""
+    import hashlib
+    import os
+    from pathlib import Path
+    root = Path(root)
+    result = hashlib.sha256()
+    for path in sorted(root.rglob("*")):
+        relative = str(path.relative_to(root))
+        if path.is_symlink():
+            item = [relative, "link", os.readlink(path)]
+        elif path.is_file():
+            with path.open("rb") as stream:
+                item = [relative, "file", hashlib.file_digest(stream, "sha256").hexdigest()]
+        elif path.is_dir():
+            continue
+        else:
+            raise ValueError("Unexpected browser bundle entry")
+        result.update((json.dumps(item, ensure_ascii=False, separators=(",", ":")) + "\n").encode())
+    return result.hexdigest()
+
+
+def browser_environment(directory, session):
+    from pathlib import Path
+    root = Path(directory)
+    return {"PATH": "/usr/bin:/bin", "HOME": str(root / "home"), "TMPDIR": str(root / "tmp"),
+        "XDG_CONFIG_HOME": str(root / "config"), "XDG_CACHE_HOME": str(root / "cache"),
+        "AGENT_BROWSER_SOCKET_DIR": str(root / "s"), "AGENT_BROWSER_DEFAULT_TIMEOUT": "12000",
+        "AGENT_BROWSER_SESSION": session}
+
+
+def agent_browser_release(*, verify_assets=True):
+    """Existing bundled release authority; never a Work payload or private grant."""
+    import hashlib
+    import os
+    import re
+    from pathlib import Path
+    lock = load_trusted_reader_lock()
+    profile = lock.get("agentBrowser")
+    fields = {"cliPath", "cliSha256", "chromePath", "chromeSha256", "chromeBundleSha256",
+        "stopEvidenceRef", "stopEvidenceSha256", "boundary", "methods"}
+    if (lock.get("runtimeKind") != "NATIVE_AGENT_BROWSER" or type(profile) is not dict
+            or set(profile) != fields
+            or profile["boundary"] != "FIXED_COMMANDS_FRESH_PROFILE_PUBLIC_READ_PROXY"
+            or profile["methods"] != ["GET", "HEAD"]
+            or not isinstance(profile["stopEvidenceRef"], str) or not profile["stopEvidenceRef"].strip()
+            or any(not re.fullmatch(r"[0-9a-f]{64}", str(profile[k])) for k in
+                ("cliSha256", "chromeSha256", "chromeBundleSha256", "stopEvidenceSha256"))):
+        raise ValueError("受管 agent-browser 构建、边界与独立停止证据尚未发布。")
+    release = {**profile, "temporaryRoot": "/private/tmp/curis-public-browser-" + str(os.getuid()),
+        "releaseSha256": hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()}
+    if verify_assets:
+        _pinned_browser_asset(release["cliPath"], release["cliSha256"])
+        chrome = Path(_pinned_browser_asset(release["chromePath"], release["chromeSha256"]))
+        bundle = chrome.parents[2]
+        if bundle.suffix != ".app" or browser_bundle_digest(bundle) != release["chromeBundleSha256"]:
+            raise ValueError("浏览器完整构建与固定发布版本不一致。")
+    return release
+
+
+def validate_browser_supervisor_request(request):
+    import os
+    import re
+    import stat
+    from pathlib import Path
+    from .agent_work_resources import scope_key
+    lock = agent_browser_release(verify_assets=False)
+    _pinned_browser_asset(lock["cliPath"], lock["cliSha256"])
+    directory = Path(request.get("cwd", ""))
+    if directory.parent != Path(lock["temporaryRoot"]) or not re.fullmatch(r"[0-9a-f]{16}", directory.name):
+        raise ValueError("Browser supervisor directory is outside its owned root")
+    identity = json.loads(read_browser_marker(directory / "owner.json"))
+    required = {"tenant_id", "company_id", "employee_id", "binding_ref", "work_ref", "task_id"}
+    if (type(identity) is not dict or set(identity) != required
+            or any(type(v) is not str or not v or len(v) > 256 for v in identity.values())
+            or directory.name != scope_key(**{k: identity[k] for k in
+                ("tenant_id", "company_id", "work_ref", "task_id")})[:16]):
+        raise ValueError("Browser directory does not match its original Task")
+    if json.loads(read_browser_marker(directory.parent / "release.json")) != {
+            "runtimeKind": "NATIVE_AGENT_BROWSER", "releaseSha256": lock["releaseSha256"]}:
+        raise ValueError("Browser root belongs to another release")
+    session = request.get("environment", {}).get("AGENT_BROWSER_SESSION", "")
+    if (not re.fullmatch(r"[0-9a-f]{12}", session) or request.get("command") != [lock["cliPath"]]
+            or request.get("cwd") != str(directory) or request.get("prompt") != ""
+            or request.get("environment") != {**browser_environment(directory, session), "AGENT_BROWSER_DAEMON": "1"}):
+        raise ValueError("Browser supervisor permits only the fixed foreground daemon")
+    for path in (directory.parent, directory, directory / "s", directory / "home", directory / "tmp", directory / "config", directory / "cache"):
+        info = path.lstat()
+        if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid()
+                or stat.S_IMODE(info.st_mode) != 0o700 or str(path.resolve()) != str(path)):
+            raise ValueError("Browser supervisor requires an owned private directory")
+    if read_browser_marker(directory / "s" / (session + ".config")) != '{"debug":false}':
+        raise ValueError("Browser daemon startup configuration changed")
+
+
+def run_browser_supervisor():
+    from .agent_adapter import _run_agent_supervisor_candidate
+    try:
+        agent_browser_release(verify_assets=False)
+    except (ValueError, OSError, KeyError, TypeError):
+        return 2
+    return _run_agent_supervisor_candidate(request_validator=validate_browser_supervisor_request)
+
+
+def open_agent_browser_for_work(identity, should_stop, *, hosts, source_url):
+    from .agent_browser import AgentBrowserLease
+    from .agent_browser_policy import PublicTargets
+    required = {"tenant_id", "company_id", "employee_id", "binding_ref", "work_ref", "task_id"}
+    if (type(identity) is not dict or set(identity) != required or not callable(should_stop)
+            or any(type(v) is not str or not v or len(v) > 256 for v in identity.values())):
+        raise ValueError("Browser requires the complete original Work identity")
+    policy = PublicTargets(hosts)
+    policy.url(source_url)
+    if "#" in source_url:
+        raise ValueError("Source URL cannot contain a fragment")
+    if should_stop():
+        raise PermissionError("Original research Task is stopped")
+    release = agent_browser_release()
+    if should_stop():
+        raise PermissionError("Original research Task is stopped")
+    return AgentBrowserLease({**release, "hosts": sorted(policy.hosts), "sourceUrl": source_url}, identity, should_stop)

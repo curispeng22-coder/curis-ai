@@ -129,15 +129,17 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
   const [delivery, setDelivery] = useState(null);
   const [source, setSource] = useState(null);
   const [readiness, setReadiness] = useState(null);
+  const [scopeDirty, setScopeDirty] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const pending = useRef(false);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  async function readDelivery(execute = false, hosts = null) {
+  const canStart = delivery?.can_start_research && readiness?.ready === true && !scopeDirty;
+  async function readDelivery(execute = false, browserScope = null) {
     if (pending.current) return;
-    if (execute && (blocked || !(delivery?.can_continue_research || (delivery?.can_start_research && readiness?.ready === true)))) return;
-    if (hosts && (blocked || !delivery?.can_start_research || !readiness?.can_set_browser_scope)) return;
+    if (execute && (blocked || !(delivery?.can_continue_research || canStart))) return;
+    if (browserScope && (blocked || !delivery?.can_start_research || !readiness?.can_set_browser_scope)) return;
     pending.current = true;
     setLoading(true);
     setError("");
@@ -147,23 +149,54 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
         if (result?.work?.entity_id !== receipt.work_ref) throw new Error("研究执行回执与原对话不一致。");
         if (mounted.current && result.execution_blocked) setError(result.execution_blocked);
       }
-      if (hosts) await musicApi.setResearchBrowserScope(receipt.work_ref, hosts);
+      if (browserScope) await musicApi.setResearchBrowserScope(receipt.work_ref, browserScope);
       const data = await musicApi.researchDelivery(company, workspace, receipt.conversation_ref, receipt.work_ref);
       if (data.conversation_ref !== receipt.conversation_ref || data.research_work_ref !== receipt.work_ref) {
         throw new Error("研究回执与原对话不一致。");
       }
       const status = data.can_start_research ? await musicApi.researchReadiness(receipt.work_ref) : null;
       if (status && status.work_ref !== receipt.work_ref) throw new Error("研究准备状态与原工作不一致。");
-      if (mounted.current) { setDelivery(data); setReadiness(status); }
+      if (mounted.current) {
+        setDelivery(data);
+        setReadiness(status);
+        if (browserScope) setScopeDirty(false);
+      }
     } catch (reason) {
       if (mounted.current) {
-        if (!hosts) { setDelivery(null); setReadiness(null); }
+        if (!browserScope) { setDelivery(null); setReadiness(null); }
         setError(reason.message || "暂时无法读取研究交付。");
       }
     } finally {
       pending.current = false;
       if (mounted.current) setLoading(false);
     }
+  }
+  function saveBrowserScope(event) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const hosts = Array.from(new Set(String(form.get("hosts") || "").split(/[\s,]+/).filter(Boolean)));
+    const source_url = String(form.get("source_url") || "").trim();
+    if (hosts.length < 1 || hosts.length > 8) {
+      setError("请输入一至八个允许访问的公开域名。");
+      return;
+    }
+    try {
+      const url = new URL(source_url);
+      if (!/^https:\/\//i.test(source_url) || source_url.length > 4096 || /[#\\\s]/.test(source_url)
+          || url.username || url.password || url.port) {
+        throw new Error("请输入不含页内片段或账号信息的公开 HTTPS 原文网址。");
+      }
+      const withinScope = hosts.some(host => {
+        if (/[/:?#@\\]/.test(host)) return false;
+        try { return new URL(`https://${host}`).hostname === url.hostname; }
+        catch { return false; }
+      });
+      if (!withinScope) throw new Error("原文网址的域名必须在允许访问的域名中。");
+    } catch (reason) {
+      setError(reason instanceof TypeError ? "请输入有效的公开 HTTPS 原文网址。" : reason.message);
+      return;
+    }
+    return readDelivery(false, { hosts, source_url });
   }
   async function openSource(candidate) {
     if (pending.current || blocked) return;
@@ -191,21 +224,20 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
     && item.task_ref === source.task_ref && item.artifact_ref === source.artifact_ref) ? source : null;
   return <div>
     <button type="button" className="text-ui-primary" disabled={loading} onClick={() => readDelivery()}>读取研究交付</button>
-    {readiness?.can_set_browser_scope && <form onSubmit={event => {
-      event.preventDefault();
-      const value = new FormData(event.currentTarget).get("hosts");
-      const hosts = Array.from(new Set(String(value || "").split(/[\s,]+/).filter(Boolean)));
-      if (hosts.length) readDelivery(false, hosts);
-    }}>
+    {readiness?.can_set_browser_scope && <form onSubmit={saveBrowserScope} onChange={() => setScopeDirty(true)}>
       <label className="block">允许研究员工访问的公开域名（每行一个，最多八个）
         <textarea name="hosts" key={JSON.stringify(readiness.hosts)} defaultValue={(readiness.hosts || []).join("\n")}
           required disabled={loading || blocked} />
+      </label>
+      <label className="block">公开原文网址（HTTPS）
+        <input type="url" name="source_url" key={readiness.source_url || ""} defaultValue={readiness.source_url || ""}
+          maxLength={4096} required disabled={loading || blocked} />
       </label>
       <button type="submit" className="text-ui-primary" disabled={loading || blocked}>保存研究范围</button>
     </form>}
     {readiness?.blockers?.map((reason, index) => <p role="status" key={`${reason.code}:${index}`}>{reason.message}</p>)}
     {delivery?.can_start_research && <button type="button" className="ml-2 text-ui-primary"
-      disabled={loading || blocked || readiness?.ready !== true} onClick={() => readDelivery(true)}>启动原研究工作</button>}
+      disabled={loading || blocked || !canStart} onClick={() => readDelivery(true)}>启动原研究工作</button>}
     {delivery?.market_review_required && <p role="status">请核对并接受原研究的市场证据。</p>}
     {candidates.map(item => <button key={item.artifact_ref} type="button" className="text-ui-primary"
       disabled={loading || blocked} onClick={() => openSource(item)}>读取原快照</button>)}

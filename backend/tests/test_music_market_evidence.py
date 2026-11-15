@@ -314,7 +314,7 @@ def recommendation_fixture(inputs):
         "limitations": "2023总体音乐习惯不能证明本歌曲获客或转化。"}
 
 
-@pytest.mark.parametrize('change', ['failed', 'empty', 'model', 'event_execution'])
+@pytest.mark.parametrize('change', ['failed', 'empty', 'event_execution'])
 def test_source_discovery_rejects_non_success_or_cross_execution(tmp_path, change):
     with scope():
         db, app, payload, _ = fixture(tmp_path / 'proof.sqlite')
@@ -358,7 +358,7 @@ def test_real_published_workflow_preflight_blocks_before_any_submit(tmp_path, mo
         ready = service.readiness('root')
         codes = {b['code'] for b in ready['blockers']}
         assert not ready['ready'] and ready['can_set_browser_scope']
-        assert {'PUBLIC_HOSTS_REQUIRED', 'BROWSER_RELEASE_REQUIRED', 'AGENT_STOP_VERIFICATION_REQUIRED', 'EMPLOYEE_BINDING_REQUIRED'} <= codes
+        assert {'PUBLIC_HOSTS_REQUIRED', 'PUBLIC_SOURCE_URL_REQUIRED', 'BROWSER_RELEASE_REQUIRED', 'EMPLOYEE_BINDING_REQUIRED'} <= codes
         saved = service.browser_scope('root', ['example.org'])
         assert saved['hosts'] == ['example.org'] and not saved['ready']
         calls = []
@@ -402,34 +402,24 @@ def test_recommendation_requires_actual_complete_body(change):
     else: output['status'] = 'USER_REQUIRED'
     with pytest.raises(ValueError): validate_research_recommendation(output, inputs)
 
-def test_readiness_uses_existing_binding_and_position_permissions(tmp_path, monkeypatch):
-    from app import agent_adapter, agent_browser_runtime
+def test_readiness_uses_existing_model_and_position_permissions(tmp_path, monkeypatch):
+    from app import agent_browser_runtime
     with scope():
         db, f, assignments = unstarted_leader(tmp_path, monkeypatch)
         service = MusicMarketEvidence(db)
-        service.browser_scope('root', ['example.org'])
-        db.save_tenant_private_capability(tenant_id=TENANT, capability_type='agent', capability_id='agent.fixture',
-            display_name='Offline fixture', metadata={'testOnly': True, 'kind': 'codex-cli'})
+        service.browser_scope('root', ['example.org'], 'https://example.org/report')
         with db.connect() as con:
-            con.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) values ('worker-agent',?,'company-worker','tenant_private','agent','agent.fixture')", (TENANT,))
-            con.execute("update employee_instances set allowed_effect_classes_json='[\"read\",\"exec\"]' where id in ('leader','company-worker')")
-        monkeypatch.setattr(agent_browser_runtime, 'load_trusted_reader_lock', lambda: {'runtimeKind': 'NATIVE_BROWSERSKILL'})
-        monkeypatch.setattr(agent_adapter, 'CODEX_STOP_VERIFIED', True)
-        monkeypatch.setattr(agent_adapter, 'AGENT_CONTAINER_EXECUTION_VERIFIED', True)
-        from app.company_execution_policy import CompanyExecutionPolicy
-        before_allowance = service.readiness('root')
-        assert 'AGENT_ALLOWANCE_REQUIRED' in {x['code'] for x in before_allowance['blockers']}
-        monkeypatch.setattr(CompanyExecutionPolicy, 'require_agent_execution', lambda *args: {'state': 'AVAILABLE'})
+            con.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) values ('worker-model',?,'company-worker','tenant_private','model','model.fixture')", (TENANT,))
+            con.execute("update employee_instances set allowed_effect_classes_json='[\"read\"]' where id in ('leader','company-worker')")
+        monkeypatch.setattr(agent_browser_runtime, 'agent_browser_release', lambda **kw: {'releaseSha256': 'a' * 64})
         result = service.readiness('root')
         assert result['ready'], result
+        assert result['source_url'] == 'https://example.org/report'
         with db.connect() as con:
             con.execute("update employee_instances set allowed_effect_classes_json='[\"exec\"]' where id='company-worker'")
-        result = service.readiness('root')
-        assert not result['ready']
-        assert {x['code'] for x in result['blockers']} == {'POSITION_READ_PERMISSION_REQUIRED'}
-        with db.connect() as con:
-            con.execute("update employee_capability_bindings set capability_type='model',capability_id='model.fixture' where id='worker-agent'")
-        assert 'RESEARCH_AGENT_REQUIRED' in {x['code'] for x in service.readiness('root')['blockers']}
+        codes = {x['code'] for x in service.readiness('root')['blockers']}
+        assert {'POSITION_PERMISSION_REQUIRED', 'POSITION_READ_PERMISSION_REQUIRED'} <= codes
+
 
 def test_original_entry_delegates_configured_hosts_to_worker(tmp_path, monkeypatch):
     with scope():
@@ -470,3 +460,17 @@ def test_original_entry_delegates_configured_hosts_to_worker(tmp_path, monkeypat
             assert response.json()['delegation_status'] == 'AWAITING_MARKET_EVIDENCE_ACCEPTANCE', response.text
         assert len(calls) == 4
         assert 'summaryWorkRef' not in f.get('root')['data']['leaderDelegation']
+
+
+@pytest.mark.parametrize('suffix', ['#', '#section', '%23'])
+def test_original_source_url_rejects_raw_fragment_but_preserves_encoding(tmp_path, monkeypatch, suffix):
+    with scope():
+        db, f, _ = unstarted_leader(tmp_path, monkeypatch)
+        service = MusicMarketEvidence(db)
+        url = 'https://example.org/report' + suffix
+        if '#' in suffix:
+            with pytest.raises(ValueError, match='片段'):
+                service.browser_scope('root', ['example.org'], url)
+            assert 'marketEvidenceBrowser' not in f.get('root')['data']
+        else:
+            assert service.browser_scope('root', ['example.org'], url)['source_url'] == url

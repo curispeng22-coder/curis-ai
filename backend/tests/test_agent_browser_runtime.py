@@ -1591,3 +1591,92 @@ def test_linux_navigation_receive_budget_is_longer_than_tool_and_remains_cancell
         with pytest.raises(TimeoutError if outcome == "ipc-expired" else PermissionError):
             driver._rpc("tool.navigate", {})
         assert calls == ["send", "recv"] and driver.closed
+
+
+def test_public_browser_release_requires_bundled_assets_and_stop_evidence(tmp_path, monkeypatch):
+    import hashlib
+    from app import agent_browser_runtime as runtime
+    cli = tmp_path / 'browser-cli'; cli.write_bytes(b'offline fixture, never executed'); cli.chmod(0o700)
+    chrome = tmp_path / 'Fixture.app/Contents/MacOS/browser'; chrome.parent.mkdir(parents=True)
+    chrome.write_bytes(b'offline browser fixture'); chrome.chmod(0o700)
+    profile = {'cliPath': str(cli), 'cliSha256': hashlib.sha256(cli.read_bytes()).hexdigest(),
+        'chromePath': str(chrome), 'chromeSha256': hashlib.sha256(chrome.read_bytes()).hexdigest(),
+        'chromeBundleSha256': runtime.browser_bundle_digest(tmp_path / 'Fixture.app'),
+        'stopEvidenceRef': 'fixture-review', 'stopEvidenceSha256': 'a' * 64,
+        'boundary': 'FIXED_COMMANDS_FRESH_PROFILE_PUBLIC_READ_PROXY', 'methods': ['GET', 'HEAD']}
+    lock = {'runtimeKind': 'NATIVE_AGENT_BROWSER', 'agentBrowser': profile}
+    monkeypatch.setattr(runtime, 'load_trusted_reader_lock', lambda: lock)
+    assert runtime.agent_browser_release()['cliPath'] == str(cli)
+    profile['identity'] = {'company_id': 'private-grant'}
+    with pytest.raises(ValueError): runtime.agent_browser_release()
+    profile.pop('identity')
+    profile['stopEvidenceSha256'] = ''
+    with pytest.raises(ValueError): runtime.agent_browser_release()
+    profile['stopEvidenceSha256'] = 'a' * 64
+    chrome.write_bytes(b'changed executable')
+    with pytest.raises(ValueError): runtime.agent_browser_release()
+
+
+def test_public_browser_supervisor_allows_only_pinned_daemon_and_owned_directory(tmp_path, monkeypatch):
+    import json
+    from app import agent_browser_runtime as runtime
+    from app.agent_work_resources import scope_key
+    identity = dict(IDENTITY)
+    temporary = tmp_path / 'short'; temporary.mkdir(mode=0o700)
+    release = {'temporaryRoot': str(temporary), 'releaseSha256': 'a' * 64,
+        'cliPath': '/fixture/verified-cli', 'cliSha256': 'b' * 64}
+    monkeypatch.setattr(runtime, 'agent_browser_release', lambda **kw: release)
+    monkeypatch.setattr(runtime, '_pinned_browser_asset', lambda path, sha: path)
+    directory = temporary / scope_key(**{k: identity[k] for k in ('tenant_id', 'company_id', 'work_ref', 'task_id')})[:16]
+    directory.mkdir(mode=0o700)
+    for name in ('s', 'home', 'tmp', 'config', 'cache'): (directory / name).mkdir(mode=0o700)
+    (temporary / 'release.json').write_text(json.dumps({'runtimeKind': 'NATIVE_AGENT_BROWSER', 'releaseSha256': 'a' * 64}))
+    (directory / 'owner.json').write_text(json.dumps(identity))
+    (directory / 's/012345abcdef.config').write_text('{"debug":false}')
+    env = {**runtime.browser_environment(directory, '012345abcdef'), 'AGENT_BROWSER_DAEMON': '1'}
+    valid = {'command': [release['cliPath']], 'cwd': str(directory), 'environment': env, 'prompt': ''}
+    runtime.validate_browser_supervisor_request(valid)
+    for change in ({'command': ['/bin/sh']}, {'command': [release['cliPath'], 'open', 'https://example.org']},
+            {'prompt': 'arbitrary'}, {'environment': {**env, 'TOKEN': 'fixture'}}, {'cwd': str(tmp_path)}):
+        with pytest.raises(ValueError): runtime.validate_browser_supervisor_request({**valid, **change})
+    (directory / 'owner.json').write_text(json.dumps({**identity, 'task_id': 'foreign'}))
+    with pytest.raises(ValueError): runtime.validate_browser_supervisor_request(valid)
+
+
+def test_unreleased_public_browser_never_bypasses_agent_or_starts_helper(monkeypatch):
+    from app import agent_adapter, agent_browser_runtime as runtime
+    monkeypatch.setattr(agent_adapter, '_run_agent_supervisor_candidate', lambda **kw: pytest.fail('unreleased helper started'))
+    assert runtime.run_browser_supervisor() == 2
+    assert agent_adapter.CODEX_STOP_VERIFIED is False
+    assert agent_adapter.run_agent_supervisor() == 2
+
+
+def test_browser_request_validator_rejects_before_any_supervisor_child(monkeypatch, tmp_path):
+    import io
+    import json
+    import stat
+    from types import SimpleNamespace
+    from app import agent_adapter as module
+    request = {'command': ['/fixture/browser'], 'cwd': str(tmp_path), 'environment': {},
+        'prompt': '', 'timeout': 2, 'nonce': 'a' * 32}
+    class Input:
+        def fileno(self): return 123
+    class Status(io.StringIO):
+        def fileno(self): return 124
+    checked = []
+    def reject(value):
+        checked.append(value)
+        raise ValueError('not a released browser request')
+    monkeypatch.setattr(module.sys, 'stdin', Input())
+    monkeypatch.setattr(module.sys, 'stderr', Status())
+    monkeypatch.setattr(module.os, 'getpid', lambda: 100)
+    monkeypatch.setattr(module.os, 'getsid', lambda _: 100)
+    monkeypatch.setattr(module.os, 'getpgrp', lambda: 100)
+    monkeypatch.setattr(module.os, 'fstat', lambda _: SimpleNamespace(st_mode=stat.S_IFIFO))
+    monkeypatch.setattr(module.os, 'set_inheritable', lambda *a: None)
+    monkeypatch.setattr(module.os, 'set_blocking', lambda *a: None)
+    monkeypatch.setattr(module.os, 'read', lambda *a: (json.dumps(request) + '\n').encode())
+    monkeypatch.setattr(module.select, 'select', lambda r, *a: (r, [], []))
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **kw: pytest.fail('invalid browser request spawned'))
+    assert module._run_agent_supervisor_candidate(request_validator=reject) == 2
+    assert checked == [request]

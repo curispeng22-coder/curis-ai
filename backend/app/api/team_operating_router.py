@@ -71,6 +71,7 @@ def _verified_origin_projection(work, contract, tenant_id):
 class MarketBrowserScopeIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     hosts: list[str] = Field(min_length=1, max_length=8)
+    source_url: str | None = Field(default=None, min_length=1, max_length=4096)
 
 
 class LimitedGeneralExecutionIn(BaseModel):
@@ -1347,6 +1348,8 @@ def build_team_operating_router(
             if browser_scope:
                 from ..agent_browser_policy import PublicTargets
                 contract["agentBrowser"] = {"hosts": sorted(PublicTargets(browser_scope["hosts"]).hosts)}
+        if root["data"].get("marketEvidenceBrowser"):
+            contract["marketEvidenceBrowser"] = copy.deepcopy(root["data"]["marketEvidenceBrowser"])
         return contract
 
     async def run_leader(work_ref):
@@ -1611,7 +1614,7 @@ def build_team_operating_router(
     @router.post("/works/{work_ref}/market-evidence/browser-scope")
     def set_market_browser_scope(work_ref: str, payload: MarketBrowserScopeIn):
         try:
-            return MusicMarketEvidence(database).browser_scope(work_ref, payload.hosts)
+            return MusicMarketEvidence(database).browser_scope(work_ref, payload.hosts, payload.source_url)
         except (KeyError, ValueError, PermissionError, OSError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
