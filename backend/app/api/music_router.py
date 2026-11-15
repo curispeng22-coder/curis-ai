@@ -4,6 +4,7 @@ from urllib.parse import unquote
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Header, Response, Request
 from pydantic import BaseModel, ConfigDict, Field
 from .conversation_router import ReferenceIn
+from .music_research_handoff import ConfirmResearchPlanningIn, confirm_research_planning, read_research_delivery
 from ..runtime import RuntimeScopeError
 from ..runtime.music import MusicConflict
 
@@ -92,6 +93,16 @@ def build_music_router(database, executor, *, service):
     @router.post("/operating/commands/{action}")
     def operating_command(company: str, workspace: str, action: Literal["save-scope", "save-snapshot", "save-reference", "save-direction", "save-observation", "create-report", "confirm-report", "save-learning", "use-learning", "create-song", "apply-direction"], payload: OperatingIn):
         return invoke(lambda: service.operating_command(company, workspace, action, **payload.model_dump()))
+    @router.get("/research-delivery")
+    def research_delivery(company: str, workspace: str, conversation_ref: str,
+                          research_work_ref: str):
+        return invoke(lambda: read_research_delivery(service, company, workspace,
+            conversation_ref=conversation_ref, research_work_ref=research_work_ref))
+
+    @router.post("/research-planning/confirm")
+    def research_planning(company: str, workspace: str, payload: ConfirmResearchPlanningIn):
+        return invoke(lambda: confirm_research_planning(service, company, workspace, **payload.model_dump()))
+
     @router.post("/songs")
     def create(company: str, workspace: str, payload: CommandIn): return invoke(lambda: service.command(company, workspace, "", "create", **payload.model_dump()))
     @router.get("/songs/{song}")

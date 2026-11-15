@@ -344,3 +344,46 @@ def test_owned_container_execution_relays_only_bound_tools_then_original_result(
     session_owner.revoke('eof')
     assert relay.revoked
     with pytest.raises(PermissionError):server.handle(token,{'jsonrpc':'2.0','id':1,'method':'ping'})
+
+
+def test_browser_text_snapshot_is_host_written_and_bound_to_original_work(tmp_path):
+    server, _, resources, _ = session(tmp_path)
+    value = {"url": "https://example.com/public", "result": {"text": "controlled source text"}}
+    browser = SimpleNamespace(identity=resources.identity, session="owned", browser_id="owned", tab=1,
+        call=lambda arguments, original: value, close=lambda: None)
+    token = server.register(resources, [], lambda: False, browser=browser)
+    result = call(server, token, "browser", {"action": "observe"})
+    assert not result["isError"]
+    audit = server.browser_evidence(token)[0]
+    assert audit["capture_kind"] == "HOST_BROWSER_TEXT_V1"
+    assert audit["identity"] == resources.identity and audit["captured_at"].endswith("+00:00")
+    raw = resources.read_output(audit["snapshot_receipt"])
+    assert json.loads(raw) == value
+    assert hashlib.sha256(raw).hexdigest() == audit["result_sha256"]
+    # A model cannot supply trusted capture metadata through the browser schema.
+    assert call(server, token, "browser", {"action": "observe", "captured_at": "forged"})["isError"]
+    assert len(server.browser_evidence(token)) == 1
+
+
+
+def test_browser_snapshot_refuses_foreign_work_before_file_creation(tmp_path):
+    server, _, resources, _ = session(tmp_path)
+    browser = SimpleNamespace(identity={**resources.identity, "work_ref": "foreign"}, session="owned", browser_id="owned", tab=1,
+        call=lambda a, r: {"url": "https://example.com/public", "result": "text"}, close=lambda: None)
+    token = server.register(resources, [], lambda: False, browser=browser)
+    assert call(server, token, "browser", {"action": "observe"})["isError"]
+    assert not resources.collect() and not server.browser_evidence(token)
+
+
+@pytest.mark.parametrize('reason', ['url', 'stop', 'expiry'])
+def test_text_capture_refuses_invalid_or_late_bytes_before_creating_file(tmp_path, reason):
+    now, stopped = [0], [False]
+    server, _, resources, _ = session(tmp_path, clock=lambda: now[0], stop=lambda: stopped[0])
+    def capture(arguments, original):
+        if reason == 'stop': stopped[0] = True
+        if reason == 'expiry': now[0] = 90
+        return {'url': 'file:///private/source' if reason == 'url' else 'https://example.org/public', 'result': {'text': 'fixture'}}
+    browser = SimpleNamespace(identity=resources.identity, session='owned', browser_id='owned', tab=1, call=capture, close=lambda: None)
+    token = server.register(resources, [], lambda: stopped[0], browser=browser)
+    assert call(server, token, 'browser', {'action': 'observe'})['isError']
+    assert resources.collect() == [] and server.browser_evidence(token) == []

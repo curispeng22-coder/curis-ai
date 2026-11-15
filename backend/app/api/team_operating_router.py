@@ -22,6 +22,7 @@ from ..runtime.general_workspace_delivery import GeneralWorkspaceDelivery, Gener
 from ..runtime.child_work import leader_preferred_binding
 from ..tenant_context import TenantContext
 from ..agent_adapter import _AGENT_STOP_SPAWN_LOCK
+from ..music_market_evidence import MusicMarketEvidence, AcceptMarketEvidenceIn, validate_research_recommendation
 
 
 def _verified_origin_projection(work, contract, tenant_id):
@@ -65,6 +66,12 @@ def _verified_origin_projection(work, contract, tenant_id):
         return {"status": "VERIFIED", "assignment_ref": assignment, "source": result}
     except (KeyError, TypeError, AttributeError):
         return unknown
+
+
+class MarketBrowserScopeIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    hosts: list[str] = Field(min_length=1, max_length=8)
+    source_url: str | None = Field(default=None, min_length=1, max_length=4096)
 
 
 class LimitedGeneralExecutionIn(BaseModel):
@@ -1044,6 +1051,7 @@ def build_team_operating_router(
         *,
         purpose: str,
         question: str = "",
+        market_evidence: dict | None = None,
     ) -> dict[str, Any]:
         if employee_execution is None:
             raise ResponsibilityRoutingError("Employee execution bridge is unavailable")
@@ -1082,6 +1090,21 @@ def build_team_operating_router(
             '"userAction":"...","destination":"...","doneCriterion":"...","resumePlan":"...","targetRef":"原工作ref","evidenceRefs":[]}}。'
             if general else '{"status":"ACCEPTED|REJECTED","resultType":"...","summary":"...","problem":"..."}。'
         )
+        if market_evidence is not None:
+            output_instruction = (
+                '{"status":"ACCEPTED|REJECTED|USER_REQUIRED","resultType":"generic-result","summary":"...","problem":"...",'
+                '"recommendation":{"evidence":[{"evidence_ref":"原编号","evidence_version":"原版本"}],'
+                '"preferred_channel":"short_video|streaming_preview","rationale":"推荐此方向的理由与假设",'
+                '"short_video":{"suitability":"适用性比较","hypothesis":"待验证假设"},'
+                '"streaming_preview":{"suitability":"适用性比较","hypothesis":"待验证假设"},'
+                '"seven_day_test":{"days":7,"steps":["前期具体行动","后期具体行动"],"metrics":["指标一及分母","指标二及分母"],"decision_rule":"如何据数据决定"},'
+                '"limitations":"证据时期、分母与不可外推限制"}}。'
+                '这是不启动实验的建议草案，不需先取得投放、发布或预算许可才提出建议；外部执行仍待CEO决定。'
+                'ACCEPTED只表示已完整交付本次草案，不代表CEO已采纳或实验已启动。'
+                '必须在上述字段实际写出比较、一个推荐方向和七天建议，不得仅声称已产出草案。'
+                '步骤需2至7项，指标需2至6项，均非空且不重复；各文本不超过500字，两路适用性和假设须分别说明。'
+                '确有缺失输入时可返回USER_REQUIRED并说明problem，但不视为交付完成。'
+            )
         prompt = (
             f"工作目标：{goal}\n"
             f"{business_context}"
@@ -1094,11 +1117,34 @@ def build_team_operating_router(
             "只返回一个 JSON 对象：" + output_instruction +
             ("只使用说明中列出的既有责任安排。" if purpose == "leader:plan" else "不要选择下一位员工，不要改变责任归属。")
         )
-        claimed = routing.begin_employee_execution(
-            work_ref, execution_key=key, assignment_ref=assignment["assignmentRef"],
-        )
+        def verify_market(con):
+            service = MusicMarketEvidence(database)
+            root = service._entity(con, work["data"]["leaderRootWorkRef"])
+            service.pin_summary(con, root, work_ref, market_evidence, key)
+
+        if market_evidence is not None:
+            from ..conversation_service import ConversationService
+            with database.connect() as con:
+                con.execute("begin immediate")
+                joined = ConversationService(database)._work_database(con)
+                service = MusicMarketEvidence(database)
+                root = service._entity(con, work["data"]["leaderRootWorkRef"])
+                service.pin_summary(con, root, work_ref, market_evidence)
+                claimed = ResponsibilityRoutingRuntime(joined).begin_employee_execution(
+                    work_ref, execution_key=key, assignment_ref=assignment["assignmentRef"])
+                verify_market(con)
+        else:
+            claimed = routing.begin_employee_execution(
+                work_ref, execution_key=key, assignment_ref=assignment["assignmentRef"])
         record = claimed["execution"]
         if claimed["duplicate"] and record.get("status") in {"ACCEPTED", "REJECTED", "PARTIAL", "FAILED", "CANCELLED"}:
+            if market_evidence is not None and record.get("status") == "ACCEPTED":
+                with database.connect() as con:
+                    task = con.execute("select output from tasks where tenant_id=? and task_id=? and work_ref=? and status='COMPLETED'",
+                        (foundation.tenant_id, record.get("taskRef"), work_ref)).fetchone()
+                    if not task:
+                        raise RuntimeScopeError("原汇总结果缺失。")
+                    validate_research_recommendation(json.loads(task["output"]), market_evidence["inputs"])
             return {
                 "status": record["status"], "task_ref": record.get("taskRef"),
                 "artifact_refs": list(record.get("artifactRefs") or []),
@@ -1112,6 +1158,10 @@ def build_team_operating_router(
         task_ref = str(record.get("taskRef") or "")
         human_continuation = (human.get("state") == "CLAIMED" and human.get("continuationKey") == key)
         try:
+            if market_evidence is not None:
+                with database.connect() as con:
+                    con.execute("begin immediate")
+                    verify_market(con)
             if not task_ref:
                 submitted = await employee_execution({
                     "execution_ref": "team_employee:auto", "mode": "submit",
@@ -1124,6 +1174,10 @@ def build_team_operating_router(
                 if not task_ref:
                     raise ResponsibilityRoutingError("Employee execution did not create a Provider Task")
                 routing.attach_provider_task(work_ref, execution_key=key, task_ref=task_ref)
+            if market_evidence is not None:
+                with database.connect() as con:
+                    con.execute("begin immediate")
+                    verify_market(con)
             raw = await employee_execution({
                 "execution_ref": "team_employee:auto", "mode": "run",
                 "company_id": work["company_id"], "workspace_id": work["workspace_id"],
@@ -1191,6 +1245,11 @@ def build_team_operating_router(
                         "summary": "原工作续接结果尚未确认；保留原领取并等待核对，不自动重试",
                         "result_type": "", "problem": ""}
         normalized = normalized_result(raw, assignment)
+        if market_evidence is not None and normalized["status"] == "ACCEPTED":
+            try:
+                validate_research_recommendation(json.loads(raw["output"]), market_evidence["inputs"])
+            except (ValueError, TypeError, KeyError):
+                normalized.update(status="FAILED", summary="负责人建议不完整或证据版本不一致；原结果保留待核对。")
         artifacts = [str(item) for item in raw.get("artifact_refs") or []]
         callback = (raw.get("execution_binding") or {}).get("callbackProvenance") or {}
         context_metrics = {
@@ -1200,7 +1259,7 @@ def build_team_operating_router(
             "copiedConversationHistory": False, "providerTaskCount": 1,
             "providerSessionCount": 1 if raw.get("session_ref") else 0,
         }
-        if normalized["status"] == "PARTIAL" and general:
+        if normalized["status"] == "PARTIAL" and general and market_evidence is None:
             try:
                 routing.finish_user_required_execution(
                     work_ref, execution_key=key, task_ref=task_ref,
@@ -1220,18 +1279,24 @@ def build_team_operating_router(
                         "context_metrics": context_metrics, "summary": "Human Input request contract invalid",
                         "result_type": normalized["result_type"], "problem": "Human Input request contract invalid"}
             return {**normalized, "task_ref": task_ref, "artifact_refs": [], "context_metrics": context_metrics}
-        routing.finish_employee_execution(
-            work_ref, execution_key=key, status=normalized["status"], task_ref=task_ref,
-            session_ref=str(raw.get("session_ref") or ""), result_ref=f"task:{task_ref}",
-            artifact_refs=artifacts,
-            evidence_refs=[str(callback["evidence_event_ref"])] if callback.get("evidence_event_ref") else [],
-            result_summary=(
-                f"{normalized['problem']} 恢复方式：补充所需输入后继续同一工作。"
-                if normalized["status"] == "REJECTED" and normalized["problem"]
-                else normalized["summary"]
-            ), result_type=normalized["result_type"],
-            provenance=callback, context_metrics=context_metrics,
-        )
+        with (database.connect() if market_evidence is not None else nullcontext(None)) as con:
+            finisher = routing
+            if con is not None:
+                con.execute("begin immediate")
+                verify_market(con)
+                finisher = ResponsibilityRoutingRuntime(ConversationService(database)._work_database(con))
+            finisher.finish_employee_execution(
+                work_ref, execution_key=key, status=normalized["status"], task_ref=task_ref,
+                session_ref=str(raw.get("session_ref") or ""), result_ref=f"task:{task_ref}",
+                artifact_refs=artifacts,
+                evidence_refs=[str(callback["evidence_event_ref"])] if callback.get("evidence_event_ref") else [],
+                result_summary=(
+                    f"{normalized['problem']} 恢复方式：补充所需输入后继续同一工作。"
+                    if normalized["status"] == "REJECTED" and normalized["problem"]
+                    else normalized["summary"]
+                ), result_type=normalized["result_type"],
+                provenance=callback, context_metrics=context_metrics,
+            )
         if normalized["status"] == "FAILED":
             from ..runtime.child_work import CanonicalChildWorkRuntime
             child = CanonicalChildWorkRuntime(database)
@@ -1279,6 +1344,12 @@ def build_team_operating_router(
                                         "employeeRef": identity["company_employee_ref"]}
             contract["agentSource"] = {"input": source, "snapshot": ConversationService(database).agent_work_source(
                 root["company_id"], root["workspace_id"], assignment["assignmentRef"], source)}
+            browser_scope = root["data"].get("marketEvidenceBrowser") or original.get("agentBrowser")
+            if browser_scope:
+                from ..agent_browser_policy import PublicTargets
+                contract["agentBrowser"] = {"hosts": sorted(PublicTargets(browser_scope["hosts"]).hosts)}
+        if root["data"].get("marketEvidenceBrowser"):
+            contract["marketEvidenceBrowser"] = copy.deepcopy(root["data"]["marketEvidenceBrowser"])
         return contract
 
     async def run_leader(work_ref):
@@ -1292,6 +1363,17 @@ def build_team_operating_router(
         if not targets or root["data"].get("kind") != "CANONICAL_CHILD_WORK":
             raise RuntimeScopeError("Leader delegation requires canonical business Work and existing target responsibilities")
         state = root["data"].get("leaderDelegation")
+        market_service = MusicMarketEvidence(database)
+        with database.connect() as con:
+            is_market = market_service.applies(con, root)
+        needs_browser = not state or any(not any(
+            str(r.get("executionKey", "")).startswith("leader:worker:") and r.get("status") == "ACCEPTED"
+            for r in foundation.get(ref)["data"].get("responsibilityRouting", {}).get("executions", {}).values())
+            for ref in (state or {}).get("childWorkRefs", []))
+        if is_market and needs_browser:
+            readiness = market_service.readiness(work_ref)
+            if not readiness["ready"]:
+                return {"work": root, "delegation_status": "BLOCKED", "market_evidence_readiness": readiness}
         if not state:
             description = [{k: a[k] for k in ("assignmentRef", "responsibility", "employeeRef")} for a in targets]
             result = await run_assignment(work_ref, leader, purpose="leader:plan", question=
@@ -1325,15 +1407,28 @@ def build_team_operating_router(
             child = foundation.get(ref)
             if child["lifecycle_status"] not in {"ACTIVE", "COMPLETED"}:
                 return {"work": current_root, "delegation_status": "CHILD_BLOCKED", "child_work_ref": ref}
+            if is_market and child["lifecycle_status"] == "COMPLETED":
+                # accepted() revalidates its original Task, source and canonical outcome below.
+                continue
             result = await run_assignment(ref, assignment_for(child), purpose="leader:worker")
             if result["status"] != "ACCEPTED":
                 return {"work": foundation.get(work_ref), "delegation_status": result["status"], "child_work_ref": ref}
             results.append({"workRef": ref, "taskRef": result["task_ref"], "summary": result["summary"],
                             "acceptance": "PENDING", "artifactRefs": result["artifact_refs"]})
+        market_evidence = None
+        if is_market:
+            with database.connect() as con:
+                market_evidence = market_service.accepted(con, market_service._entity(con, work_ref))
+            if market_evidence is None:
+                return {"work": foundation.get(work_ref), "delegation_status": "AWAITING_MARKET_EVIDENCE_ACCEPTANCE",
+                    "child_work_refs": state["childWorkRefs"]}
+            results = market_evidence
         summary_ref = child_runtime.release_leader_summary(work_ref)
-        result = await run_assignment(summary_ref, leader, purpose="leader:summary", question=
-            "汇总以下原子 Work 的已验证员工结果，返回原 Work；这些成果仍待既有验收，不得声称用户已接受或产品已完成。"
-            + json.dumps(results, ensure_ascii=False))
+        result = await run_assignment(summary_ref, leader, purpose="leader:summary", question=(
+            "依据以下原工作已核验市场证据提出短视频与流媒体试听的比较、推荐方向和七天测试建议；"
+            "逐项引用固定 evidence_ref/evidence_version，保留时期、分母和限制。建议不是外部执行许可。"
+            if market_evidence else "汇总以下原子 Work 的已验证员工结果，返回原 Work；这些成果仍待既有验收，不得声称用户已接受或产品已完成。")
+            + json.dumps(results, ensure_ascii=False), market_evidence=market_evidence)
         if result["status"] == "ACCEPTED":
             child_runtime.attach_leader_summary(work_ref)
         return {"work": foundation.get(work_ref), "delegation_status": result["status"], "summary_work_ref": summary_ref,
@@ -1507,6 +1602,41 @@ def build_team_operating_router(
                 interaction_key=payload.interaction_key, bounded_summary=payload.bounded_summary,
             )
         except (KeyError, ResponsibilityRoutingError, RuntimeScopeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @router.get("/works/{work_ref}/market-evidence/readiness")
+    def market_evidence_readiness(work_ref: str):
+        try:
+            return MusicMarketEvidence(database).readiness(work_ref)
+        except (KeyError, ValueError, PermissionError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @router.post("/works/{work_ref}/market-evidence/browser-scope")
+    def set_market_browser_scope(work_ref: str, payload: MarketBrowserScopeIn):
+        try:
+            return MusicMarketEvidence(database).browser_scope(work_ref, payload.hosts, payload.source_url)
+        except (KeyError, ValueError, PermissionError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @router.get("/works/{work_ref}/market-evidence/source")
+    def market_evidence_source(work_ref: str, task_ref: str | None = None, artifact_ref: str | None = None):
+        try:
+            service = MusicMarketEvidence(database)
+            if task_ref is not None and artifact_ref is not None:
+                return service.preview(work_ref, task_ref, artifact_ref)
+            if task_ref is not None or artifact_ref is not None:
+                raise ValueError("需要同时指定原 Task 与成果文件。")
+            with database.connect() as con:
+                child, root, _ = service._lineage(con, work_ref)
+                return {"work_ref": work_ref, "root_work_ref": root["entity_id"], "sources": service.review_sources(con, child)}
+        except (KeyError, ValueError, PermissionError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @router.post("/works/{work_ref}/market-evidence/accept")
+    def accept_market_evidence(work_ref: str, payload: AcceptMarketEvidenceIn):
+        try:
+            return MusicMarketEvidence(database).accept(work_ref, payload)
+        except (KeyError, ValueError, PermissionError, OSError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     @router.post("/works/{work_ref}/execute")

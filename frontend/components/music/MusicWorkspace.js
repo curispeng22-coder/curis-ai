@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createAssignedWork } from "../../lib/v1FrontendApi.js";
-import EmployeeConversation from "../v1/EmployeeConversation.js";
+import EmployeeConversation, { MusicResearchResult } from "../v1/EmployeeConversation.js";
 import { useRouter, useSearchParams } from "next/navigation";
 import WorkspacePaneShell from "../workspace/WorkspacePaneShell.js";
 import MusicMain from "./MusicMain.js";
@@ -12,6 +12,11 @@ import styles from "./Music.module.css";
 
 export default function MusicWorkspace({ detail, workspaceId }) {
   const company = detail.instance.company_id, router = useRouter(), params = useSearchParams(), entry = musicEntry(params), operating = musicOperatingEntry(params), canOperate = detail.package?.version === "0.2.0";
+  const researchConversation = params.getAll("research_conversation");
+  const researchWork = params.getAll("research_work");
+  const research = researchConversation.length === 1 && researchWork.length === 1 && researchConversation[0] && researchWork[0]
+    ? { conversation_ref: researchConversation[0], research_work_ref: researchWork[0] } : null;
+  const researchQuery = research ? new URLSearchParams({ research_conversation: research.conversation_ref, research_work: research.research_work_ref }) : null;
   const operatingEntry = { ...operating, view: operating.view === "songs" ? "" : operating.view || (!entry.song && canOperate ? "operating" : "") };
   const identity = JSON.stringify([company, workspaceId, entry, operatingEntry]), active = useRef(identity), epoch = useRef(0), pending = useRef(false);
   useLayoutEffect(() => { active.current = identity; }, [identity]);
@@ -105,7 +110,7 @@ export default function MusicWorkspace({ detail, workspaceId }) {
   return <WorkspacePaneShell workspaceId={workspaceId} surfaceId="music-song" breadcrumb="音乐 · 经营与创作" contextAvailable initialContextOpen contextLabel="经营与作品" contextPane={context} utilityAvailable={Boolean(currentUtility)} utilityLabel="辅助内容" utilityTabs={currentUtility ? [currentUtility] : []} utilityRequestKey={utilityKey} utilityRequestTabId={currentUtility?.id || ""}>
     <div className={styles.main}>{error && <p role="alert" className={styles.error}>{error}</p>}{!collection && !error && <p role="status">正在读取歌曲与版本…</p>}
       {collection && (!row || Boolean(operatingEntry.view)) && discussionHolder && <EmployeeConversation key={`${company}:${workspaceId}:workspace:${discussionHolder.employee_ref}`} companyId={company} employee={{ ...discussionHolder, id: discussionHolder.company_employee_ref }} blocked={Boolean(locked || busy)} embedded={{ workspaceId, contextKey: "workspace", assignmentRef: discussionHolder.assignment_ref, title: "音乐工作空间讨论", showBar: true }} businessReturn={{ href: operatingHref(workspaceId, operatingEntry), kind: "music" }} />}
-      {collection && canOperate && operatingEntry.view && operatingEntry.view !== "release" && <MusicOperatingMain key={JSON.stringify([operatingEntry.view,operatingEntry.object,operatingEntry.period])} company={company} workspaceId={workspaceId} songs={collection.songs} entry={{...operatingEntry,song:entry.song}} collection={operatingCollection} load={load} locked={locked} />}
+      {collection && canOperate && operatingEntry.view && operatingEntry.view !== "release" && <MusicOperatingMain key={JSON.stringify([operatingEntry.view,operatingEntry.object,operatingEntry.period])} company={company} workspaceId={workspaceId} songs={collection.songs} entry={{...operatingEntry,song:entry.song}} collection={operatingCollection} load={load} locked={locked} research={research} researchQuery={researchQuery} />}
       {collection && operatingEntry.view === "release" && <MusicReleaseMain workspaceId={workspaceId} songs={collection.songs} entry={entry} />}
       {collection && !row && !operatingEntry.view && <MusicSongDirectory workspaceId={workspaceId} collection={collection} creating={creating} setCreating={setCreating} busy={busy} locked={locked} createMain={creating ? <MusicMain key="new" company={company} workspaceId={workspaceId} row={null} entry={{}} collection={collection} busy={busy} locked={locked} perform={perform} inspect={inspect} /> : null} />}
       {row && collection && !operatingEntry.view && <MusicMain key={row.song.entity_id} company={company} workspaceId={workspaceId} row={row} entry={{...entry,period:operating.period}} request={request} collection={collection} busy={busy} locked={locked} perform={perform} inspect={inspect} reload={load} />}
@@ -119,7 +124,7 @@ const operatingActions = { OperatingScope: "save-scope", MarketSnapshot: "save-s
 const operatingObjectNames = { market: "市场依据", reference: "参考分析", direction: "创作方向", performance: "作品观察", report: "分析报告", learning: "创作经验" };
 const visibleValue = v => v === null || v === undefined ? "未提供" : String(v);
 
-export function MusicOperatingMain({ company, workspaceId, songs, entry, collection, load, locked }) {
+export function MusicOperatingMain({ company, workspaceId, songs, entry, collection, load, locked, research, researchQuery }) {
   const router = useRouter(), pending = useRef(false), mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const records = collection?.records || [], selected = records.find(r => r.entity_id === entry.object);
@@ -168,7 +173,7 @@ export function MusicOperatingMain({ company, workspaceId, songs, entry, collect
       if (sessionStorage.getItem(draft) === before) sessionStorage.removeItem(draft);
       await load();
       if (output.song) router.push(songHref(workspaceId, { song: output.song.entity_id }));
-      else router.push(operatingHref(workspaceId, { view: operatingViewsForKind[output.record.data.kind], object: output.record.entity_id, period: entry.period, song:entry.song }));
+      else router.push(directionHref({ view: operatingViewsForKind[output.record.data.kind], object: output.record.entity_id, period: entry.period, song:entry.song }));
       return output;
     } catch (reason) { if (mounted.current) setError(reason.message); }
     finally { pending.current = false; if (mounted.current) setBusy(false); }
@@ -176,7 +181,11 @@ export function MusicOperatingMain({ company, workspaceId, songs, entry, collect
   if (!collection) return <p role="status">正在读取经营依据…</p>;
   if (entry.object && !selected) return <p role="alert">原对象或版本不可用。没有替换为其他作品；请返回原列表核对。</p>;
   const current = !selected || !records.some(r => r.data.identity_ref === selected.data.identity_ref && r.data.revision > selected.data.revision);
-  const recordLink = ref => { const r = records.find(v => v.entity_id === ref); return r ? <Link href={operatingHref(workspaceId, { view: operatingViewsForKind[r.data.kind], object: ref, period: entry.period, song:entry.song })}>{r.data.title} · v{r.data.revision}</Link> : <span>原来源不可用</span>; };
+  const directionHref = (values) => {
+    const href = operatingHref(workspaceId, values);
+    return researchQuery && values.view === "direction" ? `${href}${href.includes("?") ? "&" : "?"}${researchQuery}` : href;
+  };
+  const recordLink = ref => { const r = records.find(v => v.entity_id === ref); return r ? <Link href={directionHref({ view: operatingViewsForKind[r.data.kind], object: ref, period: entry.period, song:entry.song })}>{r.data.title} · v{r.data.revision}</Link> : <span>原来源不可用</span>; };
   const report = selected?.data.kind === "Report" ? selected.data : null;
   const masterLabel = data => {
     const item = songs.find(r => r.song.entity_id === data.song_ref), versions = item?.versions.filter(v => v.data.kind === "MasterRevision") || [], index = versions.findIndex(v => v.entity_id === data.master_ref);
@@ -191,8 +200,8 @@ export function MusicOperatingMain({ company, workspaceId, songs, entry, collect
     {entry.view === "operating" && <><div className={styles.operatingSummary}><section><h2>逐作品结果</h2><p>逐歌曲查看成品与期间的人工观察。</p><strong>{observationRows.length ? "已有人工观察" : "尚无原观察"}</strong></section><section><h2>可比变化</h2><p>{comparison.eligible ? `原值变化 ${comparison.difference}；${comparison.percent === null ? "原基数为 0，增长比例未提供。" : `同口径变化 ${comparison.percent.toFixed(1)}%。`}` : comparison.reason}</p></section><section><h2>来源与限制</h2><p>歌曲、成品、账号与指标分别查看；未知值保留空缺。</p></section></div><h2>判断与下一步</h2><p>从原观察追溯来源，确认创作方向后再进入歌曲。</p></>}
     {entry.view === "operating" && <section className={styles.panel}><header className={styles.row}><h2>当前歌曲与下一步</h2><Link href={songHref(workspaceId)}>全部歌曲</Link></header><div className={styles.workRows}>{songs.map(item => <Link key={item.song.entity_id} href={songHref(workspaceId,{song:item.song.entity_id})}><span className={styles.songMark} aria-hidden="true">♪</span><div><strong>{item.song.data.title}</strong><p>{item.song.data.intention || "创作意图待完善"}</p></div><span>{item.master ? "本地成品已确认" : item.choice ? "已选候选 · 待确认成品" : `${item.candidates.length} 个候选 · 待人工选版`}</span><b>继续制作 →</b></Link>)}{!songs.length && <p className={styles.empty}>还没有歌曲，从明确创作意图开始。</p>}</div></section>}
     {["operating", "performance"].includes(entry.view) && <><label className={styles.periodFilter}>观察周期<select aria-label="观察周期" value={entry.period || "all"} onChange={e => router.push(operatingHref(workspaceId, { ...entry, period: e.target.value }))}><option value="all">全部已保存周期</option>{periods.map(period => <option key={period} value={period}>{period.replaceAll("|", " · ")}</option>)}</select></label><table className={styles.table}><thead><tr><th>观察</th><th>指标与原值</th><th>来源</th><th>结果与制作</th></tr></thead><tbody>{observationRows.filter(r => !query || `${r.data.title} ${r.data.metric} ${r.data.account || ""}`.includes(query)).map(r => <tr key={r.entity_id}><td>{r.data.title} · v{r.data.revision}<br />{masterLabel(r.data)}<br />{observationPeriod(r.data).replaceAll("|", " · ")}</td><td>{r.data.metric} · {visibleValue(r.data.value)} {r.data.unit}<br />账号：{visibleValue(r.data.account)}</td><td>{r.data.source.label}<br />人工保存，未联网核验</td><td><Link href={operatingHref(workspaceId, { view: "performance", object: r.entity_id, period: entry.period || "all", song:entry.song })}>查看原观察</Link><br /><Link href={songHref(workspaceId, { song: r.data.song_ref })}>进入该作品创作</Link></td></tr>)}</tbody></table>{!observationRows.length && <p>该周期尚无观察，未提供表现、收入或归因结论。</p>}</>}
-    {entry.view !== "operating" && <><div className={styles.collectionToolbar}><label>查找{operatingObjectNames[entry.view]}<input aria-label="查找音乐依据" value={query} onChange={e => setQuery(e.target.value)} placeholder="标题或说明" /></label><button disabled={busy || locked || selected && !current} onClick={() => setEditing(true)}>{selected ? "修订这版依据" : `新增${operatingKindNames[defaultKind]}`}</button>{entry.view === "market" && <Link href={operatingHref(workspaceId,{view:"reference"})}>参考分析</Link>}{entry.view === "performance" && <Link href={operatingHref(workspaceId,{view:"report",song:entry.song,period:entry.period})}>分析报告与实际用量</Link>}</div>{!["performance"].includes(entry.view) && <div className={styles.objectList}>{records.filter(r => operatingViewsForKind[r.data.kind] === entry.view && (!query || `${r.data.title} ${r.data.body || ""}`.includes(query))).map(r => <Link aria-current={r.entity_id === entry.object ? "page" : undefined} key={r.entity_id} href={operatingHref(workspaceId,{view:entry.view,object:r.entity_id,period:entry.period,song:entry.song})}><strong>{r.data.title}</strong><span>v{r.data.revision} · {operatingKindNames[r.data.kind]}</span><small>{r.data.kind === "Learning" ? r.data.accepted_by ? "用途已接受 · 效果待验证" : "待明确接受用途" : r.data.confirmed_by ? "已明确确认" : "原保存依据"}</small></Link>)}{!records.some(r => operatingViewsForKind[r.data.kind] === entry.view) && <p className={styles.empty}>尚无已保存的{operatingObjectNames[entry.view]}。</p>}</div>}</>}
-    {selected && <section className={styles.panel}><header className={styles.row}><h2>{selected.data.title} · v{selected.data.revision}</h2><Link href={operatingHref(workspaceId, { view: entry.view, period: entry.period, song:entry.song })}>返回原列表与周期</Link></header><p>{operatingKindNames[selected.data.kind]} · {current ? "当前保存版" : "原保存版，只读引用保留"}</p><pre>{selected.data.body || "尚无文字说明"}</pre>{selected.data.scope_ref && <p>原观察范围：{recordLink(selected.data.scope_ref)}</p>}{selected.data.snapshot_ref && <p>原始观察：{recordLink(selected.data.snapshot_ref)}</p>}{selected.data.report_ref && <p>原报告：{recordLink(selected.data.report_ref)}</p>}{selected.data.learning_ref && <p>采用的原经验：{recordLink(selected.data.learning_ref)}</p>}{selected.data.reference_refs?.map(ref => <p key={ref}>原参考：{recordLink(ref)}</p>)}{selected.data.source && <p>来源：{selected.data.source.label} · {selected.data.source.locator}<br />{selected.data.source.note}</p>}{selected.data.kind === "Learning" && <><p>适用范围：{selected.data.applicability}</p><p>反例与限制：{selected.data.counterexample}</p><p>{selected.data.accepted_by ? "用途已明确接受；效果仍待验证。" : "尚未明确接受用途。"}</p></>}
+    {entry.view !== "operating" && <><div className={styles.collectionToolbar}><label>查找{operatingObjectNames[entry.view]}<input aria-label="查找音乐依据" value={query} onChange={e => setQuery(e.target.value)} placeholder="标题或说明" /></label><button disabled={busy || locked || selected && !current} onClick={() => setEditing(true)}>{selected ? "修订这版依据" : `新增${operatingKindNames[defaultKind]}`}</button>{entry.view === "market" && <Link href={operatingHref(workspaceId,{view:"reference"})}>参考分析</Link>}{entry.view === "performance" && <Link href={operatingHref(workspaceId,{view:"report",song:entry.song,period:entry.period})}>分析报告与实际用量</Link>}</div>{!["performance"].includes(entry.view) && <div className={styles.objectList}>{records.filter(r => operatingViewsForKind[r.data.kind] === entry.view && (!query || `${r.data.title} ${r.data.body || ""}`.includes(query))).map(r => <Link aria-current={r.entity_id === entry.object ? "page" : undefined} key={r.entity_id} href={directionHref({view:entry.view,object:r.entity_id,period:entry.period,song:entry.song})}><strong>{r.data.title}</strong><span>v{r.data.revision} · {operatingKindNames[r.data.kind]}</span><small>{r.data.kind === "Learning" ? r.data.accepted_by ? "用途已接受 · 效果待验证" : "待明确接受用途" : r.data.confirmed_by ? "已明确确认" : "原保存依据"}</small></Link>)}{!records.some(r => operatingViewsForKind[r.data.kind] === entry.view) && <p className={styles.empty}>尚无已保存的{operatingObjectNames[entry.view]}。</p>}</div>}</>}
+    {selected && <section className={styles.panel}><header className={styles.row}><h2>{selected.data.title} · v{selected.data.revision}</h2><Link href={directionHref({ view: entry.view, period: entry.period, song:entry.song })}>返回原列表与周期</Link></header><p>{operatingKindNames[selected.data.kind]} · {current ? "当前保存版" : "原保存版，只读引用保留"}</p><pre>{selected.data.body || "尚无文字说明"}</pre>{selected.data.scope_ref && <p>原观察范围：{recordLink(selected.data.scope_ref)}</p>}{selected.data.snapshot_ref && <p>原始观察：{recordLink(selected.data.snapshot_ref)}</p>}{selected.data.report_ref && <p>原报告：{recordLink(selected.data.report_ref)}</p>}{selected.data.learning_ref && <p>采用的原经验：{recordLink(selected.data.learning_ref)}</p>}{selected.data.reference_refs?.map(ref => <p key={ref}>原参考：{recordLink(ref)}</p>)}{selected.data.source && <p>来源：{selected.data.source.label} · {selected.data.source.locator}<br />{selected.data.source.note}</p>}{selected.data.kind === "Learning" && <><p>适用范围：{selected.data.applicability}</p><p>反例与限制：{selected.data.counterexample}</p><p>{selected.data.accepted_by ? "用途已明确接受；效果仍待验证。" : "尚未明确接受用途。"}</p></>}
       {report && <><h3>固定原观察</h3><table className={styles.table}><thead><tr><th>原观察</th><th>成品与周期</th><th>原值</th></tr></thead><tbody>{report.rows.map(r => <tr key={r.entity_id}><td>{recordLink(r.entity_id)}</td><td>{masterLabel(r.data)}<br />{observationPeriod(r.data).replaceAll("|", " · ")}</td><td>{r.data.metric} · {visibleValue(r.data.value)} {r.data.unit}<br />{r.data.platform} · 账号：{visibleValue(r.data.account)}<br />{r.data.definition} · {r.data.coverage} · {r.data.method}<br />原来源：{r.data.source.label}（人工、未核验）</td></tr>)}</tbody></table><h3>所选歌曲累计创作调用用量</h3><p>这是关联歌曲的实际创作调用累计，不是观察期间、某版成品或平台表现成本；未分摊，不推算现金收益。</p>{report.usage.length ? report.usage.map(u => <p key={u.usage_record_id}>{u.model_name} · 输入 {visibleValue(u.input_tokens)} / 输出 {visibleValue(u.output_tokens)} Token · 金额 {visibleValue(u.cost_amount)} {u.currency}（原用量记录）</p>) : <p>未提供关联的实际任务用量；不是零费用。没有现金收益、结算或 ROI 依据。</p>}<p>{collection.report_current[selected.entity_id] ? "原报告与当前观察依据一致。" : "当前观察依据已变化；本报告保持原行，确认与沉淀当前候选已停止。"}</p><button disabled={busy || locked || !current || !collection.report_current[selected.entity_id]} onClick={() => submit("confirm-report", { report_ref: selected.entity_id, confirmed: true })}>明确确认原报告事实</button></>}
     </section>}
     {entry.view !== "operating" && editing && <form className={styles.panel} onSubmit={e => { e.preventDefault(); try { submit(operatingActions[kind], payload()); } catch (reason) { setError(reason.message); } }}>
@@ -209,6 +218,10 @@ export function MusicOperatingMain({ company, workspaceId, songs, entry, collect
       {kind === "Learning" && <>{select("report_ref", "已明确确认的原报告", reports)}{textarea("applicability", "适用范围", true)}{textarea("counterexample", "反例与限制", true)}{check("accepted", "明确接受这版经验的用途；效果仍待验证")}</>}
       <button disabled={busy || locked || selected && !current} type="submit">{busy ? "正在保存…" : selected ? "保存新版本" : "明确保存"}</button>
     </form>}
+    {research && entry.view === "direction" && <ResearchPlanning
+      key={JSON.stringify([company, workspaceId, selected?.entity_id, research])} company={company}
+      workspaceId={workspaceId} research={research} direction={selected?.data.kind === "Direction" ? selected : null}
+      canConfirm={Boolean(current && selected?.data.confirmed_by)} assignments={collection.entry.assignments || []} locked={locked} />}
     {selected?.data.kind === "Direction" && <details className={styles.details}><summary>基于原方向开始或引用到歌曲</summary><section className={styles.panel}><h2>基于这版方向开始创作</h2>{input("new_song_title", "新歌曲名称", { required: true })}{textarea("new_song_intention", "本次明确创作意图", true)}{check("historical", "明确选择原版本及其适用范围，不替换为新版")}{check("creation_confirmed", "明确开始本次新歌曲创作")}
       <button disabled={busy || locked || !selected.data.confirmed_by || !form.creation_confirmed || !form.new_song_title || !form.new_song_intention} onClick={() => submit("create-song", { direction_ref: selected.entity_id, confirmed: form.creation_confirmed, historical: form.historical, title: form.new_song_title, intention: form.new_song_intention, lyrics: "", production: "", draft_revision: form.creation_revision }, "")}>保存并进入新歌曲</button>
       {select("song_ref", "引用到已有作品", songs.map(r=>r.song), false)}<button disabled={busy || locked || !selected.data.confirmed_by || !form.song_ref || !form.creation_confirmed} onClick={() => submit("apply-direction", { direction_ref: selected.entity_id, song_ref: form.song_ref, confirmed: form.creation_confirmed, historical: form.historical }, "")}>明确引用到原作品，保留原创作依据</button>
@@ -218,6 +231,68 @@ export function MusicOperatingMain({ company, workspaceId, songs, entry, collect
     </section></details>}
   </div>;
 }
+function ResearchPlanning({ company, workspaceId, research, direction, canConfirm, assignments, locked }) {
+  const [view, setView] = useState(null), [error, setError] = useState("");
+  const [evidence, setEvidence] = useState(""), [assignment, setAssignment] = useState("");
+  const [busy, setBusy] = useState(false), [refresh, reread] = useState(0);
+  const pending = useRef(false), mounted = useRef(true);
+  const { conversation_ref, research_work_ref } = research;
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  useEffect(() => {
+    let active = true;
+    api.researchDelivery(company, workspaceId, conversation_ref, research_work_ref).then(data => {
+      if (!active) return;
+      if (data.conversation_ref !== conversation_ref || data.research_work_ref !== research_work_ref) {
+        setError("原研究交付范围不一致。"); return;
+      }
+      setView(data);
+    }).catch(reason => { if (active) setError(reason.message || "暂时无法读取原研究交付。"); });
+    return () => { active = false; };
+  }, [company, workspaceId, conversation_ref, research_work_ref, refresh]);
+  const saved = view?.planning_receipts.find(item => item.direction_identity_ref === direction?.data.identity_ref);
+  const deliveryVersion = item => JSON.stringify([item.evidence_ref, item.evidence_version, item.summary_result_ref, item.summary_result_version]);
+  const chosen = view?.deliveries.find(item => deliveryVersion(item) === evidence);
+  const author = assignments.find(item => item.assignment_ref === assignment);
+  async function confirm() {
+    if (pending.current || locked || !canConfirm || saved || !chosen || !author) return;
+    pending.current = true;
+    setBusy(true); setError("");
+    try {
+      await api.confirmResearchPlanning(company, workspaceId, { ...research, child_work_ref: chosen.child_work_ref,
+        evidence_ref: chosen.evidence_ref, evidence_version: chosen.evidence_version,
+        summary_result_ref: chosen.summary_result_ref, summary_result_version: chosen.summary_result_version,
+        direction_ref: direction.entity_id, assignment_ref: author.assignment_ref });
+    } catch (reason) {
+      if (mounted.current) setError(reason.message || "策划工作尚未确认。请核对原记录。");
+    } finally {
+      pending.current = false;
+      if (mounted.current) { setView(null); reread(value => value + 1); setBusy(false); }
+    }
+  }
+  return <section className={styles.panel} aria-label="基于研究交付确认歌曲策划">
+    <h2>歌曲策划工作</h2>
+    {error && <p role="alert">{error}</p>}
+    {view?.planning_receipts.map(item => <p role="status" key={item.work_ref}>
+      已创建歌曲策划工作。工作编号：{item.work_ref}
+    </p>)}
+    {view && !view.deliveries.length && <p role="status">原工作尚无已验收的研究交付。</p>}
+    {view && (!canConfirm || saved) && view.deliveries.map(item => <MusicResearchResult key={item.evidence_ref} item={item} />)}
+    {view?.deliveries.length > 0 && !saved && (canConfirm ? <>
+      <label>原研究证据<select value={evidence} onChange={event => setEvidence(event.target.value)}>
+        <option value="">请选择原研究证据</option>
+        {view.deliveries.map(item => <option key={item.evidence_ref} value={deliveryVersion(item)}>{item.evidence_summary || item.evidence_ref}</option>)}
+      </select></label>
+      {chosen && <MusicResearchResult item={chosen} />}
+      <label>歌曲创作责任<select value={assignment} onChange={event => setAssignment(event.target.value)}>
+        <option value="">请选择歌曲创作责任</option>
+        {assignments.map(item => <option key={item.assignment_ref} value={item.assignment_ref}>{item.name || item.responsibility}</option>)}
+      </select></label>
+      <button type="button" disabled={busy || locked || !chosen || !author} onClick={confirm}>确认并创建歌曲策划工作</button>
+    </> : <p>请选择当前已确认的创作方向，再创建歌曲策划工作。</p>)}
+    <button type="button" disabled={busy} onClick={() => { setView(null); setError(""); reread(value => value + 1); }}>重新读取原研究交付</button>
+  </section>;
+}
+
 function observationPeriod(data) { return [data.period.start, data.period.end, data.period.timezone].join("|"); }
 
 export function MusicSongDirectory({ workspaceId, collection, creating, setCreating, busy, locked, createMain }) {
