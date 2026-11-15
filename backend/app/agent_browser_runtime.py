@@ -683,7 +683,10 @@ def browser_bundle_digest(root):
     for path in sorted(root.rglob("*")):
         relative = str(path.relative_to(root))
         if path.is_symlink():
-            item = [relative, "link", os.readlink(path)]
+            target = os.readlink(path)
+            if Path(target).is_absolute() or not path.resolve(strict=True).is_relative_to(root.resolve()):
+                raise ValueError("Browser bundle link escapes its relocatable root")
+            item = [relative, "link", target]
         elif path.is_file():
             with path.open("rb") as stream:
                 item = [relative, "file", hashlib.file_digest(stream, "sha256").hexdigest()]
@@ -704,33 +707,84 @@ def browser_environment(directory, session):
         "AGENT_BROWSER_SESSION": session}
 
 
+BROWSER_BUNDLE_PATHS = {
+    "cliPath": "vendor/agent-browser/agent-browser",
+    "chromePath": "vendor/agent-browser/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "stopEvidenceRef": "vendor/agent-browser/normal-close-evidence.json",
+}
+
+
+def browser_release_profile(lock):
+    """Finite bundle layout shared by the existing builder and runtime."""
+    import re
+    profile = lock.get("agentBrowser")
+    fields = set(BROWSER_BUNDLE_PATHS) | {"cliSha256", "chromeSha256", "chromeBundleSha256",
+        "stopEvidenceSha256", "boundary", "methods"}
+    if (lock.get("runtimeKind") != "NATIVE_AGENT_BROWSER" or type(profile) is not dict
+            or set(profile) != fields
+            or any(profile[k] != value for k, value in BROWSER_BUNDLE_PATHS.items())
+            or profile["boundary"] != "FIXED_COMMANDS_FRESH_PROFILE_PUBLIC_READ_PROXY"
+            or profile["methods"] != ["GET", "HEAD"]
+            or any(not re.fullmatch(r"[0-9a-f]{64}", str(profile[k])) for k in
+                ("cliSha256", "chromeSha256", "chromeBundleSha256", "stopEvidenceSha256"))):
+        raise ValueError("受管 agent-browser 构建、包内路径与独立停止证据尚未发布。")
+    return dict(profile)
+
+
+def _bundled_browser_file(root, relative):
+    from pathlib import Path
+    root = Path(root).resolve(strict=True)
+    if relative not in BROWSER_BUNDLE_PATHS.values():
+        raise ValueError("Browser resource is outside the finite bundle layout")
+    path = root
+    for component in Path(relative).parts:
+        path = path / component
+        if path.is_symlink():
+            raise ValueError("Browser resource path contains a link")
+    if not path.is_file() or not path.resolve(strict=True).is_relative_to(root):
+        raise ValueError("Browser resource is missing from the trusted bundle")
+    return path
+
+
+def verify_browser_package(profile, root, *, verify_assets=True):
+    import hashlib
+    import os
+    import stat
+    paths = {key: _bundled_browser_file(root, value) for key, value in
+        ((key, profile[key]) for key in BROWSER_BUNDLE_PATHS)}
+    # Proof bytes must be present even during repeated release/revocation checks.
+    fd = os.open(paths["stopEvidenceRef"], os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or not 0 < info.st_size <= 1024 * 1024:
+            raise ValueError("Browser stop evidence resource is invalid")
+        with os.fdopen(fd, "rb", closefd=False) as stream:
+            proof_sha = hashlib.file_digest(stream, "sha256").hexdigest()
+    finally:
+        os.close(fd)
+    if proof_sha != profile["stopEvidenceSha256"]:
+        raise ValueError("Browser stop evidence does not match the fixed build")
+    if verify_assets:
+        _pinned_browser_asset(paths["cliPath"], profile["cliSha256"])
+        _pinned_browser_asset(paths["chromePath"], profile["chromeSha256"])
+        if browser_bundle_digest(paths["chromePath"].parents[2]) != profile["chromeBundleSha256"]:
+            raise ValueError("浏览器完整构建与固定发布版本不一致。")
+    return {**profile, **{key: str(path) for key, path in paths.items()}}
+
+
 def agent_browser_release(*, verify_assets=True):
     """Existing bundled release authority; never a Work payload or private grant."""
     import hashlib
     import os
-    import re
+    import sys
     from pathlib import Path
     lock = load_trusted_reader_lock()
-    profile = lock.get("agentBrowser")
-    fields = {"cliPath", "cliSha256", "chromePath", "chromeSha256", "chromeBundleSha256",
-        "stopEvidenceRef", "stopEvidenceSha256", "boundary", "methods"}
-    if (lock.get("runtimeKind") != "NATIVE_AGENT_BROWSER" or type(profile) is not dict
-            or set(profile) != fields
-            or profile["boundary"] != "FIXED_COMMANDS_FRESH_PROFILE_PUBLIC_READ_PROXY"
-            or profile["methods"] != ["GET", "HEAD"]
-            or not isinstance(profile["stopEvidenceRef"], str) or not profile["stopEvidenceRef"].strip()
-            or any(not re.fullmatch(r"[0-9a-f]{64}", str(profile[k])) for k in
-                ("cliSha256", "chromeSha256", "chromeBundleSha256", "stopEvidenceSha256"))):
-        raise ValueError("受管 agent-browser 构建、边界与独立停止证据尚未发布。")
-    release = {**profile, "temporaryRoot": "/private/tmp/curis-public-browser-" + str(os.getuid()),
-        "releaseSha256": hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()}
-    if verify_assets:
-        _pinned_browser_asset(release["cliPath"], release["cliSha256"])
-        chrome = Path(_pinned_browser_asset(release["chromePath"], release["chromeSha256"]))
-        bundle = chrome.parents[2]
-        if bundle.suffix != ".app" or browser_bundle_digest(bundle) != release["chromeBundleSha256"]:
-            raise ValueError("浏览器完整构建与固定发布版本不一致。")
-    return release
+    profile = browser_release_profile(lock)
+    root = Path(sys._MEIPASS) if getattr(sys, "frozen", False) else Path(__file__).resolve().parents[2]
+    release = verify_browser_package(profile, root, verify_assets=verify_assets)
+    release_sha = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {**release, "temporaryRoot": "/private/tmp/curis-public-browser-" + str(os.getuid()) + "-" + release_sha[:12],
+        "releaseSha256": release_sha}
 
 
 def validate_browser_supervisor_request(request):

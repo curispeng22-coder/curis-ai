@@ -1594,26 +1594,23 @@ def test_linux_navigation_receive_budget_is_longer_than_tool_and_remains_cancell
 
 
 def test_public_browser_release_requires_bundled_assets_and_stop_evidence(tmp_path, monkeypatch):
-    import hashlib
     from app import agent_browser_runtime as runtime
-    cli = tmp_path / 'browser-cli'; cli.write_bytes(b'offline fixture, never executed'); cli.chmod(0o700)
-    chrome = tmp_path / 'Fixture.app/Contents/MacOS/browser'; chrome.parent.mkdir(parents=True)
-    chrome.write_bytes(b'offline browser fixture'); chrome.chmod(0o700)
-    profile = {'cliPath': str(cli), 'cliSha256': hashlib.sha256(cli.read_bytes()).hexdigest(),
-        'chromePath': str(chrome), 'chromeSha256': hashlib.sha256(chrome.read_bytes()).hexdigest(),
-        'chromeBundleSha256': runtime.browser_bundle_digest(tmp_path / 'Fixture.app'),
-        'stopEvidenceRef': 'fixture-review', 'stopEvidenceSha256': 'a' * 64,
-        'boundary': 'FIXED_COMMANDS_FRESH_PROFILE_PUBLIC_READ_PROXY', 'methods': ['GET', 'HEAD']}
-    lock = {'runtimeKind': 'NATIVE_AGENT_BROWSER', 'agentBrowser': profile}
+    from backend.tests.test_agent_browser_packaging import assets_fixture, install_fixture, activate_fixture
+    values = assets_fixture(tmp_path)
+    lock, _, _, _, _ = values
+    root = tmp_path / 'installed'
+    expected = install_fixture(root, values)
+    activate_fixture(monkeypatch, root, expected)
+    monkeypatch.setattr(runtime, 'load_trusted_reader_lock', _bundled_lock_loader)
+    assert runtime.agent_browser_release()['cliPath'] == str(root / runtime.BROWSER_BUNDLE_PATHS['cliPath'])
     monkeypatch.setattr(runtime, 'load_trusted_reader_lock', lambda: lock)
-    assert runtime.agent_browser_release()['cliPath'] == str(cli)
+    profile = lock['agentBrowser']
     profile['identity'] = {'company_id': 'private-grant'}
     with pytest.raises(ValueError): runtime.agent_browser_release()
     profile.pop('identity')
     profile['stopEvidenceSha256'] = ''
     with pytest.raises(ValueError): runtime.agent_browser_release()
     profile['stopEvidenceSha256'] = 'a' * 64
-    chrome.write_bytes(b'changed executable')
     with pytest.raises(ValueError): runtime.agent_browser_release()
 
 

@@ -14,6 +14,18 @@ verify_bsk() {
     }
 }
 
+# Build-time asset inputs only. No runtime environment override or download.
+python_bin="${CURIS_BUILD_PYTHON:-$root/backend/.venv/bin/python}"
+[ -x "$python_bin" ] || python_bin="python3"
+package_agent_browser() {
+  "$python_bin" "$root/desktop/scripts/package-agent-browser.py" \
+    --resource-root "$runtime/workspace/_internal" \
+    --lock "$root/backend/app/reader_runtime_lock.json" \
+    --cli "${CURIS_AGENT_BROWSER_CLI:-}" \
+    --chrome-bundle "${CURIS_AGENT_BROWSER_CHROME_BUNDLE:-}" \
+    --evidence "${CURIS_AGENT_BROWSER_STOP_EVIDENCE:-}" "$@"
+}
+
 if [[ "${CURIS_SKIP_RUNTIME_BUILD:-0}" == "1" ]]; then
   test -x "$runtime/node" && test -x "$runtime/workspace/curis-workspace" && \
     test -x "$runtime/gateway/curis-gateway" && test -x "$runtime/guardian/curis-guardian" && \
@@ -22,6 +34,7 @@ if [[ "${CURIS_SKIP_RUNTIME_BUILD:-0}" == "1" ]]; then
       exit 1
     }
   verify_bsk "$bsk_runtime"
+  package_agent_browser --verify-only
   echo "runtime build skipped (CURIS_SKIP_RUNTIME_BUILD=1)"
   exit 0
 fi
@@ -29,8 +42,6 @@ fi
 bsk_source="${CURIS_BROWSER_SKILL_BINARY:-$root/artifacts/tasks/CURIS-V1-EMPLOYEE-EXECUTION-CAPABILITIES-20261029/tools/browser-skill/bsk}"
 verify_bsk "$bsk_source"
 build_tools="${CURIS_BUILD_TOOLS:-$out/build-tools}"
-python_bin="${CURIS_BUILD_PYTHON:-$root/backend/.venv/bin/python}"
-[ -x "$python_bin" ] || python_bin="python3"
 
 rm -rf "$runtime" "$out/workspace-dist" "$out/workspace-build" \
   "$out/gateway-dist" "$out/gateway-build" "$out/guardian-dist" "$out/guardian-build" \
@@ -146,6 +157,8 @@ cp -RL "$out/workspace-dist/curis-workspace/." "$runtime/workspace/"
 cp "$bsk_source" "$bsk_runtime"
 chmod 755 "$bsk_runtime"
 verify_bsk "$bsk_runtime"
+# Copy reviewed native bytes after PyInstaller; retain Chrome internal links.
+package_agent_browser
 
 echo "[3/4] install fixed Gateway source"
 PYTHONPATH="$build_tools:$root" "$python_bin" -m PyInstaller \
