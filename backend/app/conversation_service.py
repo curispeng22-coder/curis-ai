@@ -1,8 +1,4 @@
-"""Shared conversation ownership on the existing append-only event seam.
-
-This is not a Work projection. Existing CEO Assistant and Meeting holders stay
-untouched; they can consume this vocabulary without a historical migration.
-"""
+"""Shared conversation ownership and explicit research confirmation on the event log."""
 from __future__ import annotations
 
 import copy
@@ -26,6 +22,17 @@ from .resource_scope_policy import ResourceScopePolicy
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def _research_fields(output):
+    try:
+        value = json.loads(output)
+    except ValueError:
+        return None
+    if (not isinstance(value, dict) or set(value) != {"problem", "expected_result"}
+            or any(not isinstance(field, str) or not 1 <= len(field.strip()) <= 1600 for field in value.values())):
+        return None
+    return {key: field.strip() for key, field in value.items()}
 
 
 # Read-only ADR-0046 truth projected into the Shared Composer access slot.
@@ -821,7 +828,93 @@ class ConversationService:
                 attempt["status"] = "UNKNOWN"
             self._project_credential_wait(attempt)
         return {**owner, "messages": [row["payload"] for row in rows if row["event_type"] == "conversation.message"],
-                "attempts": list(attempts.values())}
+                "attempts": list(attempts.values()),
+                "research_work_receipts": [row["payload"] for row in rows
+                                           if row["event_type"] == "conversation.research_work.confirmed"]}
+
+    def confirm_research_work(self, company_id, *, message_ref, proposal_version,
+                              employee_ref=None, conversation_id=None):
+        from .runtime import ResponsibilityRoutingRuntime
+        from .runtime.child_work import CanonicalChildWorkRuntime
+
+        if TenantContext.current_identity().get("role", "").lower() not in {"ceo", "owner"}:
+            raise RuntimeScopeError("Only the Company owner may confirm research Work")
+        with self.db.connect() as con:
+            con.execute("begin immediate")
+            database = self._work_database(con)
+            service = ConversationService(database)
+            owner = service.owner(company_id, employee_ref, conversation_id)
+            conversation_id = owner["conversation_id"]
+            employee = owner["owner_ref"]
+            rows = self._rows(con, conversation_id)
+            messages = {row["payload"]["message_id"]: row["payload"] for row in rows
+                        if row["event_type"] == "conversation.message"}
+            reply = messages.get(message_ref, {})
+            proposal = reply.get("research_proposal")
+            if not proposal or reply["sender"] != {"kind": "EMPLOYEE", "ref": employee}:
+                raise RuntimeScopeError("The original Employee research proposal is unavailable")
+            basis = {key: proposal[key] for key in ("problem", "expected_result", "source_message_ref")}
+            version = digest([conversation_id, message_ref, reply["context"], basis])
+            if proposal_version != version or proposal["version"] != version:
+                raise ValueError("Research proposal version does not match")
+            source = messages.get(basis["source_message_ref"], {})
+            finishes = [row["payload"] for row in rows if row["event_type"] == "conversation.attempt.finished"
+                        and row["payload"]["attempt_id"] == reply["idempotency_key"]]
+            if (source.get("sender") != owner["participants"][0] or source.get("context") != reply["context"]
+                    or len(finishes) != 1 or finishes[0].get("status") != "COMPLETED"
+                    or finishes[0].get("effect_status", "SETTLED") != "SETTLED"
+                    or finishes[0]["message_id"] != basis["source_message_ref"]
+                    or finishes[0]["context"] != reply["context"]
+                    or finishes[0].get("task_ref") != reply.get("task_ref")):
+                raise RuntimeScopeError("Research proposal has no settled original reply")
+            context = service.context(company_id, employee, reply["context"]["assignment_ref"])
+            assignment_ref = context["assignment_ref"]
+            assignment = service.foundation.get(assignment_ref)
+            if (context != reply["context"] or context["scope_type"] != "BUSINESS"
+                    or not assignment["data"].get("isLeader")):
+                raise RuntimeScopeError("The original business leader Assignment is no longer current")
+
+            key = "conversation-research-work:" + version
+            prior = next((row["payload"] for row in rows if row["event_type"] == "conversation.research_work.confirmed"
+                          and row["payload"]["proposal_version"] == version), None)
+            if prior:
+                return prior
+
+            routing = ResponsibilityRoutingRuntime(database)
+            latest = {}
+            for workflow in service.foundation.list("RESPONSIBILITY_WORKFLOW", company_id=company_id,
+                                                    workspace_id=context["workspace_id"]):
+                data = workflow["data"]
+                if (data["scopeType"], data["scopeRef"]) != (context["scope_type"], context["scope_ref"]):
+                    continue
+                workflow_key = data["workflowKey"]
+                if workflow_key not in latest or data["version"] > latest[workflow_key]["data"]["version"]:
+                    latest[workflow_key] = workflow
+            matches = [workflow for workflow in latest.values()
+                       if any(row["assignmentRef"] == assignment_ref for row in workflow["data"]["assignments"])]
+            if len(matches) != 1 or routing._assignment_snapshot(assignment) not in matches[0]["data"]["assignments"]:
+                raise RuntimeScopeError("A unique current published workflow is required for this Assignment")
+
+            origin = {"conversation_ref": conversation_id, "proposal_message_ref": message_ref,
+                      "source_message_ref": source["message_id"], "proposal_version": version,
+                      "business_ref": context["business_id"], "assignment_ref": assignment_ref,
+                      "assignment_revision": context["assignment_revision"], "employee_ref": employee,
+                      "confirmed_by": owner["participants"][0]["ref"]}
+            work_runtime = CanonicalChildWorkRuntime(database)
+            scope = {field: context[field] for field in ("scope_type", "scope_ref")}
+            created = work_runtime.create_cycle_work(company_id=company_id, workspace_id=context["workspace_id"],
+                **scope, assignment_ref=assignment_ref, release_key=key, contract={
+                    "problem": basis["problem"], "expectedResult": basis["expected_result"],
+                    "constraints": [], "references": [], "conversationResearchSource": origin,
+                })
+            work_ref = created["work"]["entity_id"]
+            routing.start_work(work_ref, **scope, workflow_key=matches[0]["data"]["workflowKey"],
+                               initial_responsibility=assignment["data"]["responsibilityKey"])
+            work_runtime.transition_work(work_ref, "READY", actor="SYSTEM", reason="负责人研究提案已确认")
+            work_runtime.transition_work(work_ref, "ACTIVE", actor="SYSTEM", reason="等待启动研究工作")
+            receipt = {**origin, "work_ref": work_ref, "cycle_ref": created["cycle"]["entity_id"]}
+            return self.events.record_in_connection(con, correlation_id=conversation_id,
+                event_type="conversation.research_work.confirmed", payload=receipt, idempotency_key=key)["payload"]
 
     def _terminal_failure(self, con, attempt):
         """A failed Task closes execution, not its unknown outbound metering."""
@@ -1221,6 +1314,17 @@ class ConversationService:
                           f"本次CEO消息：{message['body']}\n"
                           f"CEO所选来源（仅引用，未加载正文）：{json.dumps(references, ensure_ascii=False)}\n"
                           "只回复CEO这条消息；不执行外部写入，不猜测未提供事实。")
+            ordinary_reply = (selection or {}).get("purpose") in {None, "CONVERSATION_REPLY"}
+            may_propose_research = (ordinary_reply and context["scope_type"] == "BUSINESS"
+                and message["context"] == context
+                and self.foundation.get(context["assignment_ref"])["data"].get("isLeader")
+                and not (self.owner(company, conversation_id=conversation_id).get("discussion_scope") or {}).get("object_ref"))
+            if may_propose_research:
+                prompt += (
+                    '\n仅当本次消息明确要求拟定业务研究工作时，返回一个 JSON 对象，'
+                    '字段严格为 problem 和 expected_result，均为非空字符串且各不超过1600字。'
+                    '描述待研究的问题和预期交付，不声称已创建工作或完成研究。其他消息正常用文字回复。'
+                )
             def submit(database):
                 task = ResultStore(database).create_task(prompt, company_id=company, workspace_id=context["workspace_id"],
                     scope_type=context["scope_type"], scope_ref=context["scope_ref"],
@@ -1284,6 +1388,15 @@ class ConversationService:
                      "sender": {"kind": "EMPLOYEE", "ref": employee}, "timestamp": datetime.now(timezone.utc).isoformat(),
                      "body": task["output"][:8000], "references": message["references"], "context": context,
                      "idempotency_key": attempt_id, "task_ref": task_id, "provenance": verified}
+            if may_propose_research and len(task["output"]) <= 8000:
+                fields = _research_fields(task["output"])
+                if fields:
+                    basis = {**fields, "source_message_ref": message["message_id"]}
+                    reply["research_proposal"] = {**basis,
+                        "version": digest([conversation_id, reply["message_id"], context, basis])}
+                    reply["display_body"] = (
+                        f"研究提案\n研究问题：{fields['problem']}\n预期成果：{fields['expected_result']}"
+                    )
             if work_ref:
                 from .runtime import ResponsibilityRoutingRuntime
                 with self.db.connect() as con:

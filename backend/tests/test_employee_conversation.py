@@ -366,6 +366,191 @@ def test_selected_conversation_reply_runs_real_binding_with_usage(tmp_path, monk
         assert len(usage) == 1 and usage[0]["fallback_from_model"] is None
 
 
+def test_business_leader_research_proposal_confirm_and_reopen(tmp_path, monkeypatch):
+    import json
+    from dataclasses import replace
+    from app.identity_membership import IdentityMembership
+    from app.main import create_app
+    from app.runtime.child_work import CanonicalChildWorkRuntime
+    from backend.tests.test_conversation_usage import prepared
+    from backend.tests.test_v1_general_operating_contract import BUSINESS
+
+    path = tmp_path / "research.sqlite"
+    db, assignment, adapter, calls = prepared(path)
+    routing = ResponsibilityRoutingRuntime(db)
+    with scope(), db.connect() as con:
+        con.execute("update runtime_entities set workspace_id=null where entity_type in ('AI_EMPLOYEE','ROLE_SLOT')")
+        row = con.execute("select data_json from runtime_entities where entity_id=?", (assignment,)).fetchone()
+        data = json.loads(row[0])
+        data.update(scopeType="BUSINESS", scopeRef=BUSINESS, isLeader=True)
+        con.execute("update runtime_entities set workspace_id=null,data_json=? where entity_id=?", (json.dumps(data), assignment))
+
+    proposal = {"problem": "研究原创歌曲的发现路径", "expected_result": "列出带出处和适用范围的公开依据"}
+    def post(url, payload, headers, timeout):
+        prompt = payload["messages"][-1]["content"]
+        assert "expected_result" in prompt
+        calls.append(prompt)
+        body = json.dumps(proposal, ensure_ascii=False) if len(calls) == 1 else "普通回复"
+        return {"choices": [{"message": {"content": body}}],
+                "usage": {"prompt_tokens": 4, "completion_tokens": 3, "total_tokens": 7}}
+
+    adapter.http_post = post
+    original = IdentityMembership._authorize_test
+    monkeypatch.setattr(IdentityMembership, "_authorize_test",
+        lambda self, tenant, request: replace(original(self, tenant, request), role="ceo"))
+    base = f"/api/workspace/v1/companies/{COMPANY}"
+    prefix = f"{base}/employees/{EMPLOYEE}/conversation"
+    confirm = prefix + "/research-work/confirm"
+    headers = {"X-Tenant-Id": TENANT, "X-Ceo-Id": "ceo"}
+    with TestClient(create_app(str(path), model_gateway_adapter=adapter), headers=headers) as client:
+        assert client.post(prefix + "/messages", json={
+            "body": "请拟定一项歌曲市场研究工作", "request_id": "research-goal", "assignment_ref": assignment,
+        }).status_code == 202
+        before = client.get(prefix).json()
+        original_message, reply = before["messages"]
+        basis = reply["research_proposal"]
+        assert {k: basis[k] for k in proposal} == proposal
+        assert basis["source_message_ref"] == original_message["message_id"]
+        assert before["research_work_receipts"] == []
+        confirm_payload = {"message_ref": reply["message_id"], "proposal_version": basis["version"]}
+        assert client.post(confirm, json={**confirm_payload, "proposal_version": "0" * 64}).status_code == 409
+        assert client.post(confirm, json={**confirm_payload, "message_ref": original_message["message_id"]}).status_code == 404
+        other = client.post(base + "/conversations", json={"request_id": "other", "employee_ref": EMPLOYEE}).json()
+        assert client.post(f"{base}/conversations/{other['conversation_id']}/research-work/confirm",
+                           json=confirm_payload).status_code == 404
+        assert client.post(confirm, json=confirm_payload).status_code == 404  # No published workflow.
+        with db.connect() as con:
+            assert con.execute("select count(*) from runtime_entities where entity_type in ('CYCLE','WORK')").fetchone()[0] == 0
+        with scope():
+            published = routing.publish_workflow(company_id=COMPANY, workspace_id=None, scope_type="BUSINESS", scope_ref=BUSINESS,
+                workflow_key="research", assignment_refs=[assignment], default_flow=[data["responsibilityKey"]])
+        with db.connect() as con:
+            stale = published["data"]
+            stale["assignments"][0]["assignmentRevision"] = 0
+            con.execute("update runtime_entities set data_json=? where entity_id=?",
+                        (json.dumps(stale), published["entity_id"]))
+        assert client.post(confirm, json=confirm_payload).status_code == 404
+        with scope():
+            routing.publish_workflow(company_id=COMPANY, workspace_id=None, scope_type="BUSINESS", scope_ref=BUSINESS,
+                workflow_key="research", assignment_refs=[assignment], default_flow=[data["responsibilityKey"]])
+
+        with monkeypatch.context() as patch:
+            def refuse(*args, **kwargs):
+                raise ValueError("injected receipt failure")
+            patch.setattr(EvolutionEventLog, "record_in_connection", refuse)
+            assert client.post(confirm, json=confirm_payload).status_code == 409
+        with db.connect() as con:
+            assert con.execute("select count(*) from runtime_entities where entity_type in ('CYCLE','WORK')").fetchone()[0] == 0
+
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            responses = list(pool.map(lambda _: client.post(confirm, json=confirm_payload), range(4)))
+        assert all(response.status_code == 200 for response in responses)
+        receipt = responses[0].json()
+        assert all(response.json() == receipt for response in responses)
+        topic = f"{base}/conversations/{before['conversation_id']}"
+        assert client.post(topic + "/research-work/confirm", json=confirm_payload).json() == receipt
+        assert client.get(topic).json()["research_work_receipts"] == [receipt]
+        assert receipt["business_ref"] == BUSINESS and receipt["assignment_ref"] == assignment
+        assert receipt["source_message_ref"] == original_message["message_id"]
+        assert receipt["proposal_message_ref"] == reply["message_id"]
+        assert receipt["employee_ref"] == EMPLOYEE and receipt["proposal_version"] == basis["version"]
+        assert client.post(prefix + "/messages", json={
+            "body": "只讨论这项工作的背景", "request_id": "ordinary", "assignment_ref": assignment,
+        }).status_code == 202
+        current = client.get(prefix).json()
+        assert "research_proposal" not in current["messages"][-1]
+
+    with TestClient(create_app(str(path)), headers=headers) as reopened:
+        assert reopened.get(prefix).json()["research_work_receipts"] == [receipt]
+        assert reopened.post(confirm, json=confirm_payload).json() == receipt
+        restored = Database(str(path))
+        with scope():
+            work = CanonicalChildWorkRuntime(restored).get_work(receipt["work_ref"])
+            cycle = RuntimeFoundation(restored).get(receipt["cycle_ref"])
+            assert work["data"]["scopeRef"] == BUSINESS and work["owner_ref"] == EMPLOYEE
+            assert work["data"]["responsibilityRouting"]["currentAssignmentRef"] == assignment
+            assert work["data"]["responsibilityRouting"]["currentExecutorRef"] is None
+            assert cycle["data"]["contract"]["problem"] == proposal["problem"]
+            assert cycle["data"]["contract"]["expectedResult"] == proposal["expected_result"]
+            assert cycle["data"]["contract"]["conversationResearchSource"]["proposal_version"] == basis["version"]
+        with monkeypatch.context() as patch:
+            patch.setattr(IdentityMembership, "_authorize_test",
+                lambda self, tenant, request: replace(original(self, tenant, request), role="viewer"))
+            assert reopened.post(confirm, json=confirm_payload).status_code == 404
+    assert len(calls) == 2
+    with db.connect() as con:
+        assert con.execute("select count(*) from runtime_entities where entity_type='WORK'").fetchone()[0] == 1
+        assert con.execute("select count(*) from tasks where work_ref is not null").fetchone()[0] == 0
+        assert con.execute("pragma integrity_check").fetchone()[0] == "ok"
+
+    # Revocation is checked before replay. Use a second transaction so cold-read
+    # QA can still open the unchanged fixture after this test process exits.
+    with pytest.raises(RuntimeScopeError, match="original business leader Assignment"):
+        with scope(), db.connect() as con:
+            con.execute("begin immediate")
+            service = ConversationService(ConversationService(db)._work_database(con))
+            ResponsibilityRoutingRuntime(service.db).update_assignment(assignment, responsibility="已更新的业务责任")
+            service.confirm_research_work(COMPANY, employee_ref=EMPLOYEE, **confirm_payload)
+
+
+def test_workspace_leader_cannot_propose_or_confirm_business_research(tmp_path, monkeypatch):
+    import json
+    from dataclasses import replace
+    from app.conversation_service import digest
+    from app.identity_membership import IdentityMembership
+    from app.main import create_app
+    from backend.tests.test_conversation_usage import prepared
+    from backend.tests.test_v1_general_operating_contract import BUSINESS
+
+    db, assignment, adapter, calls = prepared(tmp_path / "workspace-leader.sqlite")
+    with scope(), db.connect() as con:
+        row = con.execute("select data_json from runtime_entities where entity_id=?", (assignment,)).fetchone()
+        data = {**json.loads(row[0]), "isLeader": True}
+        con.execute("update runtime_entities set data_json=? where entity_id=?", (json.dumps(data), assignment))
+    with scope():
+        ResponsibilityRoutingRuntime(db).publish_workflow(company_id=COMPANY, workspace_id=WORKSPACE,
+            scope_type="WORKSPACE", scope_ref=WORKSPACE, workflow_key="research",
+            assignment_refs=[assignment], default_flow=[data["responsibilityKey"]])
+    fields = {"problem": "研究歌曲市场", "expected_result": "可复核资料"}
+
+    def post(url, payload, headers, timeout):
+        calls.append(payload["messages"][-1]["content"])
+        return {"choices": [{"message": {"content": json.dumps(fields)}}],
+                "usage": {"prompt_tokens": 4, "completion_tokens": 3, "total_tokens": 7}}
+
+    adapter.http_post = post
+    original = IdentityMembership._authorize_test
+    monkeypatch.setattr(IdentityMembership, "_authorize_test",
+        lambda self, tenant, request: replace(original(self, tenant, request), role="ceo"))
+    prefix = f"/api/workspace/v1/companies/{COMPANY}/employees/{EMPLOYEE}/conversation"
+    with TestClient(create_app(str(db.path), model_gateway_adapter=adapter),
+                    headers={"X-Tenant-Id": TENANT, "X-Ceo-Id": "ceo"}) as client:
+        sent = client.post(prefix + "/messages", json={
+            "body": "请拟定业务研究", "request_id": "workspace-goal", "assignment_ref": assignment,
+        })
+        assert sent.status_code == 202
+        view = client.get(prefix).json()
+        source, reply = view["messages"]
+        assert view["attempts"][0]["status"] == "COMPLETED"
+        assert reply["context"]["business_id"] == BUSINESS and reply["context"]["scope_type"] == "WORKSPACE"
+        assert "research_proposal" not in reply and "expected_result" not in calls[0]
+
+        # Simulate a proposal persisted by the earlier candidate, with valid version and lineage.
+        basis = {**fields, "source_message_ref": source["message_id"]}
+        version = digest([view["conversation_id"], reply["message_id"], reply["context"], basis])
+        reply["research_proposal"] = {**basis, "version": version}
+        with db.connect() as con:
+            con.execute("update evolution_events set payload=? where tenant_id=? and idempotency_key=?",
+                        (json.dumps(reply), TENANT, reply["message_id"]))
+        response = client.post(prefix + "/research-work/confirm", json={
+            "message_ref": reply["message_id"], "proposal_version": version,
+        })
+        assert response.status_code == 404
+        assert client.get(prefix).json()["research_work_receipts"] == []
+    with db.connect() as con:
+        assert con.execute("select count(*) from runtime_entities where entity_type in ('CYCLE','WORK')").fetchone()[0] == 0
+
+
 def test_topic_without_employee_rejects_execution_selection(tmp_path):
     db, assignment = setup(tmp_path / "topic-no-employee.sqlite")
     app = FastAPI()

@@ -111,6 +111,10 @@ export const getEmployeeConversation = (company, employee) => workspaceFetch(emp
 export const getEmployeeConversationReferences = (company, employee, assignment) => workspaceFetch(employeeConversationPath(company, employee) + "/references?assignment_ref=" + encodeURIComponent(assignment));
 export const openEmployeeConversation = (company, employee) => workspaceFetch(employeeConversationPath(company, employee) + "/open", { method: "POST" });
 export const sendEmployeeConversation = (company, employee, payload) => workspaceFetch(employeeConversationPath(company, employee) + "/messages", { method: "POST", body: JSON.stringify(payload) });
+export const confirmConversationResearchWork = (company, { employeeRef, conversationId }, payload) =>
+  workspaceFetch(`${conversationId ? `${conversationsPath(company)}/${encodeURIComponent(conversationId)}` : employeeConversationPath(company, employeeRef)}/research-work/confirm`, {
+    method: "POST", body: JSON.stringify(payload),
+  });
 
 export const getBusinessDefinitions = (companyId) => workspaceFetch(`/api/workspace/v1/companies/${encodeURIComponent(companyId)}/business-definitions`);
 export const getBusinessCreationResult = (companyId, runId) => workspaceFetch(`/api/workspace/v1/companies/${encodeURIComponent(companyId)}/founding-runs/${encodeURIComponent(runId)}/business-result`);
