@@ -16,6 +16,7 @@ from urllib.parse import urlsplit, unquote, quote
 MAX_ARCHIVE = 16 * 1024 * 1024
 MAX_FILE = 2 * 1024 * 1024
 MAX_FILES = 512
+LICENSE_NAMES = ("LICENSE", "LICENSE.md", "LICENSE.txt", "MIT_LICENSE")
 
 
 def digest(value: bytes) -> str:
@@ -87,7 +88,9 @@ def resolve_link(link: str, *, fetch=None) -> tuple[str, str, str]:
     if len(tail) < 2 or tail[0] not in {"tree", "blob"}:
         raise ValueError("请提供仓库、技能目录或 SKILL.md 链接。")
     from urllib.error import HTTPError
-    for end in range(len(tail), 1, -1):
+    # A full commit is unambiguous. Do not probe its subdirectory as part of a ref.
+    ref_ends = (2,) if re.fullmatch(r"[0-9a-f]{40}", tail[1]) else range(len(tail), 1, -1)
+    for end in ref_ends:
         ref = "/".join(tail[1:end])
         if re.fullmatch(r"[0-9a-f]{40}", ref):
             commit = ref
@@ -118,6 +121,7 @@ def inspect_package(repo_url: str, commit: str, subdirectory: str = "", *, fetch
     if not isinstance(archive, bytes) or len(archive) > MAX_ARCHIVE:
         raise ValueError("技能包超过允许大小。")
     files = {}
+    symlinks = set()
     seen = set()
     total = 0
     root = None
@@ -133,6 +137,10 @@ def inspect_package(repo_url: str, commit: str, subdirectory: str = "", *, fetch
                 seen.add(name)
                 if len(seen) > MAX_FILES * 4:
                     raise ValueError("仓库包含过多文件，请选择较小的独立技能仓库。")
+                # Discovery may inspect a monorepo. Never read or follow its links.
+                if member.issym() and len(parts) > 1 and member.size == 0:
+                    symlinks.add("/".join(parts[1:]))
+                    continue
                 if not member.isdir() and not member.isfile():
                     raise ValueError("技能包不能含链接、设备或其他特殊文件。")
                 if member.isdir():
@@ -151,6 +159,8 @@ def inspect_package(repo_url: str, commit: str, subdirectory: str = "", *, fetch
                 files[relative] = data
     except (tarfile.TarError, EOFError, OSError) as error:
         raise ValueError("技能归档无法完整读取。") from error
+    if symlinks.intersection(LICENSE_NAMES):
+        raise ValueError("仓库许可不能含符号链接。")
     prefix = subdirectory + "/" if subdirectory else ""
     if discover and prefix + "SKILL.md" not in files:
         choices = [p.removesuffix("/SKILL.md") for p in files
@@ -162,10 +172,13 @@ def inspect_package(repo_url: str, commit: str, subdirectory: str = "", *, fetch
             return {"selection_required": True, "repo_url": f"https://github.com/{repo}",
                     "commit": commit, "choices": [{"directory": p, "name": skill_name(files[p + "/SKILL.md"], p)}
                                                    for p in sorted(choices)]}, {}
+    if any(p.startswith(prefix) or subdirectory.startswith(p + "/") or p == subdirectory for p in symlinks):
+        raise ValueError("所选技能和上级路径不能含符号链接。")
     selected = {p[len(prefix):]: data for p, data in files.items() if p.startswith(prefix)}
     if "SKILL.md" not in selected or not selected["SKILL.md"].strip():
         raise ValueError("所选目录必须包含完整 SKILL.md。")
-    license_path = next((p for p in (prefix + "LICENSE", prefix + "LICENSE.md", prefix + "LICENSE.txt", prefix + "MIT_LICENSE", "LICENSE", "LICENSE.md", "LICENSE.txt", "MIT_LICENSE") if p in files), None)
+    license_path = next((p for p in (*(prefix + name for name in LICENSE_NAMES), *LICENSE_NAMES)
+                         if p in files), None)
     if license_path is None:
         raise ValueError("未找到许可文件，不能安装。")
     license_text = files[license_path].decode("utf-8", errors="strict")

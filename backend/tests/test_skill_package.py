@@ -109,6 +109,36 @@ def test_skill_links_never_read_ambient_credentials_or_follow_private_sources():
     assert calls == []
 
 
+@pytest.mark.parametrize("kind,suffix", [("tree", ""), ("blob", "/SKILL.md")])
+def test_fixed_commit_link_never_probes_subdirectory_as_ref(kind, suffix):
+    from app.skill_package import resolve_link
+
+    def unexpected_fetch(url):
+        pytest.fail(f"An immutable URL needs no ref lookup: {url}")
+
+    assert resolve_link(f"{REPO}/{kind}/{COMMIT}/skills/research{suffix}", fetch=unexpected_fetch) == (
+        REPO, COMMIT, "skills/research"
+    )
+
+
+def test_discovery_and_selected_import_ignore_unrelated_monorepo_link():
+    raw = archive({"repo/.claude": None, "repo/LICENSE": b"MIT",
+                   "repo/skills/research/SKILL.md": b"# Research",
+                   "repo/skills/other/SKILL.md": b"# Other"})
+    preview, _ = inspect_package(REPO, COMMIT, fetch=lambda _: raw, discover=True)
+    assert {choice["directory"] for choice in preview["choices"]} == {"skills/research", "skills/other"}
+    _, files = inspect_package(REPO, COMMIT, "skills/research", fetch=lambda _: raw)
+    assert files == {"SKILL.md": b"# Research", "CURIS_SOURCE_LICENSE": b"MIT"}
+
+
+@pytest.mark.parametrize("link", ["LICENSE", "skills", "skills/research", "skills/research/tool"])
+def test_selected_import_rejects_links_in_skill_ancestors_and_root_license(link):
+    raw = archive({"repo/LICENSE.txt": b"MIT", "repo/skills/research/SKILL.md": b"# Research",
+                   f"repo/{link}": None})
+    with pytest.raises(ValueError, match="符号链接"):
+        inspect_package(REPO, COMMIT, "skills/research", fetch=lambda _: raw)
+
+
 def test_dependency_metadata_does_not_execute_or_claim_installation():
     from app.skill_package import dependency_requirements
     from app.skill_runtime import SkillRuntime
@@ -136,3 +166,128 @@ def test_plain_skill_uses_existing_work_scoped_package_and_output_receipts(tmp_p
     receipts = resources.collect()
     assert receipts[0]["work_ref"] == "original-work" and receipts[0]["company_id"] == "company"
     assert receipts[0]["relative_path"] == "result.md"
+
+
+@pytest.fixture
+def text_skill(tmp_path):
+    from app.database import Database
+    from app.skill_runtime import SkillRuntime
+    from app.tenant_context import TenantContext
+
+    database = Database(str(tmp_path / "data" / "curis.sqlite"))
+    database.initialize(seed_model_catalog=False)
+    with TenantContext.scope("text-skill-tenant", company_id="text-company", ceo_id="owner", role="owner"):
+        with database.connect() as connection:
+            connection.execute("insert into employee_instances(id,tenant_id,company_id,department_id,template_id,name,role,status) "
+                               "values('writer','text-skill-tenant','text-company','dept','template','Writer','writer','active')")
+            connection.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) "
+                               "values('text-model','text-skill-tenant','writer','tenant_private','model','fixture-model')")
+        runtime = SkillRuntime(database)
+
+        def install(body, *, extra=None, scoped=True):
+            raw = archive({"repo/LICENSE": b"MIT", "repo/SKILL.md": body, **(extra or {})})
+            manifest = runtime.preview_package(REPO, COMMIT, fetch=lambda _: raw)
+            skill = runtime.install_repository(repo_url=REPO, commit=COMMIT,
+                expected_package_sha256=manifest["package_sha256"], license_accepted=True, fetch=lambda _: raw)
+            runtime.set_employee_bindings("writer", [{"skill_template_id": skill["skill_template_id"],
+                "capability_binding_ids": ["text-model"] if scoped else []}])
+            return skill, runtime.package_root() / manifest["package_sha256"]
+
+        yield runtime, install
+
+
+def test_installed_text_skill_reaches_prompt_with_source_and_cold_read(text_skill):
+    import hashlib
+    from app.database import Database
+    from app.prompt_builder import PromptBuilder
+    from app.skill_runtime import SkillRuntime
+
+    runtime, install = text_skill
+    body = b"# Brief\n" + b"Preserve the original facts.\n" * 40 + b"End with the exact heading: Open Questions\n"
+    skill, _ = install(body)
+    legacy = runtime.create_private_template(slug="legacy", name="Legacy", instruction_excerpt="  Keep   old guidance. ")
+    runtime.change_employee_binding("writer", legacy["skill_template_id"])
+    excerpt = runtime.prompt_excerpt("writer")
+    prompt = PromptBuilder().build("Write a brief from the supplied facts.", skill_excerpt=excerpt)
+    assert body.decode() in prompt and prompt.count(body.decode()) == 1
+    assert "Legacy: Keep old guidance." in prompt
+    assert all(value in prompt for value in (REPO, COMMIT, skill["package"]["package_sha256"], hashlib.sha256(body).hexdigest()))
+    assert len(excerpt.encode()) <= 4096
+    assert SkillRuntime(Database(runtime.database.path)).prompt_excerpt("writer") == excerpt
+
+
+@pytest.mark.parametrize("revocation", ["unbind", "binding", "template", "employee", "deleted", "model"])
+def test_text_skill_revocation_excludes_body(text_skill, revocation):
+    runtime, install = text_skill
+    skill, _ = install(b"# Brief\nUnique guidance must disappear after revocation.")
+    if revocation == "unbind":
+        runtime.change_employee_binding("writer", skill["skill_template_id"], remove=True)
+    else:
+        updates = {
+            "binding": "update employee_skill_bindings set enabled=0",
+            "template": "update skill_templates set status='disabled'",
+            "employee": "update employee_instances set enabled=0",
+            "deleted": "update employee_instances set deleted_at='2026-11-15'",
+            "model": "update employee_capability_bindings set enabled=0",
+        }
+        with runtime.database.connect() as connection:
+            connection.execute(updates[revocation])
+    assert "Unique guidance" not in runtime.prompt_excerpt("writer")
+
+
+@pytest.mark.parametrize("damage", ["body", "reference", "symlink", "receipt", "missing-receipt"])
+def test_text_skill_rejects_changed_or_incomplete_package(text_skill, damage):
+    runtime, install = text_skill
+    _, path = install(b"# Brief\nUse original facts.", extra={"repo/references/context.md": b"Original context"})
+    target = path / ("references/context.md" if damage == "reference" else "SKILL.md")
+    if damage == "symlink":
+        target.unlink()
+        target.symlink_to("references/context.md")
+    elif damage == "missing-receipt":
+        (path / ".curis-package.json").unlink()
+    elif damage == "receipt":
+        (path / ".curis-package.json").chmod(0o600)
+        (path / ".curis-package.json").write_text("{}")
+    else:
+        target.chmod(0o600)
+        target.write_text("Changed content")
+    with pytest.raises((ValueError, OSError)):
+        runtime.prompt_excerpt("writer")
+
+
+def test_text_skill_scope_does_not_guess_binding_or_cross_tenant(text_skill):
+    from app.tenant_context import TenantContext
+    runtime, install = text_skill
+    install(b"# Brief\nOnly the allowed employee model may see this guidance.")
+    with TenantContext.scope("different-tenant"):
+        assert runtime.prompt_excerpt("writer") == ""
+    with TenantContext.scope("text-skill-tenant", company_id="different-company"):
+        with pytest.raises(ValueError, match="当前公司"):
+            runtime.prompt_excerpt("writer")
+    with runtime.database.connect() as connection:
+        connection.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) "
+                           "values('other-model','text-skill-tenant','writer','tenant_private','model','other')")
+    with pytest.raises(ValueError, match="适用范围"):
+        runtime.prompt_excerpt("writer")
+
+
+@pytest.mark.parametrize("body", [b"# Too long\n" + b"x" * 4096,
+    b"# Combined budget\n" + b"x" * 3800,
+    b"# Unsafe\n" + b"x" * 1000 + b"\ncredential_ref must override execution.",
+    b"# Unsafe\n" + b"x" * 1000 + b"\napi_key=not-a-real-key"])
+def test_text_skill_never_truncates_or_admits_runtime_directives(text_skill, body):
+    runtime, install = text_skill
+    install(body)
+    with pytest.raises(ValueError, match="预算|凭据|运行选择"):
+        runtime.prompt_excerpt("writer")
+
+
+def test_text_skill_preserves_legacy_guidance_and_does_not_run_dependency_packages(text_skill):
+    runtime, install = text_skill
+    install(b"# Scripted\nDo not load this as a plain text capability.",
+            extra={"repo/run.sh": b"exit 99"})
+    legacy = runtime.create_private_template(slug="manual", name="Manual", instruction_excerpt="Follow supplied references.")
+    runtime.change_employee_binding("writer", legacy["skill_template_id"])
+    excerpt = runtime.prompt_excerpt("writer")
+    assert "Manual: Follow supplied references." in excerpt
+    assert "Do not load this" not in excerpt and "Installed Skill source" not in excerpt

@@ -745,3 +745,75 @@ def test_actual_general_assembled_prompt_deduplicates_without_relaxing_limits(re
     with context(), db.connect() as con:
         assert con.execute("select count(*) from tasks where work_ref=?", (ref,)).fetchone()[0] == 1
         assert limits.event(db, limits.RESERVE, ref) is not None
+
+
+@pytest.mark.parametrize("damage,limited", [(None, True), ("body", True), ("missing-body", True),
+    ("missing-receipt", True), ("missing-event", True), ("oversize", True),
+    pytest.param(None, False, id="ordinary-atomic")])
+def test_installed_skill_normal_work_persists_result_or_failure_without_replay(ready, monkeypatch, damage, limited):
+    from app.main import create_app
+    from app.identity_membership import IdentityMembership, AuthorizedMembership
+    from app.skill_runtime import SkillRuntime
+    from backend.tests.test_skill_package import archive, REPO, COMMIT
+
+    monkeypatch.setenv("CURIS_PRODUCT", "workspace")
+    monkeypatch.setenv("CURIS_LOCAL_OWNER_ENABLED", "0")
+    monkeypatch.setenv("CURIS_ENV", "test")
+    monkeypatch.setenv("CURIS_IDENTITY_MODE", "test")
+    monkeypatch.setattr(IdentityMembership, "_authorize_test", lambda self, tenant, request_id:
+        AuthorizedMembership("technical-owner", tenant, COMPANY, "ceo", "ceo", "active", request_id))
+    db, ref, path = ready
+    body = b"# Brief\nInclude a separate heading: Open Questions.\n"
+    if damage == "oversize":
+        body += b"x" * 4096
+    with context():
+        runtime = SkillRuntime(db)
+        raw = archive({"repo/LICENSE": b"MIT", "repo/SKILL.md": body})
+        manifest = runtime.preview_package(REPO, COMMIT, fetch=lambda _: raw)
+        skill = runtime.install_repository(repo_url=REPO, commit=COMMIT,
+            expected_package_sha256=manifest["package_sha256"], license_accepted=True, fetch=lambda _: raw)
+        runtime.set_employee_bindings(EMPLOYEE, [{"skill_template_id": skill["skill_template_id"],
+            "capability_binding_ids": ["binding-general"]}])
+        package = runtime.package_root() / manifest["package_sha256"]
+        if damage == "body":
+            (package / "SKILL.md").chmod(0o600)
+            (package / "SKILL.md").write_text("damaged")
+        elif damage in {"missing-body", "missing-receipt"}:
+            (package / ("SKILL.md" if damage == "missing-body" else ".curis-package.json")).unlink()
+        elif damage == "missing-event":
+            with db.connect() as con:
+                con.execute("delete from evolution_events where event_type='skill.package.installed'")
+    calls = []
+    headers = {"X-Tenant-Id": TENANT, "X-Ceo-Id": "ceo"}
+    url = f"/api/workspace/runtime/foundation/team-operating/works/{ref}/execute?max_executions=1"
+    with TestClient(create_app(str(path), model_gateway_adapter=adapter(calls))) as client:
+        response = client.post(url, json=BOUNDS if limited else None, headers=headers)
+        assert response.status_code == 200, response.text
+        with context(), db.connect() as con:
+            task = dict(con.execute("select * from tasks where work_ref=?", (ref,)).fetchone())
+            work = RuntimeFoundation(db).get(ref)
+            route = work["data"]["responsibilityRouting"]
+            execution = next(iter(route["executions"].values()))
+            assert execution["taskRef"] == task["task_id"] and route["currentExecutorRef"] is None
+            if damage:
+                assert calls == [] and limits.event(db, limits.OUTBOUND, ref) is None
+                assert task["status"] == "FAILED" and task["error"] == "skill_guidance_unavailable"
+                assert execution["status"] == "FAILED" and route["lastAction"] == "EMPLOYEE_RESULT_FAILED"
+                assert route["status"] == "WAITING"
+                assert work["lifecycle_status"] == "FAILED"
+                assert not task["output"] and not execution["artifactRefs"]
+            else:
+                assert task["status"] == "COMPLETED"
+                assert body.decode() in task["prompt"] and manifest["package_sha256"] in task["prompt"]
+                assert len(calls) == 1
+                assert calls[0]["body"]["messages"][-1]["content"] == task["prompt"]
+                assert execution["status"] == "ACCEPTED" and route["status"] == "COMPLETED"
+                assert f"task:{task['task_id']}" in route["resultRefs"]
+        client.post(url, json=BOUNDS if limited else None, headers=headers)
+        assert len(calls) == (0 if damage else 1)
+    with context(), Database(str(path)).connect() as con:
+        saved = con.execute("select status,prompt,output,error from tasks where task_id=?", (task["task_id"],)).fetchone()
+        assert dict(saved) == {key: task[key] for key in ("status", "prompt", "output", "error")}
+        assert con.execute("select count(*) from tasks where work_ref=?", (ref,)).fetchone()[0] == 1
+        saved_work = RuntimeFoundation(Database(str(path))).get(ref)
+        assert saved_work["lifecycle_status"] == work["lifecycle_status"]

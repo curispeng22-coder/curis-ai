@@ -1232,6 +1232,25 @@ def build_team_operating_router(
             ), result_type=normalized["result_type"],
             provenance=callback, context_metrics=context_metrics,
         )
+        if normalized["status"] == "FAILED":
+            from ..runtime.child_work import CanonicalChildWorkRuntime
+            child = CanonicalChildWorkRuntime(database)
+            with database.connect() as connection:
+                connection.execute("begin immediate")
+                failed = connection.execute(
+                    "select 1 from tasks where tenant_id=? and company_id=? and workspace_id is ? "
+                    "and work_ref=? and execution_ref=? and task_id=? and status='FAILED' "
+                    "and error='skill_guidance_unavailable'",
+                    (TenantContext.current_tenant_id(), work["company_id"], work["workspace_id"],
+                     work_ref, key, task_ref),
+                ).fetchone()
+                if failed:
+                    current = child._entity(child._row(connection, work_ref, "WORK"))
+                    receipt = current["data"]["responsibilityRouting"]["executions"].get(key, {})
+                    if (receipt.get("taskRef") == task_ref and receipt.get("status") == "FAILED"
+                            and current["lifecycle_status"] in {"ACTIVE", "WAITING"}):
+                        child._transition_locked(connection, current, "FAILED", actor="SYSTEM",
+                            reason="已安装 Skill 无法安全加载；本次执行失败，未调用模型。")
         return {**normalized, "task_ref": task_ref, "artifact_refs": artifacts, "context_metrics": context_metrics}
 
     def leader_child_contract(root, assignment, item):
