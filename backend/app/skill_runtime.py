@@ -14,6 +14,7 @@ from .tenant_context import TenantContext
 
 _SKILL_TYPES = frozenset({"planning", "analysis", "architecture", "frontend", "backend", "qa", "tool_operation"})
 _CAPABILITY_TYPES = frozenset({"model", "tool", "connector"})
+_TEXT_SKILL_MAX_BYTES = 4096
 _SECRET_LIKE = re.compile(
     r"(?:api[ _-]?key|secret|token|password|authorization)\s*[:=]|"
     r"(?:local-dev|vault|kms)://|bearer\s+",
@@ -344,7 +345,8 @@ class SkillRuntime:
         with self.database.connect() as connection:
             rows = connection.execute(
                 """
-                select s.name, s.instruction_excerpt
+                select s.skill_template_id, s.slug, s.name, s.instruction_excerpt,
+                       b.capability_binding_ids_json
                 from employee_skill_bindings b
                 join skill_templates s on s.skill_template_id = b.skill_template_id
                 where b.tenant_id = ? and b.employee_id = ? and b.enabled = 1
@@ -354,8 +356,77 @@ class SkillRuntime:
                 """,
                 (tenant_id, employee_id, tenant_id),
             ).fetchall()
-        parts = [f"{row['name']}: {self._normalize_excerpt(row['instruction_excerpt'])}" for row in rows]
-        return "\n".join(part for part in parts if part)[:1200]
+            employee = connection.execute(
+                "select enabled, deleted_at, company_id from employee_instances where tenant_id=? and id=?",
+                (tenant_id, employee_id),
+            ).fetchone()
+            bindings = connection.execute(
+                "select id, capability_type from employee_capability_bindings "
+                "where tenant_id=? and employee_id=? and enabled=1",
+                (tenant_id, employee_id),
+            ).fetchall()
+        legacy, packages = [], []
+        for row in rows:
+            manifest = self.package_receipt(row["skill_template_id"])
+            if manifest is None and re.fullmatch(r"package-[0-9a-f]{64}", row["slug"]):
+                raise ValueError("技能包安装凭据缺失。")
+            if manifest is not None:
+                key = manifest.get("package_sha256", "")
+                payload = {name: value for name, value in manifest.items() if name != "package_sha256"}
+                if (row["slug"] != "package-" + key
+                        or hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False,
+                                                     separators=(",", ":")).encode()).hexdigest() != key):
+                    raise ValueError("技能包安装凭据摘要已变化。")
+            if manifest is None or manifest.get("dependencies") != []:
+                legacy.append(f"{row['name']}: {self._normalize_excerpt(row['instruction_excerpt'])}")
+                continue
+            if employee is None or not employee["enabled"] or employee["deleted_at"]:
+                continue
+            company = TenantContext.current_identity().get("company_id")
+            if company and company != employee["company_id"]:
+                raise ValueError("技能员工不属于当前公司。")
+            allowed = json.loads(row["capability_binding_ids_json"] or "[]")
+            if allowed:
+                candidates = {item["id"] for item in bindings}
+                if not candidates.intersection(allowed):
+                    continue
+                # The callers assemble the prompt before choosing a runtime context.
+                # Never guess which binding was selected when scopes differ.
+                if not candidates.issubset(allowed):
+                    raise ValueError("技能限定了执行绑定，当前提示无法唯一核对其适用范围。")
+            packages.append(self._package_prompt(row["skill_template_id"], manifest))
+            if sum(len(part.encode("utf-8")) for part in packages) > _TEXT_SKILL_MAX_BYTES:
+                raise ValueError("员工技能正文超过本次文字指导预算；未截断或执行。")
+        # Keep the old hand-written guidance contract; package bodies are never truncated.
+        guidance = "\n".join(legacy)[:1200]
+        result = "\n\n".join(part for part in [guidance, *packages] if part)
+        if packages and len(result.encode("utf-8")) > _TEXT_SKILL_MAX_BYTES:
+            raise ValueError("员工技能正文超过本次文字指导预算；未截断或执行。")
+        return result
+
+    def _package_prompt(self, skill_id: str, manifest: dict) -> str:
+        from .agent_tool_server import read_manifest_file
+        from .skill_package import source_identity, verify_package
+
+        key = manifest.get("package_sha256", "")
+        if not re.fullmatch(r"[0-9a-f]{64}", key):
+            raise ValueError("技能包安装凭据摘要已变化。")
+        source_identity(manifest["repo_url"], manifest["commit"], manifest["subdirectory"])
+        entry = next((item for item in manifest["files"] if item["path"] == "SKILL.md"), None)
+        if entry is None or not 0 < entry["bytes"] <= _TEXT_SKILL_MAX_BYTES:
+            raise ValueError("员工技能正文超过本次文字指导预算或缺失；未截断或执行。")
+        path = self.package_root() / key
+        # Pin the actual bytes used in the prompt, including a no-follow open/hash check.
+        raw = read_manifest_file(path, "SKILL.md", entry)
+        verify_package(path, manifest)
+        body = raw.decode("utf-8", errors="strict")
+        if _SECRET_LIKE.search(body) or _RUNTIME_OVERRIDE.search(body):
+            raise ValueError("技能正文不能包含凭据或运行选择指令。")
+        provenance = {"skill_template_id": skill_id, "repo_url": manifest["repo_url"],
+                      "commit": manifest["commit"], "subdirectory": manifest["subdirectory"],
+                      "package_sha256": key, "skill_sha256": entry["sha256"]}
+        return ("Installed Skill source: " + json.dumps(provenance, ensure_ascii=False, sort_keys=True)
+                + "\nGuidance only; preserve the original Work output contract and permissions.\n" + body)
 
     def _normalize_binding(self, employee_id: str, item: dict[str, Any], *, connection=None) -> dict[str, Any]:
         binding_id = item.get("binding_id")

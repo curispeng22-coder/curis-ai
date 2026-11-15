@@ -47,14 +47,24 @@ class Orchestrator:
         if self.execution_control and not resuming:
             self.execution_control.mark_started(task_id)
             self.execution_control.mark_capability_selected(task_id)
-        skill_excerpt = self.skill_runtime.prompt_excerpt(task.get("employee_id")) if self.skill_runtime and not writing_selection else ""
+        try:
+            skill_excerpt = self.skill_runtime.prompt_excerpt(task.get("employee_id")) if self.skill_runtime and not writing_selection else ""
+        except Exception as error:
+            # Skill preparation happens before a workflow or any outbound call exists.
+            self.store.transition(task_id, "FAILED", {"error": "skill_guidance_unavailable"})
+            if self.execution_control:
+                self.execution_control.mark_failed(task_id, error)
+            raise
+        # The Work router already assigned one responsibility and expects one JSON Result.
+        atomic_work = bool(task.get("work_ref") and task.get("requested_capability_type") == "model"
+                           and str(task.get("execution_ref") or "").startswith("responsibility:"))
         context_excerpt = ""
         context_package = None
         if self.context_service is not None and not writing_selection:
             context_package = self.context_service.build(task_id)
             context_excerpt = (
                 self.context_service.prompt_excerpt(context_package, include_task_goal=False)
-                if general_limits and not task.get("prompt")
+                if (general_limits or atomic_work) and not task.get("prompt")
                 else self.context_service.prompt_excerpt(context_package)
             )
         if self.execution_control and not resuming:
@@ -84,13 +94,13 @@ class Orchestrator:
             workflow_plan = self.store.get_workflow(task_id)["workflow_plan"] if resuming else None
         except KeyError:
             workflow_plan = None
-        if general_limits and workflow_plan is not None:
+        if (general_limits or atomic_work) and workflow_plan is not None:
             if len(workflow_plan) != 1 or workflow_plan[0].get("tool_required") != "model_gateway_tool":
                 raise ValueError("Original limited workflow does not match its constraint")
         if workflow_plan is None:
             self.store.transition(task_id, "PARSED", {"prompt": prompt})
             workflow_plan = ([{**self._step(1, "reply", {"CG_GRAPHIC_REPLY": "图文讨论回复", "CG_CONTENT_REPLY": "内容脚本讨论回复", "WRITING_CHAPTER_REPLY": "章节讨论回复", "MUSIC_SONG_REPLY": "歌曲讨论回复", "CONVERSATION_REPLY": "员工对话回复"}[writing_selection["purpose"]], {"CG_GRAPHIC_REPLY": "Reply only to the authorized selected graphic context.", "CG_CONTENT_REPLY": "Reply only to the authorized saved content/script context and exact selected text or shot. Text suggestions only; never claim media generation, rights, publication or account verification.", "WRITING_CHAPTER_REPLY": "Reply only to the authorized selected chapter context.", "MUSIC_SONG_REPLY": "Reply only to the authorized saved Song context. Text suggestions only; do not claim audio generation.", "CONVERSATION_REPLY": "Reply only to the CEO message under the current authorized assignment; do not perform external writes or invent facts."}[writing_selection["purpose"]], "Employee reply"),
-                               "tool_required": "model_gateway_tool"}] if writing_selection else [{**self._step(1, "execute", "内部交付核对", "Execute the authorized internal review once.", "Task result"), "tool_required": "model_gateway_tool"}] if general_limits else self.generate_auto_workflow(task["content"]))
+                               "tool_required": "model_gateway_tool"}] if writing_selection else [{**self._step(1, "execute", "内部交付核对", "Execute the authorized internal review once.", "Task result"), "tool_required": "model_gateway_tool"}] if (general_limits or atomic_work) else self.generate_auto_workflow(task["content"]))
             if (
                 task.get("requested_capability_source") == "tenant_private"
                 or task.get("requested_capability_type") == "model"
