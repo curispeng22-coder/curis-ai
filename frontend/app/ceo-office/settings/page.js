@@ -37,6 +37,13 @@ export function CompanyTextConsent({ companyId }) {
   const [clock, setClock] = useState(Date.now());
   const expiresAt = Date.parse(view?.policy?.expires_at);
   const expired = Number.isFinite(expiresAt) && clock >= expiresAt;
+  const pricePending = view?.price_status === "VERIFICATION_REQUIRED" || view?.policy?.execution_state === "AWAITING_PRICE_VERIFICATION";
+  const priceNoticeBody = (view?.price_notice || "许可范围和预算已保存，但尚不能进行付费模型执行；请由维护者更新经核验的价格依据后，重新核对并确认公司许可。原输入会保留，不会自动调用或计费。").replace(/^价格待核实[：:]\s*/, "");
+  const ceiling = view?.per_request_ceiling_cny;
+  const ceilingKnown = typeof ceiling === "number" ? Number.isFinite(ceiling) : typeof ceiling === "string" && ceiling.trim() !== "";
+  const ceilingText = ceilingKnown
+    ? `含保守封装预留的单次准入上限 ¥${view.per_request_ceiling_cny}；超限会保留输入并要求缩小范围。`
+    : "价格待核实，暂无经核验的单次准入上限；超限会保留输入并要求缩小范围。";
   useEffect(() => {
     if (!view?.policy?.enabled || !Number.isFinite(expiresAt) || expired) return;
     const timer = setTimeout(() => setClock(Date.now()), Math.max(0, expiresAt - Date.now()));
@@ -85,7 +92,8 @@ export function CompanyTextConsent({ companyId }) {
   return <Group title="专业文字执行：预算与数据外发">
     <p>明确同意后，所选工作空间的负责员工可将当前讨论中已发送的文字、员工回复和主动选择的引用发给下列模型。对话上下文只取最近六条、每条最多1500字符；未保存的正文不会自动发送；音频生成、文件上传与外部发布不在本许可内。</p>
     {!view && !error && <p role="status">正在读取公司许可…</p>}{error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
-    {view && <>{view.continuity?.history_incomplete && <p role="alert">资料状态曾发生变化，历史费用不可完整核实；下方不会把历史未知费用显示为零。{view.continuity.needs_reconfirmation ? "旧费用授权已失效；重新核对范围并填写新的后续额度后，才能明确保存新许可。" : "当前额度只适用于明确重新确认后的执行，不代表历史费用已结清。"}</p>}
+    {view && <>{pricePending && <p role="alert">价格待核实：{priceNoticeBody}</p>}
+      {view.continuity?.history_incomplete && <p role="alert">资料状态曾发生变化，历史费用不可完整核实；下方不会把历史未知费用显示为零。{view.continuity.needs_reconfirmation ? "旧费用授权已失效；重新核对范围并填写新的后续额度后，才能明确保存新许可。" : "当前额度只适用于明确重新确认后的执行，不代表历史费用已结清。"}</p>}
       {view.continuity?.can_confirm === false && <p role="alert">本机许可状态文件无法核验，已停止执行。请保留现场处理；不会自动修复或重新授权。</p>}
       <p role="status">{view.policy?.enabled && !view.continuity?.needs_reconfirmation
         ? expired ? `文字许可已过期（${view.policy.expires_at}）。请核对范围、费用和有效期后重新同意并保存。`
@@ -96,7 +104,7 @@ export function CompanyTextConsent({ companyId }) {
       <fieldset disabled={busy || unknown}><legend>文字发送目的地与模型</legend>{view.models.map((m) => <label className="block" key={m.model_key}><input type="checkbox" checked={models.includes(m.model_key)} onChange={() => toggle(models, setModels, m.model_key)} /> {m.display_name} · {m.destination}</label>)}{!view.models.length && <p>当前没有同时具备合法模型资格、明确目的地及有效价格依据的模型。</p>}</fieldset>
       <p>价格核对：{view.price.checked_at}；有效至 {view.price.valid_until}。峰值每百万输入 ¥{view.price.input_cny_per_million} / 输出 ¥{view.price.output_cny_per_million}，为估算依据。</p>
       <a href={view.price.source_cny} target="_blank" rel="noreferrer">查看官方人民币价格</a>
-      <p>每次完整文字输入最多 {view.max_input_bytes} 字节，输出最多 {view.max_output_tokens} tokens，含保守封装预留的单次准入上限 ¥{view.per_request_ceiling_cny}；超限会保留输入并要求缩小范围。</p>
+      <p>每次完整文字输入最多 {view.max_input_bytes} 字节，输出最多 {view.max_output_tokens} tokens，{ceilingText}</p>
       <Row label={continuous ? "本轮费用参考（人民币，不自动停止）" : view.continuity?.needs_reconfirmation ? "新的后续预算（人民币）" : "本功能累计预算（人民币）"} description={continuous ? "参考金额不作为停止阈值；历史用量、估算与占额保留。" : view.continuity?.needs_reconfirmation ? "这是新的后续费用许可，不是历史额度恢复；历史费用仍不可完整核实。" : "本许可期已有估算和未知结果占额都计入此上限；正常重新保存不会归零。"}><input aria-label="专业文字累计预算（人民币）" type="number" min="0.000001" max={trial && !continuous ? "0.1" : "100000"} step="0.000001" value={budget} disabled={busy || unknown} onChange={(event) => setBudget(event.target.value)} /></Row>
       <Row label="许可有效期"><select aria-label="文字许可有效期" value={hours} disabled={busy || unknown} onChange={(event) => setHours(Number(event.target.value))}>{[[1,"1小时"],[24,"24小时"],[72,"3天"]].map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></Row>
       <label className="block"><input aria-label="本轮合成验收受限授权" type="checkbox" checked={trial} disabled={busy || unknown || continuous || Boolean(view.policy?.trial_authorization_ref)} onChange={(event) => { setTrial(event.target.checked); setConsent(false); }} />本轮合成验收受限授权（仅验收候选）</label>

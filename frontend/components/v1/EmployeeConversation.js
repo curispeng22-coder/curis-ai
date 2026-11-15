@@ -16,6 +16,10 @@ export function companyTextPermission(snapshot, company, workspace, model, now) 
   if (!policy?.enabled || continuity?.needs_reconfirmation || continuity?.can_confirm === false) {
     return { blocked: true, message: "当前没有可用的公司文字许可。输入已保留。" };
   }
+  if (snapshot.price_status === "VERIFICATION_REQUIRED" || policy?.execution_state === "AWAITING_PRICE_VERIFICATION") {
+    return { blocked: true, pricePending: true, message: snapshot.price_notice
+      || "价格待核实：许可范围和预算已保存，但尚不能进行付费模型执行；请由维护者更新经核验的价格依据后，重新核对并确认公司许可。原输入会保留，不会自动调用或计费。" };
+  }
   const expiry = Date.parse(policy.expires_at);
   if (!Number.isFinite(expiry)) return { blocked: true, message: "无法确认公司文字许可的有效期。输入已保留。" };
   if (now >= expiry) return { blocked: true, message: "公司文字许可已过期。续期后可继续，输入已保留。" };
