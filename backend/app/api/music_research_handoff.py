@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, ConfigDict, Field
 
 from ..conversation_service import ConversationService, digest
+from ..music_market_evidence import MusicMarketEvidence, validate_research_recommendation
 from ..resource_scope_policy import ResourceScopePolicy
 from ..result_attention import ResultAttention
 from ..runtime import RuntimeScopeError
@@ -115,8 +116,13 @@ def _delivery(service, con, company, workspace, conversation_ref, research_work_
     if len(statements) != 1:
         raise RuntimeScopeError("负责人汇总尚未核验。")
     statement = statements[0]
-    if {"evidence_ref": evidence_ref, "evidence_version": version} not in statement.get("evidenceInputs", []):
+    inputs = summary["data"].get("marketEvidenceInputs")
+    if (not isinstance(inputs, list) or inputs != statement.get("evidenceInputs")
+            or {"evidence_ref": evidence_ref, "evidence_version": version} not in inputs):
         raise RuntimeScopeError("负责人汇总未引用此证据版本。")
+    accepted = MusicMarketEvidence(conversations.db).accepted(con, root)
+    if not accepted or accepted["inputs"] != inputs:
+        raise RuntimeScopeError("负责人汇总引用的证据版本与原研究不一致。")
     result_ref = statement.get("resultRef")
     if not result_ref or result_ref not in root["data"].get("responsibilityRouting", {}).get("resultRefs", []):
         raise RuntimeScopeError("负责人汇总尚未回到原研究工作。")
@@ -131,13 +137,16 @@ def _delivery(service, con, company, workspace, conversation_ref, research_work_
     if (not isinstance(opportunity, str) or not opportunity.strip()
             or opportunity[:2000].strip() != statement["resultSummary"]):
         raise RuntimeScopeError("负责人建议与原结果正文不一致。")
+    recommendation = validate_research_recommendation(content, inputs)
 
     data = {**receipt, "child_work_ref": child_work_ref, "evidence_ref": evidence_ref,
             "summary_work_ref": summary_ref, "summary_result_ref": result_ref,
             "summary_result_version": result["result_version"], "opportunity_summary": statement["resultSummary"],
             "evidence_version": version, "research_employee_ref": child["owner_ref"],
             "research_assignment_ref": child["data"]["responsibilityAssignmentRef"],
-            "evidence_summary": evidence["summary"], "source": source}
+            "evidence_summary": evidence["summary"], "source": source,
+            "metrics": payload["metrics"], "limitations": payload["limitations"],
+            "recommendation": recommendation.model_dump()}
     return conversations.db, entry, data
 
 
@@ -145,11 +154,12 @@ def read_research_delivery(service, company, workspace, *, conversation_ref, res
     with service.db.connect() as con:
         con.execute("begin")
         conversations = ConversationService(ConversationService(service.db)._work_database(con))
-        conversations.owner(company, conversation_id=conversation_ref)
+        owner = conversations.owner(company, conversation_id=conversation_ref)
         entry = service._operating_entry(company, workspace, connection=con)
         receipts = [row["payload"] for row in conversations._rows(con, conversation_ref)
                     if row["event_type"] == "conversation.research_work.confirmed"
                     and row["payload"].get("work_ref") == research_work_ref
+                    and row["payload"].get("employee_ref") == owner["owner_ref"]
                     and row["payload"].get("business_ref") == entry["scope"]["business_id"]]
         if len(receipts) != 1:
             raise RuntimeScopeError("此研究工作不属于原对话。")
@@ -158,21 +168,48 @@ def read_research_delivery(service, company, workspace, *, conversation_ref, res
             company_id=company, scope_type="BUSINESS", scope_ref=entry["scope"]["business_id"])
         ResourceScopePolicy.require_same_execution_scope(source_scope,
             ResourceScopePolicy.execution_scope_from_record(con, tenant_id=source_scope["tenant_id"], record=root))
-        if root["entity_type"] != "WORK" or root["parent_id"] != receipts[0]["cycle_ref"]:
+        receipt = receipts[0]
+        cycle = conversations.foundation.get(receipt["cycle_ref"])
+        origin = cycle["data"].get("contract", {}).get("conversationResearchSource")
+        if (root["entity_type"] != "WORK" or root["parent_id"] != cycle["entity_id"]
+                or origin != {key: value for key, value in receipt.items() if key not in {"work_ref", "cycle_ref"}}
+                or root["owner_ref"] != owner["owner_ref"]
+                or root["data"].get("responsibilityAssignmentRef") != receipt["assignment_ref"]):
             raise RuntimeScopeError("此研究工作不属于原对话。")
         route = root["data"].get("responsibilityRouting") or {}
-        deliveries = []
-        for child_ref in (root["data"].get("leaderDelegation") or {}).get("childWorkRefs", []):
+        delegation = root["data"].get("leaderDelegation") or {}
+        children, deliveries = [], []
+        for child_ref in delegation.get("childWorkRefs", []):
             child = conversations.foundation.get(child_ref)
+            ResourceScopePolicy.require_same_execution_scope(source_scope,
+                ResourceScopePolicy.execution_scope_from_record(con, tenant_id=source_scope["tenant_id"], record=child))
+            if (child["entity_type"] != "WORK" or child["parent_id"] != root["parent_id"]
+                    or child["data"].get("leaderRootWorkRef") != research_work_ref or child["owner_ref"] == root["owner_ref"]):
+                raise RuntimeScopeError("原研究子工作关系不一致。")
+            children.append(child)
             if child["lifecycle_status"] != "COMPLETED":
                 continue
             for evidence_ref in child["data"].get("evidenceRefs", []):
                 try:
                     _, _, delivery = _delivery(service, con, company, workspace, conversation_ref,
                                                research_work_ref, child_ref, evidence_ref)
-                except (RuntimeScopeError, KeyError, ValueError):
+                except (KeyError, OSError, ValueError):
                     continue
                 deliveries.append(delivery)
+        is_active = root["lifecycle_status"] == "ACTIVE" and route.get("status") == "ACTIVE"
+        review_sources = []
+        can_continue = False
+        if is_active and children and not delegation.get("summaryWorkRef"):
+            market = MusicMarketEvidence(conversations.db)
+            incomplete = [child for child in children if child["lifecycle_status"] != "COMPLETED"]
+            if incomplete:
+                review_sources = [candidate for child in incomplete if child["lifecycle_status"] == "ACTIVE"
+                                  for candidate in market.review_sources(con, child)]
+            else:
+                try:
+                    can_continue = market.accepted(con, root) is not None
+                except (KeyError, OSError, ValueError):
+                    pass
         saved = con.execute(
             "select w.entity_id, w.lifecycle_status, "
             "json_extract(c.data_json,'$.contract.musicResearchSource.direction_ref') direction_ref, "
@@ -187,8 +224,9 @@ def read_research_delivery(service, company, workspace, *, conversation_ref, res
         ).fetchall()
         return {"conversation_ref": conversation_ref, "research_work_ref": research_work_ref,
                 "research_status": root["lifecycle_status"],
-                "can_start_research": root["lifecycle_status"] == "ACTIVE" and route.get("status") == "ACTIVE"
-                    and not route.get("executions") and not root["data"].get("leaderDelegation"),
+                "can_start_research": is_active and not route.get("executions") and not delegation,
+                "market_review_required": bool(review_sources), "market_review_sources": review_sources,
+                "can_continue_research": can_continue,
                 "deliveries": deliveries, "planning_receipts": [
                     {"work_ref": row["entity_id"], "direction_ref": row["direction_ref"],
                      "direction_identity_ref": row["direction_identity_ref"], "status": row["lifecycle_status"]}
@@ -212,7 +250,9 @@ def confirm_research_planning(service, company, workspace, *, evidence_version, 
         assignment = next((row for row in entry["assignments"] if row["assignment_ref"] == assignment_ref), None)
         if not assignment:
             raise RuntimeScopeError("当前歌曲创作责任不可用。")
-        origin = {**delivery, "direction_ref": direction_ref, "direction_identity_ref": data["identity_ref"],
+        # Keep the original persisted contract stable when adding read-only fields to a delivery.
+        origin = {key: value for key, value in delivery.items() if key not in {"metrics", "limitations", "recommendation"}}
+        origin = {**origin, "direction_ref": direction_ref, "direction_identity_ref": data["identity_ref"],
                   "direction_version": data["payload_sha256"],
                   "planning_assignment_ref": assignment_ref, "planning_assignment_revision": assignment["assignment_revision"],
                   "confirmed_by": entry["actor"]}

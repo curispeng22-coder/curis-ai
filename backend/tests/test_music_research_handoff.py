@@ -1,10 +1,12 @@
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 
 from app.api import music_research_handoff as handoff
 from app.conversation_service import ConversationService
 from app.database import Database
 from app.music_service import MusicService
-from app.runtime import RuntimeFoundation
+from app.runtime import RuntimeFoundation, RuntimeScopeError
 from app.runtime.music import MusicConflict
 from backend.tests.test_music_canonical_entry import setup
 from backend.tests.test_music_operating_chain import chain, op
@@ -20,7 +22,7 @@ def test_confirm_planning_creates_one_version_bound_work_after_admitted_delivery
                     "evidence_ref": "admitted-evidence", "evidence_version": "1" * 64,
                     "summary_result_ref": "summary-result", "summary_result_version": "3" * 64}
 
-        # This seam is intentionally controlled until A supplies real admitted Evidence.
+        # Evidence admission is exercised separately from planning writes.
         def admitted(service, con, company, workspace, **refs):
             return (ConversationService(service.db)._work_database(con),
                     service._operating_entry(company, workspace, connection=con), delivery)
@@ -30,8 +32,20 @@ def test_confirm_planning_creates_one_version_bound_work_after_admitted_delivery
                   "assignment_ref": assignment["assignment_ref"]}
         with pytest.raises(MusicConflict, match="证据版本"):
             handoff.confirm_research_planning(music, COMPANY, workspace, **{**fields, "evidence_version": "2" * 64})
-        owner = handoff.confirm_research_planning(music, COMPANY, workspace, **fields)
+        with pytest.raises(MusicConflict, match="汇总版本"):
+            handoff.confirm_research_planning(music, COMPANY, workspace, **{**fields, "summary_result_version": "4" * 64})
+        with scope(role="employee"), pytest.raises(RuntimeScopeError, match="所有者"):
+            handoff.confirm_research_planning(music, COMPANY, workspace, **fields)
+
+        def confirm(_):
+            with scope():
+                return handoff.confirm_research_planning(music, COMPANY, workspace, **fields)
+
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            owner, *duplicates = pool.map(confirm, range(3))
+        assert duplicates == [owner, owner]
         reopened = MusicService(Database(db.path))
+        delivery.update(metrics=[{"label": "公开指标"}], limitations="适用范围待核对", recommendation={"evidence": []})
         replay = handoff.confirm_research_planning(reopened, COMPANY, workspace, **fields)
         work = owner["work"]
         assert replay["work"] == work

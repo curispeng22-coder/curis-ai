@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import contextvars
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -230,15 +231,30 @@ class AgentToolSessions:
         if name == "browser" and session["browser"] and set(arguments) <= {"action", "url", "target_id"}:
             browser = session["browser"]
             value = browser.call(arguments, resources)
-            with self.lock:
+            with _AGENT_STOP_SPAWN_LOCK, self.lock:
                 if session["closed"] or self.clock() >= session["expires"] or session["stop"]():
                     raise PermissionError("原工作已停止或许可到期，拒绝迟到结果。")
-                session["browser_calls"].append({"action": arguments["action"], "session_id": browser.session,
+                raw = json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()
+                audit = {"action": arguments["action"], "session_id": browser.session,
                     "browser_instance_id": browser.browser_id, "tab_id": browser.tab,
-                    "result_sha256": hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
-                    **({"url": value["url"]} if arguments["action"] == "navigate" else {}),
+                    "result_sha256": hashlib.sha256(raw).hexdigest(),
+                    **({"url": value["url"]} if value.get("url") else {}),
                     "dns": value.get("dns") or [],
-                    "content_verification": "UNVERIFIED"})
+                    "content_verification": "UNVERIFIED"}
+                if arguments["action"] in {"observe", "extract"}:
+                    from urllib.parse import urlsplit
+                    url = urlsplit(value.get("url", ""))
+                    identity = getattr(browser, "identity", {})
+                    if (url.scheme != "https" or not url.hostname or url.username or url.password
+                            or any(identity.get(k) != v for k, v in resources.identity.items())):
+                        raise ValueError("浏览器快照缺少原工作身份或公开来源。")
+                    receipt = write_output(resources, "browser-source-" + secrets.token_hex(12) + ".json", raw)
+                    self._require_live(session)
+                    audit.update(capture_kind="HOST_BROWSER_TEXT_V1", identity=dict(resources.identity),
+                        captured_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                        snapshot_receipt=receipt)
+                    value = {**value, "snapshot_receipt": receipt}
+                session["browser_calls"].append(audit)
             return value
         raise ValueError("工具或参数不属于本次授权。")
 

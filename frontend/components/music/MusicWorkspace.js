@@ -250,7 +250,8 @@ function ResearchPlanning({ company, workspaceId, research, direction, canConfir
     return () => { active = false; };
   }, [company, workspaceId, conversation_ref, research_work_ref, refresh]);
   const saved = view?.planning_receipts.find(item => item.direction_identity_ref === direction?.data.identity_ref);
-  const chosen = view?.deliveries.find(item => item.evidence_ref === evidence);
+  const deliveryVersion = item => JSON.stringify([item.evidence_ref, item.evidence_version, item.summary_result_ref, item.summary_result_version]);
+  const chosen = view?.deliveries.find(item => deliveryVersion(item) === evidence);
   const author = assignments.find(item => item.assignment_ref === assignment);
   async function confirm() {
     if (pending.current || locked || !canConfirm || saved || !chosen || !author) return;
@@ -279,7 +280,7 @@ function ResearchPlanning({ company, workspaceId, research, direction, canConfir
     {view?.deliveries.length > 0 && !saved && (canConfirm ? <>
       <label>原研究证据<select value={evidence} onChange={event => setEvidence(event.target.value)}>
         <option value="">请选择原研究证据</option>
-        {view.deliveries.map(item => <option key={item.evidence_ref} value={item.evidence_ref}>{item.evidence_summary || item.evidence_ref}</option>)}
+        {view.deliveries.map(item => <option key={item.evidence_ref} value={deliveryVersion(item)}>{item.evidence_summary || item.evidence_ref}</option>)}
       </select></label>
       {chosen && <MusicResearchResult item={chosen} />}
       <label>歌曲创作责任<select value={assignment} onChange={event => setAssignment(event.target.value)}>

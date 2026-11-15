@@ -6,7 +6,7 @@ import { EmployeeAvatar } from "./EmployeeAvatar.js";
 import { confirmConversationResearchWork, receiveConversationResult, createConversation, executeOriginalAgentWork, getConversation, sendConversation, getCompanyTextPolicy, getEmployeeConversation, getEmployeeConversationReferences, openEmployeeConversation, sendEmployeeConversation } from "../../lib/v1FrontendApi.js";
 import { musicApi } from "../../lib/musicApi.js";
 import { getCanonicalBusinesses } from "../../lib/runtimeApi.js";
-import { operatingHref } from "../../lib/musicState.mjs";
+import { operatingHref, stableRequest } from "../../lib/musicState.mjs";
 import ResultReferenceView, { resultSelection } from "./ResultReferenceView.js";
 
 function requestReference({ reference_id, workspace_id, kind, version_ref, purpose, locator }) {
@@ -33,48 +33,189 @@ function renewalDraftKey({ tenant_id, company_id, conversation_id, owner_ref }) 
 }
 
 export function MusicResearchResult({ item }) {
+  const recommendation = item.recommendation;
   return <div>
-    <p>研究证据：{item.evidence_summary}</p>
+    {item.evidence_summary && <p>研究证据：{item.evidence_summary}</p>}
     <p><a href={item.source.url} target="_blank" rel="noreferrer">查看原公开来源</a> · <time dateTime={item.source.captured_at}>{item.source.captured_at}</time></p>
     <p className="break-all">快照校验值：{item.source.snapshot_sha256}</p>
     <p className="break-all">证据版本：{item.evidence_version}</p>
+    {item.metrics?.map((metric, index) => <div key={index}>
+      <p>{metric.label} · {metric.value} {metric.unit} · {metric.period} · {metric.population}</p>
+      <blockquote className="whitespace-pre-wrap">{metric.source_quote}</blockquote>
+    </div>)}
+    {item.limitations && <p className="whitespace-pre-wrap">证据适用限制：{item.limitations}</p>}
     <p className="whitespace-pre-wrap">负责人建议：{item.opportunity_summary}</p>
+    {recommendation && <>
+      <p>短视频：{recommendation.short_video.suitability}。假设：{recommendation.short_video.hypothesis}</p>
+      <p>流媒体试听：{recommendation.streaming_preview.suitability}。假设：{recommendation.streaming_preview.hypothesis}</p>
+      <p>建议先测试{recommendation.preferred_channel === "short_video" ? "短视频" : "流媒体试听"}。{recommendation.rationale}</p>
+      <p>七天测试步骤</p>
+      <ol className="list-decimal pl-5">{recommendation.seven_day_test.steps.map(step => <li key={step}>{step}</li>)}</ol>
+      <p>观察指标：{recommendation.seven_day_test.metrics.join("、")}</p>
+      <p>判定规则：{recommendation.seven_day_test.decision_rule}</p>
+      <p>建议适用限制：{recommendation.limitations}</p>
+    </>}
   </div>;
+}
+
+const marketMetricFields = [
+  ["label", "指标", 200], ["value", "数值", 100], ["unit", "单位", 100],
+  ["period", "时期", 200], ["population", "样本与口径", 500], ["source_quote", "原文引句", 1000],
+];
+
+function snapshotText(value) {
+  if (typeof value === "string") return value;
+  return value && typeof value === "object" ? Object.values(value).map(snapshotText).filter(Boolean).join("\n\n") : "";
+}
+
+function MarketSourceReview({ source, blocked, onAccepted }) {
+  const [count, setCount] = useState(1);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const pending = useRef(false), request = useRef(null);
+  const text = snapshotText(source.snapshot?.result);
+  async function accept(event) {
+    event.preventDefault();
+    if (blocked || pending.current || !text) return;
+    const form = new FormData(event.currentTarget);
+    if (!form.has("reviewed")) return;
+    const metrics = Array.from({ length: count }, (_, index) => Object.fromEntries(
+      marketMetricFields.map(([key]) => [key, String(form.get(`${key}-${index}`) || "").trim()]),
+    ));
+    const limitations = String(form.get("limitations") || "").trim();
+    if (!limitations || metrics.some(metric => Object.values(metric).some(value => !value))) {
+      setError("请填写每项指标、原文引句和适用限制。");
+      return;
+    }
+    const { work_ref, task_ref, artifact_ref, result_version, snapshot_sha256 } = source;
+    const payload = { task_ref, artifact_ref, result_version, snapshot_sha256, reviewed: true, metrics, limitations };
+    request.current = stableRequest(request.current, "accept-market-evidence", work_ref, payload, () => crypto.randomUUID());
+    pending.current = true;
+    setSaving(true);
+    setError("");
+    try {
+      const saved = await musicApi.acceptResearchSource(work_ref, { ...payload, request_id: request.current.request_id });
+      if (saved?.work_ref !== work_ref || !saved.evidence_ref || !/^[a-f0-9]{64}$/.test(saved.evidence_version)) {
+        throw new Error("证据接受回执待核对，请重新读取原研究交付。");
+      }
+      onAccepted();
+    } catch (reason) {
+      setError(reason.message || "暂时无法确认原市场证据。");
+    } finally {
+      pending.current = false;
+      setSaving(false);
+    }
+  }
+  return <form onSubmit={accept}>
+    <p>待核对的原快照 · {source.source_url}</p>
+    <p className="break-all"><time dateTime={source.captured_at}>{source.captured_at}</time> · {source.snapshot_sha256}</p>
+    <pre className="max-h-64 overflow-auto whitespace-pre-wrap">{text || "原快照没有可核对的文字。"}</pre>
+    {Array.from({ length: count }, (_, index) => <fieldset key={index} disabled={blocked || saving}>
+      <legend>指标 {index + 1}</legend>
+      {marketMetricFields.map(([key, label, limit]) => <label key={key} className="block">
+        {label} <input required name={`${key}-${index}`} maxLength={limit} className="w-full text-ui-1" />
+      </label>)}
+    </fieldset>)}
+    <button type="button" disabled={blocked || saving || count >= 12} onClick={() => setCount(count + 1)}>添加指标</button>
+    {count > 1 && <button type="button" disabled={blocked || saving} onClick={() => setCount(count - 1)}>移除最后一项</button>}
+    <label className="block">适用限制 <textarea required name="limitations" maxLength={2000} disabled={blocked || saving} /></label>
+    <label className="block"><input required type="checkbox" name="reviewed" disabled={blocked || saving} /> 我已核对原文、指标口径和适用限制</label>
+    <button type="submit" className="text-ui-primary" disabled={blocked || saving || !text}>接受原市场证据</button>
+    {error && <p role="alert">{error}</p>}
+  </form>;
 }
 
 function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
   const [delivery, setDelivery] = useState(null);
+  const [source, setSource] = useState(null);
+  const [readiness, setReadiness] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const pending = useRef(false);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  async function readDelivery(start = false) {
+  async function readDelivery(execute = false, hosts = null) {
     if (pending.current) return;
-    if (start && (blocked || !delivery?.can_start_research)) return;
+    if (execute && (blocked || !(delivery?.can_continue_research || (delivery?.can_start_research && readiness?.ready === true)))) return;
+    if (hosts && (blocked || !delivery?.can_start_research || !readiness?.can_set_browser_scope)) return;
     pending.current = true;
     setLoading(true);
     setError("");
     try {
-      if (start) await executeOriginalAgentWork(receipt.work_ref);
+      if (execute) {
+        const result = await executeOriginalAgentWork(receipt.work_ref);
+        if (result?.work?.entity_id !== receipt.work_ref) throw new Error("研究执行回执与原对话不一致。");
+        if (mounted.current && result.execution_blocked) setError(result.execution_blocked);
+      }
+      if (hosts) await musicApi.setResearchBrowserScope(receipt.work_ref, hosts);
       const data = await musicApi.researchDelivery(company, workspace, receipt.conversation_ref, receipt.work_ref);
       if (data.conversation_ref !== receipt.conversation_ref || data.research_work_ref !== receipt.work_ref) {
         throw new Error("研究回执与原对话不一致。");
       }
-      if (mounted.current) setDelivery(data);
+      const status = data.can_start_research ? await musicApi.researchReadiness(receipt.work_ref) : null;
+      if (status && status.work_ref !== receipt.work_ref) throw new Error("研究准备状态与原工作不一致。");
+      if (mounted.current) { setDelivery(data); setReadiness(status); }
     } catch (reason) {
-      if (mounted.current) { setDelivery(null); setError(reason.message || "暂时无法读取研究交付。"); }
+      if (mounted.current) {
+        if (!hosts) { setDelivery(null); setReadiness(null); }
+        setError(reason.message || "暂时无法读取研究交付。");
+      }
     } finally {
       pending.current = false;
       if (mounted.current) setLoading(false);
     }
   }
+  async function openSource(candidate) {
+    if (pending.current || blocked) return;
+    pending.current = true;
+    setLoading(true);
+    setSource(null);
+    setError("");
+    try {
+      const preview = await musicApi.researchSource(candidate);
+      if (preview?.root_work_ref !== receipt.work_ref || preview.work_ref !== candidate.work_ref
+          || preview.task_ref !== candidate.task_ref || preview.artifact_ref !== candidate.artifact_ref
+          || preview.content_verification !== "UNVERIFIED") {
+        throw new Error("来源快照与原研究回执不一致。");
+      }
+      if (mounted.current) setSource(preview);
+    } catch (reason) {
+      if (mounted.current) setError(reason.message || "暂时无法读取原研究快照。");
+    } finally {
+      pending.current = false;
+      if (mounted.current) setLoading(false);
+    }
+  }
+  const candidates = delivery?.market_review_sources || [];
+  const reviewSource = source && candidates.some(item => item.work_ref === source.work_ref
+    && item.task_ref === source.task_ref && item.artifact_ref === source.artifact_ref) ? source : null;
   return <div>
     <button type="button" className="text-ui-primary" disabled={loading} onClick={() => readDelivery()}>读取研究交付</button>
+    {readiness?.can_set_browser_scope && <form onSubmit={event => {
+      event.preventDefault();
+      const value = new FormData(event.currentTarget).get("hosts");
+      const hosts = Array.from(new Set(String(value || "").split(/[\s,]+/).filter(Boolean)));
+      if (hosts.length) readDelivery(false, hosts);
+    }}>
+      <label className="block">允许研究员工访问的公开域名（每行一个，最多八个）
+        <textarea name="hosts" key={JSON.stringify(readiness.hosts)} defaultValue={(readiness.hosts || []).join("\n")}
+          required disabled={loading || blocked} />
+      </label>
+      <button type="submit" className="text-ui-primary" disabled={loading || blocked}>保存研究范围</button>
+    </form>}
+    {readiness?.blockers?.map((reason, index) => <p role="status" key={`${reason.code}:${index}`}>{reason.message}</p>)}
     {delivery?.can_start_research && <button type="button" className="ml-2 text-ui-primary"
-      disabled={loading || blocked} onClick={() => readDelivery(true)}>启动原研究工作</button>}
+      disabled={loading || blocked || readiness?.ready !== true} onClick={() => readDelivery(true)}>启动原研究工作</button>}
+    {delivery?.market_review_required && <p role="status">请核对并接受原研究的市场证据。</p>}
+    {candidates.map(item => <button key={item.artifact_ref} type="button" className="text-ui-primary"
+      disabled={loading || blocked} onClick={() => openSource(item)}>读取原快照</button>)}
+    {reviewSource && <MarketSourceReview key={`${reviewSource.artifact_ref}:${reviewSource.result_version}`}
+      source={reviewSource} blocked={blocked || loading} onAccepted={() => { setSource(null); readDelivery(); }} />}
+    {delivery?.can_continue_research && <button type="button" className="ml-2 text-ui-primary"
+      disabled={loading || blocked} onClick={() => readDelivery(true)}>请负责人汇总已接受的证据</button>}
     {error && <p role="alert">{error}</p>}
-    {delivery && !delivery.deliveries.length && <p role="status">原工作尚无已验收的研究交付。</p>}
+    {delivery && !delivery.can_start_research && !delivery.market_review_required && !delivery.can_continue_research && !delivery.deliveries.length
+      && <p role="status">尚未收到引用正式市场证据的负责人建议。</p>}
     {delivery?.deliveries.map(item => <MusicResearchResult key={item.evidence_ref} item={item} />)}
     {delivery?.planning_receipts?.map(item => <p role="status" key={item.work_ref}>已创建歌曲策划工作。工作编号：{item.work_ref}</p>)}
     {(delivery?.deliveries.length > 0 || delivery?.planning_receipts.length > 0) && <a className="text-ui-primary"
