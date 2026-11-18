@@ -303,3 +303,65 @@ test('embedded real composer preserves drafts across collapse, object switch and
   assert.equal(sends[0].body, '续期后保留这条输入');
   assert.deepEqual([creates.length, sends.length], [1, 1]);
 });
+
+test("original research Owner explicitly grants and revokes the selected employee's public source", async () => {
+  const { createRequire } = await import("node:module"), vm = await import("node:vm");
+  const swc = createRequire(import.meta.url)("next/dist/build/swc");
+  await swc.loadBindings();
+  const { code } = await swc.transform(
+    read("components/v1/EmployeeConversation.js") + "\nexport { MusicResearchDelivery };",
+    { filename: "EmployeeConversation.js", isModule: true, jsc: { parser: { syntax: "ecmascript", jsx: true },
+      transform: { react: { runtime: "automatic" } } }, module: { type: "commonjs" } });
+  const loaded = { exports: {} }, calls = [], state = [];
+  let cursor = 0, enabled = false, revision = 2, owner = true, finishExecute;
+  const props = { company: "company", workspace: "music", receipt: { work_ref: "original", conversation_ref: "original-chat" } };
+  const jsx = (type, props) => ({ type, props });
+  const api = {
+    researchDelivery: async () => ({ conversation_ref: "original-chat", research_work_ref: "original",
+      can_start_research: true, deliveries: [], planning_receipts: [] }),
+    researchReadiness: async () => ({ work_ref: "original", ready: enabled, browser_permission_revision: revision,
+      browser_permissions: [{ assignment_ref: "research-assignment", employee_ref: "researcher", employee_name: "研究员",
+        enabled, can_grant: owner && !enabled, can_revoke: owner && enabled }] }),
+    setResearchBrowserPermission: async (work, payload) => {
+      calls.push([work, { ...payload }]); enabled = payload.enabled; revision++;
+      return { work_ref: work, revision, ...payload };
+    },
+  };
+  vm.runInNewContext(code, { module: loaded, exports: loaded.exports, URLSearchParams, require(name) {
+    if (name === "react/jsx-runtime") return { jsx, jsxs: jsx };
+    if (name === "react") return {
+      useState(initial) { const slot = cursor++; if (!(slot in state)) state[slot] = initial;
+        return [state[slot], value => { state[slot] = value; }]; },
+      useRef(initial) { const slot = cursor++; return state[slot] ??= { current: initial }; },
+      useEffect() {},
+    };
+    if (name.endsWith("musicApi.js")) return { musicApi: api };
+    if (name.endsWith("v1FrontendApi.js")) return {
+      executeOriginalAgentWork: () => new Promise(resolve => { finishExecute = resolve; }),
+    };
+    return {};
+  } });
+  const render = () => { cursor = 0; return loaded.exports.MusicResearchDelivery(props); };
+  const children = node => Array.isArray(node) ? node.flatMap(children)
+    : node && typeof node === "object" ? [node, ...children(node.props?.children)] : [];
+  const button = (tree, label) => children(tree).find(node => node.type === "button" && node.props.children === label);
+  await button(render(), "读取研究交付").props.onClick();
+  assert.equal(button(render(), "启动原研究工作").props.disabled, true);
+  await button(render(), "授权读取所选公开原文").props.onClick();
+  assert.deepEqual(calls[0], ["original", {
+    assignment_ref: "research-assignment", employee_ref: "researcher", expected_revision: 2, enabled: true,
+  }]);
+  const starting = button(render(), "启动原研究工作").props.onClick();
+  const revoke = button(render(), "撤销公开网页读取");
+  assert.equal(revoke.props.disabled, false, "Owner can revoke while the original Work is running");
+  await revoke.props.onClick();
+  assert.deepEqual(calls[1], ["original", {
+    assignment_ref: "research-assignment", employee_ref: "researcher", expected_revision: 3, enabled: false,
+  }]);
+  finishExecute({ work: { entity_id: "original" } }); await starting;
+  assert.equal(button(render(), "启动原研究工作").props.disabled, true);
+  owner = false;
+  await button(render(), "读取研究交付").props.onClick();
+  assert.equal(button(render(), "授权读取所选公开原文"), undefined);
+  assert.equal(calls.length, 2);
+});

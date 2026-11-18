@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+import TeamOperatingDefinitionEditor from "../../../components/workspace/TeamOperatingDefinitionEditor.js";
 import TerraShell from "../../../components/terra/TerraShell.js";
 import { CreateBusiness } from "../../../components/v1/CeoDeskOperating.js";
 import BusinessCatalogSurface, { BusinessCatalogPaneContent, businessCatalogHref, businessCatalogSelection } from "../../../components/v1/BusinessCatalogSurface.js";
@@ -183,6 +184,10 @@ function BusinessSurface() {
         <p className="text-ui-1 font-bold text-ui-primary">业务团队</p>
         {currentTeam && !currentTeam.assignments.length && <InitialTeamCompletion key={`${runtime.companyId}:${business.business_id}`} companyId={runtime.companyId} business={business} onChanged={() => setRefreshKey(value => value + 1)} />}
         {currentTeam?.assignments.length ? <><p className="mt-2 text-ui-1 text-ui-txt-3">{currentTeam.staffingCount} 名当前员工 · {currentTeam.roleCount} 项责任；责任安排不代表模型、工具或执行已可用。</p><ul className="mt-3 grid gap-2 md:grid-cols-2">{currentTeam.assignments.map((member) => <li key={member.assignmentRef} className="rounded-ui-sm bg-ui-surface-2 p-3"><strong className="text-ui-2 text-ui-txt">{member.employee ? <Link href={`/ceo-office/organization/employees/${encodeURIComponent(member.employeeRef)}?${new URLSearchParams({ company_id: runtime.companyId, business_id: business.business_id })}#employee-conversation`}>{member.employee.name} · {member.roleName}</Link> : "当前员工身份无法确认"}</strong><p className="mt-1 text-ui-1 text-ui-txt-3">{member.responsibility || "责任尚未记录"}</p>{!member.enabled && <p role="status" className="mt-1 text-ui-1 text-ui-txt-3">当前责任员工或岗位不可用，请核对安排。</p>}</li>)}</ul></> : <p className="mt-3 text-ui-2 text-ui-txt-3">{currentTeam ? "这项业务尚未设置团队责任。" : "当前团队资料暂不可读取，请重新读取。"}</p>}
+      {currentTeam?.assignments.some(member => member.enabled && member.isLeader && member.scopeType === "BUSINESS" && member.scopeRef === business.business_id)
+        && business.workspaces?.some(workspace => workspace.package_id === "com.curis.local.music" && !["ARCHIVED", "DISABLED"].includes(workspace.status))
+        && <TeamOperatingDefinitionEditor key={`${runtime.companyId}:${business.business_id}`}
+          companyId={runtime.companyId} musicBusinessRef={business.business_id} onPublished={() => setRefreshKey(value => value + 1)} />}
       </TerraCard>
     </div>
   </>;

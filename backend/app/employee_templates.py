@@ -12,6 +12,10 @@ from .database import Database
 from .tenant_context import TenantContext
 
 
+MUSIC_RESEARCH_WORKFLOW_KEY = "music-market-research"
+MUSIC_RESEARCH_RESPONSIBILITY = "MUSIC_MARKET_RESEARCH"
+
+
 EMPLOYEE_AVATAR_PRESETS = frozenset(
     {
         "iris",
@@ -1123,6 +1127,39 @@ class EmployeeTemplateContract:
             "and (workspace_id=? or (json_extract(data_json,'$.scopeType')='BUSINESS' and json_extract(data_json,'$.scopeRef')=?)) order by entity_id",
             (tenant, company_id, workspace_id, business_id),
         ).fetchall()
+        music_research_ref = None
+        # The initial team remains the authority for its original two roles.
+        # A separately published Music research responsibility is not an initial team member.
+        if contract["departmentType"] == "music" and len(rows) == 3:
+            from .runtime.responsibility_routing import ResponsibilityRoutingRuntime
+            def snapshot(row):
+                return ResponsibilityRoutingRuntime._assignment_snapshot({
+                    "entity_id": row["entity_id"], "data": json.loads(row["data_json"]),
+                })
+
+            publications = connection.execute(
+                "select data_json from runtime_entities where tenant_id=? and company_id=? and workspace_id is null "
+                "and entity_type='RESPONSIBILITY_WORKFLOW' and lifecycle_status='PUBLISHED' "
+                "and json_extract(data_json,'$.scopeType')='BUSINESS' "
+                "and json_extract(data_json,'$.scopeRef')=? and json_extract(data_json,'$.workflowKey')=?",
+                (tenant, company_id, business_id, MUSIC_RESEARCH_WORKFLOW_KEY),
+            ).fetchall()
+            if len(publications) == 1:
+                release = json.loads(publications[0]["data_json"])
+                leader = next((snapshot(row) for row in rows
+                               if json.loads(row["data_json"]).get("responsibilityKey") == contract["leaderKey"]), None)
+                for row in rows:
+                    data = json.loads(row["data_json"])
+                    if (row["workspace_id"] is None and data.get("scopeType") == "BUSINESS"
+                            and data.get("scopeRef") == business_id
+                            and data.get("responsibilityKey") == MUSIC_RESEARCH_RESPONSIBILITY
+                            and data.get("outputContract", {}).get("resultType") == "market-summary"
+                            and not data.get("isLeader") and leader and data.get("employeeRef") != leader["employeeRef"]
+                            and release.get("version") == 1 and release.get("defaultFlow") == [MUSIC_RESEARCH_RESPONSIBILITY]
+                            and release.get("assignments") == [leader, snapshot(row)]):
+                        music_research_ref = row["entity_id"]
+                        rows = [item for item in rows if item["entity_id"] != music_research_ref]
+                        break
         basis = [{"ref": row["entity_id"], "revision": json.loads(row["data_json"]).get("revision"),
                   "employee_ref": json.loads(row["data_json"]).get("employeeRef")} for row in rows]
         if not rows:
@@ -1184,7 +1221,7 @@ class EmployeeTemplateContract:
                     raise ValueError("Current team canonical links differ from its Assignment")
         employee_ref = next(a["employeeRef"] for a in assignments if a["responsibilityKey"] == contract["authorKey"])
         company_ref, person = people[employee_ref]
-        return {"basis": basis, "team": {"employeeRef": employee_ref, "companyEmployeeRef": company_ref, "name": person["name"],
+        return {"basis": basis, "music_research_ref": music_research_ref, "team": {"employeeRef": employee_ref, "companyEmployeeRef": company_ref, "name": person["name"],
             "businessRef": business_id, "workspaceRef": workspace_id, "assignments": basis,
             "companyEmployeeRefs": [value[0] for value in people.values()], "executionVerification": "UNVERIFIED"}}
 

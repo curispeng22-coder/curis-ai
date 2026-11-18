@@ -132,12 +132,23 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
   const [scopeDirty, setScopeDirty] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [permissionSaving, setPermissionSaving] = useState(false);
   const pending = useRef(false);
+  const permissionPending = useRef(false);
+  const permissionRevision = useRef(-1);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const canStart = delivery?.can_start_research && readiness?.ready === true && !scopeDirty;
+  const canStart = delivery?.can_start_research && readiness?.ready === true && !scopeDirty && !permissionSaving;
+  async function readReadiness() {
+    const status = await musicApi.researchReadiness(receipt.work_ref);
+    if (status?.work_ref !== receipt.work_ref) throw new Error("研究准备状态与原工作不一致。");
+    if (mounted.current && !(status.browser_permission_revision < permissionRevision.current)) {
+      permissionRevision.current = status.browser_permission_revision ?? permissionRevision.current;
+      setReadiness(status);
+    }
+  }
   async function readDelivery(execute = false, browserScope = null) {
-    if (pending.current) return;
+    if (pending.current || permissionPending.current) return;
     if (execute && (blocked || !(delivery?.can_continue_research || canStart))) return;
     if (browserScope && (blocked || !delivery?.can_start_research || !readiness?.can_set_browser_scope)) return;
     pending.current = true;
@@ -154,16 +165,12 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
       if (data.conversation_ref !== receipt.conversation_ref || data.research_work_ref !== receipt.work_ref) {
         throw new Error("研究回执与原对话不一致。");
       }
-      const status = data.can_start_research ? await musicApi.researchReadiness(receipt.work_ref) : null;
-      if (status && status.work_ref !== receipt.work_ref) throw new Error("研究准备状态与原工作不一致。");
-      if (mounted.current) {
-        setDelivery(data);
-        setReadiness(status);
-        if (browserScope) setScopeDirty(false);
-      }
+      if (mounted.current) setDelivery(data);
+      await readReadiness();
+      if (mounted.current && browserScope) setScopeDirty(false);
     } catch (reason) {
       if (mounted.current) {
-        if (!browserScope) { setDelivery(null); setReadiness(null); }
+        setReadiness(null);
         setError(reason.message || "暂时无法读取研究交付。");
       }
     } finally {
@@ -198,6 +205,33 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
     }
     return readDelivery(false, { hosts, source_url });
   }
+  async function changeBrowserPermission(item) {
+    if (blocked || permissionPending.current || (!item.can_revoke && (pending.current || !item.can_grant || scopeDirty))
+        || !Number.isSafeInteger(readiness?.browser_permission_revision)) return;
+    const { assignment_ref, employee_ref } = item;
+    const expected_revision = readiness.browser_permission_revision, enabled = !item.enabled;
+    permissionPending.current = true;
+    setPermissionSaving(true);
+    setError("");
+    try {
+      const saved = await musicApi.setResearchBrowserPermission(receipt.work_ref,
+        { assignment_ref, employee_ref, expected_revision, enabled });
+      if (saved?.work_ref !== receipt.work_ref || saved.assignment_ref !== assignment_ref
+          || saved.employee_ref !== employee_ref || saved.enabled !== enabled || saved.revision !== expected_revision + 1) {
+        throw new Error("授权回执与原研究不一致，请重新读取研究交付。");
+      }
+      permissionRevision.current = Math.max(permissionRevision.current, saved.revision);
+      await readReadiness();
+    } catch (reason) {
+      if (mounted.current) {
+        setReadiness(null);
+        setError(reason.message || "授权状态待核对，请重新读取研究交付。");
+      }
+    } finally {
+      permissionPending.current = false;
+      if (mounted.current) setPermissionSaving(false);
+    }
+  }
   async function openSource(candidate) {
     if (pending.current || blocked) return;
     pending.current = true;
@@ -223,7 +257,7 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
   const reviewSource = source && candidates.some(item => item.work_ref === source.work_ref
     && item.task_ref === source.task_ref && item.artifact_ref === source.artifact_ref) ? source : null;
   return <div>
-    <button type="button" className="text-ui-primary" disabled={loading} onClick={() => readDelivery()}>读取研究交付</button>
+    <button type="button" className="text-ui-primary" disabled={loading || permissionSaving} onClick={() => readDelivery()}>读取研究交付</button>
     {readiness?.can_set_browser_scope && <form onSubmit={saveBrowserScope} onChange={() => setScopeDirty(true)}>
       <label className="block">允许研究员工访问的公开域名（每行一个，最多八个）
         <textarea name="hosts" key={JSON.stringify(readiness.hosts)} defaultValue={(readiness.hosts || []).join("\n")}
@@ -233,9 +267,19 @@ function MusicResearchDelivery({ company, receipt, workspace, blocked }) {
         <input type="url" name="source_url" key={readiness.source_url || ""} defaultValue={readiness.source_url || ""}
           maxLength={4096} required disabled={loading || blocked} />
       </label>
-      <button type="submit" className="text-ui-primary" disabled={loading || blocked}>保存研究范围</button>
+      <button type="submit" className="text-ui-primary" disabled={loading || permissionSaving || blocked}>保存研究范围</button>
     </form>}
-    {readiness?.blockers?.map((reason, index) => <p role="status" key={`${reason.code}:${index}`}>{reason.message}</p>)}
+    {readiness?.browser_permissions?.length > 0 && <fieldset>
+      <legend>本项研究的公开网页只读权限</legend>
+      <p>授权仅用于本项研究所选的公开原文。变更来源后需要重新授权。</p>
+      {readiness.browser_permissions.map(item => <div key={item.assignment_ref}>
+        <span>{item.employee_name} · {item.enabled ? "已授权" : "未授权"}</span>
+        {(item.can_grant || item.can_revoke) && <button type="button" className="text-ui-primary"
+          disabled={permissionSaving || blocked || (!item.can_revoke && (loading || scopeDirty))}
+          onClick={() => changeBrowserPermission(item)}>{item.can_revoke ? "撤销公开网页读取" : "授权读取所选公开原文"}</button>}
+      </div>)}
+    </fieldset>}
+    {delivery?.can_start_research && readiness?.blockers?.map((reason, index) => <p role="status" key={`${reason.code}:${index}`}>{reason.message}</p>)}
     {delivery?.can_start_research && <button type="button" className="ml-2 text-ui-primary"
       disabled={loading || blocked || !canStart} onClick={() => readDelivery(true)}>启动原研究工作</button>}
     {delivery?.market_review_required && <p role="status">请核对并接受原研究的市场证据。</p>}

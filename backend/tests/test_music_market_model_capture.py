@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from app import agent_browser_runtime
 from app.music_market_evidence import MusicMarketEvidence
 from app.result_store import ResultStore
-from backend.tests.test_music_market_evidence import (scope, fixture, replace_data, unstarted_leader,
+from backend.tests.test_music_market_evidence import (scope, replace_data, unstarted_leader, researcher_permission,
     recommendation_fixture, TENANT, COMPANY, BUSINESS)
 
 URL = 'https://example.org/report'
@@ -24,8 +24,14 @@ def fake_browser(identity, stopped, launches, *, close_ok=True):
             'held_process': {'direct_child': 'EXITED' if close_ok else 'UNKNOWN'}})
 
 
-def capture_context(tmp_path):
-    db, _, _, _ = fixture(tmp_path / 'capture.sqlite')
+def capture_context(tmp_path, monkeypatch, *, grant=True):
+    db, _, assignments = unstarted_leader(tmp_path, monkeypatch)
+    service = MusicMarketEvidence(db)
+    service.browser_scope("root", ["example.org"], URL)
+    assignment_ref = assignments[1]["entity_id"]
+    if grant:
+        service.browser_permission("root", researcher_permission(service, assignment_ref))
+    replace_data(db, "root", lambda d: d.update(leaderDelegation={"childWorkRefs": ["child"]}))
     task = ResultStore(db).create_task('Synthetic model capture', company_id=COMPANY, scope_type='BUSINESS', scope_ref=BUSINESS,
         work_ref='child', execution_ref='leader:worker:capture', employee_id='company-worker',
         capability_source='tenant_private', capability_type='model', capability_id='model.fixture')
@@ -37,22 +43,40 @@ def capture_context(tmp_path):
         responsibilityRouting={'status': 'EXECUTING', 'executions': {'leader:worker:capture': {'status': 'RUNNING', 'taskRef': task['task_id']}}}))
     context = {'type': 'model', 'id': 'model.fixture', 'source': 'tenant_private', 'company_id': COMPANY, 'work_ref': 'child',
         'task_id': task['task_id'], 'employee_id': 'company-worker', 'binding_id': 'capture-binding', 'execution_ref': 'leader:worker:capture'}
-    return db, context
+    return db, context, assignment_ref
 
 
-@pytest.mark.parametrize('failure', [None, 'close', 'revoked', 'scope', 'release'])
+@pytest.mark.parametrize('failure', [None, 'close', 'model_revoked', 'ungranted', 'revoked', 'revoked_during_capture', 'different_source', 'scope', 'release'])
 def test_model_host_capture_stays_in_original_task_and_never_reopens(tmp_path, monkeypatch, failure):
     with scope():
-        db, context = capture_context(tmp_path)
+        db, context, assignment_ref = capture_context(tmp_path, monkeypatch, grant=failure != 'ungranted')
         launches = []
         if failure != 'release':
             monkeypatch.setattr(agent_browser_runtime, 'agent_browser_release', lambda **kw: RELEASE)
-        if failure == 'revoked':
+        if failure == 'model_revoked':
             with db.connect() as con: con.execute("update employee_capability_bindings set enabled=0 where id='capture-binding'")
         if failure == 'scope': context['work_ref'] = 'root'
-        monkeypatch.setattr(agent_browser_runtime, 'open_agent_browser_for_work', lambda identity, stopped, **kw:
-            fake_browser(identity, stopped, launches, close_ok=failure != 'close'))
+        if failure == 'different_source':
+            replace_data(db, 'child', lambda d: d['followupContract']['marketEvidenceBrowser'].update(
+                sourceUrl='https://example.org/unapproved'))
         service = MusicMarketEvidence(db)
+        def revoke():
+            service.browser_permission("root", researcher_permission(service, assignment_ref, enabled=False))
+        if failure == "revoked":
+            revoke()
+        def open_browser(identity, stopped, **kw):
+            browser = fake_browser(identity, stopped, launches, close_ok=failure != 'close')
+            if failure == "revoked_during_capture":
+                observe = browser.call
+                def call(args, resources):
+                    result = observe(args, resources)
+                    if args["action"] == "navigate":
+                        revoke()
+                        assert stopped()
+                    return result
+                browser.call = call
+            return browser
+        monkeypatch.setattr(agent_browser_runtime, 'open_agent_browser_for_work', open_browser)
         if failure == 'scope':
             assert service.capture_for_model_task(context) is None
         elif failure:
@@ -62,8 +86,11 @@ def test_model_host_capture_stays_in_original_task_and_never_reopens(tmp_path, m
             assert captured['identity']['task_id'] == context['task_id']
             assert len(captured['artifact_receipts']) == 1 and URL in captured['source_text']
             assert captured['browser_tool_calls'][-1]['shutdown']['normal_browser_close']
-        if failure in {None, 'close'}:
-            with pytest.raises(PermissionError, match='领取过'): service.capture_for_model_task(context)
+        if failure in {None, 'close', 'revoked_during_capture'}:
+            if failure != 'revoked_during_capture':
+                with pytest.raises(PermissionError, match='领取过'): service.capture_for_model_task(context)
+            else:
+                with pytest.raises(PermissionError): service.capture_for_model_task(context)
             assert len(launches) == 1
         else: assert launches == []
         with db.connect() as con:
@@ -86,7 +113,9 @@ def test_normal_model_entry_capture_analysis_evidence_and_original_summary(tmp_p
             con.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) values ('worker-model',?,'company-worker','tenant_private','model','model.fixture')", (TENANT,))
             con.execute("update employee_instances set allowed_effect_classes_json='[\"read\"]' where id in ('leader','company-worker')")
         monkeypatch.setattr(agent_browser_runtime, 'agent_browser_release', lambda **kw: RELEASE)
-        MusicMarketEvidence(db).browser_scope('root', ['example.org'], URL)
+        service = MusicMarketEvidence(db)
+        service.browser_scope('root', ['example.org'], URL)
+        service.browser_permission('root', researcher_permission(service, assignments[1]['entity_id']))
     launches, calls = [], []
     monkeypatch.setattr(agent_browser_runtime, 'open_agent_browser_for_work', lambda identity, stopped, **kw: fake_browser(identity, stopped, launches, close_ok=close_ok))
     monkeypatch.setattr(IdentityMembership, '_authorize_test', lambda self, tenant_id, request_id:
@@ -127,6 +156,8 @@ def test_normal_model_entry_capture_analysis_evidence_and_original_summary(tmp_p
             'period': '2023', 'population': 'synthetic', 'source_quote': 'video 31 percent, 2023'}], limitations='Synthetic fixture only')
         accepted = client.post(prefix + f'/works/{child_ref}/market-evidence/accept', headers=headers, json=payload)
         assert accepted.status_code == 200, accepted.text
+        with scope():
+            service.browser_permission('root', researcher_permission(service, assignments[1]['entity_id'], enabled=False))
         summary = client.post(prefix + '/works/root/execute', headers=headers)
         assert summary.status_code == 200 and summary.json()['delegation_status'] == 'ACCEPTED', summary.text
         assert client.post(prefix + '/works/root/execute', headers=headers).json()['summary_work_ref'] == summary.json()['summary_work_ref']

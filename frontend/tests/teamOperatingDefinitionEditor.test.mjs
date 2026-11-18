@@ -53,3 +53,37 @@ test("XHS uses the lightweight product-language editor and reorder controls", ()
   assert.doesNotMatch(editor, /DAG|State Machine|Runtime Graph/);
   assert.match(xhs, /TeamOperatingDefinitionEditor/);
 });
+
+test("only the reviewed Music Business can build a first research publication request", async () => {
+  const { createRequire } = await import("node:module");
+  const { default: vm } = await import("node:vm");
+  const require = createRequire(import.meta.url);
+  const swc = require("next/dist/build/swc");
+  await swc.loadBindings();
+  const text = fs.readFileSync(new URL("../components/workspace/TeamOperatingDefinitionEditor.js", import.meta.url), "utf8");
+  const { code } = await swc.transform(text, { filename: "TeamOperatingDefinitionEditor.js", isModule: true,
+    jsc: { parser: { syntax: "ecmascript", jsx: true }, transform: { react: { runtime: "automatic" } } },
+    module: { type: "commonjs" } });
+  const module = { exports: {} };
+  vm.runInNewContext(code, { module, exports: module.exports, require: id => id.includes("runtimeApi") ? {} : require(id) });
+  const request = module.exports.musicResearchPublishRequest;
+  const leader = { assignmentRef: "leader-assignment", roleRef: "leader-role", assignmentRevision: 5,
+    employeeRef: "leader", isLeader: true, responsibilityKey: "BUSINESS_LEADER", roleName: "业务负责人", responsibility: "统筹" };
+  const review = { company_id: "company", scope: { type: "BUSINESS", ref: "music", workspace_id: null },
+    workflow_key: "music-market-research", published: null, can_publish: true, leader,
+    available_employees: [{ employee_ref: "researcher" }] };
+  let captured;
+  await publishTeamOperatingDefinition(request("company", "music", review, "researcher"),
+    async (path, options) => { captured = { path, body: JSON.parse(options.body) }; return { published: { version: 1 } }; });
+  assert.equal(captured.path, "/api/workspace/runtime/foundation/team-operating/definitions/publish");
+  assert.equal(captured.body.scope_type, "BUSINESS");
+  assert.equal("workspace_id" in captured.body, false);
+  assert.deepEqual(captured.body.music_research, { leader_revision: 5, confirm: true });
+  assert.equal(captured.body.roles[0].assignment_ref, "leader-assignment");
+  assert.equal(captured.body.roles[1].employee_ref, "researcher");
+  for (const invalid of [
+    { company_id: "elsewhere" }, { published: { version: 1 } }, { can_publish: false },
+    { scope: { ...review.scope, workspace_id: "fake-workspace" } }, { scope: { ...review.scope, ref: "old" } },
+  ]) assert.throws(() => request("company", "music", { ...review, ...invalid }, "researcher"), /重新核对/);
+  assert.throws(() => request("company", "music", review, "leader"), /重新核对/);
+});

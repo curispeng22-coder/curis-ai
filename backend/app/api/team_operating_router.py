@@ -21,8 +21,12 @@ from ..runtime import ResponsibilityRoutingError, ResponsibilityRoutingRuntime, 
 from ..runtime.general_workspace_delivery import GeneralWorkspaceDelivery, GeneralWorkspaceGap, GeneralHumanAuthorityGap
 from ..runtime.child_work import leader_preferred_binding
 from ..tenant_context import TenantContext
+from ..employee_templates import (
+    EmployeeTemplateContract, MUSIC_RESEARCH_RESPONSIBILITY, MUSIC_RESEARCH_WORKFLOW_KEY, professional_team_contract,
+)
+from ..result_attention import ResultAttention
 from ..agent_adapter import _AGENT_STOP_SPAWN_LOCK
-from ..music_market_evidence import MusicMarketEvidence, AcceptMarketEvidenceIn, validate_research_recommendation
+from ..music_market_evidence import MusicMarketEvidence, AcceptMarketEvidenceIn, MarketBrowserPermissionIn, validate_research_recommendation
 
 
 def _verified_origin_projection(work, contract, tenant_id):
@@ -100,6 +104,13 @@ class OperatingRoleIn(BaseModel):
     role_ref: str | None = Field(default=None, max_length=128)
 
 
+class MusicResearchConfirmationIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    leader_revision: StrictInt = Field(ge=1)
+    confirm: StrictBool
+
+
 class PublishOperatingDefinitionIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -110,6 +121,7 @@ class PublishOperatingDefinitionIn(BaseModel):
     workflow_key: str = Field(min_length=1, max_length=128)
     roles: list[OperatingRoleIn] = Field(min_length=1, max_length=32)
     default_flow: list[str] | None = Field(default=None, min_length=1, max_length=32)
+    music_research: MusicResearchConfirmationIn | None = None
 
 
 class StartOperatingWorkIn(BaseModel):
@@ -302,7 +314,6 @@ def build_team_operating_router(
             raise RuntimeScopeError("只有当前公司的 CEO 可以核对和发布责任流程。")
         if assignment["company_id"] != company_id or assignment["workspace_id"] != workspace_id:
             raise RuntimeScopeError("当前责任不属于指定公司和工作空间。")
-        from ..result_attention import ResultAttention
         ResultAttention(scoped_database).actor(company_id)
         scope = ResourceScopePolicy.authorize_assignment(connection, tenant_id=scoped.tenant_id,
             company_id=company_id, assignment_ref=assignment_ref,
@@ -1500,6 +1511,132 @@ def build_team_operating_router(
             return {"work": foundation.get(work_ref)}
         return {"work": foundation.get(work_ref), "continuation_pending": True}
 
+    def music_research_definition(connection, company_id, business_ref, payload=None):
+        require_company(company_id)
+        tenant = foundation.tenant_id
+        ResourceScopePolicy.resolve_execution_scope(
+            connection, tenant_id=tenant, company_id=company_id, scope_type="BUSINESS", scope_ref=business_ref,
+        )
+        packages = connection.execute(
+            "select w.workspace_id, i.package_id, i.package_version, i.package_digest "
+            "from workspaces w join workspace_package_instances i using(tenant_id, company_id, workspace_id) "
+            "join installed_workspace_packages p on p.tenant_id=i.tenant_id and p.package_id=i.package_id "
+            "and p.version=i.package_version and p.digest=i.package_digest "
+            "where w.tenant_id=? and w.company_id=? and w.business_id=? and w.business_relation_status='RESOLVED' "
+            "and w.status not in ('ARCHIVED','DISABLED') and i.status='ACTIVE' and p.status='ACTIVE' "
+            "and i.package_id='com.curis.local.music' and w.blueprint_version=i.package_version "
+            "and json_extract(w.blueprint_json,'$.packageId')=i.package_id "
+            "and json_extract(w.blueprint_json,'$.packageVersion')=i.package_version "
+            "and json_extract(w.blueprint_json,'$.packageDigest')=i.package_digest",
+            (tenant, company_id, business_ref),
+        ).fetchall()
+        if len(packages) != 1:
+            raise HTTPException(status_code=404, detail="当前业务没有可配置的音乐工作台。")
+        package = packages[0]
+        contract = professional_team_contract(package["package_id"], package["package_version"], package["package_digest"])
+        scoped_db = SimpleNamespace(connect=lambda: nullcontext(connection))
+        scoped = ResponsibilityRoutingRuntime(scoped_db)
+        can_publish = TenantContext.current_identity().get("role", "").lower() in {"owner", "ceo"}
+        if can_publish:
+            try:
+                ResultAttention(scoped_db).actor(company_id)
+            except RuntimeScopeError:
+                can_publish = False
+        if payload is not None and not can_publish:
+            raise HTTPException(status_code=403, detail="只有当前公司所有者可以发布市场研究流程。")
+        state = EmployeeTemplateContract(scoped_db).professional_team_state_in_connection(
+            connection, company_id=company_id, business_id=business_ref,
+            workspace_id=package["workspace_id"], contract=contract,
+        )
+        if not state["team"]:
+            raise ValueError("请先完成当前音乐业务的初始团队。")
+        old = [scoped.foundation.get(row["ref"]) for row in state["basis"]]
+        leader, = [row for row in old if row["data"]["responsibilityKey"] == contract["leaderKey"]]
+        leader_snapshot = scoped._assignment_snapshot(leader)
+        releases = [item for item in scoped.foundation.list("RESPONSIBILITY_WORKFLOW", company_id=company_id)
+                    if item["workspace_id"] is None and item["data"].get("scopeType") == "BUSINESS"
+                    and item["data"].get("scopeRef") == business_ref]
+        release = releases[0] if len(releases) == 1 else None
+        if releases and (not release or release["lifecycle_status"] != "PUBLISHED"
+                or release["data"].get("workflowKey") != MUSIC_RESEARCH_WORKFLOW_KEY
+                or release["data"].get("defaultFlow") != [MUSIC_RESEARCH_RESPONSIBILITY]
+                or len(release["data"].get("assignments", [])) != 2
+                or release["data"]["assignments"][0] != leader_snapshot
+                or not state["music_research_ref"]
+                or release["data"]["assignments"][1].get("assignmentRef") != state["music_research_ref"]):
+            raise ValueError("当前业务已有不同或冲突的流程，请先核对已有安排。")
+        employees = []
+        if can_publish and not release:
+            employees = [dict(row) for row in connection.execute(
+                "select r.entity_id as employee_ref, e.name, e.role from runtime_entities r "
+                "join employee_instances e on e.tenant_id=r.tenant_id and e.company_id=r.company_id "
+                "and e.id=json_extract(r.data_json,'$.companyEmployeeRef') "
+                "where r.tenant_id=? and r.company_id=? and r.workspace_id is null and r.entity_type='AI_EMPLOYEE' "
+                "and r.lifecycle_status in ('AVAILABLE','OPERATING') and e.enabled=1 and e.deleted_at is null "
+                "and e.status in ('idle','assigned') and e.id!=? and r.entity_id!=? order by e.name,r.entity_id",
+                (tenant, company_id, state["team"]["companyEmployeeRef"], leader_snapshot["employeeRef"]),
+            )]
+        if payload is not None:
+            existing = payload.roles
+            if (payload.music_research is None or payload.music_research.confirm is not True or len(existing) != 2
+                    or payload.music_research.leader_revision != leader_snapshot["assignmentRevision"]
+                    or not existing[0].is_leader or existing[0].assignment_ref != leader["entity_id"]
+                    or existing[0].role_ref != leader_snapshot["roleRef"]
+                    or existing[0].employee_ref != leader_snapshot["employeeRef"]
+                    or existing[0].responsibility_key != contract["leaderKey"]
+                    or existing[1].is_leader or existing[1].assignment_ref or existing[1].role_ref
+                    or existing[1].responsibility_key != MUSIC_RESEARCH_RESPONSIBILITY
+                    or payload.default_flow != [MUSIC_RESEARCH_RESPONSIBILITY]):
+                raise ValueError("负责人职责或确认内容已变化，请重新读取。")
+            researcher = existing[1].employee_ref
+            if release:
+                if researcher != release["data"]["assignments"][1]["employeeRef"]:
+                    raise ValueError("市场研究流程已发布。请读取当前安排。")
+            else:
+                if not any(item["employee_ref"] == researcher for item in employees):
+                    raise ValueError("请选择当前公司另一位可用员工负责市场研究。")
+                role_name = "市场研究"
+                role = scoped.foundation.create(
+                    "ROLE_SLOT", company_id=company_id, owner_ref=researcher, lifecycle_status="ASSIGNED",
+                    data={"name": role_name, "role": role_name, "roleKey": MUSIC_RESEARCH_RESPONSIBILITY},
+                )
+                assignment = scoped.create_assignment(
+                    company_id=company_id, scope_type="BUSINESS", scope_ref=business_ref,
+                    role_ref=role["entity_id"], employee_ref=researcher,
+                    responsibility_key=MUSIC_RESEARCH_RESPONSIBILITY,
+                    responsibility="核对公开市场来源、数据口径和限制，交付可追溯的市场研究。",
+                    output_contract={"requiresResult": True, "resultType": "market-summary"},
+                )
+                release = scoped.publish_workflow(
+                    company_id=company_id, scope_type="BUSINESS", scope_ref=business_ref,
+                    workflow_key=MUSIC_RESEARCH_WORKFLOW_KEY,
+                    assignment_refs=[leader["entity_id"], assignment["entity_id"]],
+                    default_flow=[MUSIC_RESEARCH_RESPONSIBILITY],
+                )
+        def presented(snapshot):
+            role = scoped.foundation.get(snapshot["roleRef"])
+            employee = scoped.foundation.get(snapshot["employeeRef"])
+            person = connection.execute(
+                "select name from employee_instances where tenant_id=? and company_id=? and id=? and deleted_at is null",
+                (tenant, company_id, employee["data"].get("companyEmployeeRef")),
+            ).fetchone()
+            return {**snapshot, "roleName": role["data"].get("name") or role["data"].get("role") or snapshot["responsibilityKey"],
+                    "employeeName": person["name"] if person and person["name"] else "员工姓名暂不可读取"}
+        return {
+            "scope": {"type": "BUSINESS", "ref": business_ref, "workspace_id": None},
+            "company_id": company_id,
+            "workflow_key": MUSIC_RESEARCH_WORKFLOW_KEY,
+            "leader": presented(leader_snapshot),
+            "can_publish": can_publish and release is None,
+            "available_employees": employees if release is None else [],
+            "published": None if release is None else {
+                "workflow_ref": release["entity_id"], "version": release["data"]["version"],
+                "default_flow": release["data"]["defaultFlow"],
+                "roles": [presented(row) for row in release["data"]["assignments"]],
+                "published_at": release["data"]["publishedAt"],
+            },
+        }
+
     @router.get("/definition")
     def read_definition(
         company_id: str,
@@ -1508,6 +1645,15 @@ def build_team_operating_router(
         workflow_key: str,
         workspace_id: str | None = Query(default=None),
     ):
+        if workflow_key.strip() == MUSIC_RESEARCH_WORKFLOW_KEY:
+            if scope_type != "BUSINESS" or workspace_id is not None or workflow_key != MUSIC_RESEARCH_WORKFLOW_KEY:
+                raise HTTPException(status_code=422, detail="请从当前音乐业务打开市场研究安排。")
+            try:
+                with database.connect() as connection:
+                    connection.execute("begin")
+                    return music_research_definition(connection, company_id, scope_ref)
+            except (KeyError, ValueError, RuntimeScopeError) as error:
+                raise HTTPException(status_code=409, detail=str(error)) from error
         try:
             routing._validate_scope(company_id=company_id, scope_type=scope_type, scope_ref=scope_ref, workspace_id=workspace_id)
             return projection(company_id, workspace_id, scope_type, scope_ref, workflow_key)
@@ -1516,6 +1662,16 @@ def build_team_operating_router(
 
     @router.post("/definitions/publish")
     def publish_definition(payload: PublishOperatingDefinitionIn):
+        if payload.workflow_key.strip() == MUSIC_RESEARCH_WORKFLOW_KEY or payload.music_research is not None:
+            if (payload.scope_type != "BUSINESS" or payload.workspace_id is not None
+                    or payload.workflow_key != MUSIC_RESEARCH_WORKFLOW_KEY or payload.music_research is None):
+                raise HTTPException(status_code=422, detail="请明确确认当前音乐业务范围和市场研究职责。")
+            try:
+                with database.connect() as connection:
+                    connection.execute("begin immediate")
+                    return music_research_definition(connection, payload.company_id, payload.scope_ref, payload)
+            except (KeyError, ValueError, RuntimeScopeError) as error:
+                raise HTTPException(status_code=409, detail=str(error)) from error
         try:
             require_company(payload.company_id)
             keys = [item.responsibility_key.strip() for item in payload.roles]
@@ -1616,6 +1772,13 @@ def build_team_operating_router(
         try:
             return MusicMarketEvidence(database).browser_scope(work_ref, payload.hosts, payload.source_url)
         except (KeyError, ValueError, PermissionError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @router.post("/works/{work_ref}/market-evidence/browser-permission")
+    def set_market_browser_permission(work_ref: str, payload: MarketBrowserPermissionIn):
+        try:
+            return MusicMarketEvidence(database).browser_permission(work_ref, payload)
+        except (KeyError, ValueError, PermissionError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     @router.get("/works/{work_ref}/market-evidence/source")

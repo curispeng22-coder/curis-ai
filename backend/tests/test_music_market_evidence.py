@@ -12,7 +12,7 @@ from app.api.team_operating_router import build_team_operating_router
 from app.conversation_service import digest
 from app.database import Database
 from app.evolution_event_log import EvolutionEventLog
-from app.music_market_evidence import MusicMarketEvidence, AcceptMarketEvidenceIn
+from app.music_market_evidence import MusicMarketEvidence, AcceptMarketEvidenceIn, MarketBrowserPermissionIn
 from app.result_store import ResultStore
 from app.runtime import RuntimeFoundation, ResponsibilityRoutingRuntime
 from app.tenant_context import TenantContext
@@ -402,6 +402,81 @@ def test_recommendation_requires_actual_complete_body(change):
     else: output['status'] = 'USER_REQUIRED'
     with pytest.raises(ValueError): validate_research_recommendation(output, inputs)
 
+def researcher_permission(service, assignment_ref, *, enabled=True):
+    state = service.readiness("root")
+    return MarketBrowserPermissionIn(assignment_ref=assignment_ref, employee_ref="company-worker",
+        expected_revision=state["browser_permission_revision"], enabled=enabled)
+
+
+@pytest.mark.parametrize("case", ["member", "foreign_owner", "foreign_company", "foreign_tenant",
+    "leader", "not_research", "wrong_employee", "unknown_assignment", "stale_assignment", "child", "forged_origin"])
+def test_browser_permission_rejects_ineligible_change(tmp_path, monkeypatch, case):
+    with scope():
+        db, f, assignments = unstarted_leader(tmp_path, monkeypatch)
+        service = MusicMarketEvidence(db)
+        service.browser_scope("root", ["example.org"], "https://example.org/report")
+        worker_ref = assignments[1]["entity_id"]
+        request = researcher_permission(service, worker_ref).model_dump()
+        target = "root"
+        if case == "leader":
+            request.update(assignment_ref=assignments[0]["entity_id"], employee_ref="leader")
+        elif case == "wrong_employee":
+            request["employee_ref"] = "leader"
+        elif case == "unknown_assignment":
+            request["assignment_ref"] = "not-in-workflow"
+        elif case == "stale_assignment":
+            replace_data(db, worker_ref, lambda d: d.update(revision=d["revision"] + 1))
+        elif case == "not_research":
+            workflow = f.get("root")["data"]["responsibilityRouting"]["workflowRef"]
+            output = {"resultType": "song-plan"}
+            replace_data(db, worker_ref, lambda d: d.update(outputContract=output))
+            replace_data(db, workflow, lambda d: d["assignments"][1].update(outputContract=output))
+            assert service.readiness("root")["browser_permissions"] == []
+        elif case == "child":
+            target = "child"
+        elif case == "forged_origin":
+            with db.connect() as con:
+                con.execute("delete from evolution_events where event_type='conversation.research_work.confirmed'")
+        identity = {"member": {"role": "member"}, "foreign_owner": {"ceo_id": "foreign"},
+            "foreign_company": {"company_id": "foreign"}, "foreign_tenant": {"tenant_id": "foreign"}}.get(case, {})
+        before = f.get("root")["data"]["marketEvidenceBrowserPermissions"]
+        with scope(**identity), pytest.raises((KeyError, ValueError, PermissionError)):
+            MusicMarketEvidence(db).browser_permission(target, MarketBrowserPermissionIn(**request))
+        assert f.get("root")["data"]["marketEvidenceBrowserPermissions"] == before
+
+
+def test_owner_public_permission_api_grants_revokes_and_changes_source_without_replay(tmp_path, monkeypatch):
+    with scope():
+        db, f, assignments = unstarted_leader(tmp_path, monkeypatch)
+        service = MusicMarketEvidence(db)
+        service.browser_scope("root", ["example.org"], "https://example.org/report")
+        worker_ref = assignments[1]["entity_id"]
+        request = researcher_permission(service, worker_ref).model_dump()
+        app = FastAPI()
+        app.include_router(build_team_operating_router(db))
+        with TestClient(app) as client:
+            endpoint = "/team-operating/works/root/market-evidence/browser-permission"
+            for invalid in [{"enabled": "true"}, {"expected_revision": True}, {"hosts": ["example.org"]}]:
+                assert client.post(endpoint, json={**request, **invalid}).status_code == 422
+            granted = client.post(endpoint, json=request)
+            assert granted.status_code == 200, granted.text
+            assert granted.json() == {"work_ref": "root", "assignment_ref": worker_ref,
+                "employee_ref": "company-worker", "revision": request["expected_revision"] + 1, "enabled": True}
+            assert service.readiness("root")["browser_permissions"][0]["can_revoke"]
+            assert client.post(endpoint, json=request).status_code == 422
+            service.browser_scope("root", ["example.org"], "https://example.org/another-report")
+            service.browser_scope("root", ["example.org"], "https://example.org/report")
+            assert not service.readiness("root")["browser_permissions"][0]["enabled"]
+            grant = researcher_permission(service, worker_ref)
+            assert client.post(endpoint, json=grant.model_dump()).status_code == 200
+            replace_data(db, "root", lambda d: d["responsibilityRouting"].update(executions={"started": {"status": "RUNNING"}}))
+            revoke = researcher_permission(service, worker_ref, enabled=False)
+            assert client.post(endpoint, json=revoke.model_dump()).status_code == 200
+            assert not service.readiness("root")["browser_permissions"][0]["enabled"]
+            assert client.post(endpoint, json=grant.model_dump()).status_code == 422
+            assert client.post(endpoint, json=researcher_permission(service, worker_ref).model_dump()).status_code == 422
+
+
 def test_readiness_uses_existing_model_and_position_permissions(tmp_path, monkeypatch):
     from app import agent_browser_runtime
     with scope():
@@ -412,13 +487,16 @@ def test_readiness_uses_existing_model_and_position_permissions(tmp_path, monkey
             con.execute("insert into employee_capability_bindings(id,tenant_id,employee_id,capability_source,capability_type,capability_id) values ('worker-model',?,'company-worker','tenant_private','model','model.fixture')", (TENANT,))
             con.execute("update employee_instances set allowed_effect_classes_json='[\"read\"]' where id in ('leader','company-worker')")
         monkeypatch.setattr(agent_browser_runtime, 'agent_browser_release', lambda **kw: {'releaseSha256': 'a' * 64})
+        assert "PUBLIC_WEB_PERMISSION_REQUIRED" in {x["code"] for x in service.readiness("root")["blockers"]}
+        service.browser_permission("root", researcher_permission(service, assignments[1]["entity_id"]))
         result = service.readiness('root')
         assert result['ready'], result
         assert result['source_url'] == 'https://example.org/report'
         with db.connect() as con:
             con.execute("update employee_instances set allowed_effect_classes_json='[\"exec\"]' where id='company-worker'")
         codes = {x['code'] for x in service.readiness('root')['blockers']}
-        assert {'POSITION_PERMISSION_REQUIRED', 'POSITION_READ_PERMISSION_REQUIRED'} <= codes
+        assert 'POSITION_PERMISSION_REQUIRED' in codes
+        assert 'PUBLIC_WEB_PERMISSION_REQUIRED' not in codes
 
 
 def test_original_entry_delegates_configured_hosts_to_worker(tmp_path, monkeypatch):

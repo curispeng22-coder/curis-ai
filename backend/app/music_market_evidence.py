@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StringConstraints
 
 from .agent_work_resources import AgentWorkResources
 from .conversation_service import ConversationService, digest
@@ -91,6 +91,14 @@ class AcceptMarketEvidenceIn(BaseModel):
     limitations: str = Field(min_length=1, max_length=2000)
 
 
+class MarketBrowserPermissionIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    assignment_ref: str = Field(min_length=1, max_length=128)
+    employee_ref: str = Field(min_length=1, max_length=128)
+    expected_revision: StrictInt = Field(ge=0)
+    enabled: StrictBool
+
+
 
 class MusicMarketEvidence:
     def __init__(self, database):
@@ -151,7 +159,8 @@ class MusicMarketEvidence:
                             or binding["capability_source"] != context.get("source")
                             or employee["company_employee_ref"] != identity["employee_id"]
                             or not authorizer.authorize(identity["employee_id"], "model", context.get("id", ""), connection=con)[0]
-                            or not authorizer.authorize(identity["employee_id"], "tool", "reader", connection=con)[0]
+                            or not self._browser_allowed(con, root, child["data"].get("responsibilityAssignmentRef"),
+                                identity["employee_id"], configured, child["owner_ref"])
                             or not agent_work_claim_active(con, **{k: identity[k] for k in
                                 ("tenant_id", "company_id", "work_ref", "task_id")}, execution_ref=context["execution_ref"]))
             except (ValueError, KeyError, OSError, RuntimeScopeError):
@@ -226,6 +235,10 @@ class MusicMarketEvidence:
                 or child_ref not in root["data"].get("leaderDelegation", {}).get("childWorkRefs", [])
                 or work["parent_id"] != root["parent_id"] or work["owner_ref"] == root["owner_ref"]):
             raise RuntimeScopeError("需要原 Music 研究下不同员工的同范围子工作。")
+        self._require_research_confirmation(con, root)
+        return work, root, scope
+
+    def _require_research_confirmation(self, con, root):
         cycle = self._entity(con, root["parent_id"], "CYCLE")
         origin = cycle["data"]["contract"]["conversationResearchSource"]
         rows = con.execute("select payload from evolution_events where tenant_id=? "
@@ -234,7 +247,6 @@ class MusicMarketEvidence:
         if (len(rows) != 1 or json.loads(rows[0]["payload"]) !=
                 {**origin, "work_ref": root["entity_id"], "cycle_ref": cycle["entity_id"]}):
             raise RuntimeScopeError("原对话研究确认与 Work 来源不一致。")
-        return work, root, scope
 
 
     def _proof(self, con, work, scope, task_ref, artifact_ref):
@@ -371,6 +383,7 @@ class MusicMarketEvidence:
         ResultAttention(ConversationService(self.db)._work_database(con)).actor(root["company_id"])
         if not self.applies(con, root) or root["data"].get("leaderRootWorkRef"):
             raise RuntimeScopeError("需要原对话确认的 Music 研究工作。")
+        self._require_research_confirmation(con, root)
         return root
 
     def _can_set_browser_scope(self, con, root):
@@ -397,10 +410,99 @@ class MusicMarketEvidence:
                 policy.url(source_url)
                 if "#" in source_url:
                     raise ValueError("请选择不含页内片段的公开原文 URL。")
-            root["data"]["marketEvidenceBrowser"] = {"hosts": sorted(policy.hosts), "sourceUrl": source_url}
+            configured = {"hosts": sorted(policy.hosts), "sourceUrl": source_url}
+            if configured != root["data"].get("marketEvidenceBrowser"):
+                state = self._browser_permissions(root)
+                root["data"]["marketEvidenceBrowserPermissions"] = {"revision": state["revision"] + 1, "grants": {}}
+                root["data"]["marketEvidenceBrowser"] = configured
             con.execute("update runtime_entities set data_json=? where tenant_id=? and entity_id=?",
                 (json.dumps(root["data"], ensure_ascii=False), self.tenant, root_ref))
         return self.readiness(root_ref)
+
+    @staticmethod
+    def _browser_permissions(root):
+        return root["data"].get("marketEvidenceBrowserPermissions") or {"revision": 0, "grants": {}}
+
+    def _workflow(self, con, root):
+        route = root["data"].get("responsibilityRouting") or {}
+        workflow = self._entity(con, route.get("workflowRef"), "RESPONSIBILITY_WORKFLOW")
+        ResourceScopePolicy.require_same_execution_scope(self.child._scope(con, root), self.child._scope(con, workflow))
+        if workflow["lifecycle_status"] != "PUBLISHED" or workflow["data"].get("version") != route.get("workflowVersion"):
+            raise RuntimeScopeError("原研究已发布的责任流程发生变化。")
+        return workflow
+
+    def _researcher(self, con, root, workflow, assignment):
+        from .runtime.responsibility_routing import ResponsibilityRoutingRuntime
+        # A non-leader alone is not a research duty. Use the structured output
+        # contract of the pinned Business research workflow, never a display name.
+        if (assignment.get("isLeader") or assignment.get("employeeRef") == root["owner_ref"]
+                or assignment.get("outputContract", {}).get("resultType") != "market-summary"):
+            raise RuntimeScopeError("此责任未承担 Music 市场研究。")
+        ResourceScopePolicy.authorize_assignment(con, tenant_id=self.tenant,
+            company_id=root["company_id"], assignment_ref=assignment["assignmentRef"],
+            employee_ref=assignment["employeeRef"], revision=assignment["assignmentRevision"],
+            scope=self.child._scope(con, root))
+        current = self._entity(con, assignment["assignmentRef"], "RESPONSIBILITY_ASSIGNMENT")
+        if ResponsibilityRoutingRuntime._assignment_snapshot(current) != assignment:
+            raise RuntimeScopeError("原研究员工的责任已变化。")
+        joined = ConversationService(self.db)._work_database(con)
+        resolver = EmployeeExecutionIdentity(joined)
+        identity = resolver.resolve(company_id=root["company_id"], runtime_employee_ref=assignment["employeeRef"])
+        leader = resolver.resolve(company_id=root["company_id"], runtime_employee_ref=root["owner_ref"])
+        if (identity["company_employee_ref"] == leader["company_employee_ref"]
+                or identity["employee"]["status"] not in {"idle", "assigned"}):
+            raise RuntimeScopeError("需要当前公司内不同于负责人的可用研究员工。")
+        return identity, {
+            "workRef": root["entity_id"], "companyRef": root["company_id"], "workflowRef": workflow["entity_id"],
+            "workflowVersion": workflow["data"]["version"], "assignmentRef": assignment["assignmentRef"], "assignmentRevision": assignment["assignmentRevision"],
+            "runtimeEmployeeRef": assignment["employeeRef"], "companyEmployeeRef": identity["company_employee_ref"],
+        }
+
+    def _browser_allowed(self, con, root, assignment_ref, employee_ref, configured, runtime_employee_ref):
+        workflow = self._workflow(con, root)
+        assignment = next((a for a in workflow["data"]["assignments"] if a["assignmentRef"] == assignment_ref), None)
+        if assignment is None or assignment["employeeRef"] != runtime_employee_ref:
+            return False
+        _, basis = self._researcher(con, root, workflow, assignment)
+        return (basis["companyEmployeeRef"] == employee_ref
+            and configured == root["data"].get("marketEvidenceBrowser")
+            and self._browser_permissions(root)["grants"].get(assignment_ref) == {**basis, "source": configured})
+
+    def browser_permission(self, root_ref, request: MarketBrowserPermissionIn):
+        from .agent_browser_policy import PublicTargets
+        with self.db.connect() as con:
+            con.execute("begin immediate")
+            root = self._research_root(con, root_ref)
+            if TenantContext.current_identity().get("role") not in {"owner", "ceo"}:
+                raise RuntimeScopeError("只有当前公司所有者可以管理原研究员工的公开网页读取权限。")
+            state = self._browser_permissions(root)
+            if state["revision"] != request.expected_revision:
+                raise RuntimeScopeError("研究授权已变化，请重新读取原研究交付。")
+            workflow = self._workflow(con, root)
+            assignment = next((a for a in workflow["data"]["assignments"] if a["assignmentRef"] == request.assignment_ref), None)
+            if assignment is None:
+                raise RuntimeScopeError("此员工不在原 Music 研究责任流程。")
+            _, basis = self._researcher(con, root, workflow, assignment)
+            if basis["companyEmployeeRef"] != request.employee_ref:
+                raise RuntimeScopeError("研究责任与当前公司员工不一致。")
+            grants = dict(state["grants"])
+            if request.enabled:
+                if not self._can_set_browser_scope(con, root):
+                    raise RuntimeScopeError("只能在原研究首次执行前授予公开网页读取权限。")
+                configured = root["data"].get("marketEvidenceBrowser") or {}
+                source_url = configured.get("sourceUrl")
+                if not source_url or "#" in source_url:
+                    raise ValueError("请先保存明确的公开 HTTPS 原文。")
+                PublicTargets(configured["hosts"]).url(source_url)
+                grants[request.assignment_ref] = {**basis, "source": configured}
+            else:
+                grants.pop(request.assignment_ref, None)
+            revision = state["revision"] + 1
+            root["data"]["marketEvidenceBrowserPermissions"] = {"revision": revision, "grants": grants}
+            con.execute("update runtime_entities set data_json=? where tenant_id=? and company_id=? and entity_id=?",
+                (json.dumps(root["data"], ensure_ascii=False), self.tenant, root["company_id"], root_ref))
+        return {"work_ref": root_ref, "assignment_ref": request.assignment_ref,
+            "employee_ref": request.employee_ref, "revision": revision, "enabled": request.enabled}
 
     def readiness(self, root_ref):
         """Read existing gates without launching a browser, model, or permission change."""
@@ -432,13 +534,28 @@ class MusicMarketEvidence:
             except (ValueError, OSError) as error:
                 blocked("BROWSER_RELEASE_REQUIRED", str(error))
             joined = ConversationService(self.db)._work_database(con)
-            route = root["data"].get("responsibilityRouting") or {}
-            workflow = self._entity(con, route.get("workflowRef"), "RESPONSIBILITY_WORKFLOW")
+            workflow = self._workflow(con, root)
             assignments = workflow["data"].get("assignments") or []
+            state = self._browser_permissions(root)
+            owner = TenantContext.current_identity().get("role") in {"owner", "ceo"}
+            can_set_scope = self._can_set_browser_scope(con, root)
+            permissions = []
             if not any(not a.get("isLeader") for a in assignments):
                 blocked("RESEARCH_EMPLOYEE_REQUIRED", "原研究没有已发布的研究员工责任安排。")
             for assignment in assignments:
                 ref = assignment["assignmentRef"]
+                if not assignment.get("isLeader"):
+                    try:
+                        identity, basis = self._researcher(con, root, workflow, assignment)
+                        enabled = state["grants"].get(ref) == {**basis, "source": browser}
+                        if not enabled:
+                            blocked("PUBLIC_WEB_PERMISSION_REQUIRED", "请由公司所有者为本项研究员工授权读取选定的公开原文。", assignment_ref=ref)
+                        permissions.append({"assignment_ref": ref, "employee_ref": identity["company_employee_ref"],
+                            "employee_name": identity["employee"]["name"], "enabled": enabled,
+                            "can_grant": owner and can_set_scope and bool(source_url) and not enabled,
+                            "can_revoke": owner and enabled})
+                    except (ValueError, PermissionError, KeyError):
+                        blocked("RESEARCH_ASSIGNMENT_REQUIRED", "原流程有尚未具备 Music 市场研究职责的员工。", assignment_ref=ref)
                 try:
                     identity = EmployeeExecutionIdentity(joined).resolve(company_id=root["company_id"],
                         workspace_id=root["workspace_id"], runtime_employee_ref=assignment["employeeRef"])
@@ -458,14 +575,11 @@ class MusicMarketEvidence:
                     allowed, reason = authorizer.authorize(identity["company_employee_ref"], kind, capability_id, connection=con)
                     if not allowed:
                         blocked("POSITION_PERMISSION_REQUIRED", reason, assignment_ref=ref)
-                    if not assignment.get("isLeader"):
-                        allowed, reason = authorizer.authorize(identity["company_employee_ref"], "tool", "reader", connection=con)
-                        if not allowed:
-                            blocked("POSITION_READ_PERMISSION_REQUIRED", reason, assignment_ref=ref)
                 except (ValueError, PermissionError, KeyError) as error:
                     blocked("EMPLOYEE_BINDING_REQUIRED", str(error), assignment_ref=ref)
             return {"work_ref": root_ref, "ready": not blockers, "blockers": blockers, "hosts": hosts,
-                "source_url": source_url, "can_set_browser_scope": self._can_set_browser_scope(con, root)}
+                "source_url": source_url, "can_set_browser_scope": can_set_scope,
+                "browser_permission_revision": state["revision"], "browser_permissions": permissions}
 
     def preview(self, child_ref, task_ref, artifact_ref):
         with self.db.connect() as con:

@@ -215,3 +215,126 @@ def test_draft_company_schema_rejects_unknown_terminal_labels(tmp_path,state):
   with db.connect() as con:
    assert con.execute('select status from companies where company_id=?',(COMPANY,)).fetchone()[0]=='draft'
    assert con.execute('select count(*) from employee_instances').fetchone()[0]==baseline
+
+
+def test_music_business_research_publish_preserves_team_and_is_atomic(tmp_path, monkeypatch):
+    from fastapi import FastAPI, Request
+    from fastapi.testclient import TestClient
+    from app.api.team_operating_router import build_team_operating_router
+    from app.employee_templates import MUSIC_RESEARCH_RESPONSIBILITY, MUSIC_RESEARCH_WORKFLOW_KEY
+    from app.runtime import ResponsibilityRoutingRuntime, RuntimeFoundation
+
+    db, runtime = company_only(tmp_path)
+    with scope():
+        with db.connect() as connection:
+            connection.execute("begin immediate")
+            EmployeeTemplateContract(db).materialize_builtin_organization(connection, company_id=COMPANY)
+        detail = install(runtime)
+        writing = install(runtime, "writing_authoring", "writing-business")
+        workspace = detail["instance"]["workspace_id"]
+        package = detail["package"]
+        contract = professional_team_contract(package["package_id"], package["version"], package["digest"])
+        service = EmployeeTemplateContract(db)
+        with db.connect() as connection:
+            original = service.professional_team_state_in_connection(
+                connection, company_id=COMPANY, business_id="team-business", workspace_id=workspace, contract=contract,
+            )
+            employee = connection.execute("select * from employee_instances where id=?",
+                (original["team"]["companyEmployeeRef"],)).fetchone()
+            prior_proofs = service._professional_execution_context(connection, employee)
+        assert prior_proofs and writing["instance"]["workspace_id"] != workspace
+
+    app = FastAPI()
+    app.include_router(build_team_operating_router(db))
+
+    @app.middleware("http")
+    async def identity(request: Request, call_next):
+        with scope(role=request.headers.get("x-test-role", "owner"),
+                   company_id=request.headers.get("x-test-company", COMPANY),
+                   ceo_id=request.headers.get("x-test-ceo", CEO)):
+            return await call_next(request)
+
+    params = {"company_id": COMPANY, "scope_type": "BUSINESS", "scope_ref": "team-business",
+              "workflow_key": MUSIC_RESEARCH_WORKFLOW_KEY}
+    read = "/team-operating/definition"
+    publish_path = "/team-operating/definitions/publish"
+
+    def recorded():
+        with db.connect() as connection:
+            return tuple(tuple(row) for row in connection.execute(
+                "select * from runtime_entities order by entity_id"
+            )), tuple(tuple(row) for row in connection.execute("select * from runtime_links order by link_id"))
+
+    with TestClient(app) as client:
+        before = recorded()
+        preview = client.get(read, params=params)
+        assert preview.status_code == 200, preview.text
+        draft = preview.json()
+        assert draft["can_publish"] and draft["published"] is None and draft["scope"]["workspace_id"] is None
+        researcher = next(person for person in draft["available_employees"] if person["role"] == "行业研究专家")
+        leader = draft["leader"]
+        roles = [
+            {"responsibility_key": leader["responsibilityKey"], "role_name": leader["roleName"],
+             "employee_ref": leader["employeeRef"], "responsibility": leader["responsibility"], "is_leader": True,
+             "assignment_ref": leader["assignmentRef"], "role_ref": leader["roleRef"]},
+            {"responsibility_key": MUSIC_RESEARCH_RESPONSIBILITY, "role_name": "市场研究",
+             "employee_ref": researcher["employee_ref"], "responsibility": "核对公开市场来源"},
+        ]
+        proof = {"confirm": True, "leader_revision": leader["assignmentRevision"]}
+        body = {**params, "roles": roles, "default_flow": [MUSIC_RESEARCH_RESPONSIBILITY], "music_research": proof}
+        assert client.get(read, params=params, headers={"x-test-role":"employee"}).json()["available_employees"] == []
+        for headers in [{"x-test-role":"employee"}, {"x-test-company":"foreign"}, {"x-test-ceo":"foreign"}]:
+            assert client.post(publish_path, json=body, headers=headers).status_code in {403, 409}
+        for changes in [
+            {"music_research": None}, {"music_research": {**proof, "confirm": False}},
+            {"music_research": {**proof, "leader_revision": proof["leader_revision"] + 1}},
+            {"scope_ref": "writing-business"}, {"workspace_id": workspace}, {"workflow_key": " " + MUSIC_RESEARCH_WORKFLOW_KEY},
+            *[{"roles": [roles[0], {**roles[1], "employee_ref": ref}]} for ref in (leader["employeeRef"], "foreign-worker")],
+        ]:
+            assert client.post(publish_path, json={**body, **changes}).status_code in {404, 409, 422}
+        with db.connect() as connection:
+            connection.execute("update employee_instances set enabled=0 where id=?", (researcher["employee_ref"],))
+        try:
+            assert client.post(publish_path, json=body).status_code == 409
+        finally:
+            with db.connect() as connection:
+                connection.execute("update employee_instances set enabled=1 where id=?", (researcher["employee_ref"],))
+        assert recorded() == before
+        with monkeypatch.context() as injected:
+            def fail_after_assignment(self, **kwargs):
+                raise ValueError("fixture: publication failed after role and assignment writes")
+            injected.setattr(ResponsibilityRoutingRuntime, "publish_workflow", fail_after_assignment)
+            assert client.post(publish_path, json=body).status_code == 409
+            assert recorded() == before
+
+        def submit(_):
+            response = client.post(publish_path, json=body)
+            assert response.status_code == 200, response.text
+            return response.json()
+
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            original_release, *repeats = pool.map(submit, range(3))
+        assert all(other == original_release for other in repeats)
+        published = client.get(read, params=params).json()
+        assert published == original_release and not published["can_publish"]
+        assert published["published"]["version"] == 1 and published["published"]["roles"][0] == leader
+        worker = published["published"]["roles"][1]
+        assert worker["employeeRef"] == researcher["employee_ref"]
+        assert worker["employeeName"] == researcher["name"] and worker["roleName"] == "市场研究"
+        assert worker["outputContract"]["resultType"] == "market-summary"
+        other = {**body, "roles": [roles[0], {**roles[1], "employee_ref": "other-worker"}]}
+        assert client.post(publish_path, json=other).status_code == 409
+    with scope():
+        f = RuntimeFoundation(db)
+        assert f.get(worker["roleRef"])["lifecycle_status"] == "ASSIGNED"
+        after = recorded()
+        assert len(after[0]) - len(before[0]) == 3
+        assert len(after[1]) - len(before[1]) == 2
+        with db.connect() as connection:
+            current = service.professional_team_state_in_connection(
+                connection, company_id=COMPANY, business_id="team-business", workspace_id=workspace, contract=contract,
+            )
+            assert current["basis"] == original["basis"] and current["team"] == original["team"]
+            assert service._professional_execution_context(connection, employee) == prior_proofs
+            for table in ("tasks", "ai_usage_records", "employee_capability_bindings", "tenant_private_capabilities"):
+                assert connection.execute(f"select count(*) from {table}").fetchone()[0] == 0

@@ -29,7 +29,130 @@ function moveRole(items, sourceKey, targetKey) {
   return next;
 }
 
-export default function TeamOperatingDefinitionEditor({ companyId, workspaceId, workflowKey = "content-growth" }) {
+const musicWorkflowKey = "music-market-research";
+const marketResearchRole = "MUSIC_MARKET_RESEARCH";
+
+export function musicResearchPublishRequest(companyId, businessRef, definition, researcher) {
+  const leader = definition?.leader;
+  if (definition?.company_id !== companyId || definition?.scope?.type !== "BUSINESS"
+      || definition.scope.ref !== businessRef || definition.scope.workspace_id !== null
+      || definition.workflow_key !== musicWorkflowKey || definition.published || definition.can_publish !== true
+      || !leader?.isLeader || !leader.assignmentRef || !leader.employeeRef || leader.employeeRef === researcher
+      || !Number.isInteger(leader.assignmentRevision) || leader.assignmentRevision < 1
+      || !definition.available_employees?.some(employee => employee.employee_ref === researcher)) {
+    throw new Error("请重新核对音乐业务、负责人和研究员。");
+  }
+  return {
+    company_id: companyId, scope_type: "BUSINESS", scope_ref: businessRef, workflow_key: musicWorkflowKey,
+    default_flow: [marketResearchRole],
+    music_research: { leader_revision: leader.assignmentRevision, confirm: true },
+    roles: [
+      { responsibility_key: leader.responsibilityKey, role_name: leader.roleName,
+        employee_ref: leader.employeeRef, responsibility: leader.responsibility,
+        assignment_ref: leader.assignmentRef, role_ref: leader.roleRef, is_leader: true },
+      { responsibility_key: marketResearchRole, role_name: "市场研究", employee_ref: researcher,
+        responsibility: "核对公开市场来源、数据口径和限制。", is_leader: false },
+    ],
+  };
+}
+
+function MusicResearchArrangement({ companyId, businessRef, onPublished }) {
+  const [definition, setDefinition] = useState(null);
+  const [researcher, setResearcher] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [reread, setReread] = useState(0);
+  const pending = useRef(false);
+  const mounted = useRef(false);
+
+  const checkScope = useCallback((data) => {
+    if (data?.company_id !== companyId || data?.scope?.type !== "BUSINESS" || data.scope.ref !== businessRef
+        || data.scope.workspace_id !== null || data.workflow_key !== musicWorkflowKey) {
+      throw new Error("研究流程的业务范围无法核对。");
+    }
+    return data;
+  }, [companyId, businessRef]);
+
+  useEffect(() => {
+    let active = true;
+    mounted.current = true;
+    setBusy(true);
+    setDefinition(null);
+    setResearcher("");
+    setConfirmed(false);
+    setError("");
+    getTeamOperatingDefinition({ companyId, scopeType: "BUSINESS", scopeRef: businessRef, workflowKey: musicWorkflowKey })
+      .then(checkScope)
+      .then(data => { if (active) setDefinition(data); })
+      .catch(reason => { if (active) setError(reason.message || "暂时无法读取市场研究安排。"); })
+      .finally(() => { if (active) setBusy(false); });
+    return () => { active = false; mounted.current = false; };
+  }, [companyId, businessRef, checkScope, reread]);
+
+  async function publish(event) {
+    event.preventDefault();
+    if (pending.current || busy || !confirmed || error) return;
+    pending.current = true;
+    setBusy(true);
+    try {
+      const body = musicResearchPublishRequest(companyId, businessRef, definition, researcher);
+      const data = checkScope(await publishTeamOperatingDefinition(body));
+      const roles = data.published?.roles;
+      if (!data.published?.workflow_ref || !(data.published.version >= 1) || roles?.length !== 2
+          || roles[0].assignmentRef !== definition.leader.assignmentRef
+          || roles[0].assignmentRevision !== definition.leader.assignmentRevision
+          || roles[1].employeeRef !== researcher || roles[1].outputContract?.resultType !== "market-summary") {
+        throw new Error("发布回执无法核对。");
+      }
+      if (mounted.current) {
+        setDefinition(data);
+        onPublished?.();
+      }
+    } catch (reason) {
+      if (mounted.current) setError((reason.message || "发布状态待核对。") + " 请先重新读取安排。");
+    } finally {
+      pending.current = false;
+      if (mounted.current) setBusy(false);
+    }
+  }
+
+  return <section className="rounded-ui-md border border-ui-line bg-ui-surface p-4" aria-label="安排市场研究">
+    <h2 className="text-ui-3 font-semibold">安排市场研究</h2>
+    {busy && !definition && <p role="status">正在读取研究安排…</p>}
+    {definition && <p className="mt-2 text-ui-2">业务负责人：{definition.leader.employeeName}</p>}
+    {definition?.published && <p role="status" className="mt-2 text-ui-2">市场研究负责人：{definition.published.roles[1].employeeName}。流程已发布 · 版本 {definition.published.version}</p>}
+    {definition?.can_publish && !error && !definition.available_employees.length && <p role="status">当前没有可安排的其他员工。</p>}
+    {definition?.can_publish && !error && definition.available_employees.length > 0 && <form onSubmit={publish} className="mt-3 grid gap-2">
+      <label className="grid gap-1">研究员<select required value={researcher} disabled={busy}
+        className="rounded-ui-sm border border-ui-line bg-ui-bg px-3 py-2"
+        onChange={event => { setResearcher(event.target.value); setConfirmed(false); }}>
+        <option value="">请选择员工</option>
+        {definition.available_employees.map(person => <option key={person.employee_ref} value={person.employee_ref}>
+          {person.name}{person.role && person.name !== person.role ? ` · ${person.role}` : ""}
+        </option>)}
+      </select></label>
+      <label className="flex gap-2"><input type="checkbox" checked={confirmed} disabled={!researcher || busy}
+        onChange={event => setConfirmed(event.target.checked)} />确认以上研究员，发布本业务的市场研究流程</label>
+      <button type="submit" disabled={!researcher || !confirmed || busy}
+        className="rounded-ui-sm bg-ui-action-primary-bg px-3 py-2 text-ui-action-primary-fg disabled:opacity-50">
+        {busy ? "正在发布…" : "发布市场研究流程"}
+      </button>
+    </form>}
+    {error && <><p role="alert" className="mt-2 text-ui-danger">{error}</p>
+      <button type="button" disabled={busy} onClick={() => setReread(value => value + 1)}
+        className="mt-2 text-ui-primary">重新读取安排</button></>}
+  </section>;
+}
+
+export default function TeamOperatingDefinitionEditor({ musicBusinessRef, ...props }) {
+  return musicBusinessRef
+    ? <MusicResearchArrangement key={JSON.stringify([props.companyId, musicBusinessRef])}
+        companyId={props.companyId} businessRef={musicBusinessRef} onPublished={props.onPublished} />
+    : <WorkspaceDefinitionEditor {...props} />;
+}
+
+function WorkspaceDefinitionEditor({ companyId, workspaceId, workflowKey = "content-growth" }) {
   const [state, setState] = useState({ status: "loading", data: null, error: "" });
   const [editing, setEditing] = useState(false);
   const [roles, setRoles] = useState([]);
