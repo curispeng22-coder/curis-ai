@@ -20,6 +20,7 @@ export function RuntimeProvider({ children }) {
     companyId: "",
     snapshot: null,
     simulations: [],
+    teams: [],
     error: "",
   });
 
@@ -27,13 +28,16 @@ export function RuntimeProvider({ children }) {
     if (!usesRuntime(pathname)) return;
     setState((current) => ({ ...current, status: "loading", error: "" }));
     try {
-      await workspaceFetch("/api/workspace/v1/first-launch", { method: "POST" });
+      // T-011 首启接口返回 teams（含 status_label「待连接能力」/「就绪」），
+      // 供前端团队能力展示使用；不臆造字段。
+      const launch = await workspaceFetch("/api/workspace/v1/first-launch", { method: "POST" });
       const result = await getRuntimeBootstrap();
       setState({
         status: result.snapshot ? "ready" : "empty",
         companyId: result.companyId,
         snapshot: result.snapshot,
         simulations: result.simulations,
+        teams: Array.isArray(launch?.teams) ? launch.teams : [],
         error: "",
       });
     } catch (error) {
@@ -42,6 +46,7 @@ export function RuntimeProvider({ children }) {
         companyId: "",
         snapshot: null,
         simulations: [],
+        teams: [],
         error: runtimeErrorMessage(error),
       });
     }

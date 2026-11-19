@@ -139,7 +139,11 @@ export default function AppEntry() {
   };
   if (runtime.status === "error" || runtime.status === "forbidden") return <main className="grid min-h-screen place-items-center bg-ui-bg px-6"><section className="max-w-md rounded-2xl border border-ui-line bg-ui-surface p-7"><h1 className="text-xl font-semibold text-ui-txt">暂时无法读取 Curis</h1><p className="mt-2 text-sm text-ui-txt-2">{runtime.error}</p><button onClick={runtime.refresh} className="mt-5 text-sm font-semibold text-ui-primary-text">重新读取</button></section></main>;
   if (stage === "recovery-error") return <main className="grid min-h-screen place-items-center bg-ui-bg px-6"><section role="alert"><h1>原建公司记录暂不可读取</h1><p>{error}</p><button onClick={() => window.location.reload()}>重新读取</button></section></main>;
-  if (stage === "loading" || runtime.status === "loading") return <main className="grid min-h-screen place-items-center bg-ui-bg text-sm text-ui-txt-2">正在打开 Curis…</main>;
+  // T-011 验收意见：首启 runtime 未就绪（idle/loading）或即将跳首页（ready 且已有公司）
+  // 时统一显示加载态，不再先闪「这里还没有公司」再 window.location.replace 到首页。
+  const booting = ["idle", "loading"].includes(runtime.status)
+    || (runtime.status === "ready" && !operation.current && Boolean(runtime.snapshot?.company));
+  if (booting || stage === "loading") return <main role="status" aria-live="polite" className="grid min-h-screen place-items-center bg-ui-bg text-sm text-ui-txt-2">正在打开 Curis 工作台，请稍候…</main>;
   if (stage === "setup") return <Setup value={form} setValue={value => { if (!pending.current && !operation.current) setForm(value); }} onSubmit={createCompany} busy={busy} error={error} recovering={recovering} onBack={() => setStage("empty")} />;
   if (stage === "empty") return <EmptyCuris onCreate={() => setStage("setup")} />;
   return <EmptyCuris onCreate={() => setStage("setup")} />;
