@@ -20,7 +20,7 @@ PACKAGE_VERSION = "0.1.0"
 PACKAGE_DIGEST = "2f4c37d6b579d8db31f88f7626acec44b9f630164ba8c9909e217a5f41e2d66e"
 PREFIX = "writing.chapter."
 ACTIONS = frozenset(("draft.saved", "discussion.bound", "candidate.recorded", "candidate.adopted",
-                     "inspection.recorded", "formal.confirmed", "package.prepared", "work.linked", "context.bound", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"))
+                     "inspection.recorded", "formal.confirmed", "version.reopened", "package.prepared", "work.linked", "context.bound", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"))
 CHECKS = ("continuity", "language", "rights")
 
 
@@ -384,6 +384,7 @@ class WritingChapterService:
             "candidate.adopted": {"candidate_ref": str, "confirmed": bool},
             "inspection.recorded": {"mode": str, "checks": list, "note": str},
             "formal.confirmed": {"inspection_ref": str, "confirmed": bool},
+            "version.reopened": {"version_ref": str, "confirmed": bool},
             "package.prepared": {"formal_ref": str, "introduction": str, "credits": str, "rights_declared": bool, "target": str},
             "work.linked": {"work_ref": str, "basis_draft_ref": str, "basis_sha256": str},
         }[action]
@@ -400,6 +401,14 @@ class WritingChapterService:
         basis = draft.get("book_context_basis")
         def with_basis(value):
             return {**value, **({"book_context_basis": basis} if basis else {})}
+        if action == "version.reopened":
+            if data["confirmed"] is not True:
+                raise ValueError("需要明确确认以历史版本续做。")
+            version = find("formal.confirmed", data["version_ref"])
+            source = version["snapshot"]
+            self._knowledge(lineage, source["knowledge"])
+            return {**data, "previous_draft_ref": draft["ref"],
+                    "draft": {**source, "ref": ref, "source_version_ref": version["ref"]}, "author": author}
         if action == "context.bound":
             if data["confirmed"] is not True or draft["ref"] == "ABSENT":
                 raise ValueError("请先保存正文，再明确选择本章依据。")
@@ -588,6 +597,27 @@ class WritingChapterService:
                 raise WritingConflict("工作没有已验证章节版本依据。")
             return {**data, "relation_only": True}
         raise ValueError("不支持的章节动作。")
+
+    def manuscript(self, company, workspace, book, chapter, version_ref=""):
+        """Read immutable formal snapshots; candidates never become the default export."""
+        state = self.chapter(company, workspace, book, chapter)
+        versions = []
+        previous = None
+        for event in state["events"]:
+            if event["action"] == "formal.confirmed":
+                versions.append({"ref": event["ref"], "previous_version_ref": previous,
+                                 "snapshot": event["snapshot"], "created_at": event["created_at"]})
+                previous = event["ref"]
+        selected = next((v for v in versions if v["ref"] == version_ref), None) if version_ref else (versions[-1] if versions else None)
+        if selected is None:
+            raise RuntimeScopeError("正式文稿版本不存在或不属于当前文稿。")
+        return {"version": selected, "versions": versions, "read_only": True,
+                "current_formal_ref": versions[-1]["ref"],
+                "candidates": [e for e in state["events"] if e["action"] in {
+                    "candidate.recorded", "candidate.manual-recorded", "candidate.agent-recorded", "candidate.dialogue-recorded"}]}
+
+    def manuscript_text(self, company, workspace, book, chapter, version_ref=""):
+        return self.manuscript(company, workspace, book, chapter, version_ref)["version"]["snapshot"]["text"]
 
     def download(self, company, workspace, book, chapter, package_ref):
         state = self.chapter(company, workspace, book, chapter)

@@ -90,6 +90,21 @@ def build_writing_router(database, executor, *, conversation_service=None, allow
     def chapter(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str):
         return invoke(lambda: service.chapter(company_id, workspace_id, book_ref, chapter_ref))
 
+    @router.get("/books/{book_ref}/chapters/{chapter_ref}/manuscript")
+    def manuscript(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str, version_ref: str = ""):
+        return invoke(lambda: service.manuscript(company_id, workspace_id, book_ref, chapter_ref, version_ref))
+
+    @router.get("/books/{book_ref}/chapters/{chapter_ref}/manuscript/copy")
+    def copy_manuscript(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str, version_ref: str = ""):
+        text = invoke(lambda: service.manuscript_text(company_id, workspace_id, book_ref, chapter_ref, version_ref))
+        return Response(text, media_type="text/plain", headers={"Cache-Control": "no-store"})
+
+    @router.get("/books/{book_ref}/chapters/{chapter_ref}/manuscript/export")
+    def export_manuscript(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str, version_ref: str = ""):
+        text = invoke(lambda: service.manuscript_text(company_id, workspace_id, book_ref, chapter_ref, version_ref))
+        return Response(text, media_type="text/plain", headers={
+            "Content-Disposition": 'attachment; filename="manuscript.txt"', "Cache-Control": "no-store"})
+
     @router.post("/books/{book_ref}/chapters/{chapter_ref}/commands/{action}")
     def command(company_id: str, workspace_id: str, book_ref: str, chapter_ref: str, action: str, payload: CommandIn):
         return invoke(lambda: service.command(company_id, workspace_id, book_ref, chapter_ref, action, **payload.model_dump()))
